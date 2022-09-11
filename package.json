@@ -1,0 +1,9 @@
+{
+  "name": "my-app",
+  "scripts": {
+    "frontend:app:dev": "pnpm --filter @my-app/frontend-app dev",
+    "install": "pnpm install"
+  },
+  "author": "jinyaoMa",
+  "license": "MIT"
+}
