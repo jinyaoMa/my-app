@@ -20,7 +20,7 @@ func main() {
 	w := app.App().Wails()
 
 	err := wails.Run(&options.App{
-		Title:             "My App",
+		Title:             "My Application",
 		Width:             800,
 		Height:            600,
 		DisableResize:     false,
@@ -31,7 +31,7 @@ func main() {
 		MaxWidth:          -1,
 		MaxHeight:         -1,
 		StartHidden:       false,
-		HideWindowOnClose: true,
+		HideWindowOnClose: false,
 		AlwaysOnTop:       false,
 		// BackgroundColour:  &options.RGBA{R: 242, G: 242, B: 242, A: 0},
 		// RGBA:               &options.RGBA{},
@@ -50,7 +50,7 @@ func main() {
 		Windows: &windows.Options{
 			WebviewIsTransparent:              false,
 			WindowIsTranslucent:               false,
-			DisableWindowIcon:                 false,
+			DisableWindowIcon:                 true,
 			DisableFramelessWindowDecorations: false,
 			WebviewUserDataPath:               "",
 			WebviewBrowserPath:                "",

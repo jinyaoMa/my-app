@@ -3,6 +3,7 @@
 .tools
 build/bin
 frontend/wailsjs
+frontend/public/docs
 
 # From the vue template of vite
 #

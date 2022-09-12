@@ -1,14 +1,26 @@
 {
   "name": "my-app",
+  "author": "jinyaoMa",
+  "license": "MIT",
   "scripts": {
     "wails:dev": ".tools\\wails dev -s true -noreload",
     "wails:build": ".tools\\wails build --platform windows/amd64",
     "upx:compress": ".tools\\upx -9 build/bin/MyApp.exe",
-    "install:swag": "set \"GOBIN=%cd%\\.tools\" && go install github.com/swaggo/swag/cmd/swag@latest",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:serve": "vitepress serve docs",
+    "frontend:dev": "pnpm --filter frontend exec vite",
+    "frontend:build": "pnpm --filter frontend exec vue-tsc --noEmit && pnpm --filter frontend exec vite build",
+    "frontend:preview": "pnpm --filter frontend exec vite preview",
+    "install:swag": "cross-env GOBIN=\"%cd%\\.tools\" go install github.com/swaggo/swag/cmd/swag@latest",
     "install:upx": "curl -L https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win64.zip > upx.zip && unzip -p upx.zip '*/upx.exe' > .tools/upx.exe && rm upx.zip",
-    "install:wails": "set \"GOBIN=%cd%\\.tools\" && go install github.com/wailsapp/wails/v2/cmd/wails@latest",
-    "install": "pnpm install:wails && pnpm install:upx && pnpm install:swag && pnpm wails:build"
+    "install:wails": "cross-env GOBIN=\"%cd%\\.tools\" go install github.com/wailsapp/wails/v2/cmd/wails@latest",
+    "install": "pnpm install:wails && pnpm install:upx && pnpm install:swag && pnpm docs:build && pnpm frontend:build"
   },
-  "author": "jinyaoMa",
-  "license": "MIT"
+  "devDependencies": {
+    "@types/node": "^18.7.16",
+    "cross-env": "^7.0.3",
+    "vitepress": "1.0.0-alpha.13",
+    "vue": "^3.2.37"
+  }
 }

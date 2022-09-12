@@ -1,11 +1,15 @@
 # My App (my-app)
 
-Prepare environment for development?
+My App is a continuously updated service collection.
+
+Prepare and install environment for development?
 
 - Go v1.19+, https://go.dev/
 - Node.js v16+, https://nodejs.org/
-- VS Code v1.71+, https://code.visualstudio.com/
 - PNPM v7+, https://pnpm.io/
+- VS Code v1.71+, https://code.visualstudio.com/
+
+> Run command `pnpm install` at project root directory to setup.
 
 ## Technologies
 
