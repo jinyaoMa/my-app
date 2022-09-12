@@ -1,7 +1,13 @@
 {
   "name": "my-app",
   "scripts": {
-    "frontend:app:dev": "pnpm --filter @my-app/frontend dev"
+    "wails:dev": ".tools\\wails dev -s true -noreload",
+    "wails:build": ".tools\\wails build --platform windows/amd64",
+    "upx:compress": ".tools\\upx -9 build/bin/MyApp.exe",
+    "install:swag": "set \"GOBIN=%cd%\\.tools\" && go install github.com/swaggo/swag/cmd/swag@latest",
+    "install:upx": "curl -L https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win64.zip > upx.zip && unzip -p upx.zip '*/upx.exe' > .tools/upx.exe && rm upx.zip",
+    "install:wails": "set \"GOBIN=%cd%\\.tools\" && go install github.com/wailsapp/wails/v2/cmd/wails@latest",
+    "install": "pnpm install:wails && pnpm install:upx && pnpm install:swag && pnpm wails:build"
   },
   "author": "jinyaoMa",
   "license": "MIT"

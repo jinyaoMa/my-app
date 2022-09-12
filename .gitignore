@@ -1,3 +1,9 @@
+# Custom
+#
+.tools
+build/bin
+frontend/wailsjs
+
 # From the vue template of vite
 #
 # Logs

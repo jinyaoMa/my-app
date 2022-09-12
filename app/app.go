@@ -11,6 +11,7 @@ var (
 )
 
 type Application struct {
+	wails Wails
 }
 
 func App() *Application {
@@ -20,4 +21,8 @@ func App() *Application {
 	})
 	fmt.Println("Single instance already created.")
 	return instance
+}
+
+func (a *Application) Wails() *Wails {
+	return &a.wails
 }

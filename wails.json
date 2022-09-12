@@ -1,0 +1,18 @@
+{
+  "name": "My App",
+  "outputfilename": "MyApp",
+  "assetdir": "frontend/dist",
+  "frontend:build": "pnpm build",
+  "frontend:dev:watcher": "pnpm dev",
+  "frontend:dev:serverUrl": "auto",
+  "wailsjsdir": "frontend",
+  "debounceMS": 1000,
+  "devServer": "localhost:10000",
+  "info": {
+    "companyName": "Jinyao's Individual Project",
+    "productName": "My App - Continuously updated service collection.",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright © 2022 jinyaoMa",
+    "comments": "Continuously updated service collection. Built using Wails (https://wails.app)"
+  }
+}
