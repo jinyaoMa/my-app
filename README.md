@@ -25,6 +25,6 @@ Prepare and install environment for development?
 
 ## Design Pattern Summary
 
-| Pattern   | Role                                                                                     | Packages |
-| :-------- | :--------------------------------------------------------------------------------------- | :------- |
-| Singleton | Maintains read-only state for the backend included connections to database, logger, etc. | app      |
+| Pattern   | Role                                         | Packages        |
+| :-------- | :------------------------------------------- | :-------------- |
+| Singleton | Maintains read-only state and global objects | app, i18n, tray |

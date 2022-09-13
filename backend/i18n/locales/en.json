@@ -1,0 +1,24 @@
+{
+  "lang": {
+    "code": "en",
+    "text": "English"
+  },
+  "appname": "My Application",
+  "quit": "Quit",
+  "display_language": "Display Language",
+  "color_theme": {
+    "title": "Color Theme",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "api_service": {
+    "start": "Enable API service",
+    "stop": "Disable API service",
+    "swagger": "Open API docs"
+  },
+  "quit_dialog": {
+    "message": "Are you sure to quit?",
+    "default_button": "Quit",
+    "cancel_button": "Cancel"
+  }
+}

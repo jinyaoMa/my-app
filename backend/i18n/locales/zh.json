@@ -1,0 +1,24 @@
+{
+  "lang": {
+    "code": "zh",
+    "text": "简体中文"
+  },
+  "appname": "我的应用程序",
+  "quit": "退出",
+  "display_language": "选择 显示语言",
+  "color_theme": {
+    "title": "选择 颜色主题",
+    "light": "默认浅色",
+    "dark": "默认深色"
+  },
+  "api_service": {
+    "start": "开启 API 服务",
+    "stop": "关闭 API 服务",
+    "swagger": "打开 API 文档"
+  },
+  "quit_dialog": {
+    "message": "确认退出 我的应用程序 吗？",
+    "default_button": "退出",
+    "cancel_button": "取消"
+  }
+}

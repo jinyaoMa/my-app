@@ -3,7 +3,9 @@ package main
 import (
 	"embed"
 	"log"
-	"my-app/app"
+	"my-app/backend/app"
+	"my-app/backend/i18n"
+	"my-app/backend/tray"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -17,7 +19,11 @@ import (
 var frontend embed.FS
 
 func main() {
-	w := app.App().Wails()
+	tray.Tray()
+
+	i18n.I18n()
+
+	wlc := app.App().WailsLifeCycle()
 
 	err := wails.Run(&options.App{
 		Title:             "My Application",
@@ -41,10 +47,10 @@ func main() {
 		Logger:             nil,
 		LogLevel:           logger.DEBUG,
 		LogLevelProduction: logger.ERROR,
-		OnStartup:          w.Startup,
-		OnDomReady:         w.DomReady,
-		OnShutdown:         w.Shutdown,
-		OnBeforeClose:      w.BeforeClose,
+		OnStartup:          wlc.Startup,
+		OnDomReady:         wlc.DomReady,
+		OnShutdown:         wlc.Shutdown,
+		OnBeforeClose:      wlc.BeforeClose,
 		Bind:               []interface{}{},
 		WindowStartState:   options.Normal,
 		Windows: &windows.Options{
@@ -55,8 +61,8 @@ func main() {
 			WebviewUserDataPath:               "",
 			WebviewBrowserPath:                "",
 			Theme:                             windows.SystemDefault,
-			OnSuspend:                         w.Suspend,
-			OnResume:                          w.Resume,
+			OnSuspend:                         wlc.Suspend,
+			OnResume:                          wlc.Resume,
 		},
 		Mac:          &mac.Options{},
 		Linux:        &linux.Options{},
