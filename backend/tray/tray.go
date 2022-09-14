@@ -157,10 +157,13 @@ func (t *tray) onReady() {
 			OnQuit: func() {
 				locale := i18n.I18n().Locale()
 				dialog, err := runtime.MessageDialog(t.wailsCtx, runtime.MessageDialogOptions{
-					Type:          runtime.QuestionDialog,
-					Title:         locale.AppName,
-					Message:       locale.QuitDialog.Message,
-					Buttons:       []string{},
+					Type:    runtime.QuestionDialog,
+					Title:   locale.AppName,
+					Message: locale.QuitDialog.Message,
+					Buttons: []string{
+						locale.QuitDialog.DefaultButton,
+						locale.QuitDialog.CancelButton,
+					},
 					DefaultButton: locale.QuitDialog.DefaultButton,
 					CancelButton:  locale.QuitDialog.CancelButton,
 				})

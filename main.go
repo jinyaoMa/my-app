@@ -4,7 +4,6 @@ import (
 	"embed"
 	"log"
 	"my-app/backend/app"
-	"my-app/backend/tray"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -18,9 +17,7 @@ import (
 var frontend embed.FS
 
 func main() {
-	tray.Tray() // systray must run at very beginning...
-
-	wlc := app.App().WailsLifeCycle()
+	wlc := app.App().WailsLifeCycle().Initialize()
 
 	err := wails.Run(&options.App{
 		Title:             "My Application",
