@@ -4,7 +4,6 @@ import (
 	"embed"
 	"log"
 	"my-app/backend/app"
-	"my-app/backend/i18n"
 	"my-app/backend/tray"
 
 	"github.com/wailsapp/wails/v2"
@@ -19,9 +18,7 @@ import (
 var frontend embed.FS
 
 func main() {
-	tray.Tray()
-
-	i18n.I18n()
+	tray.Tray() // systray must run at very beginning...
 
 	wlc := app.App().WailsLifeCycle()
 
@@ -37,7 +34,7 @@ func main() {
 		MaxWidth:          -1,
 		MaxHeight:         -1,
 		StartHidden:       false,
-		HideWindowOnClose: false,
+		HideWindowOnClose: true,
 		AlwaysOnTop:       false,
 		// BackgroundColour:  &options.RGBA{R: 242, G: 242, B: 242, A: 0},
 		// RGBA:               &options.RGBA{},

@@ -4,17 +4,19 @@
     "text": "简体中文"
   },
   "appname": "我的应用程序",
+  "open_window": "打开 我的应用程序",
   "quit": "退出",
   "display_language": "选择 显示语言",
   "color_theme": {
     "title": "选择 颜色主题",
-    "light": "默认浅色",
-    "dark": "默认深色"
+    "system": "跟随系统",
+    "light": "浅色",
+    "dark": "深色"
   },
   "api_service": {
+    "swagger": "打开 API 文档",
     "start": "开启 API 服务",
-    "stop": "关闭 API 服务",
-    "swagger": "打开 API 文档"
+    "stop": "关闭 API 服务"
   },
   "quit_dialog": {
     "message": "确认退出 我的应用程序 吗？",

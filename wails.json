@@ -9,9 +9,9 @@
   "debounceMS": 1000,
   "info": {
     "companyName": "Jinyao Ma's Individual Project",
-    "productName": "My App - Continuously updated service collection.",
+    "productName": "My App - Continuously updated personal service collection.",
     "productVersion": "1.0.0",
     "copyright": "Copyright © 2022 jinyaoMa",
-    "comments": "Continuously updated service collection. Built using Wails (https://wails.app)"
+    "comments": "Continuously updated personal service collection. Built using Wails (https://wails.app)"
   }
 }

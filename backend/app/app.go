@@ -6,22 +6,22 @@ import (
 
 var (
 	once     sync.Once
-	instance *Application
+	instance *app
 )
 
-type Application struct {
+type app struct {
 	wlc *WailsLifeCycle
 }
 
-func App() *Application {
+func App() *app {
 	once.Do(func() {
-		instance = &Application{
+		instance = &app{
 			wlc: &WailsLifeCycle{},
 		}
 	})
 	return instance
 }
 
-func (a *Application) WailsLifeCycle() *WailsLifeCycle {
+func (a *app) WailsLifeCycle() *WailsLifeCycle {
 	return a.wlc
 }

@@ -15,7 +15,7 @@
     "install:swag": "cross-env GOBIN=\"%cd%\\.tools\" go install github.com/swaggo/swag/cmd/swag@latest",
     "install:upx": "curl -L https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win64.zip > upx.zip && unzip -p upx.zip '*/upx.exe' > .tools/upx.exe && rm upx.zip",
     "install:wails": "cross-env GOBIN=\"%cd%\\.tools\" go install github.com/wailsapp/wails/v2/cmd/wails@latest",
-    "install": "pnpm install:wails && pnpm install:upx && pnpm install:swag && pnpm docs:build && pnpm frontend:build"
+    "install": "pnpm install:wails && pnpm install:upx && pnpm install:swag && pnpm docs:build && pnpm frontend:build && go mod tidy"
   },
   "devDependencies": {
     "@types/node": "^18.7.16",

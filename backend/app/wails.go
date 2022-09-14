@@ -3,6 +3,9 @@ package app
 import (
 	"context"
 	"log"
+	"my-app/backend/i18n"
+	"my-app/backend/tray"
+	"my-app/backend/tray/menus"
 )
 
 // Wailsapp Life Cycle
@@ -12,7 +15,10 @@ type WailsLifeCycle struct {
 
 func (wlc *WailsLifeCycle) Startup(ctx context.Context) {
 	wlc.ctx = ctx
-
+	tray.Tray().
+		SetWailsContext(ctx).
+		ChangeTheme(menus.ColorThemeSystem).
+		ChangeLanguage(i18n.I18n().GetCurrentLanguage())
 	log.Println("WAILS START UP")
 }
 

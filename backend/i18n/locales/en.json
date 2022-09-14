@@ -4,17 +4,19 @@
     "text": "English"
   },
   "appname": "My Application",
+  "open_window": "Open My Application",
   "quit": "Quit",
   "display_language": "Display Language",
   "color_theme": {
     "title": "Color Theme",
+    "system": "System Default",
     "light": "Light",
     "dark": "Dark"
   },
   "api_service": {
+    "swagger": "Open API docs",
     "start": "Enable API service",
-    "stop": "Disable API service",
-    "swagger": "Open API docs"
+    "stop": "Disable API service"
   },
   "quit_dialog": {
     "message": "Are you sure to quit?",

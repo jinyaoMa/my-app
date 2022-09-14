@@ -1,6 +1,6 @@
 # My App (my-app)
 
-My App is a continuously updated service collection.
+My App is a continuously updated personal service collection.
 
 Prepare and install environment for development?
 

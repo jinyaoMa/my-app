@@ -3,34 +3,36 @@ package i18n
 import (
 	"embed"
 	"encoding/json"
-	"path/filepath"
 )
 
 //go:embed locales
 var locales embed.FS
 
 const (
-	dirLocales = "locales"
+	En = "en"
+	Zh = "zh"
 )
 
-type locale struct {
+type Locale struct {
 	Lang struct {
 		Code string `json:"code"`
 		Text string `json:"text"`
 	} `json:"lang"`
 	AppName         string `json:"appname"`
+	OpenWindow      string `json:"open_window"`
+	Quit            string `json:"quit"`
 	DisplayLanguage string `json:"display_language"`
 	ColorTheme      struct {
-		Title string `json:"title"`
-		Light string `json:"light"`
-		Dark  string `json:"dark"`
+		Title  string `json:"title"`
+		System string `json:"system"`
+		Light  string `json:"light"`
+		Dark   string `json:"dark"`
 	} `json:"color_theme"`
 	ApiService struct {
+		Swagger string `json:"swagger"`
 		Start   string `json:"start"`
 		Stop    string `json:"stop"`
-		Swagger string `json:"swagger"`
 	} `json:"api_service"`
-	Quit       string `json:"quit"`
 	QuitDialog struct {
 		Message       string `json:"message"`
 		DefaultButton string `json:"default_button"`
@@ -38,19 +40,19 @@ type locale struct {
 	} `json:"quit_dialog"`
 }
 
-type localeMap map[string]locale
-
-func load() (tm localeMap, availableLanguages []string) {
-	tm = make(localeMap)
+func load() (localeMap map[string]Locale, availableLanguages []string) {
+	dirLocales := "locales"
+	var al []string
+	lm := make(map[string]Locale)
 	files, _ := locales.ReadDir(dirLocales)
 	for _, f := range files {
 		if !f.IsDir() { // load only locale JSON file
-			t := locale{}
-			data, _ := locales.ReadFile(filepath.Join(dirLocales, f.Name()))
+			t := Locale{}
+			data, _ := locales.ReadFile(dirLocales + "/" + f.Name()) // embed use slash as separator
 			json.Unmarshal(data, &t)
-			tm[t.Lang.Code] = t
-			availableLanguages = append(availableLanguages, t.Lang.Code)
+			lm[t.Lang.Code] = t
+			al = append(al, t.Lang.Code)
 		}
 	}
-	return
+	return lm, al
 }
