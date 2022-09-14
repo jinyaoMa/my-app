@@ -4,6 +4,7 @@
 build/bin
 frontend/wailsjs
 frontend/public/docs
+*-res.syso
 
 # From the vue template of vite
 #

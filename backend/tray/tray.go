@@ -169,7 +169,6 @@ func (t *tray) onReady() {
 				}
 				if dialog == "Yes" { // when default button => "Yes" is clicked
 					systray.Quit()
-					runtime.Quit(t.wailsCtx)
 				}
 			},
 		})
@@ -182,4 +181,6 @@ func (t *tray) onQuit() {
 	t.displayLanguage.StopWatch()
 	t.colorTheme.StopWatch()
 	t.quit.StopWatch()
+
+	runtime.Quit(t.wailsCtx)
 }

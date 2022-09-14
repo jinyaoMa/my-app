@@ -13,18 +13,13 @@ Prepare and install environment for development?
 
 ## Technologies
 
-| Technology | Role                                                 | Sources                        |
-| :--------- | :--------------------------------------------------- | :----------------------------- |
-| Go         | Backend programming language                         | https://pkg.go.dev/std         |
-| TypeScript | Frontend programming language                        | https://typescriptlang.org     |
-| Vite       | Next Generation Frontend Tooling                     | https://vitejs.dev/            |
-| Vue 3      | Progressive JavaScript Framework                     | https://vuejs.org/             |
-| Wails      | Build cross-platform desktop applications using Go   | https://wails.io/              |
-| UPX        | Ultimate packer for executables                      | https://upx.github.io/         |
-| Swaggo     | Converts Go annotations to Swagger Documentation 2.0 | https://github.com/swaggo/swag |
-
-## Design Pattern Summary
-
-| Pattern   | Role                                         | Packages        |
-| :-------- | :------------------------------------------- | :-------------- |
-| Singleton | Maintains read-only state and global objects | app, i18n, tray |
+| Technology | Role                                                 | Sources                               |
+| :--------- | :--------------------------------------------------- | :------------------------------------ |
+| Go         | Backend programming language                         | https://pkg.go.dev/std                |
+| TypeScript | Frontend programming language                        | https://typescriptlang.org            |
+| Vite       | Next Generation Frontend Tooling                     | https://vitejs.dev/                   |
+| Vue 3      | Progressive JavaScript Framework                     | https://vuejs.org/                    |
+| Wails      | Build cross-platform desktop applications using Go   | https://wails.io/                     |
+| UPX        | Ultimate packer for executables                      | https://upx.github.io/                |
+| Swaggo     | Converts Go annotations to Swagger Documentation 2.0 | https://github.com/swaggo/swag        |
+| Systray    | A cross platfrom system tray using Go                | https://github.com/getlantern/systray |
