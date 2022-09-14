@@ -166,11 +166,13 @@ func (t *tray) onReady() {
 					},
 					DefaultButton: locale.QuitDialog.DefaultButton,
 					CancelButton:  locale.QuitDialog.CancelButton,
+					Icon:          icon,
 				})
 				if err != nil {
 					log.Fatalf("fail to open quit dialog: %+v\n", err)
 				}
-				if dialog == "Yes" { // when default button => "Yes" is clicked
+				if dialog == "Yes" || dialog == locale.QuitDialog.DefaultButton {
+					// when "Yes" or default button is clicked
 					systray.Quit()
 				}
 			},

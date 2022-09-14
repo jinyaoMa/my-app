@@ -21,13 +21,13 @@ func main() {
 
 	err := wails.Run(&options.App{
 		Title:             "My Application",
-		Width:             800,
-		Height:            600,
+		Width:             1024, // 16:9
+		Height:            576,  // 16:9
 		DisableResize:     false,
 		Fullscreen:        false,
 		Frameless:         false,
-		MinWidth:          800,
-		MinHeight:         600,
+		MinWidth:          1024, // 16:9
+		MinHeight:         576,  // 16:9
 		MaxWidth:          -1,
 		MaxHeight:         -1,
 		StartHidden:       false,
@@ -50,11 +50,15 @@ func main() {
 		Windows: &windows.Options{
 			WebviewIsTransparent:              false,
 			WindowIsTranslucent:               false,
-			DisableWindowIcon:                 true,
+			DisableWindowIcon:                 false,
 			DisableFramelessWindowDecorations: false,
 			WebviewUserDataPath:               "",
 			WebviewBrowserPath:                "",
 			Theme:                             windows.SystemDefault,
+			CustomTheme:                       nil,
+			TranslucencyType:                  windows.Auto,
+			Messages:                          nil,
+			ResizeDebounceMS:                  0,
 			OnSuspend:                         wlc.Suspend,
 			OnResume:                          wlc.Resume,
 		},
