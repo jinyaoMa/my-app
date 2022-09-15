@@ -3,6 +3,7 @@
     "editorconfig.editorconfig",
     "esbenp.prettier-vscode",
     "golang.go",
-    "Vue.volar"
+    "vue.volar",
+    "bungcip.better-toml"
   ]
 }

@@ -1,6 +1,7 @@
 # Custom
 #
 .tools
+air/bin
 build/bin
 frontend/wailsjs
 frontend/public/docs

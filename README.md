@@ -28,3 +28,4 @@ Prepare and install environment for development in Window 10/11?
 | Gin         | A HTTP web framework using Go                         | https://gin-gonic.com/                |
 | Gin Swagger | Gin middleware for API documentation with Swagger 2.0 | https://github.com/swaggo/gin-swagger |
 | Swaggo      | Converts Go annotations to Swagger Documentation 2.0  | https://github.com/swaggo/swag        |
+| Air         | Live reload and test for API service                  | https://github.com/cosmtrek/air       |

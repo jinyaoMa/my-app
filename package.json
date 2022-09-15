@@ -8,6 +8,7 @@
     "wails:dev": ".tools\\wails dev -s true -noreload",
     "wails:build": ".tools\\wails build --platform windows/amd64",
     "upx:compress": ".tools\\upx -9 build/bin/MyApp.exe",
+    "air:dev": ".tools\\air -c air/.air.toml",
     "update:swag": ".tools\\swag init -g backend/web/router.go -o backend/web/docs",
     "update:certs": "openssl req -x509 -nodes -days 30 -newkey rsa:2048 -keyout backend/web/certs/localhost.key -out backend/web/certs/localhost.crt -subj \"//SKIP=skip/C=CN/ST=GD/L=Github/O=App/OU=Certs/CN=localhost/emailAddress=jinyao.ma@outlook.com\"",
     "docs:dev": "vitepress dev docs",
@@ -16,10 +17,11 @@
     "frontend:dev": "pnpm --filter frontend exec vite",
     "frontend:build": "pnpm --filter frontend exec vue-tsc --noEmit && pnpm --filter frontend exec vite build",
     "frontend:preview": "pnpm --filter frontend exec vite preview",
+    "install:air": "cross-env GOBIN=\"%cd%\\.tools\" go install github.com/cosmtrek/air@latest",
     "install:swag": "cross-env GOBIN=\"%cd%\\.tools\" go install github.com/swaggo/swag/cmd/swag@latest",
     "install:upx": "curl -L https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win64.zip > upx.zip && unzip -p upx.zip '*/upx.exe' > .tools/upx.exe && rm upx.zip",
     "install:wails": "cross-env GOBIN=\"%cd%\\.tools\" go install github.com/wailsapp/wails/v2/cmd/wails@latest",
-    "install": "pnpm install:wails && pnpm install:upx && pnpm install:swag && pnpm docs:build && pnpm frontend:build && go mod tidy"
+    "install": "pnpm install:wails && pnpm install:upx && pnpm install:swag && pnpm update:certs && pnpm docs:build && pnpm frontend:build && go mod tidy"
   },
   "devDependencies": {
     "@types/node": "^18.7.16",
