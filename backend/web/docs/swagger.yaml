@@ -1,0 +1,18 @@
+basePath: /api
+info:
+  contact:
+    name: Github Issues
+    url: https://github.com/jinyaoMa/my-app/issues
+  description: '"My App is a continuously updated personal service collection."'
+  license:
+    name: MIT
+    url: https://github.com/jinyaoMa/my-app/blob/main/LICENSE
+  title: My App (backend/web/router.go)
+  version: 1.0.0
+paths: {}
+securityDefinitions:
+  BearerToken:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

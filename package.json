@@ -1,11 +1,15 @@
 {
   "name": "my-app",
+  "version": "1.0.0",
+  "description": "My App is a continuously updated personal service collection.",
   "author": "jinyaoMa",
   "license": "MIT",
   "scripts": {
     "wails:dev": ".tools\\wails dev -s true -noreload",
     "wails:build": ".tools\\wails build --platform windows/amd64",
     "upx:compress": ".tools\\upx -9 build/bin/MyApp.exe",
+    "update:swag": ".tools\\swag init -g backend/web/router.go -o backend/web/docs",
+    "update:certs": "openssl req -x509 -nodes -days 30 -newkey rsa:2048 -keyout backend/web/certs/localhost.key -out backend/web/certs/localhost.crt -subj \"//SKIP=skip/C=CN/ST=GD/L=Github/O=App/OU=Certs/CN=localhost/emailAddress=jinyao.ma@outlook.com\"",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs",
@@ -22,5 +26,13 @@
     "cross-env": "^7.0.3",
     "vitepress": "1.0.0-alpha.13",
     "vue": "^3.2.37"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jinyaoMa/my-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jinyaoMa/my-app/issues"
+  },
+  "homepage": "https://github.com/jinyaoMa/my-app#readme"
 }

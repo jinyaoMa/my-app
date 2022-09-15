@@ -21,13 +21,13 @@ func main() {
 
 	err := wails.Run(&options.App{
 		Title:             "My Application",
-		Width:             1024, // 16:9
-		Height:            576,  // 16:9
+		Width:             1024, // 16:10
+		Height:            640,  // 16:10
 		DisableResize:     false,
 		Fullscreen:        false,
 		Frameless:         false,
-		MinWidth:          1024, // 16:9
-		MinHeight:         576,  // 16:9
+		MinWidth:          1024, // 16:10
+		MinHeight:         640,  // 16:10
 		MaxWidth:          -1,
 		MaxHeight:         -1,
 		StartHidden:       false,

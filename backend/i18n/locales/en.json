@@ -16,7 +16,11 @@
   "api_service": {
     "swagger": "Open API docs",
     "start": "Enable API service",
-    "stop": "Disable API service"
+    "stop": "Disable API service",
+    "dialog": {
+      "start": "API service has been started.",
+      "stop": "API service has been stopped."
+    }
   },
   "quit_dialog": {
     "message": "Are you sure to quit?",

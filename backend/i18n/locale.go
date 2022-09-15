@@ -32,6 +32,10 @@ type Locale struct {
 		Swagger string `json:"swagger"`
 		Start   string `json:"start"`
 		Stop    string `json:"stop"`
+		Dialog  struct {
+			Start string `json:"start"`
+			Stop  string `json:"stop"`
+		} `json:"dialog"`
 	} `json:"api_service"`
 	QuitDialog struct {
 		Message       string `json:"message"`

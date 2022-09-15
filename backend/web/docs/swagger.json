@@ -1,0 +1,25 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "\"My App is a continuously updated personal service collection.\"",
+        "title": "My App (backend/web/router.go)",
+        "contact": {
+            "name": "Github Issues",
+            "url": "https://github.com/jinyaoMa/my-app/issues"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://github.com/jinyaoMa/my-app/blob/main/LICENSE"
+        },
+        "version": "1.0.0"
+    },
+    "basePath": "/api",
+    "paths": {},
+    "securityDefinitions": {
+        "BearerToken": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

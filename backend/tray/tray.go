@@ -6,6 +6,7 @@ import (
 	"log"
 	"my-app/backend/i18n"
 	"my-app/backend/tray/menus"
+	"my-app/backend/web"
 	"sync"
 
 	"github.com/getlantern/systray"
@@ -104,15 +105,15 @@ func (t *tray) onReady() {
 		SetIconStop(iconApiStop, iconApiStop).
 		Watch(menus.ApiServiceListener{
 			OnStart: func() bool {
-				return true
+				return web.Web().Start()
 			},
 			OnStop: func() bool {
-				return true
+				return web.Web().Stop()
 			},
 			OnOpenSwagger: func() {
 				runtime.BrowserOpenURL(
 					t.wailsCtx,
-					"https://www.baidu.com",
+					"https://localhost:10443/swagger/index.html",
 				)
 			},
 		})
@@ -187,5 +188,6 @@ func (t *tray) onQuit() {
 	t.colorTheme.StopWatch()
 	t.quit.StopWatch()
 
+	web.Web().Stop()
 	runtime.Quit(t.wailsCtx)
 }
