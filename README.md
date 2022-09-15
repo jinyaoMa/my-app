@@ -6,11 +6,14 @@ My App is a continuously updated personal service collection.
 
 Prepare and install environment for development in Window 10/11?
 
+- Git v2.37+, https://git-scm.com/
 - Go v1.19+, https://go.dev/
 - Node.js v16+, https://nodejs.org/
 - PNPM v7+, https://pnpm.io/
 - VS Code v1.71+ with GCC, https://code.visualstudio.com/docs/cpp/config-mingw
 - WebView2 v104+, https://developer.microsoft.com/en-us/microsoft-edge/webview2/
+
+> Setup VS Code by installing recommended extensions. To do this, enter in `@recommended` while searching for extensions.
 
 > Run command `go env -w CGO_ENABLED=1` to prepare for _CGO_ enabled packages
 

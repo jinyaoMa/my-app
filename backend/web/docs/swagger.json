@@ -1,11 +1,15 @@
 {
+    "schemes": [
+        "https"
+    ],
     "swagger": "2.0",
     "info": {
         "description": "\"My App is a continuously updated personal service collection.\"",
         "title": "My App (backend/web/router.go)",
         "contact": {
             "name": "Github Issues",
-            "url": "https://github.com/jinyaoMa/my-app/issues"
+            "url": "https://github.com/jinyaoMa/my-app/issues",
+            "email": "jinyao.ma@outlook.com"
         },
         "license": {
             "name": "MIT",
@@ -14,9 +18,34 @@
         "version": "1.0.0"
     },
     "basePath": "/api",
-    "paths": {},
+    "paths": {
+        "/test": {
+            "get": {
+                "description": "Test pass path",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Pass",
+                "responses": {
+                    "200": {
+                        "description": "Pass Path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
     "securityDefinitions": {
         "BearerToken": {
+            "description": "Authorization Header should contain value started with \"Bearer \" and followed by a JSON Web Token.",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

@@ -12,7 +12,8 @@ const docTemplate = `{
         "title": "{{.Title}}",
         "contact": {
             "name": "Github Issues",
-            "url": "https://github.com/jinyaoMa/my-app/issues"
+            "url": "https://github.com/jinyaoMa/my-app/issues",
+            "email": "jinyao.ma@outlook.com"
         },
         "license": {
             "name": "MIT",
@@ -22,9 +23,34 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {},
+    "paths": {
+        "/test": {
+            "get": {
+                "description": "Test pass path",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Pass",
+                "responses": {
+                    "200": {
+                        "description": "Pass Path",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
     "securityDefinitions": {
         "BearerToken": {
+            "description": "Authorization Header should contain value started with \"Bearer \" and followed by a JSON Web Token.",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
@@ -37,7 +63,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "1.0.0",
 	Host:             "",
 	BasePath:         "/api",
-	Schemes:          []string{},
+	Schemes:          []string{"https"},
 	Title:            "My App (backend/web/router.go)",
 	Description:      "\"My App is a continuously updated personal service collection.\"",
 	InfoInstanceName: "swagger",

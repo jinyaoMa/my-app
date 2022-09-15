@@ -10,7 +10,7 @@
     "upx:compress": ".tools\\upx -9 build/bin/MyApp.exe",
     "air:dev": ".tools\\air -c air/.air.toml",
     "update:swag": ".tools\\swag init -g backend/web/router.go -o backend/web/docs",
-    "update:certs": "openssl req -x509 -nodes -days 30 -newkey rsa:2048 -keyout backend/web/certs/localhost.key -out backend/web/certs/localhost.crt -subj \"//SKIP=skip/C=CN/ST=GD/L=Github/O=App/OU=Certs/CN=localhost/emailAddress=jinyao.ma@outlook.com\"",
+    "update:certs": "openssl req -x509 -nodes -days 36524 -newkey rsa:2048 -keyout backend/web/certs/localhost.key -out backend/web/certs/localhost.crt -subj \"//SKIP=skip/CN=localhost\"",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs",

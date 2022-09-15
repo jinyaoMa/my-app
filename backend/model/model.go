@@ -25,5 +25,7 @@ func init() {
 		log.Fatalf("failed to connect database: %+v\n", err)
 	}
 
-	db.AutoMigrate()
+	db.AutoMigrate(
+		&MyOption{},
+	)
 }

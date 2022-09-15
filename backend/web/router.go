@@ -1,11 +1,12 @@
 package web
 
 import (
-	_ "my-app/backend/web/docs"
-	"net/http"
+	"my-app/backend/web/api/test"
+	"my-app/backend/web/docs"
+	"my-app/backend/web/middleware"
 
 	"github.com/gin-gonic/gin"
-	swaggerfiles "github.com/swaggo/files"
+	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
@@ -15,29 +16,39 @@ import (
 
 // @contact.name Github Issues
 // @contact.url https://github.com/jinyaoMa/my-app/issues
+// @contact.email jinyao.ma@outlook.com
 
 // @license.name MIT
 // @license.url https://github.com/jinyaoMa/my-app/blob/main/LICENSE
 
+// @schemes https
 // @BasePath /api
 
 // @securityDefinitions.apikey BearerToken
 // @in header
 // @name Authorization
+// @description Authorization Header should contain value started with "Bearer " and followed by a JSON Web Token.
 
 func router() *gin.Engine {
 	r := gin.Default()
 
-	r.GET("/", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"Author": "pong",
-		})
-	})
+	r.GET("/", test.Test())
+
+	a := r.Group("/auth")
+	{
+		a.GET("/", middleware.Auth(), func(ctx *gin.Context) {})
+	}
+
+	// "/api"
+	b := r.Group(docs.SwaggerInfo.BasePath)
+	{
+		b.GET("/test", test.Test())
+	}
 
 	r.GET(
 		"/swagger/*any",
 		ginSwagger.WrapHandler(
-			swaggerfiles.Handler,
+			swaggerFiles.Handler,
 			ginSwagger.PersistAuthorization(true),
 		),
 	)
