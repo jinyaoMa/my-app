@@ -12,6 +12,8 @@ Prepare and install environment for development in Window 10/11?
 - VS Code v1.71+ with GCC, https://code.visualstudio.com/docs/cpp/config-mingw
 - WebView2 v104+, https://developer.microsoft.com/en-us/microsoft-edge/webview2/
 
+> Run command `go env -w CGO_ENABLED=1` to prepare for _CGO_ enabled packages
+
 > Run command `pnpm install` at project root directory to setup.
 
 ## Technologies
