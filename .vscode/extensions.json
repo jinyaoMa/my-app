@@ -4,6 +4,7 @@
     "esbenp.prettier-vscode",
     "golang.go",
     "vue.volar",
-    "bungcip.better-toml"
+    "bungcip.better-toml",
+    "hediet.vscode-drawio"
   ]
 }

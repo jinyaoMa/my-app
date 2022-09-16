@@ -1,8 +1,6 @@
 package app
 
 import (
-	"log"
-	"my-app/backend/model"
 	"sync"
 )
 
@@ -17,9 +15,8 @@ type app struct {
 
 func App() *app {
 	once.Do(func() {
-		log.Println(model.MyOption{})
 		instance = &app{
-			config: DefaultConfig(),
+			config: LoadConfig(),
 		}
 	})
 	return instance

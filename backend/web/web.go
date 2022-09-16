@@ -6,7 +6,6 @@ import (
 	"embed"
 	"log"
 	"my-app/backend/app"
-	"my-app/backend/model"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -61,8 +60,6 @@ func (w *web) Stop() (ok bool) {
 		ctxHttp, cancelHttp := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancelHttp()
 		if err := w.http.Shutdown(ctxHttp); err != nil && err != http.ErrServerClosed {
-			app.App()
-			log.Println(model.MyOption{})
 			log.Printf("server (http) shutdown error: %+v\n", err)
 		}
 
