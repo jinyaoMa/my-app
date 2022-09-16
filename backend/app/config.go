@@ -1,7 +1,7 @@
 package app
 
 import (
-	"my-app/backend/i18n"
+	"my-app/backend/pkg/i18n"
 	"my-app/backend/tray/menus"
 )
 

@@ -1,6 +1,9 @@
 package test
 
 import (
+	"log"
+	"my-app/backend/app"
+	"my-app/backend/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,6 +18,8 @@ import (
 // @Router       /test [get]
 func Test() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		app.App()
+		log.Println(model.MyOption{})
 		ctx.String(http.StatusOK, "Pass "+ctx.Request.URL.Path)
 	}
 }

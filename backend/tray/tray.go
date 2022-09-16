@@ -4,7 +4,7 @@ import (
 	"context"
 	_ "embed"
 	"log"
-	"my-app/backend/i18n"
+	"my-app/backend/pkg/i18n"
 	"my-app/backend/tray/menus"
 	"my-app/backend/web"
 	"sync"

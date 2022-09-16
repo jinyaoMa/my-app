@@ -1,7 +1,7 @@
 package menus
 
 import (
-	"my-app/backend/i18n"
+	"my-app/backend/pkg/i18n"
 
 	"github.com/getlantern/systray"
 )

@@ -2,7 +2,7 @@ package model
 
 import (
 	"log"
-	"my-app/backend/utils"
+	"my-app/backend/pkg/utils"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
