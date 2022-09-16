@@ -1,9 +1,8 @@
 basePath: /api
 info:
   contact:
-    email: jinyao.ma@outlook.com
-    name: Github Issues
-    url: https://github.com/jinyaoMa/my-app/issues
+    name: GitHub Discussions
+    url: https://github.com/jinyaoMa/my-app/discussions
   description: '"My App is a continuously updated personal service collection."'
   license:
     name: MIT
@@ -11,6 +10,28 @@ info:
   title: My App (backend/web/router.go)
   version: 1.0.0
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Login and get access token
+      parameters:
+      - description: Username
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Login
+      tags:
+      - Auth
   /test:
     get:
       consumes:

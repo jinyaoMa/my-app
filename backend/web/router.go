@@ -14,9 +14,8 @@ import (
 // @version 1.0.0
 // @description "My App is a continuously updated personal service collection."
 
-// @contact.name Github Issues
-// @contact.url https://github.com/jinyaoMa/my-app/issues
-// @contact.email jinyao.ma@outlook.com
+// @contact.name GitHub Discussions
+// @contact.url https://github.com/jinyaoMa/my-app/discussions
 
 // @license.name MIT
 // @license.url https://github.com/jinyaoMa/my-app/blob/main/LICENSE

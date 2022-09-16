@@ -1,15 +1,10 @@
 package menus
 
 import (
+	"my-app/backend/app"
 	"my-app/backend/pkg/i18n"
 
 	"github.com/getlantern/systray"
-)
-
-const (
-	ColorThemeSystem = "system"
-	ColorThemeLight  = "light"
-	ColorThemeDark   = "dark"
 )
 
 type ColorThemeListener struct {
@@ -63,19 +58,19 @@ func (ct *ColorTheme) Watch(listener ColorThemeListener) *ColorTheme {
 		for {
 			select {
 			case <-ct.system.ClickedCh:
-				if listener.OnColorThemeChanged(ColorThemeSystem) {
+				if listener.OnColorThemeChanged(app.ColorThemeSystem) {
 					ct.system.Check()
 					ct.light.Uncheck()
 					ct.dark.Uncheck()
 				}
 			case <-ct.light.ClickedCh:
-				if listener.OnColorThemeChanged(ColorThemeLight) {
+				if listener.OnColorThemeChanged(app.ColorThemeLight) {
 					ct.system.Uncheck()
 					ct.light.Check()
 					ct.dark.Uncheck()
 				}
 			case <-ct.dark.ClickedCh:
-				if listener.OnColorThemeChanged(ColorThemeDark) {
+				if listener.OnColorThemeChanged(app.ColorThemeDark) {
 					ct.system.Uncheck()
 					ct.light.Uncheck()
 					ct.dark.Check()

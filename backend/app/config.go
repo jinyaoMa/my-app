@@ -4,7 +4,6 @@ import (
 	"log"
 	"my-app/backend/model"
 	"my-app/backend/pkg/i18n"
-	"my-app/backend/tray/menus"
 )
 
 const (
@@ -14,6 +13,12 @@ const (
 	CfgWebPortHttp          = "Config.Web.PortHttp"
 	CfgWebPortHttps         = "Config.Web.PortHttps"
 	CfgWebDirCerts          = "Config.Web.DirCerts"
+)
+
+const (
+	ColorThemeSystem = "system"
+	ColorThemeLight  = "light"
+	ColorThemeDark   = "dark"
 )
 
 type Config struct {
@@ -31,7 +36,7 @@ type WebConfig struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Language: i18n.En,
-		Theme:    menus.ColorThemeSystem,
+		Theme:    ColorThemeSystem,
 		Web: &WebConfig{
 			PortHttp:  ":10080",
 			PortHttps: ":10443",

@@ -4,6 +4,7 @@ import (
 	"context"
 	_ "embed"
 	"log"
+	"my-app/backend/app"
 	"my-app/backend/pkg/i18n"
 	"my-app/backend/tray/menus"
 	"my-app/backend/web"
@@ -64,9 +65,9 @@ func (t *tray) ChangeLanguage(lang string) *tray {
 
 func (t *tray) ChangeTheme(theme string) *tray {
 	switch theme {
-	case menus.ColorThemeLight:
+	case app.ColorThemeLight:
 		t.colorTheme.ClickLight()
-	case menus.ColorThemeDark:
+	case app.ColorThemeDark:
 		t.colorTheme.ClickDark()
 	default:
 		t.colorTheme.ClickSystem()
@@ -139,9 +140,9 @@ func (t *tray) onReady() {
 		Watch(menus.ColorThemeListener{
 			OnColorThemeChanged: func(theme string) bool {
 				switch theme {
-				case menus.ColorThemeLight:
+				case app.ColorThemeLight:
 					runtime.WindowSetLightTheme(t.wailsCtx)
-				case menus.ColorThemeDark:
+				case app.ColorThemeDark:
 					runtime.WindowSetDarkTheme(t.wailsCtx)
 				default:
 					runtime.WindowSetSystemDefaultTheme(t.wailsCtx)
