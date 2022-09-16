@@ -53,6 +53,16 @@ func (t *tray) SetWailsContext(ctx context.Context) *tray {
 	return t
 }
 
+func (t *tray) StartApiService() *tray {
+	t.apiService.ClickStart()
+	return t
+}
+
+func (t *tray) StopApiService() *tray {
+	t.apiService.ClickStop()
+	return t
+}
+
 func (t *tray) ChangeLanguage(lang string) *tray {
 	switch lang {
 	case i18n.Zh:

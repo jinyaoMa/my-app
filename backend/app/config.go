@@ -1,15 +1,16 @@
 package app
 
 import (
-	"log"
 	"my-app/backend/model"
 	"my-app/backend/pkg/i18n"
+	"my-app/backend/pkg/utils"
 )
 
 const (
-	CfgTotalNumberOfOptions = 5
+	CfgTotalNumberOfOptions = 6
 	CfgLanguage             = "Config.Language"
 	CfgTheme                = "Config.Theme"
+	CfgLogPath              = "Config.LogPath"
 	CfgWebPortHttp          = "Config.Web.PortHttp"
 	CfgWebPortHttps         = "Config.Web.PortHttps"
 	CfgWebDirCerts          = "Config.Web.DirCerts"
@@ -24,6 +25,7 @@ const (
 type Config struct {
 	Language string
 	Theme    string
+	LogPath  string
 	Web      *WebConfig
 }
 
@@ -37,6 +39,7 @@ func DefaultConfig() *Config {
 	return &Config{
 		Language: i18n.En,
 		Theme:    ColorThemeSystem,
+		LogPath:  utils.GetExecutablePath("MyApp.log"),
 		Web: &WebConfig{
 			PortHttp:  ":10080",
 			PortHttps: ":10443",
@@ -51,7 +54,7 @@ func LoadConfig() *Config {
 	var options model.MyOptions
 	result := options.Load()
 	if result.Error != nil {
-		log.Fatalf("fail to load options: %+v\n", result.Error)
+		instance.logger.App.Fatalf("fail to load options: %+v\n", result.Error)
 	}
 	if result.RowsAffected == 0 {
 		// options not yet generated and stored
@@ -69,6 +72,7 @@ func (c *Config) updateOptions(options model.MyOptions) {
 	optionPairs := [][]string{
 		{CfgLanguage, c.Language},
 		{CfgTheme, c.Theme},
+		{CfgLogPath, c.LogPath},
 		{CfgWebPortHttp, c.Web.PortHttp},
 		{CfgWebPortHttps, c.Web.PortHttps},
 		{CfgWebDirCerts, c.Web.DirCerts},
@@ -98,7 +102,7 @@ func (c *Config) updateOptions(options model.MyOptions) {
 
 	result := options.Save()
 	if result.Error != nil {
-		log.Fatalf("fail to update options: %+v\n", result.Error)
+		instance.logger.App.Fatalf("fail to update options: %+v\n", result.Error)
 	}
 }
 
@@ -110,6 +114,10 @@ func (c *Config) saveOptions(options model.MyOptions) {
 	options = append(options, model.MyOption{
 		Name:  CfgTheme,
 		Value: c.Theme,
+	})
+	options = append(options, model.MyOption{
+		Name:  CfgLogPath,
+		Value: c.LogPath,
 	})
 	options = append(options, model.MyOption{
 		Name:  CfgWebPortHttp,
@@ -126,7 +134,7 @@ func (c *Config) saveOptions(options model.MyOptions) {
 
 	result := options.Save()
 	if result.Error != nil {
-		log.Fatalf("fail to save options: %+v\n", result.Error)
+		instance.logger.App.Fatalf("fail to save options: %+v\n", result.Error)
 	}
 }
 
@@ -137,6 +145,8 @@ func (c *Config) loadOptions(options model.MyOptions) {
 			c.Language = option.Value
 		case CfgTheme:
 			c.Theme = option.Value
+		case CfgLogPath:
+			c.LogPath = option.Value
 		case CfgWebPortHttp:
 			c.Web.PortHttp = option.Value
 		case CfgWebPortHttps:

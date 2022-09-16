@@ -1,11 +1,12 @@
 package model
 
 import (
-	"log"
+	"context"
 	"my-app/backend/pkg/utils"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var (
@@ -15,17 +16,21 @@ var (
 func init() {
 	var err error
 	db, err = gorm.Open(
-		sqlite.Open(utils.GetExecutablePath("my-app.db")),
+		sqlite.Open(utils.GetExecutablePath("MyApp.db")),
 		&gorm.Config{
 			FullSaveAssociations: false,
 			PrepareStmt:          true,
 		},
 	)
 	if err != nil {
-		log.Fatalf("failed to connect database: %+v\n", err)
+		db.Logger.Error(context.Background(), "failed to connect database: %+v\n", err)
 	}
 
 	db.AutoMigrate(
 		&MyOption{},
 	)
+}
+
+func SetLogger(logger logger.Interface) {
+	db.Logger = logger
 }
