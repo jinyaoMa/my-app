@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"embed"
 	"log"
+	"my-app/backend/app"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -14,8 +15,6 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 	"golang.org/x/sync/errgroup"
 )
-
-const Package = "Web"
 
 //go:embed certs
 var certs embed.FS
@@ -30,21 +29,13 @@ type web struct {
 	errGroup  errgroup.Group
 	http      *http.Server // redirector
 	https     *http.Server // server (tls)
-	config    Config
 }
 
 func Web() *web {
 	once.Do(func() {
-		instance = &web{
-			config: DefaultConfig(),
-		}
+		instance = &web{}
 	})
 	return instance
-}
-
-func (w *web) SetConfig(cfg Config) *web {
-	w.config = cfg
-	return w
 }
 
 func (w *web) Start() (ok bool) {
@@ -89,15 +80,17 @@ func (w *web) Stop() (ok bool) {
 }
 
 func (w *web) reset() {
+	cfg := app.App().WebConfig()
+
 	manager := &autocert.Manager{
 		Prompt: autocert.AcceptTOS,
-		Cache:  autocert.DirCache(w.config.DirCerts),
+		Cache:  autocert.DirCache(cfg.DirCerts),
 	}
 
 	w.http = &http.Server{
-		Addr: w.config.PortHttp,
+		Addr: cfg.PortHttp,
 		Handler: manager.HTTPHandler(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-			target := "https://" + strings.Replace(r.Host, w.config.PortHttp, w.config.PortHttps, 1) + r.RequestURI
+			target := "https://" + strings.Replace(r.Host, cfg.PortHttp, cfg.PortHttps, 1) + r.RequestURI
 			http.Redirect(rw, r, target, http.StatusMovedPermanently)
 		})),
 	}
@@ -106,7 +99,7 @@ func (w *web) reset() {
 	tlsConfig.GetCertificate = w.getSelfSignedOrLetsEncryptCert(manager)
 
 	w.https = &http.Server{
-		Addr:      w.config.PortHttps,
+		Addr:      cfg.PortHttps,
 		Handler:   router(),
 		TLSConfig: tlsConfig,
 	}

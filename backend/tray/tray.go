@@ -56,7 +56,7 @@ func (t *tray) ChangeLanguage(lang string) *tray {
 	switch lang {
 	case i18n.Zh:
 		t.displayLanguage.ClickChinese()
-	case i18n.En:
+	default:
 		t.displayLanguage.ClickEnglish()
 	}
 	return t
@@ -64,12 +64,12 @@ func (t *tray) ChangeLanguage(lang string) *tray {
 
 func (t *tray) ChangeTheme(theme string) *tray {
 	switch theme {
-	case menus.ColorThemeSystem:
-		t.colorTheme.ClickSystem()
 	case menus.ColorThemeLight:
 		t.colorTheme.ClickLight()
 	case menus.ColorThemeDark:
 		t.colorTheme.ClickDark()
+	default:
+		t.colorTheme.ClickSystem()
 	}
 	return t
 }
@@ -139,12 +139,12 @@ func (t *tray) onReady() {
 		Watch(menus.ColorThemeListener{
 			OnColorThemeChanged: func(theme string) bool {
 				switch theme {
-				case menus.ColorThemeSystem:
-					runtime.WindowSetSystemDefaultTheme(t.wailsCtx)
 				case menus.ColorThemeLight:
 					runtime.WindowSetLightTheme(t.wailsCtx)
 				case menus.ColorThemeDark:
 					runtime.WindowSetDarkTheme(t.wailsCtx)
+				default:
+					runtime.WindowSetSystemDefaultTheme(t.wailsCtx)
 				}
 				return true
 			},

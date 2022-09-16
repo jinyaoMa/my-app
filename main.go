@@ -3,7 +3,6 @@ package main
 import (
 	"embed"
 	"log"
-	"my-app/backend/app"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -17,7 +16,7 @@ import (
 var frontend embed.FS
 
 func main() {
-	wlc := app.App().WailsLifeCycle().Initialize()
+	wlc := DefaultWailsLifeCycle()
 
 	err := wails.Run(&options.App{
 		Title:             "My Application",
@@ -41,10 +40,10 @@ func main() {
 		Logger:             nil,
 		LogLevel:           logger.DEBUG,
 		LogLevelProduction: logger.ERROR,
-		OnStartup:          wlc.Startup,
-		OnDomReady:         wlc.DomReady,
-		OnShutdown:         wlc.Shutdown,
-		OnBeforeClose:      wlc.BeforeClose,
+		OnStartup:          wlc.startup,
+		OnDomReady:         wlc.domReady,
+		OnShutdown:         wlc.shutdown,
+		OnBeforeClose:      wlc.beforeClose,
 		Bind:               []interface{}{},
 		WindowStartState:   options.Normal,
 		Windows: &windows.Options{
@@ -59,8 +58,8 @@ func main() {
 			TranslucencyType:                  windows.Auto,
 			Messages:                          nil,
 			ResizeDebounceMS:                  0,
-			OnSuspend:                         wlc.Suspend,
-			OnResume:                          wlc.Resume,
+			OnSuspend:                         wlc.suspend,
+			OnResume:                          wlc.resume,
 		},
 		Mac:          &mac.Options{},
 		Linux:        &linux.Options{},

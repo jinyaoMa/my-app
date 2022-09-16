@@ -10,18 +10,22 @@ var (
 )
 
 type app struct {
-	wlc *WailsLifeCycle
+	config *Config
 }
 
 func App() *app {
 	once.Do(func() {
 		instance = &app{
-			wlc: &WailsLifeCycle{},
+			config: DefaultConfig(),
 		}
 	})
 	return instance
 }
 
-func (a *app) WailsLifeCycle() *WailsLifeCycle {
-	return a.wlc
+func (a *app) Config() *Config {
+	return a.config
+}
+
+func (a *app) WebConfig() *WebConfig {
+	return a.config.Web
 }
