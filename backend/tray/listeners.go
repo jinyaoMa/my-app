@@ -75,6 +75,7 @@ func (t *tray) displayLanguageListener() menus.DisplayLanguageListener {
 func (t *tray) colorThemeListener() menus.ColorThemeListener {
 	return menus.ColorThemeListener{
 		OnColorThemeChanged: func(theme string) (ok bool, complete func()) {
+			runtime.Hide(t.wailsCtx)
 			switch theme {
 			case app.ColorThemeLight:
 				runtime.WindowSetLightTheme(t.wailsCtx)
@@ -84,6 +85,7 @@ func (t *tray) colorThemeListener() menus.ColorThemeListener {
 				runtime.WindowSetSystemDefaultTheme(t.wailsCtx)
 			}
 			runtime.EventsEmit(t.wailsCtx, "onColorThemeChanged", theme)
+			runtime.Show(t.wailsCtx)
 
 			option := model.MyOption{
 				Name: app.CfgColorTheme,

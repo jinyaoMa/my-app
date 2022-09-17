@@ -13,7 +13,7 @@
   "color_theme": {
     "label": "Theme",
     "title": "Color Theme",
-    "system": "System Default",
+    "system": "System",
     "light": "Light",
     "dark": "Dark"
   },
