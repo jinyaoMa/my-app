@@ -10,18 +10,18 @@ import (
 
 const (
 	LogPrefixModel = "MDL"
-	LogPrefixApp   = "APP"
-	LogPrefixWeb   = "WEB"
-	LogPrefixTray  = "TRY"
 	LogPrefixWails = "WLS"
+	LogPrefixApp   = "APP"
+	LogPrefixTray  = "TRY"
+	LogPrefixWeb   = "WEB"
 )
 
 type Logger struct {
 	Model logger.Interface
+	Wails *log.WailsLogger
 	App   *log.Logger
-	Web   *log.Logger
 	Tray  *log.Logger
-	Wails *log.Logger
+	Web   *log.Logger
 }
 
 func LoadConsoleLogger() *Logger {
@@ -35,10 +35,10 @@ func LoadConsoleLogger() *Logger {
 				Colorful:                  true,
 			},
 		),
+		Wails: log.NewWailsConsoleLogger(LogPrefixWails),
 		App:   log.ConsoleLogger(LogPrefixApp),
-		Web:   log.ConsoleLogger(LogPrefixWeb),
 		Tray:  log.ConsoleLogger(LogPrefixTray),
-		Wails: log.ConsoleLogger(LogPrefixWails),
+		Web:   log.ConsoleLogger(LogPrefixWeb),
 	}
 }
 
@@ -53,9 +53,9 @@ func LoadFileLogger(file *os.File) *Logger {
 				Colorful:                  false,
 			},
 		),
+		Wails: log.NewWailsFileLogger(LogPrefixWails, file),
 		App:   log.FileLogger(LogPrefixApp, file),
-		Web:   log.FileLogger(LogPrefixWeb, file),
 		Tray:  log.FileLogger(LogPrefixTray, file),
-		Wails: log.FileLogger(LogPrefixWails, file),
+		Web:   log.FileLogger(LogPrefixWeb, file),
 	}
 }

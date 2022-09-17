@@ -66,6 +66,6 @@ func (a *app) TrayLog() *log.Logger {
 	return a.logger.Tray
 }
 
-func (a *app) WailsLog() *log.Logger {
+func (a *app) WailsLog() *log.WailsLogger {
 	return a.logger.Wails
 }
