@@ -84,7 +84,6 @@ func (t *tray) colorThemeListener() menus.ColorThemeListener {
 				runtime.WindowSetSystemDefaultTheme(t.wailsCtx)
 			}
 			runtime.EventsEmit(t.wailsCtx, "onColorThemeChanged", theme)
-			runtime.Hide(t.wailsCtx)
 
 			option := model.MyOption{
 				Name: app.CfgColorTheme,
