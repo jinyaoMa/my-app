@@ -18,6 +18,7 @@
     "frontend:build": "pnpm --filter frontend exec vue-tsc --noEmit && pnpm --filter frontend exec vite build",
     "frontend:preview": "pnpm --filter frontend exec vite preview",
     "icons:build": "pnpm --filter @jinyaoma/my-app-icons exec node build.js",
+    "components:build": "pnpm --filter @jinyaoma/my-app-components exec vue-tsc --noEmit && pnpm --filter @jinyaoma/my-app-components exec vite build",
     "install:dist": "mkdirp frontend/dist && echo \"\" > frontend/dist/index.html",
     "install:certs": "mkdirp backend/web/certs && openssl req -x509 -nodes -days 36524 -newkey rsa:2048 -keyout backend/web/certs/localhost.key -out backend/web/certs/localhost.crt -subj \"//SKIP=skip/CN=localhost\"",
     "install:generate": "pnpm swag:docs && pnpm wails:js && pnpm docs:build && pnpm frontend:build",
@@ -32,7 +33,7 @@
     "@types/node": "^18.7.16",
     "cross-env": "^7.0.3",
     "mkdirp": "^1.0.4",
-    "vitepress": "1.0.0-alpha.*",
+    "vitepress": "^1.0.0-alpha.15",
     "vue": "^3.2.37"
   },
   "repository": {

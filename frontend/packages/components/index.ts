@@ -1,13 +1,16 @@
-import { App } from "vue";
-import HelloWorld from "./HelloWorld.vue";
+import { App, Plugin } from "vue";
+import HelloWorld from "./HelloWorld";
 
 const components = [HelloWorld];
 
-export default {
-  install(app: App) {
-    components.forEach((component) => {
-      app.use(component);
-    });
-  },
-  ...components,
+const install = (app: App) => {
+  components.map((item) => {
+    app.use({
+      install: item.install,
+    } as Plugin);
+  });
 };
+
+export default {
+  install,
+} as Plugin;
