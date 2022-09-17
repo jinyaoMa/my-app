@@ -5,6 +5,8 @@ import (
 	"my-app/backend/pkg/log"
 	"os"
 	"sync"
+
+	"github.com/wailsapp/wails/v2/pkg/logger"
 )
 
 var (
@@ -58,6 +60,10 @@ func (a *app) Env() *Env {
 	return a.env
 }
 
+func (a *app) AppLog() *log.Logger {
+	return a.logger.App
+}
+
 func (a *app) WebLog() *log.Logger {
 	return a.logger.Web
 }
@@ -66,6 +72,6 @@ func (a *app) TrayLog() *log.Logger {
 	return a.logger.Tray
 }
 
-func (a *app) WailsLog() *log.WailsLogger {
+func (a *app) WailsLog() logger.Logger {
 	return a.logger.Wails
 }

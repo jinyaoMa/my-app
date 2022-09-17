@@ -2,48 +2,50 @@ package log
 
 import (
 	"os"
+
+	"github.com/wailsapp/wails/v2/pkg/logger"
 )
 
 type WailsLogger struct {
-	*Logger
+	log *Logger
 }
 
-func NewWailsConsoleLogger(prefix string) *WailsLogger {
+func NewWailsConsoleLogger(prefix string) logger.Logger {
 	return &WailsLogger{
-		Logger: ConsoleLogger(prefix),
+		log: ConsoleLogger(prefix),
 	}
 }
 
-func NewWailsFileLogger(prefix string, file *os.File) *WailsLogger {
+func NewWailsFileLogger(prefix string, file *os.File) logger.Logger {
 	return &WailsLogger{
-		Logger: FileLogger(prefix, file),
+		log: FileLogger(prefix, file),
 	}
 }
 
 func (wl *WailsLogger) Print(message string) {
-	wl.Logger.Println(message)
+	wl.log.Println(message)
 }
 
 func (wl *WailsLogger) Trace(message string) {
-	wl.Logger.Println("TRA | " + message)
+	wl.log.Println("TRA | " + message)
 }
 
 func (wl *WailsLogger) Debug(message string) {
-	wl.Logger.Println("DEB | " + message)
+	wl.log.Println("DEB | " + message)
 }
 
 func (wl *WailsLogger) Info(message string) {
-	wl.Logger.Println("INF | " + message)
+	wl.log.Println("INF | " + message)
 }
 
 func (wl *WailsLogger) Warning(message string) {
-	wl.Logger.Println("WAR | " + message)
+	wl.log.Println("WAR | " + message)
 }
 
 func (wl *WailsLogger) Error(message string) {
-	wl.Logger.Println("ERR | " + message)
+	wl.log.Println("ERR | " + message)
 }
 
 func (wl *WailsLogger) Fatal(message string) {
-	wl.Logger.Fatalln("FAT | " + message)
+	wl.log.Fatalln("FAT | " + message)
 }

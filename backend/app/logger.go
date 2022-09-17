@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	wailsLogger "github.com/wailsapp/wails/v2/pkg/logger"
 	"gorm.io/gorm/logger"
 )
 
@@ -18,7 +19,7 @@ const (
 
 type Logger struct {
 	Model logger.Interface
-	Wails *log.WailsLogger
+	Wails wailsLogger.Logger
 	App   *log.Logger
 	Tray  *log.Logger
 	Web   *log.Logger

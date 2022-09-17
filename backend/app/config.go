@@ -55,7 +55,7 @@ func LoadConfig() *Config {
 	var options model.MyOptions
 	result := options.Load()
 	if result.Error != nil {
-		instance.logger.App.Fatalf("fail to load options: %+v\n", result.Error)
+		instance.AppLog().Fatalf("fail to load options: %+v\n", result.Error)
 	}
 	if result.RowsAffected == 0 {
 		// options not yet generated and stored
@@ -105,7 +105,7 @@ func (c *Config) updateOptions(options model.MyOptions) {
 
 	result := options.Save()
 	if result.Error != nil {
-		instance.logger.App.Fatalf("fail to update options: %+v\n", result.Error)
+		instance.AppLog().Fatalf("fail to update options: %+v\n", result.Error)
 	}
 }
 
@@ -137,7 +137,7 @@ func (c *Config) saveOptions(options model.MyOptions) {
 
 	result := options.Save()
 	if result.Error != nil {
-		instance.logger.App.Fatalf("fail to save options: %+v\n", result.Error)
+		instance.AppLog().Fatalf("fail to save options: %+v\n", result.Error)
 	}
 }
 

@@ -37,7 +37,7 @@ func main() {
 		Assets:             frontend,
 		AssetsHandler:      nil,
 		Menu:               nil,
-		Logger:             nil,
+		Logger:             app.App().WailsLog(),
 		LogLevel:           logger.INFO,
 		LogLevelProduction: logger.ERROR,
 		OnStartup:          wlc.startup,
@@ -67,6 +67,6 @@ func main() {
 	})
 
 	if err != nil {
-		app.App().WailsLog().Fatalf("fail to run wails: %+v\n", err)
+		app.App().AppLog().Fatalf("fail to run wails: %+v\n", err)
 	}
 }
