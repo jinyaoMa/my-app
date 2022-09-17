@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	LogPrefixModel = "MODEL"
-	LogPrefixApp   = "APP__"
-	LogPrefixWeb   = "WEB__"
-	LogPrefixTray  = "TRAY_"
-	LogPrefixWails = "WAILS"
+	LogPrefixModel = "MDL"
+	LogPrefixApp   = "APP"
+	LogPrefixWeb   = "WEB"
+	LogPrefixTray  = "TRY"
+	LogPrefixWails = "WLS"
 )
 
 type Logger struct {
