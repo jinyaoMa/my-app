@@ -1,5 +1,5 @@
 import { App, Plugin } from "vue";
-import HelloWorld from "./HelloWorld";
+import HelloWorld from "./src/HelloWorld";
 
 const components = [HelloWorld];
 
