@@ -1,0 +1,35 @@
+@font-face {
+  font-family: "mp-icon";
+  src: url('mp-icon.eot'); /* IE9*/
+  src: url('mp-icon.eot#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url("mp-icon.woff2") format("woff2"),
+  url("mp-icon.woff") format("woff"),
+  url('mp-icon.ttf') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('mp-icon.svg#mp-icon') format('svg'); /* iOS 4.1- */
+}
+
+[class^="mp-icon-"], [class*=" mp-icon-"] {
+  font-family: 'mp-icon' !important;
+  font-size:1em;
+  font-style: normal;
+  vertical-align: bottom;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[class^="mp-icon-"].fix-width, [class*=" mp-icon-"].fix-width {
+  width: 1.3em;
+  text-align: center;
+}
+
+.mp-icon-docs:before { content: "\ea01"; }
+.mp-icon-home:before { content: "\ea02"; }
+.mp-icon-jinyao-ma:before { content: "\ea03"; }
+.mp-icon-settings:before { content: "\ea04"; }
+.mp-icon-window-close:before { content: "\ea05"; }
+.mp-icon-window-fullscreen:before { content: "\ea06"; }
+.mp-icon-window-maximize:before { content: "\ea07"; }
+.mp-icon-window-minimize:before { content: "\ea08"; }
+.mp-icon-window-restore:before { content: "\ea09"; }
+.mp-icon-window-unfullscreen:before { content: "\ea0a"; }
+
