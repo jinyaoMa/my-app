@@ -20,7 +20,7 @@ func DefaultWailsLifeCycle() *WailsLifeCycle {
 func (wlc *WailsLifeCycle) startup(ctx context.Context) {
 	wlc.ctx = ctx
 	tray.Tray().SetWailsContext(ctx)
-	app.App().AppLog().Println("WAILS START UP")
+	app.App().WailsLog().Print("WAILS START UP")
 }
 
 // domReady is called after the front-end dom has been loaded
@@ -29,7 +29,7 @@ func (wlc *WailsLifeCycle) domReady(ctx context.Context) {
 	tray.Tray().
 		ChangeColorTheme(cfg.ColorTheme).
 		ChangeLanguage(cfg.DisplayLanguage)
-	app.App().AppLog().Println("WAILS DOM READY")
+	app.App().WailsLog().Print("WAILS DOM READY")
 }
 
 // beforeClose is called when the application is about to quit,
@@ -37,21 +37,21 @@ func (wlc *WailsLifeCycle) domReady(ctx context.Context) {
 // Returning true will cause the application to continue,
 // false will continue shutdown as normal.
 func (wlc *WailsLifeCycle) beforeClose(ctx context.Context) (prevent bool) {
-	app.App().AppLog().Println("WAILS BEFORE CLOSE")
+	app.App().WailsLog().Print("WAILS BEFORE CLOSE")
 	return false
 }
 
 // shutdown is called at application termination
 func (wlc *WailsLifeCycle) shutdown(ctx context.Context) {
-	app.App().AppLog().Println("WAILS SHUTDOWN")
+	app.App().WailsLog().Print("WAILS SHUTDOWN")
 }
 
 // suspend is called when Windows enters low power mode
 func (wlc *WailsLifeCycle) suspend() {
-	app.App().AppLog().Println("WAILS SUSPEND")
+	app.App().WailsLog().Print("WAILS SUSPEND")
 }
 
 // resume is called when Windows resumes from low power mode
 func (wlc *WailsLifeCycle) resume() {
-	app.App().AppLog().Println("WAILS RESUME")
+	app.App().WailsLog().Print("WAILS RESUME")
 }

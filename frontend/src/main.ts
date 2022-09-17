@@ -1,7 +1,9 @@
 import { createApp } from "vue";
-import "./style.css";
-import App from "./App.vue";
-
+import router from "./router";
+import i18n from "./i18n";
 import Components from "@jinyaoma/my-app-components/index";
 
-createApp(App).use(Components).mount("#app");
+import "./style.scss";
+import App from "./App.vue";
+
+createApp(App).use(router).use(i18n).use(Components).mount("#app");

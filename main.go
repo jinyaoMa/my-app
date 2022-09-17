@@ -67,6 +67,6 @@ func main() {
 	})
 
 	if err != nil {
-		app.App().AppLog().Fatalf("fail to run wails: %+v\n", err)
+		app.App().WailsLog().Fatal("fail to run wails: " + err.Error())
 	}
 }

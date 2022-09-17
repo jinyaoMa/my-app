@@ -25,6 +25,7 @@ Prepare and install environment for development in Window 10/11?
 | :---------- | :---------------------------------------------------- | :-------------------------------------- |
 | Go          | Backend programming language                          | https://pkg.go.dev/std                  |
 | TypeScript  | Frontend programming language                         | https://typescriptlang.org/             |
+| Sass/Scss   | Frontend CSS extension language                       | https://sass-lang.com/dart-sass         |
 | Vite        | Next Generation Frontend Tooling                      | https://vitejs.dev/                     |
 | Vue 3       | Progressive JavaScript Framework                      | https://vuejs.org/                      |
 | Wails       | Build cross-platform desktop applications using Go    | https://wails.io/                       |

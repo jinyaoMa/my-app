@@ -21,7 +21,7 @@
   <iframe src="/docs/index.html" style="width: 100%; height: 100%"></iframe>
 </template>
 
-<style scoped>
+<style lang="scss">
 .logo {
   height: 6em;
   padding: 1.5em;
