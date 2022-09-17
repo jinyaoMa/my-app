@@ -14,38 +14,34 @@ var (
 
 type app struct {
 	logger *Logger
-	flag   *Flag
+	env    *Env
 	config *Config
 }
 
 func init() {
 	instance = &app{
-		logger: DefaultLogger(),
+		env:    LoadEnv(),
+		logger: LoadConsoleLogger(),
 	}
 }
 
 func App() *app {
 	once.Do(func() {
-		flag := LoadFlag()
-		cfg := LoadConfig()
+		instance.config = LoadConfig()
 
-		logFile, err := os.OpenFile(
-			cfg.LogPath,
-			os.O_CREATE|os.O_WRONLY|os.O_APPEND,
-			0666,
-		)
-		if err != nil {
-			instance.logger.App.Fatalf("failed to open log file: %+v\n", err)
+		if instance.env.Log2File() {
+			logFile, err := os.OpenFile(
+				instance.config.LogPath,
+				os.O_CREATE|os.O_WRONLY|os.O_APPEND,
+				0666,
+			)
+			if err != nil {
+				instance.logger.App.Fatalf("failed to open log file: %+v\n", err)
+			}
+			instance.logger = LoadFileLogger(logFile)
 		}
 
-		logger := LoadLogger(logFile)
-		model.SetLogger(logger.Model)
-
-		instance = &app{
-			logger: logger,
-			flag:   flag,
-			config: cfg,
-		}
+		model.SetLogger(instance.logger.Model)
 	})
 	return instance
 }
@@ -58,8 +54,8 @@ func (a *app) WebConfig() *WebConfig {
 	return a.config.Web
 }
 
-func (a *app) Flag() *Flag {
-	return a.flag
+func (a *app) Env() *Env {
+	return a.env
 }
 
 func (a *app) WebLog() *log.Logger {

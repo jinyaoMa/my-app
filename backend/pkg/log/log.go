@@ -12,7 +12,7 @@ type Logger struct {
 func ConsoleLogger(prefix string) *Logger {
 	label := "[" + prefix + "] "
 	return &Logger{
-		Logger: log.New(log.Writer(), label, log.Ldate|log.Ltime|log.Lshortfile),
+		Logger: log.New(os.Stdout, label, log.Ldate|log.Ltime|log.Lshortfile),
 	}
 }
 

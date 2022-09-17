@@ -24,7 +24,7 @@ type Logger struct {
 	Wails *log.Logger
 }
 
-func DefaultLogger() *Logger {
+func LoadConsoleLogger() *Logger {
 	return &Logger{
 		Model: logger.New(
 			log.ConsoleLogger(LogPrefixModel),
@@ -42,7 +42,7 @@ func DefaultLogger() *Logger {
 	}
 }
 
-func LoadLogger(file *os.File) *Logger {
+func LoadFileLogger(file *os.File) *Logger {
 	return &Logger{
 		Model: logger.New(
 			log.FileLogger(LogPrefixModel, file),

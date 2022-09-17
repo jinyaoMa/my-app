@@ -5,11 +5,11 @@
   "author": "jinyaoMa",
   "license": "MIT",
   "scripts": {
-    "wails:dev": ".tools\\wails dev -s true -noreload",
+    "wails:dev": "cross-env MY_APP_LOG=0 .tools\\wails dev -s true -noreload",
     "wails:js": ".tools\\wails generate module",
     "wails:build": ".tools\\wails build --platform windows/amd64",
     "upx:compress": ".tools\\upx -9 build/bin/MyApp.exe",
-    "air:dev": ".tools\\air -c air/.air.toml",
+    "air:dev": "cross-env MY_APP_AIR=1 MY_APP_LOG=0 .tools\\air -c air/.air.toml",
     "swag:docs": ".tools\\swag init -g backend/web/router.go -o backend/web/docs",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",

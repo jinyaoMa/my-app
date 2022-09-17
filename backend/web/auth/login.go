@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"log"
 	"my-app/backend/app"
 	"my-app/backend/model"
 	"net/http"
@@ -19,8 +18,7 @@ import (
 // @Router       /auth/login [post]
 func Login() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		app.App()
-		log.Println(model.MyOption{})
+		app.App().WebLog().Println(model.MyOption{})
 		ctx.JSON(http.StatusOK, gin.H{})
 	}
 }

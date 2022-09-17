@@ -7,6 +7,7 @@
   "frontend:dev:serverUrl": "auto",
   "wailsjsdir": "frontend",
   "debounceMS": 1000,
+  "devServer": "localhost:34115",
   "info": {
     "companyName": "Jinyao Ma's Individual Project",
     "productName": "My App - Continuously updated personal service collection.",

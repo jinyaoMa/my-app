@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"embed"
-	"log"
 	"my-app/backend/app"
 	"net/http"
 	"path/filepath"
@@ -60,17 +59,17 @@ func (w *web) Stop() (ok bool) {
 		ctxHttp, cancelHttp := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancelHttp()
 		if err := w.http.Shutdown(ctxHttp); err != nil && err != http.ErrServerClosed {
-			log.Printf("server (http) shutdown error: %+v\n", err)
+			app.App().WebLog().Printf("server (http) shutdown error: %+v\n", err)
 		}
 
 		ctxHttps, cancelHttps := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancelHttps()
 		if err := w.https.Shutdown(ctxHttps); err != nil && err != http.ErrServerClosed {
-			log.Printf("server (http/s) shutdown error: %+v\n", err)
+			app.App().WebLog().Printf("server (http/s) shutdown error: %+v\n", err)
 		}
 
 		if err := w.errGroup.Wait(); err != nil && err != http.ErrServerClosed {
-			log.Printf("server running error: %+v\n", err)
+			app.App().WebLog().Printf("server running error: %+v\n", err)
 		}
 
 		w.isRunning = false

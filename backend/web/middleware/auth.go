@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"log"
 	"my-app/backend/app"
 	"my-app/backend/model"
 
@@ -10,8 +9,7 @@ import (
 
 func Auth() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		app.App()
-		log.Println(model.MyOption{})
+		app.App().WebLog().Println(model.MyOption{})
 		ctx.Next()
 	}
 }

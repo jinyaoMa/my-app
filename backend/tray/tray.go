@@ -3,7 +3,6 @@ package tray
 import (
 	"context"
 	_ "embed"
-	"log"
 	"my-app/backend/app"
 	"my-app/backend/pkg/i18n"
 	"my-app/backend/tray/menus"
@@ -181,7 +180,7 @@ func (t *tray) onReady() {
 					Icon:          icon,
 				})
 				if err != nil {
-					log.Fatalf("fail to open quit dialog: %+v\n", err)
+					app.App().TrayLog().Fatalf("fail to open quit dialog: %+v\n", err)
 				}
 				if dialog == "Yes" || dialog == locale.QuitDialog.DefaultButton {
 					// when "Yes" or default button is clicked

@@ -2,7 +2,7 @@ package main
 
 import (
 	"embed"
-	"log"
+	"my-app/backend/app"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -67,6 +67,6 @@ func main() {
 	})
 
 	if err != nil {
-		log.Fatalf("fail to run wails: %+v\n", err)
+		app.App().WailsLog().Fatalf("fail to run wails: %+v\n", err)
 	}
 }
