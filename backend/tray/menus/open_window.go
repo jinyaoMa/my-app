@@ -28,7 +28,8 @@ func (ow *OpenWindow) SetIcon(templateIconBytes []byte, regularIconBytes []byte)
 	return ow
 }
 
-func (ow *OpenWindow) SetLocale(locale i18n.Locale) *OpenWindow {
+func (ow *OpenWindow) SetLocale() *OpenWindow {
+	locale := i18n.I18n().Locale()
 	ow.item.SetTitle(locale.OpenWindow)
 	ow.item.SetTooltip(locale.OpenWindow)
 	return ow

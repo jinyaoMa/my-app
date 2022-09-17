@@ -3,9 +3,10 @@ package tray
 import (
 	"context"
 	_ "embed"
+	"fmt"
 	"my-app/backend/app"
-	"my-app/backend/model"
 	"my-app/backend/pkg/i18n"
+	"my-app/backend/pkg/utils"
 	"my-app/backend/tray/menus"
 	"my-app/backend/web"
 	"sync"
@@ -43,7 +44,7 @@ type tray struct {
 func Tray() *tray {
 	once.Do(func() {
 		instance = &tray{}
-		systray.Register(instance.onReady, instance.onQuit)
+		systray.Register(instance.onReady, instance.onExit)
 	})
 	return instance
 }
@@ -73,7 +74,7 @@ func (t *tray) ChangeLanguage(lang string) *tray {
 	return t
 }
 
-func (t *tray) ChangeTheme(theme string) *tray {
+func (t *tray) ChangeColorTheme(theme string) *tray {
 	switch theme {
 	case app.ColorThemeLight:
 		t.colorTheme.ClickLight()
@@ -91,11 +92,7 @@ func (t *tray) onReady() {
 	t.openWindow = menus.
 		NewOpenWindow().
 		SetIcon(iconOpenWindow, iconOpenWindow).
-		Watch(menus.OpenWindowListener{
-			OnOpenWindow: func() {
-				runtime.Show(t.wailsCtx)
-			},
-		})
+		Watch(t.openWindowListener())
 
 	systray.AddSeparator()
 
@@ -103,91 +100,32 @@ func (t *tray) onReady() {
 		NewApiService().
 		SetIconStart(iconApiStart, iconApiStart).
 		SetIconStop(iconApiStop, iconApiStop).
-		Watch(menus.ApiServiceListener{
-			OnStart: func() bool {
-				return web.Web().Start()
-			},
-			OnStop: func() bool {
-				return web.Web().Stop()
-			},
-			OnOpenSwagger: func() {
-				runtime.BrowserOpenURL(
-					t.wailsCtx,
-					"https://localhost:10443/swagger/index.html",
-				)
-			},
-		})
+		Watch(t.apiServiceListener())
 
 	systray.AddSeparator()
 
 	t.displayLanguage = menus.
 		NewDisplayLanguage().
-		Watch(menus.DisplayLanguageListener{
-			OnDisplayLanguageChanged: func(lang string) bool {
-				locale := i18n.I18n().Change(lang).Locale()
-				runtime.WindowSetTitle(t.wailsCtx, locale.AppName)
-				runtime.EventsEmit(t.wailsCtx, "onLanguageChanged", lang)
-				t.updateLocales()
-				return true
-			},
-		})
+		Watch(t.displayLanguageListener())
 
 	systray.AddSeparator()
 
 	t.colorTheme = menus.
 		NewColorTheme().
-		Watch(menus.ColorThemeListener{
-			OnColorThemeChanged: func(theme string) bool {
-				switch theme {
-				case app.ColorThemeLight:
-					runtime.WindowSetLightTheme(t.wailsCtx)
-				case app.ColorThemeDark:
-					runtime.WindowSetDarkTheme(t.wailsCtx)
-				default:
-					runtime.WindowSetSystemDefaultTheme(t.wailsCtx)
-				}
-				option := model.MyOption{
-					Name: app.CfgTheme,
-				}
-				result := option.Update(theme)
-				if result.Error != nil {
-					app.App().TrayLog().Fatalf("failed to update theme option: %+v\n", result.Error)
-				}
-				return true
-			},
-		})
+		Watch(t.colorThemeListener())
+
+	systray.AddSeparator()
+
+	systray.AddMenuItem(utils.Copyright, utils.Copyright).Disable()
 
 	systray.AddSeparator()
 
 	t.quit = menus.
 		NewQuit().
-		Watch(menus.QuitListener{
-			OnQuit: func() {
-				locale := i18n.I18n().Locale()
-				dialog, err := runtime.MessageDialog(t.wailsCtx, runtime.MessageDialogOptions{
-					Type:    runtime.QuestionDialog,
-					Title:   locale.AppName,
-					Message: locale.QuitDialog.Message,
-					Buttons: []string{
-						locale.QuitDialog.DefaultButton,
-						locale.QuitDialog.CancelButton,
-					},
-					DefaultButton: locale.QuitDialog.DefaultButton,
-					CancelButton:  locale.QuitDialog.CancelButton,
-					Icon:          icon,
-				})
-				if err != nil {
-					app.App().TrayLog().Fatalf("fail to open quit dialog: %+v\n", err)
-				}
-				if dialog == "Yes" || dialog == locale.QuitDialog.DefaultButton {
-					// when "Yes" or default button is clicked
-					systray.Quit()
-				}
-			},
-		})
+		Watch(t.quitListener())
 }
 
-func (t *tray) onQuit() {
+func (t *tray) onExit() {
 	// end menus properly
 	t.openWindow.StopWatch()
 	t.apiService.StopWatch()
@@ -199,21 +137,30 @@ func (t *tray) onQuit() {
 	runtime.Quit(t.wailsCtx)
 }
 
-func (t *tray) updateLocales() {
+func (t *tray) refreshTooltip() {
 	locale := i18n.I18n().Locale()
-	systray.SetTitle(locale.AppName)
-	systray.SetTooltip(locale.AppName)
-	t.openWindow.SetLocale(locale)
-	t.apiService.SetLocale(locale)
-	t.displayLanguage.SetLocale(locale)
-	t.colorTheme.SetLocale(locale)
-	t.quit.SetLocale(locale)
+	separator := ": "
 
-	option := model.MyOption{
-		Name: app.CfgLanguage,
+	ApiServiceState := locale.ApiService.Disabled
+	if t.apiService.IsEnabled() {
+		ApiServiceState = locale.ApiService.Enabled
 	}
-	result := option.Update(locale.Lang.Code)
-	if result.Error != nil {
-		app.App().TrayLog().Fatalf("failed to update language option: %+v\n", result.Error)
+
+	ColorThemeText := locale.ColorTheme.System
+	switch t.colorTheme.CurrentTheme() {
+	case app.ColorThemeLight:
+		ColorThemeText = locale.ColorTheme.Light
+	case app.ColorThemeDark:
+		ColorThemeText = locale.ColorTheme.Dark
 	}
+
+	systray.SetTooltip(
+		fmt.Sprintf(
+			"%s\n%s\n%s\n%s",
+			locale.AppName,
+			locale.ApiService.Label+separator+ApiServiceState,
+			locale.DisplayLanguage.Label+separator+locale.Lang.Text,
+			locale.ColorTheme.Label+separator+ColorThemeText,
+		),
+	)
 }

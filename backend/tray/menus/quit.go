@@ -28,7 +28,8 @@ func (q *Quit) SetIcon(templateIconBytes []byte, regularIconBytes []byte) *Quit 
 	return q
 }
 
-func (q *Quit) SetLocale(locale i18n.Locale) *Quit {
+func (q *Quit) SetLocale() *Quit {
+	locale := i18n.I18n().Locale()
 	q.item.SetTitle(locale.Quit)
 	q.item.SetTooltip(locale.Quit)
 	return q

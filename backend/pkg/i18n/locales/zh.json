@@ -6,20 +6,27 @@
   "appname": "我的应用程序",
   "open_window": "打开 我的应用程序",
   "quit": "退出",
-  "display_language": "选择 显示语言",
+  "display_language": {
+    "label": "显示语言",
+    "title": "选择 显示语言"
+  },
   "color_theme": {
+    "label": "颜色主题",
     "title": "选择 颜色主题",
     "system": "跟随系统",
     "light": "浅色",
     "dark": "深色"
   },
   "api_service": {
+    "label": "API 服务",
+    "enabled": "已启动",
+    "disabled": "未启动",
     "swagger": "打开 API 文档",
     "start": "开启 API 服务",
     "stop": "关闭 API 服务",
     "dialog": {
       "start": "已开启 API 服务。",
-      "stop": "已关闭API 服务。"
+      "stop": "已关闭 API 服务。"
     }
   },
   "quit_dialog": {

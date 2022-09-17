@@ -8,8 +8,8 @@ import (
 
 type ApiServiceListener struct {
 	OnOpenSwagger func()
-	OnStart       func() (ok bool)
-	OnStop        func() (ok bool)
+	OnStart       func() (ok bool, complete func())
+	OnStop        func() (ok bool, complete func())
 }
 
 type ApiService struct {
@@ -30,6 +30,10 @@ func NewApiService() *ApiService {
 	}
 }
 
+func (as *ApiService) IsEnabled() bool {
+	return as.isEnabled
+}
+
 func (as *ApiService) SetIconSwagger(templateIconBytes []byte, regularIconBytes []byte) *ApiService {
 	as.swagger.SetTemplateIcon(templateIconBytes, regularIconBytes)
 	return as
@@ -45,7 +49,8 @@ func (as *ApiService) SetIconStop(templateIconBytes []byte, regularIconBytes []b
 	return as
 }
 
-func (as *ApiService) SetLocale(locale i18n.Locale) *ApiService {
+func (as *ApiService) SetLocale() *ApiService {
+	locale := i18n.I18n().Locale()
 	as.start.SetTitle(locale.ApiService.Start)
 	as.start.SetTooltip(locale.ApiService.Start)
 	as.stop.SetTitle(locale.ApiService.Stop)
@@ -74,18 +79,20 @@ func (as *ApiService) Watch(listener ApiServiceListener) *ApiService {
 		for {
 			select {
 			case <-as.start.ClickedCh:
-				if listener.OnStart() {
+				if ok, complete := listener.OnStart(); ok {
 					as.start.Hide()
 					as.stop.Show()
 					as.swagger.Show()
 					as.isEnabled = true
+					complete()
 				}
 			case <-as.stop.ClickedCh:
-				if listener.OnStop() {
+				if ok, complete := listener.OnStop(); ok {
 					as.start.Show()
 					as.stop.Hide()
 					as.swagger.Hide()
 					as.isEnabled = false
+					complete()
 				}
 			case <-as.swagger.ClickedCh:
 				listener.OnOpenSwagger()

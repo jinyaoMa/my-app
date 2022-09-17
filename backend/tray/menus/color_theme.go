@@ -8,16 +8,17 @@ import (
 )
 
 type ColorThemeListener struct {
-	OnColorThemeChanged func(theme string) (ok bool)
+	OnColorThemeChanged func(theme string) (ok bool, complete func())
 }
 
 type ColorTheme struct {
-	isWatched bool
-	chanStop  chan struct{}
-	title     *systray.MenuItem
-	system    *systray.MenuItem
-	light     *systray.MenuItem
-	dark      *systray.MenuItem
+	isWatched    bool
+	chanStop     chan struct{}
+	currentTheme string
+	title        *systray.MenuItem
+	system       *systray.MenuItem
+	light        *systray.MenuItem
+	dark         *systray.MenuItem
 }
 
 func NewColorTheme() *ColorTheme {
@@ -30,12 +31,17 @@ func NewColorTheme() *ColorTheme {
 	}
 }
 
+func (ct *ColorTheme) CurrentTheme() string {
+	return ct.currentTheme
+}
+
 func (ct *ColorTheme) SetIcon(templateIconBytes []byte, regularIconBytes []byte) *ColorTheme {
 	ct.title.SetTemplateIcon(templateIconBytes, regularIconBytes)
 	return ct
 }
 
-func (ct *ColorTheme) SetLocale(locale i18n.Locale) *ColorTheme {
+func (ct *ColorTheme) SetLocale() *ColorTheme {
+	locale := i18n.I18n().Locale()
 	ct.title.SetTitle(locale.ColorTheme.Title)
 	ct.title.SetTooltip(locale.ColorTheme.Title)
 	ct.title.Disable()
@@ -58,22 +64,28 @@ func (ct *ColorTheme) Watch(listener ColorThemeListener) *ColorTheme {
 		for {
 			select {
 			case <-ct.system.ClickedCh:
-				if listener.OnColorThemeChanged(app.ColorThemeSystem) {
+				if ok, complete := listener.OnColorThemeChanged(app.ColorThemeSystem); ok {
 					ct.system.Check()
 					ct.light.Uncheck()
 					ct.dark.Uncheck()
+					ct.currentTheme = app.ColorThemeSystem
+					complete()
 				}
 			case <-ct.light.ClickedCh:
-				if listener.OnColorThemeChanged(app.ColorThemeLight) {
+				if ok, complete := listener.OnColorThemeChanged(app.ColorThemeLight); ok {
 					ct.system.Uncheck()
 					ct.light.Check()
 					ct.dark.Uncheck()
+					ct.currentTheme = app.ColorThemeLight
+					complete()
 				}
 			case <-ct.dark.ClickedCh:
-				if listener.OnColorThemeChanged(app.ColorThemeDark) {
+				if ok, complete := listener.OnColorThemeChanged(app.ColorThemeDark); ok {
 					ct.system.Uncheck()
 					ct.light.Uncheck()
 					ct.dark.Check()
+					ct.currentTheme = app.ColorThemeDark
+					complete()
 				}
 			case <-ct.chanStop:
 				return

@@ -21,18 +21,25 @@ type Locale struct {
 	AppName         string `json:"appname"`
 	OpenWindow      string `json:"open_window"`
 	Quit            string `json:"quit"`
-	DisplayLanguage string `json:"display_language"`
-	ColorTheme      struct {
+	DisplayLanguage struct {
+		Label string `json:"label"`
+		Title string `json:"title"`
+	} `json:"display_language"`
+	ColorTheme struct {
+		Label  string `json:"label"`
 		Title  string `json:"title"`
 		System string `json:"system"`
 		Light  string `json:"light"`
 		Dark   string `json:"dark"`
 	} `json:"color_theme"`
 	ApiService struct {
-		Swagger string `json:"swagger"`
-		Start   string `json:"start"`
-		Stop    string `json:"stop"`
-		Dialog  struct {
+		Label    string `json:"label"`
+		Enabled  string `json:"enabled"`
+		Disabled string `json:"disabled"`
+		Swagger  string `json:"swagger"`
+		Start    string `json:"start"`
+		Stop     string `json:"stop"`
+		Dialog   struct {
 			Start string `json:"start"`
 			Stop  string `json:"stop"`
 		} `json:"dialog"`

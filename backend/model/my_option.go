@@ -16,10 +16,10 @@ func (mo *MyOption) Update(newValue string) *gorm.DB {
 
 type MyOptions []MyOption
 
-func (mos MyOptions) Load() *gorm.DB {
-	return db.Find(&mos)
+func (mos *MyOptions) Load() *gorm.DB {
+	return db.Find(mos)
 }
 
-func (mos MyOptions) Save() *gorm.DB {
-	return db.Save(&mos)
+func (mos *MyOptions) Save() *gorm.DB {
+	return db.Save(mos)
 }

@@ -9,7 +9,7 @@ import (
 const (
 	CfgTotalNumberOfOptions = 6
 	CfgLanguage             = "Config.Language"
-	CfgTheme                = "Config.Theme"
+	CfgColorTheme           = "Config.ColorTheme"
 	CfgLogPath              = "Config.LogPath"
 	CfgWebPortHttp          = "Config.Web.PortHttp"
 	CfgWebPortHttps         = "Config.Web.PortHttps"
@@ -23,10 +23,10 @@ const (
 )
 
 type Config struct {
-	Language string
-	Theme    string
-	LogPath  string
-	Web      *WebConfig
+	Language   string
+	ColorTheme string
+	LogPath    string
+	Web        *WebConfig
 }
 
 type WebConfig struct {
@@ -37,9 +37,9 @@ type WebConfig struct {
 
 func DefaultConfig() *Config {
 	return &Config{
-		Language: i18n.En,
-		Theme:    ColorThemeSystem,
-		LogPath:  utils.GetExecutablePath("MyApp.log"),
+		Language:   i18n.En,
+		ColorTheme: ColorThemeSystem,
+		LogPath:    utils.GetExecutablePath("MyApp.log"),
 		Web: &WebConfig{
 			PortHttp:  ":10080",
 			PortHttps: ":10443",
@@ -71,7 +71,7 @@ func LoadConfig() *Config {
 func (c *Config) updateOptions(options model.MyOptions) {
 	optionPairs := [][]string{
 		{CfgLanguage, c.Language},
-		{CfgTheme, c.Theme},
+		{CfgColorTheme, c.ColorTheme},
 		{CfgLogPath, c.LogPath},
 		{CfgWebPortHttp, c.Web.PortHttp},
 		{CfgWebPortHttps, c.Web.PortHttps},
@@ -112,8 +112,8 @@ func (c *Config) saveOptions(options model.MyOptions) {
 		Value: c.Language,
 	})
 	options = append(options, model.MyOption{
-		Name:  CfgTheme,
-		Value: c.Theme,
+		Name:  CfgColorTheme,
+		Value: c.ColorTheme,
 	})
 	options = append(options, model.MyOption{
 		Name:  CfgLogPath,
@@ -143,8 +143,8 @@ func (c *Config) loadOptions(options model.MyOptions) {
 		switch option.Name {
 		case CfgLanguage:
 			c.Language = option.Value
-		case CfgTheme:
-			c.Theme = option.Value
+		case CfgColorTheme:
+			c.ColorTheme = option.Value
 		case CfgLogPath:
 			c.LogPath = option.Value
 		case CfgWebPortHttp:

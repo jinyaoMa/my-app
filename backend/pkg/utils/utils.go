@@ -6,6 +6,10 @@ import (
 	"path/filepath"
 )
 
+const (
+	Copyright = "© 2022 jinyaoMa"
+)
+
 var (
 	executablePath string
 )

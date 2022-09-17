@@ -7,7 +7,7 @@ import (
 )
 
 type DisplayLanguageListener struct {
-	OnDisplayLanguageChanged func(lang string) (ok bool)
+	OnDisplayLanguageChanged func(lang string) (ok bool, complete func())
 }
 
 type DisplayLanguage struct {
@@ -32,9 +32,10 @@ func (dl *DisplayLanguage) SetIcon(templateIconBytes []byte, regularIconBytes []
 	return dl
 }
 
-func (dl *DisplayLanguage) SetLocale(locale i18n.Locale) *DisplayLanguage {
-	dl.title.SetTitle(locale.DisplayLanguage)
-	dl.title.SetTooltip(locale.DisplayLanguage)
+func (dl *DisplayLanguage) SetLocale() *DisplayLanguage {
+	locale := i18n.I18n().Locale()
+	dl.title.SetTitle(locale.DisplayLanguage.Title)
+	dl.title.SetTooltip(locale.DisplayLanguage.Title)
 	dl.title.Disable()
 	dl.english.SetTitle(i18n.I18n().GetLangText(i18n.En))
 	dl.english.SetTooltip(i18n.I18n().GetLangText(i18n.En))
@@ -53,14 +54,16 @@ func (dl *DisplayLanguage) Watch(listener DisplayLanguageListener) *DisplayLangu
 		for {
 			select {
 			case <-dl.english.ClickedCh:
-				if listener.OnDisplayLanguageChanged(i18n.En) {
+				if ok, complete := listener.OnDisplayLanguageChanged(i18n.En); ok {
 					dl.chinese.Uncheck()
 					dl.english.Check()
+					complete()
 				}
 			case <-dl.chinese.ClickedCh:
-				if listener.OnDisplayLanguageChanged(i18n.Zh) {
+				if ok, complete := listener.OnDisplayLanguageChanged(i18n.Zh); ok {
 					dl.chinese.Check()
 					dl.english.Uncheck()
+					complete()
 				}
 			case <-dl.chanStop:
 				return

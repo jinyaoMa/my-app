@@ -6,20 +6,27 @@
   "appname": "My Application",
   "open_window": "Open My Application",
   "quit": "Quit",
-  "display_language": "Display Language",
+  "display_language": {
+    "label": "Language",
+    "title": "Display Language"
+  },
   "color_theme": {
+    "label": "Theme",
     "title": "Color Theme",
     "system": "System Default",
     "light": "Light",
     "dark": "Dark"
   },
   "api_service": {
+    "label": "API",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
     "swagger": "Open API docs",
-    "start": "Enable API service",
-    "stop": "Disable API service",
+    "start": "Enable API Service",
+    "stop": "Disable API Service",
     "dialog": {
-      "start": "API service has been started.",
-      "stop": "API service has been stopped."
+      "start": "API Service has been started.",
+      "stop": "API Service has been stopped."
     }
   },
   "quit_dialog": {
