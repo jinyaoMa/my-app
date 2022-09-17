@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"my-app/backend/model"
 	"my-app/backend/pkg/i18n"
 	"my-app/backend/pkg/utils"
@@ -8,7 +9,7 @@ import (
 
 const (
 	CfgTotalNumberOfOptions = 6
-	CfgLanguage             = "Config.Language"
+	CfgDisplayLanguage      = "Config.DisplayLanguage"
 	CfgColorTheme           = "Config.ColorTheme"
 	CfgLogPath              = "Config.LogPath"
 	CfgWebPortHttp          = "Config.Web.PortHttp"
@@ -23,10 +24,10 @@ const (
 )
 
 type Config struct {
-	Language   string
-	ColorTheme string
-	LogPath    string
-	Web        *WebConfig
+	DisplayLanguage string
+	ColorTheme      string
+	LogPath         string
+	Web             *WebConfig
 }
 
 type WebConfig struct {
@@ -37,9 +38,9 @@ type WebConfig struct {
 
 func DefaultConfig() *Config {
 	return &Config{
-		Language:   i18n.En,
-		ColorTheme: ColorThemeSystem,
-		LogPath:    utils.GetExecutablePath("MyApp.log"),
+		DisplayLanguage: i18n.En,
+		ColorTheme:      ColorThemeSystem,
+		LogPath:         utils.GetExecutablePath("MyApp.log"),
 		Web: &WebConfig{
 			PortHttp:  ":10080",
 			PortHttps: ":10443",
@@ -65,12 +66,14 @@ func LoadConfig() *Config {
 	} else {
 		cfg.loadOptions(options)
 	}
+	fmt.Println("=================== loadOptions ==========================")
+	fmt.Printf("%+v\n", cfg)
 	return cfg
 }
 
 func (c *Config) updateOptions(options model.MyOptions) {
 	optionPairs := [][]string{
-		{CfgLanguage, c.Language},
+		{CfgDisplayLanguage, c.DisplayLanguage},
 		{CfgColorTheme, c.ColorTheme},
 		{CfgLogPath, c.LogPath},
 		{CfgWebPortHttp, c.Web.PortHttp},
@@ -108,8 +111,8 @@ func (c *Config) updateOptions(options model.MyOptions) {
 
 func (c *Config) saveOptions(options model.MyOptions) {
 	options = append(options, model.MyOption{
-		Name:  CfgLanguage,
-		Value: c.Language,
+		Name:  CfgDisplayLanguage,
+		Value: c.DisplayLanguage,
 	})
 	options = append(options, model.MyOption{
 		Name:  CfgColorTheme,
@@ -141,8 +144,8 @@ func (c *Config) saveOptions(options model.MyOptions) {
 func (c *Config) loadOptions(options model.MyOptions) {
 	for _, option := range options {
 		switch option.Name {
-		case CfgLanguage:
-			c.Language = option.Value
+		case CfgDisplayLanguage:
+			c.DisplayLanguage = option.Value
 		case CfgColorTheme:
 			c.ColorTheme = option.Value
 		case CfgLogPath:

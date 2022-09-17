@@ -58,7 +58,7 @@ func (t *tray) displayLanguageListener() menus.DisplayLanguageListener {
 			t.quit.SetLocale()
 
 			option := model.MyOption{
-				Name: app.CfgLanguage,
+				Name: app.CfgDisplayLanguage,
 			}
 			result := option.Update(locale.Lang.Code)
 			if result.Error != nil {

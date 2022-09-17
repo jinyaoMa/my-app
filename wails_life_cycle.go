@@ -28,7 +28,7 @@ func (wlc *WailsLifeCycle) domReady(ctx context.Context) {
 	cfg := app.App().Config()
 	tray.Tray().
 		ChangeColorTheme(cfg.ColorTheme).
-		ChangeLanguage(cfg.Language)
+		ChangeLanguage(cfg.DisplayLanguage)
 	app.App().WailsLog().Println("WAILS DOM READY")
 }
 
