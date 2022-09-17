@@ -4,6 +4,7 @@ import (
 	"context"
 	_ "embed"
 	"my-app/backend/app"
+	"my-app/backend/model"
 	"my-app/backend/pkg/i18n"
 	"my-app/backend/tray/menus"
 	"my-app/backend/web"
@@ -84,17 +85,6 @@ func (t *tray) ChangeTheme(theme string) *tray {
 	return t
 }
 
-func (t *tray) updateLocales() {
-	locale := i18n.I18n().Locale()
-	systray.SetTitle(locale.AppName)
-	systray.SetTooltip(locale.AppName)
-	t.openWindow.SetLocale(locale)
-	t.apiService.SetLocale(locale)
-	t.displayLanguage.SetLocale(locale)
-	t.colorTheme.SetLocale(locale)
-	t.quit.SetLocale(locale)
-}
-
 func (t *tray) onReady() {
 	systray.SetTemplateIcon(icon, icon)
 
@@ -156,6 +146,13 @@ func (t *tray) onReady() {
 				default:
 					runtime.WindowSetSystemDefaultTheme(t.wailsCtx)
 				}
+				option := model.MyOption{
+					Name: app.CfgTheme,
+				}
+				result := option.Update(theme)
+				if result.Error != nil {
+					app.App().TrayLog().Fatalf("failed to update theme option: %+v\n", result.Error)
+				}
 				return true
 			},
 		})
@@ -200,4 +197,23 @@ func (t *tray) onQuit() {
 
 	web.Web().Stop()
 	runtime.Quit(t.wailsCtx)
+}
+
+func (t *tray) updateLocales() {
+	locale := i18n.I18n().Locale()
+	systray.SetTitle(locale.AppName)
+	systray.SetTooltip(locale.AppName)
+	t.openWindow.SetLocale(locale)
+	t.apiService.SetLocale(locale)
+	t.displayLanguage.SetLocale(locale)
+	t.colorTheme.SetLocale(locale)
+	t.quit.SetLocale(locale)
+
+	option := model.MyOption{
+		Name: app.CfgLanguage,
+	}
+	result := option.Update(locale.Lang.Code)
+	if result.Error != nil {
+		app.App().TrayLog().Fatalf("failed to update language option: %+v\n", result.Error)
+	}
 }
