@@ -1,6 +1,15 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
+import { useI18n } from "vue-i18n";
+import { EventsOn } from "../wailsjs/runtime/runtime";
+
+const { t, locale } = useI18n();
+EventsOn("onDisplayLanguageChanged", (lang: string) => {
+  console.log("onDisplayLanguageChanged", lang);
+  locale.value = lang;
+});
+EventsOn("onColorThemeChanged", (theme: string) => {
+  console.log("onColorThemeChanged", theme);
+});
 </script>
 
 <template>
@@ -9,6 +18,7 @@
       <img src="/icon.svg" class="logo avatar" />
     </a>
   </div>
+  <div>{{ t("lang") }}</div>
   <div>
     <a href="https://vitejs.dev" target="_blank">
       <img src="/vite.svg" class="logo" alt="Vite logo" />
