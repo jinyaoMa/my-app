@@ -16,14 +16,14 @@ const svgtofont = require("svgtofont");
 */
 
 svgtofont({
-  dist: "./lib", // output path
+  dist: "./dist", // output path
   src: "./svg", // svg path
   styleTemplates: "./styles",
   emptyDist: true, // Clear output directory contents
-  fontName: "mp-icon", // font name
+  fontName: "my-icon", // font name
   css: {
-    filename: "mp-icon",
-    include: "\\.css$", // "\\.(css|scss|less|styl)$",
+    filename: "my-icon",
+    include: "\\.(css|scss|less|styl)$",
     fontSize: "1em",
   }, // Create CSS files.
   outSVGReact: false,

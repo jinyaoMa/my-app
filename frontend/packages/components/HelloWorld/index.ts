@@ -5,4 +5,6 @@ HelloWorld.install = (app: App) => {
   app.component(HelloWorld.name, HelloWorld);
 };
 
+export const MyHelloWorld = HelloWorld;
+
 export default HelloWorld;

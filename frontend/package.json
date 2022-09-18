@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@jinyaoma/my-app-components": "workspace:*",
+    "@jinyaoma/my-app-design": "workspace:*",
     "pinia": "^2.0.22",
     "vue": "^3.2.37",
     "vue-i18n": "^9.2.2",
