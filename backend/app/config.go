@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"my-app/backend/model"
 	"my-app/backend/pkg/i18n"
 	"my-app/backend/pkg/utils"
@@ -66,8 +65,6 @@ func LoadConfig() *Config {
 	} else {
 		cfg.loadOptions(options)
 	}
-	fmt.Println("=================== loadOptions ==========================")
-	fmt.Printf("%+v\n", cfg)
 	return cfg
 }
 

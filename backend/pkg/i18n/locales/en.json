@@ -17,17 +17,14 @@
     "light": "Light",
     "dark": "Dark"
   },
-  "api_service": {
-    "label": "API",
+  "web_service": {
+    "label": "Web",
     "enabled": "Enabled",
     "disabled": "Disabled",
-    "swagger": "Open API docs",
-    "start": "Enable API Service",
-    "stop": "Disable API Service",
-    "dialog": {
-      "start": "API Service has been started.",
-      "stop": "API Service has been stopped."
-    }
+    "vitepress": "Open VitePress Docs",
+    "swagger": "Open Swagger Docs",
+    "start": "Enable Web Service",
+    "stop": "Disable Web Service"
   },
   "quit_dialog": {
     "message": "Are you sure to quit?",

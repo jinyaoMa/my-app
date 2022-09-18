@@ -17,17 +17,14 @@
     "light": "浅色",
     "dark": "深色"
   },
-  "api_service": {
-    "label": "API 服务",
+  "web_service": {
+    "label": "Web 服务",
     "enabled": "已启动",
     "disabled": "未启动",
-    "swagger": "打开 API 文档",
-    "start": "开启 API 服务",
-    "stop": "关闭 API 服务",
-    "dialog": {
-      "start": "已开启 API 服务。",
-      "stop": "已关闭 API 服务。"
-    }
+    "vitepress": "打开 VitePress 文档",
+    "swagger": "打开 Swagger 文档",
+    "start": "开启 Web 服务",
+    "stop": "关闭 Web 服务"
   },
   "quit_dialog": {
     "message": "确认退出 我的应用程序 吗？",

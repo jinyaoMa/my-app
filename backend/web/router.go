@@ -3,12 +3,10 @@ package web
 import (
 	"my-app/backend/app"
 	"my-app/backend/web/api/test"
-	"my-app/backend/web/docs"
 	"my-app/backend/web/middleware"
+	"my-app/backend/web/static"
 
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // @title My App (backend/web/router.go)
@@ -37,27 +35,19 @@ func router() *gin.Engine {
 	gin.DefaultWriter = app.App().WebLog().Writer()
 
 	r := gin.Default()
-
-	r.GET("/", test.Test())
+	{
+		static.Setup(r)
+	}
 
 	a := r.Group("/auth")
 	{
 		a.GET("/", middleware.Auth(), func(ctx *gin.Context) {})
 	}
 
-	// "/api"
-	b := r.Group(docs.SwaggerInfo.BasePath)
+	b := r.Group("/api")
 	{
 		b.GET("/test", test.Test())
 	}
-
-	r.GET(
-		"/swagger/*any",
-		ginSwagger.WrapHandler(
-			swaggerFiles.Handler,
-			ginSwagger.PersistAuthorization(true),
-		),
-	)
 
 	return r
 }

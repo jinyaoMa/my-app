@@ -5,8 +5,9 @@ air/bin
 build/bin
 frontend/wailsjs
 frontend/public/docs
-backend/web/certs
-backend/web/docs
+backend/web/static/certs
+backend/web/static/docs
+backend/web/static/swagger
 *-res.syso
 
 # From the vue template of vite

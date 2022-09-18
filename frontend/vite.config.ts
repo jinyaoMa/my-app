@@ -1,5 +1,5 @@
-import { resolve, dirname } from "path";
 import { defineConfig } from "vite";
+import { resolve } from "path";
 import vue from "@vitejs/plugin-vue";
 import vueSetupExtend from "vite-plugin-vue-setup-extend";
 import vueI18n from "@intlify/vite-plugin-vue-i18n";

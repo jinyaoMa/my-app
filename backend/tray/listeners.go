@@ -20,8 +20,20 @@ func (t *tray) openWindowListener() menus.OpenWindowListener {
 	}
 }
 
-func (t *tray) apiServiceListener() menus.ApiServiceListener {
-	return menus.ApiServiceListener{
+func (t *tray) webServiceListener() menus.WebServiceListener {
+	return menus.WebServiceListener{
+		OnOpenVitePress: func() {
+			runtime.BrowserOpenURL(
+				t.wailsCtx,
+				fmt.Sprintf("https://localhost%s/docs/", app.App().WebConfig().PortHttps),
+			)
+		},
+		OnOpenSwagger: func() {
+			runtime.BrowserOpenURL(
+				t.wailsCtx,
+				fmt.Sprintf("https://localhost%s/swagger/index.html", app.App().WebConfig().PortHttps),
+			)
+		},
 		OnStart: func() (ok bool, complete func()) {
 			return web.Web().Start(), func() {
 				t.refreshTooltip()
@@ -31,12 +43,6 @@ func (t *tray) apiServiceListener() menus.ApiServiceListener {
 			return web.Web().Stop(), func() {
 				t.refreshTooltip()
 			}
-		},
-		OnOpenSwagger: func() {
-			runtime.BrowserOpenURL(
-				t.wailsCtx,
-				fmt.Sprintf("https://localhost%s/swagger/index.html", app.App().WebConfig().PortHttps),
-			)
 		},
 	}
 }
@@ -52,7 +58,7 @@ func (t *tray) displayLanguageListener() menus.DisplayLanguageListener {
 			systray.SetTitle(locale.AppName)
 
 			t.openWindow.SetLocale()
-			t.apiService.SetLocale()
+			t.webService.SetLocale()
 			t.displayLanguage.SetLocale()
 			t.colorTheme.SetLocale()
 			t.quit.SetLocale()
@@ -115,7 +121,7 @@ func (t *tray) quitListener() menus.QuitListener {
 				},
 				DefaultButton: locale.QuitDialog.DefaultButton,
 				CancelButton:  locale.QuitDialog.CancelButton,
-				Icon:          icon,
+				// Icon:          nil,
 			})
 			if err != nil {
 				app.App().TrayLog().Fatalf("fail to open quit dialog: %+v\n", err)

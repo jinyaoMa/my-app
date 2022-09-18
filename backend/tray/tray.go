@@ -2,7 +2,7 @@ package tray
 
 import (
 	"context"
-	_ "embed"
+	"embed"
 	"fmt"
 	"my-app/backend/app"
 	"my-app/backend/pkg/i18n"
@@ -15,17 +15,8 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-//go:embed icons/icon.ico
-var icon []byte
-
-//go:embed icons/open-window.ico
-var iconOpenWindow []byte
-
-//go:embed icons/api-start.ico
-var iconApiStart []byte
-
-//go:embed icons/api-stop.ico
-var iconApiStop []byte
+//go:embed icons
+var icons embed.FS
 
 var (
 	once     sync.Once
@@ -35,7 +26,7 @@ var (
 type tray struct {
 	wailsCtx        context.Context
 	openWindow      *menus.OpenWindow
-	apiService      *menus.ApiService
+	webService      *menus.WebService
 	displayLanguage *menus.DisplayLanguage
 	colorTheme      *menus.ColorTheme
 	quit            *menus.Quit
@@ -54,13 +45,13 @@ func (t *tray) SetWailsContext(ctx context.Context) *tray {
 	return t
 }
 
-func (t *tray) StartApiService() *tray {
-	t.apiService.ClickStart()
+func (t *tray) StartWebService() *tray {
+	t.webService.ClickStart()
 	return t
 }
 
-func (t *tray) StopApiService() *tray {
-	t.apiService.ClickStop()
+func (t *tray) StopWebService() *tray {
+	t.webService.ClickStop()
 	return t
 }
 
@@ -87,6 +78,13 @@ func (t *tray) ChangeColorTheme(theme string) *tray {
 }
 
 func (t *tray) onReady() {
+	icon, _ := icons.ReadFile("icons/icon.ico")
+	iconOpenWindow, _ := icons.ReadFile("icons/open-window.ico")
+	iconOpenVitePress, _ := icons.ReadFile("icons/open-vitepress.ico")
+	iconOpenSwagger, _ := icons.ReadFile("icons/open-swagger.ico")
+	iconWebStart, _ := icons.ReadFile("icons/web-start.ico")
+	iconWebStop, _ := icons.ReadFile("icons/web-stop.ico")
+
 	systray.SetTemplateIcon(icon, icon)
 
 	t.openWindow = menus.
@@ -96,11 +94,13 @@ func (t *tray) onReady() {
 
 	systray.AddSeparator()
 
-	t.apiService = menus.
-		NewApiService().
-		SetIconStart(iconApiStart, iconApiStart).
-		SetIconStop(iconApiStop, iconApiStop).
-		Watch(t.apiServiceListener())
+	t.webService = menus.
+		NewWebService().
+		SetIconVitePress(iconOpenVitePress, iconOpenVitePress).
+		SetIconSwagger(iconOpenSwagger, iconOpenSwagger).
+		SetIconStart(iconWebStart, iconWebStart).
+		SetIconStop(iconWebStop, iconWebStop).
+		Watch(t.webServiceListener())
 
 	systray.AddSeparator()
 
@@ -128,7 +128,7 @@ func (t *tray) onReady() {
 func (t *tray) onExit() {
 	// end menus properly
 	t.openWindow.StopWatch()
-	t.apiService.StopWatch()
+	t.webService.StopWatch()
 	t.displayLanguage.StopWatch()
 	t.colorTheme.StopWatch()
 	t.quit.StopWatch()
@@ -141,9 +141,9 @@ func (t *tray) refreshTooltip() {
 	locale := i18n.I18n().Locale()
 	separator := ": "
 
-	ApiServiceState := locale.ApiService.Disabled
-	if t.apiService.IsEnabled() {
-		ApiServiceState = locale.ApiService.Enabled
+	WebServiceState := locale.WebService.Disabled
+	if t.webService.IsEnabled() {
+		WebServiceState = locale.WebService.Enabled
 	}
 
 	ColorThemeText := locale.ColorTheme.System
@@ -158,7 +158,7 @@ func (t *tray) refreshTooltip() {
 		fmt.Sprintf(
 			"%s\n%s\n%s\n%s",
 			locale.AppName,
-			locale.ApiService.Label+separator+ApiServiceState,
+			locale.WebService.Label+separator+WebServiceState,
 			locale.DisplayLanguage.Label+separator+locale.Lang.Text,
 			locale.ColorTheme.Label+separator+ColorThemeText,
 		),

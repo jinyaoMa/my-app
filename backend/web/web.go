@@ -3,8 +3,8 @@ package web
 import (
 	"context"
 	"crypto/tls"
-	"embed"
 	"my-app/backend/app"
+	"my-app/backend/web/static"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -14,9 +14,6 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 	"golang.org/x/sync/errgroup"
 )
-
-//go:embed certs
-var certs embed.FS
 
 var (
 	once     sync.Once
@@ -105,23 +102,18 @@ func (w *web) reset() {
 }
 
 func (s *web) getSelfSignedOrLetsEncryptCert(certManager *autocert.Manager) func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
-	dirCerts := "certs"
-
 	var certificate tls.Certificate
 	var err error
-	isCustomDirCerts := false
+	dirCerts := ""
 	dirCache, ok := certManager.Cache.(autocert.DirCache)
 	if ok && string(dirCache) != "" {
 		dirCerts = string(dirCache)
-		isCustomDirCerts = true
 	} else {
-		key, _ := certs.ReadFile(dirCerts + "/localhost.key") // embed use slash as separator
-		crt, _ := certs.ReadFile(dirCerts + "/localhost.crt") // embed use slash as separator
-		certificate, err = tls.X509KeyPair(crt, key)
+		certificate, err = tls.X509KeyPair(static.Certs())
 	}
 
 	return func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
-		if isCustomDirCerts {
+		if dirCerts != "" {
 			keyFile := filepath.Join(dirCerts, hello.ServerName+".key")
 			crtFile := filepath.Join(dirCerts, hello.ServerName+".crt")
 			certificate, err = tls.LoadX509KeyPair(crtFile, keyFile)

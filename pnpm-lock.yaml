@@ -21,6 +21,7 @@ importers:
       '@intlify/vite-plugin-vue-i18n': ^6.0.1
       '@jinyaoma/my-app-components': workspace:*
       '@vitejs/plugin-vue': ^3.1.0
+      pinia: ^2.0.22
       sass: ^1.54.9
       typescript: ^4.6.4
       vite: ^3.1.0
@@ -31,6 +32,7 @@ importers:
       vue-tsc: ^0.40.4
     dependencies:
       '@jinyaoma/my-app-components': link:packages/components
+      pinia: 2.0.22_arz4dztosvwy2ghjrlh2wdhejm
       vue: 3.2.39
       vue-i18n: 9.2.2_vue@3.2.39
       vue-router: 4.1.5_vue@3.2.39
@@ -2467,6 +2469,24 @@ packages:
     engines: {node: '>=8.6'}
     dev: true
 
+  /pinia/2.0.22_arz4dztosvwy2ghjrlh2wdhejm:
+    resolution: {integrity: sha512-u+b8/BC+tmvo3ACbYO2w5NfxHWFOjvvw9DQnyT0dW8aUMCPRQT5QnfZ5R5W2MzZBMTeZRMQI7V/QFbafmM9QHw==}
+    peerDependencies:
+      '@vue/composition-api': ^1.4.0
+      typescript: '>=4.4.4'
+      vue: ^2.6.14 || ^3.2.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      '@vue/devtools-api': 6.2.1
+      typescript: 4.8.3
+      vue: 3.2.39
+      vue-demi: 0.13.11_vue@3.2.39
+    dev: false
+
   /posix-character-classes/0.1.1:
     resolution: {integrity: sha512-xTgYBc3fuo7Yt7JbiuFxSYGToMoz8fLoE6TC9Wx1P/u+LfeThMOAqmuyECnlBaaJb+u1m9hHiXUEtwW4OzfUJg==}
     engines: {node: '>=0.10.0'}
@@ -3047,7 +3067,6 @@ packages:
     resolution: {integrity: sha512-goMHfm00nWPa8UvR/CPSvykqf6dVV8x/dp0c5mFTMTIu0u0FlGWRioyy7Nn0PGAdHxpJZnuO/ut+PpQ8UiHAig==}
     engines: {node: '>=4.2.0'}
     hasBin: true
-    dev: true
 
   /union-value/1.0.1:
     resolution: {integrity: sha512-tJfXmxMeWYnczCVs7XAEvIV7ieppALdyepWMkHkwciRpZraG/xwT+s2JN8+pr1+8jCRf80FFzvr+MpQeeoF4Xg==}
@@ -3212,7 +3231,6 @@ packages:
         optional: true
     dependencies:
       vue: 3.2.39
-    dev: true
 
   /vue-i18n/9.2.2_vue@3.2.39:
     resolution: {integrity: sha512-yswpwtj89rTBhegUAv9Mu37LNznyu3NpyLQmozF3i1hYOhwpG8RjcjIFIIfnu+2MDZJGSZPXaKWvnQA71Yv9TQ==}

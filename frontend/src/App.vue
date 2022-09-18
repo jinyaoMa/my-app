@@ -1,14 +1,22 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import { EventsOn } from "../wailsjs/runtime/runtime";
+import { useColorTheme } from "./store/color-theme";
+import {
+  EventsOn,
+  Hide,
+  WindowMinimise,
+  WindowToggleMaximise,
+} from "../wailsjs/runtime/runtime";
 
 const { t, locale } = useI18n();
 EventsOn("onDisplayLanguageChanged", (lang: string) => {
   console.log("onDisplayLanguageChanged", lang);
   locale.value = lang;
 });
+const colorTheme = useColorTheme();
 EventsOn("onColorThemeChanged", (theme: string) => {
   console.log("onColorThemeChanged", theme);
+  colorTheme.theme = theme;
 });
 </script>
 
@@ -18,7 +26,13 @@ EventsOn("onColorThemeChanged", (theme: string) => {
       <img src="/icon.svg" class="logo avatar" />
     </a>
   </div>
+  <div>
+    <button @click="Hide">Hide</button>
+    <button @click="WindowMinimise">WindowMinimise</button>
+    <button @click="WindowToggleMaximise">WindowToggleMaximise</button>
+  </div>
   <div>{{ t("lang") }}</div>
+  <div>{{ colorTheme.theme }}</div>
   <div>
     <a href="https://vitejs.dev" target="_blank">
       <img src="/vite.svg" class="logo" alt="Vite logo" />
@@ -28,7 +42,6 @@ EventsOn("onColorThemeChanged", (theme: string) => {
     </a>
   </div>
   <my-hello-world msg="Vite + Vue" />
-  <iframe src="/docs/index.html" style="width: 100%; height: 100%"></iframe>
 </template>
 
 <style lang="scss">

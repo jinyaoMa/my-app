@@ -32,18 +32,15 @@ type Locale struct {
 		Light  string `json:"light"`
 		Dark   string `json:"dark"`
 	} `json:"color_theme"`
-	ApiService struct {
-		Label    string `json:"label"`
-		Enabled  string `json:"enabled"`
-		Disabled string `json:"disabled"`
-		Swagger  string `json:"swagger"`
-		Start    string `json:"start"`
-		Stop     string `json:"stop"`
-		Dialog   struct {
-			Start string `json:"start"`
-			Stop  string `json:"stop"`
-		} `json:"dialog"`
-	} `json:"api_service"`
+	WebService struct {
+		Label     string `json:"label"`
+		Enabled   string `json:"enabled"`
+		Disabled  string `json:"disabled"`
+		VitePress string `json:"vitepress"`
+		Swagger   string `json:"swagger"`
+		Start     string `json:"start"`
+		Stop      string `json:"stop"`
+	} `json:"web_service"`
 	QuitDialog struct {
 		Message       string `json:"message"`
 		DefaultButton string `json:"default_button"`

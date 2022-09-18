@@ -38,12 +38,7 @@ export default defineConfig({
 
   ignoreDeadLinks: false,
 
-  // set it to subdirectory in production inserting into /frontend/public
+  // set it to subdirectory in production inserting into /backend/web/static/docs/
   base: process.env.NODE_ENV === "production" ? "/docs/" : "/",
-  outDir: "../frontend/public/docs",
-  vite: {
-    server: {
-      port: 10000,
-    },
-  },
+  outDir: "../backend/web/static/docs/",
 });
