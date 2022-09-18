@@ -1,7 +1,12 @@
 <script setup lang="ts" name="MyIcon">
-defineProps<{ msg: string }>();
+defineProps<{
+  name: string;
+  fixWidth: boolean;
+}>();
 </script>
 
 <template>
-  <i class="my-icon"></i>
+  <i
+    :class="`my-icon-${name || 'jinyao-ma'}${fixWidth ? ' fix-width' : ''}`"
+  ></i>
 </template>

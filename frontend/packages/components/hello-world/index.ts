@@ -1,10 +1,10 @@
 import { App } from "vue";
-import HelloWorld from "./HelloWorld.vue";
+import HelloWorld from "./hello-world.vue";
 
 HelloWorld.install = (app: App) => {
   app.component(HelloWorld.name, HelloWorld);
 };
 
-export const MyHelloWorld = HelloWorld;
-
 export default HelloWorld;
+
+export const MyHelloWorld = HelloWorld;

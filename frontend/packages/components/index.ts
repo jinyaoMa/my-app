@@ -1,2 +1,2 @@
-export * from "./HelloWorld";
-export * from "./Icon";
+export * from "./hello-world";
+export * from "./icon";

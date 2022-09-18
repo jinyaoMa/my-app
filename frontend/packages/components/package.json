@@ -1,0 +1,8 @@
+{
+  "name": "@jinyaoma/my-app-components",
+  "version": "0.1.0",
+  "type": "module",
+  "peerDependencies": {
+    "vue": "^3.2.37"
+  }
+}
