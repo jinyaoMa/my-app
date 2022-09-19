@@ -19,6 +19,51 @@ Prepare and install environment for development in Window 10/11?
 
 > Run command `pnpm install` at project root directory to setup.
 
+## NPM Scripts
+
+```shell
+$ pnpm wails:dev # run wails in development mode
+$ pnpm wails:build # build wails application
+$ pnpm upx:compress # compress the generated executable by `wails:build` script
+$ pnpm air:dev # test web service individually
+$ pnpm swag:docs # generate/update swagger docs
+$ pnpm docs:dev # test vitepress docs individually
+$ pnpm docs:build # generate/update vitepress docs
+$ pnpm icons:build # build frontend/packages/icons
+$ pnpm design:build # build frontend/packages/design
+$ pnpm ... # install/preinstall scripts trigger during project setup
+```
+
+## Project Structure
+
+```bash
+.
+├── .tools # auto-generated, development tools/CLIs
+├── .vscode # extensions for VS Code
+├── air # sources related to air hot reload tool
+│   └── bin # auto-generated, try script `air:dev`
+│   └── .air.toml # air config
+│   └── main.go # run web service individually w/o wails and tray
+├── backend # sources related to backend code
+│   └── app # app module, business layer
+│   └── model # model module, data layer
+│   └── pkg # pkg module, cross cutting
+│   └── tray # tray module, presentations & services layer
+│   └── web # web module, presentations & services layer
+├── build # sources to use during wails build process
+│   └── bin # auto-generated, try script `wails:dev` or `wails:build`
+│   └── ... # wails related sources
+├── diagrams # diagrams about 4+1 view model
+├── docs # vitepress documentation
+├── frontend # sources related to frontend code, workplace managed by PNPM
+│   └── packages # frontend components, icons, etc.
+│   └── ... # wails frontend related sources
+├── main.go # wails main application, presentations & services layer
+├── wails_life_cycle.go # wails life cycle
+├── wails.json # wails CLI config
+└── ...
+```
+
 ## Technologies
 
 | Technology  | Role                                                  | Sources                                 |
