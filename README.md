@@ -38,3 +38,7 @@ Prepare and install environment for development in Window 10/11?
 | GORM        | ORM library for Go                                    | https://gorm.io/                        |
 | SQLite      | GORM sqlite driver                                    | https://github.com/go-gorm/sqlite       |
 | SVG To Font | Generator of fonts from SVG icons                     | https://github.com/jaywcjlove/svgtofont |
+
+## Development View
+
+![Package Diagram](./diagrams/package.png)
