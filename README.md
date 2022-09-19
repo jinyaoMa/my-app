@@ -54,7 +54,7 @@ $ pnpm design:build # build frontend/packages/design
 $ pnpm ... # install/preinstall scripts trigger during project setup
 ```
 
-## Project Structure
+## Directory Structure
 
 ```bash
 .
@@ -71,7 +71,7 @@ $ pnpm ... # install/preinstall scripts trigger during project setup
 │   │   ├── env.go # load os environment variable
 │   │   ├── logger.go # setup loggers
 │   ├── model # model module, data layer
-│   │   ├── model # database setup
+│   │   ├── model.go # database setup
 │   │   └── my_option.go # define application options for app config storage
 │   ├── pkg # pkg module, cross cutting
 │   │   ├── i18n # manage locale/translation strings for backend

@@ -1,5 +1,5 @@
 import { App, Plugin } from "vue";
-import { MyHelloWorld, MyIcon } from "../components";
+import { MyHelloWorld, MyIcon } from "@jinyaoma/my-app-components";
 
 const components = [MyHelloWorld, MyIcon];
 

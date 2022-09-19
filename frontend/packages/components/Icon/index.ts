@@ -1,4 +1,5 @@
 import { App } from "vue";
+import "@jinyaoma/my-app-icons";
 import Icon from "./icon.vue";
 
 Icon.install = (app: App) => {
