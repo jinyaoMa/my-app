@@ -61,22 +61,47 @@ $ pnpm ... # install/preinstall scripts trigger during project setup
 ├── .tools # auto-generated, development tools/CLIs
 ├── .vscode # extensions for VS Code
 ├── air # sources related to air hot reload tool
-│   └── bin # auto-generated, try script `air:dev`
-│   └── .air.toml # air config
+│   ├── bin # auto-generated, try script `air:dev`
+│   ├── .air.toml # air config
 │   └── main.go # run web service individually w/o wails and tray
 ├── backend # sources related to backend code
-│   └── app # app module, business layer
-│   └── model # model module, data layer
-│   └── pkg # pkg module, cross cutting
-│   └── tray # tray module, presentations & services layer
+│   ├── app # app module, business layer
+│   │   ├── app.go # contain global state and resources
+│   │   ├── config.go # load application options from database
+│   │   ├── env.go # load os environment variable
+│   │   ├── logger.go # setup loggers
+│   ├── model # model module, data layer
+│   │   ├── model # database setup
+│   │   └── my_option.go # define application options for app config storage
+│   ├── pkg # pkg module, cross cutting
+│   │   ├── i18n # manage locale/translation strings for backend
+│   │   ├── log # define loggers for backend
+│   │   └── utils # helper functions
+│   ├── tray # tray module, presentations & services layer
+│   │   ├── icons # tray icons
+│   │   ├── menus # tray menus
+│   │   ├── listeners.go # listen to tray menu-item click events
+│   │   └── tray.go # system tray
 │   └── web # web module, presentations & services layer
+│       ├── api # API services
+│       ├── auth # Auth services
+│       ├── middleware # custom gin middlewares
+│       ├── static # static websites and sources
+│       │   ├── certs # auto-generated for localhost TLS, try script `install:certs`
+│       │   ├── docs # auto-generated, try script `docs:build`
+│       │   ├── swagger # auto-generated, try script `swag:docs`
+│       │   ├── static.go # manage static sources
+│       │   └── ... # other static sources
+│       ├── air.go # special function for air to run web service individually
+│       ├── router.go # entry point of swaggo docs generator, manage routes for API
+│       └── web.go # web service
 ├── build # sources to use during wails build process
-│   └── bin # auto-generated, try script `wails:dev` or `wails:build`
+│   ├── bin # auto-generated, try script `wails:dev` or `wails:build`
 │   └── ... # wails related sources
 ├── diagrams # diagrams about 4+1 view model
 ├── docs # vitepress documentation
 ├── frontend # sources related to frontend code, workplace managed by PNPM
-│   └── packages # frontend components, icons, etc.
+│   ├── packages # frontend components, icons, etc.
 │   └── ... # wails frontend related sources
 ├── main.go # wails main application, presentations & services layer
 ├── wails_life_cycle.go # wails life cycle
