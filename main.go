@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"my-app/backend/app"
+	"my-app/backend/pkg/utils"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -47,11 +48,11 @@ func main() {
 		Bind:               []interface{}{},
 		WindowStartState:   options.Normal,
 		Windows: &windows.Options{
-			WebviewIsTransparent:              false,
+			WebviewIsTransparent:              true,
 			WindowIsTranslucent:               false,
 			DisableWindowIcon:                 false,
 			DisableFramelessWindowDecorations: false,
-			WebviewUserDataPath:               "",
+			WebviewUserDataPath:               utils.GetExecutablePath("UserData"),
 			WebviewBrowserPath:                "",
 			Theme:                             windows.SystemDefault,
 			CustomTheme:                       nil, /*&windows.ThemeSettings{
@@ -69,7 +70,7 @@ func main() {
 				LightModeTitleBarInactive:  windows.RGB(100, 100, 100),
 				LightModeTitleTextInactive: windows.RGB(10, 10, 10),
 				LightModeBorderInactive:    windows.RGB(100, 100, 100),
-			}*/
+			},*/
 			TranslucencyType: windows.Auto,
 			Messages:         nil,
 			ResizeDebounceMS: 0,
