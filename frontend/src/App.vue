@@ -27,6 +27,7 @@ EventsOn("onColorThemeChanged", (theme: string) => {
     </a>
   </div>
   <div>
+    <my-icon></my-icon>
     <button @click="Hide">Hide</button>
     <button @click="WindowMinimise">WindowMinimise</button>
     <button @click="WindowToggleMaximise">WindowToggleMaximise</button>
