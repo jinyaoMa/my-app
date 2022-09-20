@@ -4,7 +4,7 @@
   </main>
 </template>
 
-<script lang="ts" setup name="MyMain">
+<script setup lang="ts" name="MyMain">
 import type { StyleValue } from "vue";
 import { computed } from "vue";
 

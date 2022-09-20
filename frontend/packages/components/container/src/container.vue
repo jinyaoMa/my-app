@@ -11,9 +11,11 @@ import { computed, useSlots, withDefaults } from "vue";
 const props = withDefaults(
   defineProps<{
     direction?: "vertical" | "horizontal";
+    height?: string;
   }>(),
   {
     direction: "vertical",
+    height: "auto",
   }
 );
 const slots = useSlots();
@@ -34,6 +36,7 @@ const isHorizontal = computed(() => {
 
 const style = computed<StyleValue>(() => ({
   flexDirection: isHorizontal.value ? "row" : "column",
+  height: props.height,
 }));
 </script>
 

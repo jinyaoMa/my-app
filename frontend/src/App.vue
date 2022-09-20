@@ -25,11 +25,7 @@ EventsOn("onColorThemeChanged", (theme: string) => {
 </script>
 
 <template>
-  <my-container
-    :style="{
-      height: '100vh',
-    }"
-  >
+  <my-container height="100vh">
     <my-aside>
       <my-container
         :style="{
