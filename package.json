@@ -39,5 +39,9 @@
   "bugs": {
     "url": "https://github.com/jinyaoMa/my-app/issues"
   },
-  "homepage": "https://github.com/jinyaoMa/my-app#readme"
+  "homepage": "https://github.com/jinyaoMa/my-app#readme",
+  "dependencies": {
+    "@jinyaoma/my-app-components": "workspace:^0.1.0",
+    "mitt": "^3.0.0"
+  }
 }

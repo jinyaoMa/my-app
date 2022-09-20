@@ -17,9 +17,4 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-[class^="{{prefix}}-"].fix-width, [class*=" {{prefix}}-"].fix-width {
-  width: 1.3em;
-  text-align: center;
-}
-
 {{cssString}}

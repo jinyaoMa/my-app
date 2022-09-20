@@ -28,8 +28,6 @@ body {
   margin: 0;
   box-sizing: border-box;
   height: 100vh;
-  display: flex;
-  padding: 8px;
 }
 
 h1 {
@@ -61,11 +59,6 @@ button:focus-visible {
 }
 
 #app {
-  flex-grow: 1;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 2em;
-  overflow: auto;
   text-align: center;
 }
 

@@ -2,7 +2,12 @@
   "name": "@jinyaoma/my-app-components",
   "version": "0.1.0",
   "type": "module",
+  "main": "index.ts",
   "peerDependencies": {
+    "sass": "^1.54.9",
     "vue": "^3.2.37"
+  },
+  "dependencies": {
+    "@jinyaoma/my-app-icons": "workspace:*"
   }
 }
