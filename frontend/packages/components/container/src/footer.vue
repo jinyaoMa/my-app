@@ -1,29 +1,23 @@
 <template>
-  <aside class="my-aside" :style="style">
+  <footer class="my-footer" :style="style">
     <slot></slot>
-  </aside>
+  </footer>
 </template>
 
-<script setup lang="ts" name="MyAside">
+<script setup lang="ts" name="MyFooter">
 import type { StyleValue } from "vue";
 import { computed, withDefaults } from "vue";
 
 const props = withDefaults(
   defineProps<{
-    width?: string;
+    height?: string;
   }>(),
   {
-    width: "280px",
+    height: "auto",
   }
 );
 
 const style = computed<StyleValue>(() => ({
-  width: props.width,
+  height: props.height,
 }));
 </script>
-
-<style lang="scss">
-.my-aside {
-  overflow: auto;
-}
-</style>

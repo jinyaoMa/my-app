@@ -54,11 +54,13 @@ importers:
     specifiers:
       '@jinyaoma/my-app-icons': workspace:*
       sass: ^1.54.9
+      typescript: ^4.6.4
       vue: ^3.2.37
     dependencies:
       '@jinyaoma/my-app-icons': link:../icons
     devDependencies:
       sass: 1.54.9
+      typescript: 4.8.3
       vue: 3.2.39
 
   frontend/packages/design:
