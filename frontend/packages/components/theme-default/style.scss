@@ -1,0 +1,41 @@
+:root {
+  /* dimensions */
+  --my-font-size-xs: 12px; // supplementary text
+  --my-font-size-sm: 13px; // body (small)
+  --my-font-size: 14px; // body
+  --my-font-size-md: 16px; // small title
+  --my-font-size-lg: 18px; // title
+  --my-font-size-xl: 20px; // main title
+
+  --my-line-height-none: 1; // no line height
+  --my-line-height-sm: 1.3; // compact
+  --my-line-height: 1.5; // regular
+  --my-line-height-lg: 1; // loose
+
+  --my-space-sm: 8px; // small size spacing
+  --my-space: 12px; // default size spacing
+  --my-space-lg: 16px; // large size spacing
+
+  /* colors */
+  // brand color
+  --my-color-primary: #409eff;
+  // functional color
+  --my-color-success: #67c23a;
+  --my-color-warning: #e6a23c;
+  --my-color-danger: #f56c6c;
+  --my-color-info: #909399;
+  // font color
+  --my-color-text-primary: #303133;
+  --my-color-text-regular: #606266;
+  --my-color-text-secondary: #909399;
+  --my-color-text-placeholder: #c0c4cc;
+  // border color
+  --my-color-border-base: #dcdfe6;
+  --my-color-border-light: #e4e7ed;
+  --my-color-border-lighter: #ebeef5;
+  --my-color-border-extra-light: #f2f6fc;
+  // background color
+  --my-color-white: #ffffff;
+  --my-color-black: #000000;
+  --my-color-background-base: #f5f7fa;
+}

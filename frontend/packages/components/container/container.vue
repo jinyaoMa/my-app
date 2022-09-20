@@ -8,8 +8,17 @@ defineProps({
   },
 });
 </script>
+
 <template>
   <div class="my-container">
     <slot></slot>
   </div>
 </template>
+
+<style lang="scss">
+@import "../theme-default/mixin.scss";
+
+.my-container {
+  @include font-family();
+}
+</style>

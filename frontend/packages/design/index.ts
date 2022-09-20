@@ -1,5 +1,5 @@
 import { App, Plugin } from "vue";
-import "@jinyaoma/my-app-components/theme/default.scss";
+import "@jinyaoma/my-app-components/theme-default/style.scss";
 import { MyHelloWorld, MyIcon } from "@jinyaoma/my-app-components";
 
 const components = [MyHelloWorld, MyIcon];
