@@ -1,14 +1,12 @@
-import { App, Plugin } from "vue";
+import type { App, Plugin } from "vue";
 import "@jinyaoma/my-app-components/theme-default/style.scss";
-import { MyHelloWorld, MyIcon } from "@jinyaoma/my-app-components";
+import { MyIcon, MyContainer } from "@jinyaoma/my-app-components";
 
-const components = [MyHelloWorld, MyIcon];
+const components = [MyIcon, MyContainer] as Plugin[];
 
 const install = (app: App) => {
   components.map((item) => {
-    app.use({
-      install: item.install,
-    } as Plugin);
+    app.use(item);
   });
 };
 

@@ -1,4 +1,14 @@
+<template>
+  <i
+    :class="{
+      [`my-icon-${name}`]: true,
+      fixWidth,
+    }"
+  ></i>
+</template>
+
 <script setup lang="ts" name="MyIcon">
+import "@jinyaoma/my-app-icons/dist/my-icon.scss";
 defineProps({
   name: {
     type: String,
@@ -14,15 +24,6 @@ defineProps({
   },
 });
 </script>
-
-<template>
-  <i
-    :class="{
-      [`my-icon-${name}`]: true,
-      fixWidth,
-    }"
-  ></i>
-</template>
 
 <style lang="scss">
 [class*="my-icon-"] {

@@ -1,11 +1,9 @@
-import { App } from "vue";
-import "@jinyaoma/my-app-icons";
-import Icon from "./icon.vue";
+import type { App } from "vue";
+import Icon from "./src/icon.vue";
 
 Icon.install = (app: App) => {
   app.component(Icon.name, Icon);
 };
 
 export default Icon;
-
 export const MyIcon = Icon;

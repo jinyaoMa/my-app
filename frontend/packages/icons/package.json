@@ -1,13 +1,7 @@
 {
   "name": "@jinyaoma/my-app-icons",
   "version": "0.1.0",
-  "main": "index.js",
-  "module": "index.js",
   "exports": {
-    ".": {
-      "import": "./index.js",
-      "require": "./index.js"
-    },
     "./dist/my-icon.css": {
       "import": "./dist/my-icon.css",
       "require": "./dist/my-icon.css"

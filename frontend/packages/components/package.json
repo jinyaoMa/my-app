@@ -4,6 +4,7 @@
   "type": "module",
   "main": "index.ts",
   "peerDependencies": {
+    "sass": "^1.54.9",
     "vue": "^3.2.37"
   },
   "dependencies": {
