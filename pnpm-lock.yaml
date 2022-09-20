@@ -53,9 +53,12 @@ importers:
   frontend/packages/components:
     specifiers:
       '@jinyaoma/my-app-icons': workspace:*
+      sass: ^1.54.9
       vue: ^3.2.37
     dependencies:
       '@jinyaoma/my-app-icons': link:../icons
+    devDependencies:
+      sass: 1.54.9
       vue: 3.2.39
 
   frontend/packages/design:
@@ -68,8 +71,9 @@ importers:
       vite-plugin-vue-setup-extend: ^0.4.0
       vue: ^3.2.37
       vue-tsc: ^0.40.4
-    devDependencies:
+    dependencies:
       '@jinyaoma/my-app-components': link:../components
+    devDependencies:
       '@vitejs/plugin-vue': 3.1.0_vite@3.1.2+vue@3.2.39
       sass: 1.54.9
       typescript: 4.8.3
@@ -495,7 +499,7 @@ packages:
       vite: ^3.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 3.1.2
+      vite: 3.1.2_sass@1.54.9
       vue: 3.2.39
     dev: true
 
