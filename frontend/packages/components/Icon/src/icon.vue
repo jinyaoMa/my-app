@@ -1,28 +1,26 @@
 <template>
   <i
     :class="{
-      [`my-icon-${name}`]: true,
-      fixWidth,
+      [`my-icon-${props.name}`]: true,
+      fixWidth: props.fixWidth,
     }"
   ></i>
 </template>
 
 <script setup lang="ts" name="MyIcon">
 import "@jinyaoma/my-app-icons/dist/my-icon.scss";
-defineProps({
-  name: {
-    type: String,
-    default(): string {
-      return "jinyao-ma";
-    },
-  },
-  fixWidth: {
-    type: Boolean,
-    default(): boolean {
-      return false;
-    },
-  },
-});
+import { withDefaults } from "vue";
+
+const props = withDefaults(
+  defineProps<{
+    name?: string;
+    fixWidth?: boolean;
+  }>(),
+  {
+    name: "jinyao-ma",
+    fixWidth: false,
+  }
+);
 </script>
 
 <style lang="scss">
