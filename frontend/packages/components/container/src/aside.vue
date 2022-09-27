@@ -5,8 +5,7 @@
 </template>
 
 <script setup lang="ts" name="MyAside">
-import type { StyleValue } from "vue";
-import { computed, withDefaults } from "vue";
+import { computed, StyleValue, withDefaults } from "vue";
 
 const props = withDefaults(
   defineProps<{

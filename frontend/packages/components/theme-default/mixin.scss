@@ -1,7 +1,38 @@
+@use "sass:list";
+@use "sass:map";
+
+@import "./variable.scss";
+
 @mixin font-family() {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   /*
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   */
+}
+
+@mixin main-colors(
+  $colorsMap: (
+    $TypePrimary: #409eff 10%,
+    $TypeSuccess: #67c23a 15%,
+    $TypeWarning: #e6a23c 12%,
+    $TypeDanger: #f56c6c 8%,
+    $TypeInfo: #909399 12%,
+  ),
+  $numOfExtra: 3
+) {
+  @for $i from 0 through $numOfExtra {
+    @if $i == 0 {
+      @each $name, $attrs in $colorsMap {
+        --my-color-#{$name}: #{list.nth($attrs, 1)};
+      }
+    } @else {
+      @each $name, $attrs in $colorsMap {
+        --my-color-#{$name}-#{$i}: #{lighten(
+            list.nth($attrs, 1),
+            $i * list.nth($attrs, 2)
+          )};
+      }
+    }
+  }
 }

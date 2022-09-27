@@ -71,7 +71,6 @@ func main() {
 				LightModeTitleTextInactive: windows.RGB(10, 10, 10),
 				LightModeBorderInactive:    windows.RGB(100, 100, 100),
 			},*/
-			TranslucencyType: windows.Auto,
 			Messages:         nil,
 			ResizeDebounceMS: 0,
 			OnSuspend:        wlc.suspend,

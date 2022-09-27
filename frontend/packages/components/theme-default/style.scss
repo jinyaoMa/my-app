@@ -1,29 +1,46 @@
+@import "./mixin.scss";
+
 :root {
+  color-scheme: light dark;
+
   /* dimensions */
+  // font size
   --my-font-size-xs: 12px; // supplementary text
   --my-font-size-sm: 13px; // body (small)
   --my-font-size: 14px; // body
   --my-font-size-md: 16px; // small title
   --my-font-size-lg: 18px; // title
   --my-font-size-xl: 20px; // main title
-
+  // line height
   --my-line-height-none: 1; // no line height
   --my-line-height-sm: 1.3; // compact
   --my-line-height: 1.5; // regular
-  --my-line-height-lg: 1; // loose
-
+  --my-line-height-lg: 1.7; // loose
+  // space
   --my-space-sm: 8px; // small size spacing
   --my-space: 12px; // default size spacing
   --my-space-lg: 16px; // large size spacing
+  // border width
+  --my-border-width-sm: 1px;
+  --my-border-width: 2px;
+  --my-border-width-lg: 3px;
+  // border radius
+  --my-border-radius-sm: 4px;
+  --my-border-radius: 6px;
+  --my-border-radius-lg: 8px;
 
   /* colors */
-  // brand color
-  --my-color-primary: #409eff;
-  // functional color
-  --my-color-success: #67c23a;
-  --my-color-warning: #e6a23c;
-  --my-color-danger: #f56c6c;
-  --my-color-info: #909399;
+  @include main-colors(
+    (
+      // brand color
+      $TypePrimary: #409eff 10%,
+      // functional color
+      $TypeSuccess: #67c23a 15%,
+      $TypeWarning: #e6a23c 12%,
+      $TypeDanger: #f56c6c 8%,
+      $TypeInfo: #909399 12%
+    )
+  );
   // font color
   --my-color-text-primary: #303133;
   --my-color-text-regular: #606266;
@@ -37,5 +54,5 @@
   // background color
   --my-color-white: #ffffff;
   --my-color-black: #000000;
-  --my-color-background-base: #f5f7fa;
+  --my-color-background-base: #ffffff;
 }

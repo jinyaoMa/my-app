@@ -5,8 +5,7 @@
 </template>
 
 <script setup lang="ts" name="MyFooter">
-import type { StyleValue } from "vue";
-import { computed, withDefaults } from "vue";
+import { computed, StyleValue, withDefaults } from "vue";
 
 const props = withDefaults(
   defineProps<{
@@ -21,3 +20,9 @@ const style = computed<StyleValue>(() => ({
   height: props.height,
 }));
 </script>
+
+<style lang="scss">
+.my-footer {
+  overflow: visible;
+}
+</style>

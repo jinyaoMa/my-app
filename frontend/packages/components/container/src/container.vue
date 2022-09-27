@@ -5,12 +5,19 @@
 </template>
 
 <script setup lang="ts" name="MyContainer">
-import type { Component, StyleValue, VNode } from "vue";
-import { computed, useSlots, withDefaults } from "vue";
+import {
+  Component,
+  StyleValue,
+  VNode,
+  computed,
+  useSlots,
+  withDefaults,
+} from "vue";
+import { Direction } from "../../types";
 
 const props = withDefaults(
   defineProps<{
-    direction?: "vertical" | "horizontal";
+    direction?: Direction;
     height?: string;
   }>(),
   {

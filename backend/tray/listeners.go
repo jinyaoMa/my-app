@@ -72,6 +72,7 @@ func (t *tray) displayLanguageListener() menus.DisplayLanguageListener {
 			}
 
 			return true, func() {
+				app.App().Config().DisplayLanguage = lang
 				t.refreshTooltip()
 			}
 		},
@@ -100,6 +101,7 @@ func (t *tray) colorThemeListener() menus.ColorThemeListener {
 			}
 
 			return true, func() {
+				app.App().Config().ColorTheme = theme
 				t.refreshTooltip()
 				runtime.Show(t.wailsCtx)
 			}

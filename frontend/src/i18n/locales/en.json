@@ -1,3 +1,19 @@
 {
-  "lang": "English"
+  "lang": "English",
+  "menu": {
+    "main": {
+      "title": "Main",
+      "home": "Home",
+      "settings": "Settings",
+      "about": "About"
+    },
+    "test": {
+      "title": "Test",
+      "test": "Test"
+    }
+  },
+  "footer": {
+    "openVitePress": "Open VitePress Docs",
+    "openSwagger": "Open Swagger Docs"
+  }
 }

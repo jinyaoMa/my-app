@@ -5,8 +5,7 @@
 </template>
 
 <script setup lang="ts" name="MyMain">
-import type { StyleValue } from "vue";
-import { computed } from "vue";
+import { computed, StyleValue } from "vue";
 
 const style = computed<StyleValue>(() => ({
   flexGrow: 1,
