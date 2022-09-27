@@ -38,13 +38,13 @@ const openSwagger = () => {
       </my-menu>
     </my-main>
     <my-footer class="sidebar-footer">
-      <div>
+      <div class="sidebar-footer-line">
         <my-link @click="openVitePress" underline>
           <my-icon name="external-link"></my-icon>
           <span>{{ t("footer.openVitePress") }}</span>
         </my-link>
       </div>
-      <div>
+      <div class="sidebar-footer-line">
         <my-link @click="openSwagger" underline>
           <my-icon name="external-link"></my-icon>
           <span>{{ t("footer.openSwagger") }}</span>
@@ -68,6 +68,9 @@ const openSwagger = () => {
   &-main,
   &-footer {
     padding: 2em;
+  }
+  &-footer-line {
+    margin: 0.5em 0;
   }
 }
 [class*="my-icon-"] {
