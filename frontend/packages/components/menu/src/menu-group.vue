@@ -26,13 +26,13 @@ const menuSize = inject<SizeRef>("my-menu-size") || ref(props.size);
 
 const style = computed<StyleValue>(() => {
   const size = props.size || menuSize.value;
-  let marginBottom = 0.6;
+  let marginBottom = 1;
   switch (size) {
     case "large":
-      marginBottom += 0.3;
+      marginBottom += 0.5;
       break;
     case "small":
-      marginBottom -= 0.3;
+      marginBottom -= 0.5;
   }
   return {
     marginBottom: marginBottom + "em",
@@ -41,16 +41,16 @@ const style = computed<StyleValue>(() => {
 
 const titleStyle = computed<StyleValue>(() => {
   const size = props.size || menuSize.value;
-  let lineHeight = 2.6;
+  let marginBottom = 0.5;
   switch (size) {
     case "large":
-      lineHeight += 0.3;
+      marginBottom += 0.2;
       break;
     case "small":
-      lineHeight -= 0.3;
+      marginBottom -= 0.2;
   }
   return {
-    lineHeight,
+    marginBottom: marginBottom + "em",
   };
 });
 </script>
@@ -62,6 +62,7 @@ const titleStyle = computed<StyleValue>(() => {
 
   &__title {
     font-size: var(--my-font-size-xs);
+    line-height: var(--my-line-height-sm);
     color: var(--my-color-text-secondary);
   }
 

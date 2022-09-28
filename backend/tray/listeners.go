@@ -3,8 +3,8 @@ package tray
 import (
 	"fmt"
 	"my-app/backend/app"
-	"my-app/backend/model"
 	"my-app/backend/pkg/i18n"
+	"my-app/backend/services"
 	"my-app/backend/tray/menus"
 	"my-app/backend/web"
 
@@ -63,12 +63,8 @@ func (t *tray) displayLanguageListener() menus.DisplayLanguageListener {
 			t.colorTheme.SetLocale()
 			t.quit.SetLocale()
 
-			option := model.MyOption{
-				Name: app.CfgDisplayLanguage,
-			}
-			result := option.Update(locale.Lang.Code)
-			if result.Error != nil {
-				app.App().TrayLog().Fatalf("failed to update language option: %+v\n", result.Error)
+			if err := services.SaveDisplayLanguageOption(locale.Lang.Code); err != nil {
+				app.App().TrayLog().Fatalf("failed to update language option: %+v\n", err)
 			}
 
 			return true, func() {
@@ -92,12 +88,8 @@ func (t *tray) colorThemeListener() menus.ColorThemeListener {
 			}
 			runtime.EventsEmit(t.wailsCtx, "onColorThemeChanged", theme)
 
-			option := model.MyOption{
-				Name: app.CfgColorTheme,
-			}
-			result := option.Update(theme)
-			if result.Error != nil {
-				app.App().TrayLog().Fatalf("failed to update theme option: %+v\n", result.Error)
+			if err := services.SaveColorThemeOption(theme); err != nil {
+				app.App().TrayLog().Fatalf("failed to update theme option: %+v\n", err)
 			}
 
 			return true, func() {
