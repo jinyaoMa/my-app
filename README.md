@@ -51,7 +51,7 @@ $ pnpm docs:dev # test vitepress docs individually
 $ pnpm docs:build # generate/update vitepress docs
 $ pnpm icons:build # build frontend/packages/icons
 $ pnpm design:build # build frontend/packages/design
-$ pnpm <(install|preinstall):(task)> # install/preinstall scripts trigger during project setup
+$ pnpm <[install|preinstall]:[task]> # install/preinstall scripts trigger during project setup
 ```
 
 ## Directory Structure
