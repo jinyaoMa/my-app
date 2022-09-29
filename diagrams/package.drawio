@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="Fwt0_S80Y8OOaiC3SIRB" name="第 1 页">
-        <mxGraphModel dx="617" dy="534" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="823" dy="712" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -119,13 +119,13 @@
                     <mxGeometry x="20" y="870" width="620" height="150" as="geometry"/>
                 </mxCell>
                 <mxCell id="32" value="&lt;span style=&quot;font-weight: normal&quot;&gt;model&lt;/span&gt;" style="shape=folder;fontStyle=1;tabWidth=80;tabHeight=30;tabPosition=left;html=1;boundedLbl=1;fontSize=14;" parent="1" vertex="1">
-                    <mxGeometry x="40" y="920" width="150" height="80" as="geometry"/>
+                    <mxGeometry x="255" y="920" width="150" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="67" value="" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="20" y="650" width="620" height="150" as="geometry"/>
                 </mxCell>
                 <mxCell id="34" value="&lt;span style=&quot;font-weight: normal&quot;&gt;app&lt;/span&gt;" style="shape=folder;fontStyle=1;tabWidth=80;tabHeight=30;tabPosition=left;html=1;boundedLbl=1;fontSize=14;" parent="1" vertex="1">
-                    <mxGeometry x="40" y="700" width="150" height="80" as="geometry"/>
+                    <mxGeometry x="400" y="700" width="150" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="68" value="Data Layer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;spacing=0;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="40" y="880" width="150" height="30" as="geometry"/>
@@ -162,13 +162,13 @@
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="81" value="&lt;span style=&quot;font-weight: normal&quot;&gt;service&lt;/span&gt;" style="shape=folder;fontStyle=1;tabWidth=80;tabHeight=30;tabPosition=left;html=1;boundedLbl=1;fontSize=14;" parent="1" vertex="1">
-                    <mxGeometry x="330" y="700" width="150" height="80" as="geometry"/>
+                    <mxGeometry x="110" y="700" width="150" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="82" value="&amp;lt;&amp;lt;import&amp;gt;&amp;gt;" style="html=1;endArrow=open;endSize=12;dashed=1;verticalAlign=bottom;jumpStyle=none;fontSize=14;" parent="1" source="81" target="34" edge="1">
-                    <mxGeometry x="-0.0909" width="160" relative="1" as="geometry">
+                    <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="340" y="590" as="sourcePoint"/>
                         <mxPoint x="340" y="660" as="targetPoint"/>
-                        <mxPoint x="1" as="offset"/>
+                        <mxPoint x="-1" as="offset"/>
                     </mxGeometry>
                 </mxCell>
             </root>
