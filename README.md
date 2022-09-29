@@ -51,12 +51,12 @@ $ pnpm docs:dev # test vitepress docs individually
 $ pnpm docs:build # generate/update vitepress docs
 $ pnpm icons:build # build frontend/packages/icons
 $ pnpm design:build # build frontend/packages/design
-$ pnpm ... # install/preinstall scripts trigger during project setup
+$ pnpm <(install|preinstall):(task)> # install/preinstall scripts trigger during project setup
 ```
 
 ## Directory Structure
 
-```bash
+```yaml
 .
 ├── .tools # auto-generated, development tools/CLIs
 ├── .vscode # extensions for VS Code
@@ -94,25 +94,25 @@ $ pnpm ... # install/preinstall scripts trigger during project setup
 │       │   ├── docs # auto-generated, try script `docs:build`
 │       │   ├── swagger # auto-generated, try script `swag:docs`
 │       │   ├── static.go # manage static sources
-│       │   └── ...
+│       │   └── # ...
 │       ├── air.go # special function for air to run web service individually
 │       ├── router.go # entry point of swaggo docs generator, manage routes for API
 │       └── web.go # web service
 ├── build # sources to use during wails build process
 │   ├── bin # auto-generated, try script `wails:dev` or `wails:build`
-│   └── ...
+│   └── # ...
 ├── diagrams # diagrams about 4+1 view model
 ├── docs # vitepress documentation
 ├── frontend # sources related to frontend code, workplace managed by PNPM
 │   ├── packages # frontend components, icons, etc.
 │   ├── src # wails frontend sources
 │   │   ├── vite-env.d.ts # put go struct associated types into namespace app
-│   │   └── ...
-│   └── ...
+│   │   └── # ...
+│   └── # ...
 ├── main.go # wails main application, presentations & services layer
 ├── wails_life_cycle.go # wails life cycle
 ├── wails.json # wails CLI config
-└── ...
+└── # ...
 ```
 
 ## Development View

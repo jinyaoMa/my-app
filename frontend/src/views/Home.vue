@@ -21,7 +21,7 @@ const { t } = useI18n();
       </a>
       <div class="divider"></div>
       <a href="https://vitejs.dev" target="_blank">
-        <img src="../assets/vite.svg" class="logo" alt="Vite logo" />
+        <img src="../assets/vite.svg" class="logo vite" alt="Vite logo" />
       </a>
       <div class="divider"></div>
       <a href="https://vuejs.org/" target="_blank">
@@ -54,21 +54,29 @@ const { t } = useI18n();
   will-change: filter;
   transition: filter 0.2s;
 
-  &:hover {
-    filter: drop-shadow(0 0 2em #46adeaaa);
-  }
   &.wails:hover {
-    filter: drop-shadow(0 0 1em #e55555aa);
+    filter: drop-shadow(0 0 0.5em #ff6767aa);
+  }
+  &.avatar:hover {
+    filter: drop-shadow(0 0 1em #66c7ffaa);
+  }
+  &.vite:hover {
+    filter: drop-shadow(0 0 1em #636bfaaa);
+  }
+  &.vue:hover {
+    filter: drop-shadow(0 0 1em #66ffbaaa);
   }
 }
 .divider {
   height: 3em;
-  margin-bottom: 2.3em;
+  margin-bottom: 1.5em;
   border-left: var(--my-border-width) solid var(--my-color-border-light);
 }
 .appname {
   text-align: center;
   font-size: 3em;
+  line-height: var(--my-line-height-sm);
+  margin-top: 0.5em;
 }
 .by {
   text-align: center;

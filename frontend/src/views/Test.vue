@@ -70,6 +70,9 @@ a {
 }
 a:hover {
   color: #535bf2;
+  @media (prefers-color-scheme: light) {
+    color: #747bff;
+  }
 }
 
 h1 {
@@ -84,7 +87,10 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #f3f2f1;
+  background-color: #1a1a1a;
+  @media (prefers-color-scheme: light) {
+    background-color: #f9f9f9;
+  }
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -119,5 +125,14 @@ button:focus-visible {
 
 .card {
   padding: 2em;
+}
+
+:root.my-theme-light {
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
 }
 </style>
