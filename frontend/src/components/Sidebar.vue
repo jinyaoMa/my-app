@@ -1,8 +1,16 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { EventsOn } from "../../wailsjs/runtime";
 import { BrowserOpenURL } from "../../wailsjs/runtime";
 
 const { t } = useI18n();
+
+const isWebServiceStart = ref(false);
+EventsOn("onWebServiceChanged", (isStart: boolean) => {
+  console.log("onWebServiceChanged", isStart);
+  isWebServiceStart.value = isStart;
+});
 
 const openVitePress = () => {
   BrowserOpenURL("https://localhost:10443/docs/");
@@ -38,26 +46,21 @@ const openSwagger = () => {
       </my-menu>
     </my-main>
     <my-footer class="sidebar-footer">
-      <div class="sidebar-footer-line">
-        <my-link @click="openVitePress" underline>
-          <my-icon name="external-link"></my-icon>
-          <span>{{ t("footer.openVitePress") }}</span>
-        </my-link>
-      </div>
-      <div class="sidebar-footer-line">
-        <my-link @click="openSwagger" underline>
-          <my-icon name="external-link"></my-icon>
-          <span>{{ t("footer.openSwagger") }}</span>
-        </my-link>
-      </div>
-      <div
-        :style="{
-          color: 'var(--my-color-text-placeholder)',
-          marginTop: '1em',
-        }"
-      >
-        © 2022 jinyaoMa
-      </div>
+      <template v-if="isWebServiceStart">
+        <div class="sidebar-footer-line">
+          <my-link @click="openVitePress" underline>
+            <my-icon name="external-link"></my-icon>
+            <span>{{ t("footer.openVitePress") }}</span>
+          </my-link>
+        </div>
+        <div class="sidebar-footer-line">
+          <my-link @click="openSwagger" underline>
+            <my-icon name="external-link"></my-icon>
+            <span>{{ t("footer.openSwagger") }}</span>
+          </my-link>
+        </div>
+      </template>
+      <div class="copyright">© 2022 jinyaoMa</div>
     </my-footer>
   </my-container>
 </template>
@@ -72,6 +75,10 @@ const openSwagger = () => {
   &-footer-line {
     margin: 0.5em 0;
   }
+}
+.copyright {
+  color: var(--my-color-text-placeholder);
+  margin-top: 1em;
 }
 [class*="my-icon-"] {
   margin-right: 0.5em;

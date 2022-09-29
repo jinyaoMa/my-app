@@ -5,6 +5,7 @@
     "light": "Light",
     "dark": "Dark"
   },
+  "appname": "My Application",
   "menu": {
     "main": {
       "title": "Main",

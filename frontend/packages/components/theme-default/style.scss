@@ -1,8 +1,6 @@
 @import "./mixin.scss";
 
 :root {
-  color-scheme: light dark;
-
   /* dimensions */
   // font size
   --my-font-size-xs: 12px; // supplementary text
@@ -32,6 +30,7 @@
 
 /* colors */
 @mixin light-colors {
+  color-scheme: light;
   @include main-colors(
     $colorsMap: (
       // brand color
@@ -59,6 +58,7 @@
   --my-color-background-base: #ffffff;
 }
 @mixin dark-colors {
+  color-scheme: dark;
   @include main-colors(
     $colorsMap: (
       // brand color

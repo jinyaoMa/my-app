@@ -7,20 +7,27 @@ import {
 } from "../../wailsjs/runtime";
 
 const count = ref(0);
-const msg = ref("Vite + Vue");
+const msg = ref("Wails + Vite + Vue");
 </script>
 
 <template>
   <div class="test">
     <div>
+      <a href="https://wails.io/" target="_blank">
+        <img
+          src="../assets/wails-logo-textless.svg"
+          class="logo wails"
+          alt="Wails logo"
+        />
+      </a>
       <a href="https://vitejs.dev" target="_blank">
-        <img src="/vite.svg" class="logo" alt="Vite logo" />
+        <img src="../assets/vite.svg" class="logo" alt="Vite logo" />
       </a>
       <a href="https://vuejs.org/" target="_blank">
         <img src="../assets/vue.svg" class="logo vue" alt="Vue logo" />
       </a>
-      <a href="#" target="_blank">
-        <img src="/icon.svg" class="logo avatar" />
+      <a href="https://github.com/jinyaoMa" target="_blank">
+        <img src="/icon.svg" class="logo avatar" alt="Author logo" />
       </a>
     </div>
     <h1>{{ msg }}</h1>
@@ -51,6 +58,8 @@ const msg = ref("Vite + Vue");
 
 <style lang="scss" scoped>
 .test {
+  width: 100%;
+  max-width: 1024px;
   text-align: center;
 }
 
@@ -98,8 +107,11 @@ button:focus-visible {
 .logo.vue:hover {
   filter: drop-shadow(0 0 2em #42b883aa);
 }
+.logo.wails:hover {
+  filter: drop-shadow(0 0 2em #e55555aa);
+}
 .logo.avatar:hover {
-  filter: drop-shadow(0 0 2em #99d2f4);
+  filter: drop-shadow(0 0 2em #46adeaaa);
 }
 .read-the-docs {
   color: #888;

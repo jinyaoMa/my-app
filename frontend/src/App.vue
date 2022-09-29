@@ -22,7 +22,7 @@ EventsOn("onColorThemeChanged", (theme: string) => {
       <Sidebar></Sidebar>
     </my-aside>
     <my-main class="app-main">
-      <router-view class="app-main-inner"></router-view>
+      <router-view></router-view>
     </my-main>
   </my-container>
 </template>
@@ -33,9 +33,10 @@ EventsOn("onColorThemeChanged", (theme: string) => {
   border-top: var(--my-border-width) solid var(--my-color-border-extra-light);
   &-main {
     padding: 2em;
-    &-inner {
-      margin: 0 auto;
-    }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
   }
 }
 </style>

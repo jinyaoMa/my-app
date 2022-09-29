@@ -5,6 +5,7 @@
     "light": "浅色",
     "dark": "深色"
   },
+  "appname": "我的应用程序",
   "menu": {
     "main": {
       "title": "主菜单",

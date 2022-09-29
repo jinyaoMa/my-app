@@ -37,11 +37,13 @@ func (t *tray) webServiceListener() menus.WebServiceListener {
 		OnStart: func() (ok bool, complete func()) {
 			return web.Web().Start(), func() {
 				t.refreshTooltip()
+				runtime.EventsEmit(t.wailsCtx, "onWebServiceChanged", true)
 			}
 		},
 		OnStop: func() (ok bool, complete func()) {
 			return web.Web().Stop(), func() {
 				t.refreshTooltip()
+				runtime.EventsEmit(t.wailsCtx, "onWebServiceChanged", false)
 			}
 		},
 	}

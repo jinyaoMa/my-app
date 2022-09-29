@@ -66,6 +66,10 @@ GetOptions().then((config) => {
 
 <style lang="scss" scoped>
 .settings {
+  width: 100%;
   max-width: 560px;
+}
+h2 {
+  font-size: 2em;
 }
 </style>
