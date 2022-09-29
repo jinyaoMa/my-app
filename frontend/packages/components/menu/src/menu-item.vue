@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts" name="MyMenuItem">
-import { StyleValue, ref, computed, inject, withDefaults } from "vue";
+import { StyleValue, computed, inject, withDefaults } from "vue";
 import { Size, SizeRef } from "../../types";
 
 const props = withDefaults(
@@ -24,10 +24,10 @@ const props = withDefaults(
     to: "#",
   }
 );
-const menuSize = inject<SizeRef>("my-menu-size") || ref(props.size);
+const menuSize = inject<SizeRef>("my-menu-size");
 
 const style = computed<StyleValue>(() => {
-  const size = props.size || menuSize.value;
+  const size = props.size || menuSize?.value;
   let lineHeight = 2.6;
   let space = "--my-space";
   let radius = "--my-border-radius";

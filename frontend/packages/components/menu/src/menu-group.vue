@@ -1,6 +1,6 @@
 <template>
   <li class="my-menu-group" :style="style">
-    <span class="my-menu-group__title" :style="titleStyle">{{
+    <span v-if="props.title" class="my-menu-group__title" :style="titleStyle">{{
       props.title
     }}</span>
     <ul class="my-menu-group__menu">
@@ -10,22 +10,20 @@
 </template>
 
 <script setup lang="ts" name="MyMenuGroup">
-import { computed, inject, ref, StyleValue, withDefaults } from "vue";
+import { computed, inject, StyleValue, withDefaults } from "vue";
 import { Size, SizeRef } from "../../types";
 
 const props = withDefaults(
   defineProps<{
-    title: string;
+    title?: string;
     size?: Size;
   }>(),
-  {
-    title: "[Title]",
-  }
+  {}
 );
-const menuSize = inject<SizeRef>("my-menu-size") || ref(props.size);
+const menuSize = inject<SizeRef>("my-menu-size");
 
 const style = computed<StyleValue>(() => {
-  const size = props.size || menuSize.value;
+  const size = props.size || menuSize?.value;
   let marginBottom = 1;
   switch (size) {
     case "large":
@@ -40,7 +38,7 @@ const style = computed<StyleValue>(() => {
 });
 
 const titleStyle = computed<StyleValue>(() => {
-  const size = props.size || menuSize.value;
+  const size = props.size || menuSize?.value;
   let marginBottom = 0.5;
   switch (size) {
     case "large":

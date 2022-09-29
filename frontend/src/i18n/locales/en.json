@@ -1,5 +1,10 @@
 {
   "lang": "English",
+  "theme": {
+    "system": "System Default",
+    "light": "Light",
+    "dark": "Dark"
+  },
   "menu": {
     "main": {
       "title": "Main",
@@ -15,5 +20,19 @@
   "footer": {
     "openVitePress": "Open VitePress Docs",
     "openSwagger": "Open Swagger Docs"
+  },
+  "settings": {
+    "general": {
+      "legend": "General",
+      "displayLanguage": "Display Language",
+      "colorTheme": "Color Theme",
+      "logPath": "Log Path"
+    },
+    "webService": {
+      "legend": "Web Service",
+      "portHttp": "HTTP Port",
+      "portHttps": "HTTPS Port",
+      "dirCerts": "TLS Certificate Path"
+    }
   }
 }

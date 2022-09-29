@@ -9,10 +9,10 @@ EventsOn("onDisplayLanguageChanged", (lang: string) => {
   console.log("onDisplayLanguageChanged", lang);
   locale.value = lang;
 });
-const colorTheme = useColorTheme();
+const { changeTheme } = useColorTheme();
 EventsOn("onColorThemeChanged", (theme: string) => {
   console.log("onColorThemeChanged", theme);
-  colorTheme.theme = theme;
+  changeTheme(theme);
 });
 </script>
 

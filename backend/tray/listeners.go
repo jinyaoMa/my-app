@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"my-app/backend/app"
 	"my-app/backend/pkg/i18n"
-	"my-app/backend/services"
+	"my-app/backend/service"
 	"my-app/backend/tray/menus"
 	"my-app/backend/web"
 
@@ -63,12 +63,11 @@ func (t *tray) displayLanguageListener() menus.DisplayLanguageListener {
 			t.colorTheme.SetLocale()
 			t.quit.SetLocale()
 
-			if err := services.SaveDisplayLanguageOption(locale.Lang.Code); err != nil {
+			if err := service.Settings().SaveOption(app.CfgDisplayLanguage, locale.Lang.Code); err != nil {
 				app.App().TrayLog().Fatalf("failed to update language option: %+v\n", err)
 			}
 
 			return true, func() {
-				app.App().Config().DisplayLanguage = lang
 				t.refreshTooltip()
 			}
 		},
@@ -88,14 +87,12 @@ func (t *tray) colorThemeListener() menus.ColorThemeListener {
 			}
 			runtime.EventsEmit(t.wailsCtx, "onColorThemeChanged", theme)
 
-			if err := services.SaveColorThemeOption(theme); err != nil {
+			if err := service.Settings().SaveOption(app.CfgColorTheme, theme); err != nil {
 				app.App().TrayLog().Fatalf("failed to update theme option: %+v\n", err)
 			}
 
 			return true, func() {
-				app.App().Config().ColorTheme = theme
 				t.refreshTooltip()
-				runtime.Show(t.wailsCtx)
 			}
 		},
 	}

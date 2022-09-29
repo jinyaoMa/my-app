@@ -19,7 +19,8 @@
     $TypeDanger: #f56c6c 8%,
     $TypeInfo: #909399 12%,
   ),
-  $numOfExtra: 3
+  $numOfExtra: 3,
+  $dark: false
 ) {
   @for $i from 0 through $numOfExtra {
     @if $i == 0 {
@@ -28,9 +29,10 @@
       }
     } @else {
       @each $name, $attrs in $colorsMap {
-        --my-color-#{$name}-#{$i}: #{lighten(
-            list.nth($attrs, 1),
-            $i * list.nth($attrs, 2)
+        --my-color-#{$name}-#{$i}: #{if(
+            $dark,
+            darken(list.nth($attrs, 1), $i * list.nth($attrs, 2)),
+            lighten(list.nth($attrs, 1), $i * list.nth($attrs, 2))
           )};
       }
     }

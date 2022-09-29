@@ -14,3 +14,6 @@ export type SizeRef = Ref<Size>;
 
 export type Direction = "vertical" | "horizontal";
 export type DirectionRef = Ref<Direction>;
+
+export type LabelPosition = "left" | "top";
+export type LabelPositionRef = Ref<LabelPosition>;

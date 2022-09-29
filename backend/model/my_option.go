@@ -8,6 +8,10 @@ type MyOption struct {
 	Value string ``              // Option value associated with name
 }
 
+func (mo *MyOption) Load() *gorm.DB {
+	return db.Where(mo).Find(mo)
+}
+
 func (mo *MyOption) Update(newValue string) *gorm.DB {
 	return db.Model(mo).Where(mo).Updates(MyOption{
 		Value: newValue,

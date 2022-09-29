@@ -77,6 +77,9 @@ $ pnpm ... # install/preinstall scripts trigger during project setup
 │   │   ├── i18n # manage locale/translation strings for backend
 │   │   ├── log # define loggers for backend
 │   │   └── utils # helper functions
+│   ├── service # service module, business layer
+│   │   ├── service.go # initialize provided services
+│   │   └── settings.go # functions about configure application
 │   ├── tray # tray module, presentations & services layer
 │   │   ├── icons # tray icons
 │   │   ├── menus # tray menus
@@ -91,18 +94,21 @@ $ pnpm ... # install/preinstall scripts trigger during project setup
 │       │   ├── docs # auto-generated, try script `docs:build`
 │       │   ├── swagger # auto-generated, try script `swag:docs`
 │       │   ├── static.go # manage static sources
-│       │   └── ... # other static sources
+│       │   └── ...
 │       ├── air.go # special function for air to run web service individually
 │       ├── router.go # entry point of swaggo docs generator, manage routes for API
 │       └── web.go # web service
 ├── build # sources to use during wails build process
 │   ├── bin # auto-generated, try script `wails:dev` or `wails:build`
-│   └── ... # wails related sources
+│   └── ...
 ├── diagrams # diagrams about 4+1 view model
 ├── docs # vitepress documentation
 ├── frontend # sources related to frontend code, workplace managed by PNPM
 │   ├── packages # frontend components, icons, etc.
-│   └── ... # wails frontend related sources
+│   ├── src # wails frontend sources
+│   │   ├── vite-env.d.ts # put go struct associated types into namespace app
+│   │   └── ...
+│   └── ...
 ├── main.go # wails main application, presentations & services layer
 ├── wails_life_cycle.go # wails life cycle
 ├── wails.json # wails CLI config

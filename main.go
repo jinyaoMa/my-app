@@ -4,6 +4,7 @@ import (
 	"embed"
 	"my-app/backend/app"
 	"my-app/backend/pkg/utils"
+	"my-app/backend/service"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -45,8 +46,10 @@ func main() {
 		OnDomReady:         wlc.domReady,
 		OnShutdown:         wlc.shutdown,
 		OnBeforeClose:      wlc.beforeClose,
-		Bind:               []interface{}{},
-		WindowStartState:   options.Normal,
+		Bind: []interface{}{
+			service.Settings(),
+		},
+		WindowStartState: options.Normal,
 		Windows: &windows.Options{
 			WebviewIsTransparent:              true,
 			WindowIsTranslucent:               false,

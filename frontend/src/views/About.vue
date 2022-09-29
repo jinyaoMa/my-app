@@ -4,7 +4,7 @@ import { useColorTheme } from "../store/color-theme";
 import { EventsOn } from "../../wailsjs/runtime";
 
 const { t, locale } = useI18n();
-const colorTheme = useColorTheme();
+const { theme, changeTheme } = useColorTheme();
 </script>
 
 <template>

@@ -5,9 +5,10 @@ import {
   MyContainer,
   MyLink,
   MyMenu,
+  MyForm,
 } from "@jinyaoma/my-app-components";
 
-const components = [MyIcon, MyContainer, MyLink, MyMenu];
+const components = [MyIcon, MyContainer, MyLink, MyMenu, MyForm];
 
 const install = (app: App) => {
   components.map((item) => {

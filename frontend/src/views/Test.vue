@@ -1,15 +1,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useColorTheme } from "../store/color-theme";
 import {
   Hide,
   WindowMinimise,
   WindowToggleMaximise,
 } from "../../wailsjs/runtime";
-
-const { t } = useI18n();
-const colorTheme = useColorTheme();
 
 const count = ref(0);
 const msg = ref("Vite + Vue");
@@ -17,26 +12,6 @@ const msg = ref("Vite + Vue");
 
 <template>
   <div class="test">
-    <div
-      style="
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1em;
-      "
-    >
-      <a href="#" target="_blank">
-        <img src="/icon.svg" class="logo avatar" />
-      </a>
-      <div>
-        <my-icon fix-width></my-icon>
-      </div>
-      <button @click="Hide">Hide</button>
-      <button @click="WindowMinimise">WindowMinimise</button>
-      <button @click="WindowToggleMaximise">WindowToggleMaximise</button>
-      <div>{{ t("lang") }}</div>
-      <div>{{ colorTheme.theme }}</div>
-    </div>
     <div>
       <a href="https://vitejs.dev" target="_blank">
         <img src="/vite.svg" class="logo" alt="Vite logo" />
@@ -44,9 +19,15 @@ const msg = ref("Vite + Vue");
       <a href="https://vuejs.org/" target="_blank">
         <img src="../assets/vue.svg" class="logo vue" alt="Vue logo" />
       </a>
+      <a href="#" target="_blank">
+        <img src="/icon.svg" class="logo avatar" />
+      </a>
     </div>
     <h1>{{ msg }}</h1>
     <div class="card">
+      <button @click="Hide">Hide</button>&nbsp;
+      <button @click="WindowMinimise">WindowMinimise</button>&nbsp;
+      <button @click="WindowToggleMaximise">WindowToggleMaximise</button>&nbsp;
       <button type="button" @click="count++">count is {{ count }}</button>
       <p>
         Edit

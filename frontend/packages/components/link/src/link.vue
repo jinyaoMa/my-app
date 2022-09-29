@@ -28,7 +28,6 @@ const props = withDefaults(
     type: "default",
     underline: true,
     disabled: false,
-    href: "",
   }
 );
 const emit = defineEmits<{
@@ -36,7 +35,9 @@ const emit = defineEmits<{
 }>();
 
 const href = computed(() => {
-  return props.disabled || !props.href ? undefined : props.href;
+  if (!props.disabled) {
+    return props.href || undefined;
+  }
 });
 
 const handleClick = (e: MouseEvent) => {

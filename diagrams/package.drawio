@@ -161,6 +161,16 @@
                         <mxPoint x="20" y="50" as="offset"/>
                     </mxGeometry>
                 </mxCell>
+                <mxCell id="81" value="service" style="shape=folder;fontStyle=1;tabWidth=80;tabHeight=30;tabPosition=left;html=1;boundedLbl=1;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="330" y="700" width="150" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="82" value="&amp;lt;&amp;lt;import&amp;gt;&amp;gt;" style="html=1;endArrow=open;endSize=12;dashed=1;verticalAlign=bottom;jumpStyle=none;fontSize=14;" edge="1" parent="1" source="81" target="34">
+                    <mxGeometry x="-0.0909" width="160" relative="1" as="geometry">
+                        <mxPoint x="340" y="590" as="sourcePoint"/>
+                        <mxPoint x="340" y="660" as="targetPoint"/>
+                        <mxPoint x="1" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
             </root>
         </mxGraphModel>
     </diagram>

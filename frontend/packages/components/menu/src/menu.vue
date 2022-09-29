@@ -66,8 +66,8 @@ const style = computed<StyleValue>(() => ({
             color: var(--my-color-text-primary);
           }
           &.active {
-            color: var(--my-color-white);
-            background-color: var(--my-color-text-primary);
+            color: var(--my-color-primary);
+            background-color: var(--my-color-primary-3);
           }
         }
       } @else {
@@ -77,8 +77,8 @@ const style = computed<StyleValue>(() => ({
             color: var(--my-color-#{$type});
           }
           &.active {
-            color: var(--my-color-white);
-            background-color: var(--my-color-#{$type});
+            color: var(--my-color-#{$type});
+            background-color: var(--my-color-#{$type}-3);
           }
         }
       }
