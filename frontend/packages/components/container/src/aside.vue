@@ -18,6 +18,7 @@ const props = withDefaults(
 
 const style = computed<StyleValue>(() => ({
   width: props.width,
+  minWidth: props.width,
 }));
 </script>
 

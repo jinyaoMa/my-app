@@ -5,6 +5,7 @@ import vueSetupExtend from "vite-plugin-vue-setup-extend";
 import vueI18n from "@intlify/vite-plugin-vue-i18n";
 import Markdown from "vite-plugin-md"; // https://github.com/antfu/vite-plugin-md
 import MarkdownItPrism from "markdown-it-prism";
+import MarkdownItLinkAttributes from "markdown-it-link-attributes";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -28,6 +29,17 @@ export default defineConfig({
       markdownItSetup(md) {
         // add code syntax highlighting with Prism
         md.use(MarkdownItPrism);
+        md.use(MarkdownItLinkAttributes, [
+          {
+            matcher(href) {
+              return href.match(/^https?:\/\//);
+            },
+            attrs: {
+              target: "_blank",
+              rel: "noopener",
+            },
+          },
+        ]);
       },
     }),
   ],
