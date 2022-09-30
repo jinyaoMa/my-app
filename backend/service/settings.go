@@ -71,7 +71,7 @@ func (s *settings) ChooseLogPath(path string, title string) string {
 		TreatPackagesAsDirectories: false,
 	})
 	if err != nil {
-		app.App().ServiceLog().Fatalf("fail to open directory dialog: %+v\n", err)
+		app.App().ServiceLog().Fatalf("fail to open file dialog for ChooseLogPath: %+v\n", err)
 		return ""
 	}
 
@@ -79,6 +79,30 @@ func (s *settings) ChooseLogPath(path string, title string) string {
 		err = s.SaveOption(app.CfgLogPath, chosenPath)
 		if err != nil {
 			app.App().ServiceLog().Fatalf("fail to update log path: %+v\n", err)
+			return ""
+		}
+	}
+	return chosenPath
+}
+
+func (s *settings) ChooseDirCerts(path string, title string) string {
+	chosenPath, err := runtime.OpenDirectoryDialog(app.App().WailsContext(), runtime.OpenDialogOptions{
+		DefaultDirectory:           filepath.Dir(path),
+		Title:                      title,
+		ShowHiddenFiles:            true,
+		CanCreateDirectories:       true,
+		ResolvesAliases:            false,
+		TreatPackagesAsDirectories: false,
+	})
+	if err != nil {
+		app.App().ServiceLog().Fatalf("fail to open directory dialog for ChooseDirCerts: %+v\n", err)
+		return ""
+	}
+
+	if chosenPath != "" {
+		err = s.SaveOption(app.CfgWebDirCerts, chosenPath)
+		if err != nil {
+			app.App().ServiceLog().Fatalf("fail to update dir certs: %+v\n", err)
 			return ""
 		}
 	}

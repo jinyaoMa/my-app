@@ -2,7 +2,11 @@
 import { useI18n } from "vue-i18n";
 import { useColorTheme } from "../store/color-theme";
 import { EventsOn } from "../../wailsjs/runtime";
-import { GetOptions, ChooseLogPath } from "../../wailsjs/go/service/settings";
+import {
+  GetOptions,
+  ChooseLogPath,
+  ChooseDirCerts,
+} from "../../wailsjs/go/service/settings";
 import { ChangeLanguage, ChangeColorTheme } from "../../wailsjs/go/tray/tray";
 import { ResponseState } from "../../packages/components/types";
 import { ref } from "vue";
@@ -34,6 +38,20 @@ const changeLogPath = async (res: (state: ResponseState) => void) => {
       return;
     }
     options.value!.LogPath = newLogPath;
+    res("success");
+  }
+};
+const changeDirCerts = async (res: (state: ResponseState) => void) => {
+  if (options.value) {
+    const newDirCerts = await ChooseDirCerts(
+      options.value!.Web.DirCerts,
+      t("settings.chooseDirCerts")
+    );
+    if (newDirCerts === "") {
+      res("warning");
+      return;
+    }
+    options.value!.Web.DirCerts = newDirCerts;
     res("success");
   }
 };
@@ -110,7 +128,7 @@ const changeLogPath = async (res: (state: ResponseState) => void) => {
               disabled
             >
               <template #append>
-                <my-button type="primary">
+                <my-button type="primary" @click="changeDirCerts">
                   {{ t("settings.choosePath") }}
                 </my-button>
               </template>
