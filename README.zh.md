@@ -53,76 +53,76 @@
 ## NPM 脚本
 
 ```shell
-$ pnpm wails:dev # run wails in development mode
-$ pnpm wails:build # build wails application
-$ pnpm upx:compress # compress the generated executable by `wails:build` script
-$ pnpm air:dev # test web service individually
-$ pnpm swag:docs # generate/update swagger docs
-$ pnpm docs:dev # test vitepress docs individually
-$ pnpm docs:build # generate/update vitepress docs
-$ pnpm icons:build # build frontend/packages/icons
-$ pnpm design:build # build frontend/packages/design
-$ pnpm <[install|preinstall]:[task]> # install/preinstall scripts trigger during project setup
+$ pnpm wails:dev # 开发模式运行（带 wails，tray 和 web）
+$ pnpm wails:build # 编译导出 wails 可执行文件
+$ pnpm upx:compress # 压缩由 `wails:build` 导出的 wails 可执行文件
+$ pnpm air:dev # 单独测试 Web 服务
+$ pnpm swag:docs # 生成或更新 swagger 文档
+$ pnpm docs:dev # 单独测试 vitepress 文档
+$ pnpm docs:build # 生成或更新 vitepress 文档
+$ pnpm icons:build # 生成 iconfont (frontend/packages/icons)
+$ pnpm design:build # 生成组件库 (frontend/packages/design)
+$ pnpm <[install|preinstall]:[task]> # 安装项目依赖时会触发这些 install/preinstall 脚本
 ```
 
 ## 目录结构
 
 ```yaml
 .
-├── .tools # auto-generated, development tools/CLIs
-├── .vscode # extensions for VS Code
-├── air # sources related to air hot reload tool
-│   ├── bin # auto-generated, try script `air:dev`
-│   ├── .air.toml # air config
-│   └── main.go # run web service individually w/o wails and tray
-├── backend # sources related to backend code
-│   ├── app # app module, business layer
-│   │   ├── app.go # contain global state and resources
-│   │   ├── config.go # load application options from database
-│   │   ├── env.go # load os environment variable
-│   │   ├── logger.go # setup loggers
-│   ├── model # model module, data layer
-│   │   ├── model.go # database setup
-│   │   └── my_option.go # define application options for app config storage
-│   ├── pkg # pkg module, cross cutting
-│   │   ├── i18n # manage locale/translation strings for backend
-│   │   ├── log # define loggers for backend
-│   │   └── utils # helper functions
-│   ├── service # service module, business layer
-│   │   ├── service.go # initialize provided services
-│   │   └── settings.go # functions about configure application
-│   ├── tray # tray module, presentations & services layer
-│   │   ├── icons # tray icons
-│   │   ├── menus # tray menus
-│   │   ├── listeners.go # listen to tray menu-item click events
-│   │   └── tray.go # system tray
-│   └── web # web module, presentations & services layer
-│       ├── api # API services
-│       ├── auth # Auth services
-│       ├── middleware # custom gin middlewares
-│       ├── static # static websites and sources
-│       │   ├── certs # auto-generated for localhost TLS, try script `install:certs`
-│       │   ├── docs # auto-generated, try script `docs:build`
-│       │   ├── swagger # auto-generated, try script `swag:docs`
-│       │   ├── static.go # manage static sources
+├── .tools # 自动生成，开发工具及 CLIs
+├── .vscode # VS Code 扩展
+├── air # air 热重载工具相关源文件
+│   ├── bin # 自动生成，可以尝试 `air:dev` 脚本
+│   ├── .air.toml # air 配置
+│   └── main.go # 单独运行 Web 服务（不带 wails 和 tray）
+├── backend # 后端相关源文件
+│   ├── app # app 模块，业务层
+│   │   ├── app.go # 存放全局状态及资源
+│   │   ├── config.go # 从数据库加载应用设置
+│   │   ├── env.go # 加载系统环境变量
+│   │   ├── logger.go # 初始化 loggers
+│   ├── model # model 模块，数据层
+│   │   ├── model.go # 初始化 database
+│   │   └── my_option.go # 定义 options 表，用于储存应用设置
+│   ├── pkg # pkg 模块，横切层
+│   │   ├── i18n # 后端 i18n 语言源文件
+│   │   ├── log # 定义后端 loggers
+│   │   └── utils # 辅助函数/方法
+│   ├── service # service 模块，业务层
+│   │   ├── service.go # 初始化提供给服务
+│   │   └── settings.go # 应用设置相关函数/方法
+│   ├── tray # tray 模块，表示层 & 服务层
+│   │   ├── icons # tray 图标
+│   │   ├── menus # tray 菜单
+│   │   ├── listeners.go # 监听 tray 菜单项点击事件
+│   │   └── tray.go # 系统 tray 入口
+│   └── web # web 模块，表示层 & 服务层
+│       ├── api # API 服务
+│       ├── auth # Auth 服务
+│       ├── middleware # 自定义的 gin 中间件
+│       ├── static # 静态网站及资源
+│       │   ├── certs # 自动生成的 localhost TLS 证书, 可以尝试 `install:certs` 脚本
+│       │   ├── docs # 自动生成，可以尝试 `docs:build` 脚本
+│       │   ├── swagger # 自动生成，可以尝试 `swag:docs` 脚本
+│       │   ├── static.go # 管理静态资源
 │       │   └── # ...
-│       ├── air.go # special function for air to run web service individually
-│       ├── router.go # entry point of swaggo docs generator, manage routes for API
-│       └── web.go # web service
-├── build # sources to use during wails build process
-│   ├── bin # auto-generated, try script `wails:dev` or `wails:build`
+│       ├── air.go # 包含提供给 air 的特殊方法，用于单独运行 Web 服务
+│       ├── router.go # swaggo 生成文档入口, 管理 API 路由
+│       └── web.go # web 服务入口
+├── build # 编译 wails 时用到的资源...
+│   ├── bin # 自动生成，可以尝试 `wails:dev` 或 `wails:build` 脚本
 │   └── # ...
-├── diagrams # diagrams about 4+1 view model
-├── docs # vitepress documentation
-├── frontend # sources related to frontend code, workplace managed by PNPM
-│   ├── packages # frontend components, icons, etc.
-│   ├── src # wails frontend sources
+├── diagrams # 4+1 视图模型相关图解
+├── docs # vitepress 文档
+├── frontend # 前端相关源文件（用 PNPM 管理 workspace）
+│   ├── packages # 前端组件、图标字体等等
+│   ├── src # wails 前端源文件
 │   │   ├── vite-env.d.ts # put go struct associated types into it
 │   │   └── # ...
 │   └── # ...
-├── main.go # wails main application, presentations & services layer
-├── wails_life_cycle.go # wails life cycle
-├── wails.json # wails CLI config
+├── main.go # wails main 入口, 表示层 & 服务层
+├── wails_life_cycle.go # wails 生命周期
+├── wails.json # wails CLI 配置
 └── # ...
 ```
 
