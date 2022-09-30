@@ -7,8 +7,8 @@
 > 你可以在[这里](./screenshots/)找到所有的预览截图。
 
 <p align="center">
-<img width="1024" src="./screenshots/home.jpg" alt="Home">
-<img width="1024" src="./screenshots/settings.jpg" alt="Settings">
+<img width="1024" src="./screenshots/home.zh.jpg" alt="Home">
+<img width="1024" src="./screenshots/settings.zh.jpg" alt="Settings">
 </p>
 
 ## 技术
