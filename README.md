@@ -2,6 +2,15 @@
 
 My Application is a continuously updated personal service collection.
 
+## Starter Code Preview
+
+> You can find all preview screenshots [here](./screenshots/).
+
+<p align="center">
+<img width="1024" src="./screenshots/home.jpg" alt="Home">
+<img width="1024" src="./screenshots/settings.jpg" alt="Settings">
+</p>
+
 ## Technologies
 
 | Technology  | Role                                                  | Sources                                 |

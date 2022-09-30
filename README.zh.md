@@ -2,6 +2,15 @@
 
 “我的应用程序” 是一个不断更新的个人服务集合。
 
+## 初始代码效果预览
+
+> 你可以在[这里](./screenshots/)找到所有的预览截图。
+
+<p align="center">
+<img width="1024" src="./screenshots/home.jpg" alt="Home">
+<img width="1024" src="./screenshots/settings.jpg" alt="Settings">
+</p>
+
 ## 技术
 
 | 技术        | 作用                                                  | 来源                                    |

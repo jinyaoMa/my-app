@@ -32,7 +32,7 @@ export default defineConfig({
         md.use(MarkdownItLinkAttributes, [
           {
             matcher(href) {
-              return href.match(/^https?:\/\//);
+              return href.match(/^(\.|https?:\/\/)/);
             },
             attrs: {
               target: "_blank",
