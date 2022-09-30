@@ -1,5 +1,7 @@
 # My Application (my-app)
 
+> [English](./README.md) | [简体中文](./README.zh.md)
+
 My Application is a continuously updated personal service collection.
 
 ## Starter Code Preview
