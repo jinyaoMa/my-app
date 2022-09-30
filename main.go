@@ -5,6 +5,7 @@ import (
 	"my-app/backend/app"
 	"my-app/backend/pkg/utils"
 	"my-app/backend/service"
+	"my-app/backend/tray"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -47,6 +48,7 @@ func main() {
 		OnShutdown:         wlc.shutdown,
 		OnBeforeClose:      wlc.beforeClose,
 		Bind: []interface{}{
+			tray.Tray(),
 			service.Settings(),
 		},
 		WindowStartState: options.Normal,

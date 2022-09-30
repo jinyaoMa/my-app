@@ -1,11 +1,15 @@
 {
-  "lang": "English",
+  "lang": {
+    "en": "English",
+    "zh": "简体中文"
+  },
   "theme": {
     "system": "System Default",
     "light": "Light",
     "dark": "Dark"
   },
   "appname": "My Application",
+  "by": "By jinyaoMa",
   "menu": {
     "main": {
       "title": "Main",
@@ -31,9 +35,13 @@
     },
     "webService": {
       "legend": "Web Service",
+      "autoStart": "Auto Start",
       "portHttp": "HTTP Port",
       "portHttps": "HTTPS Port",
       "dirCerts": "TLS Certificate Path"
-    }
+    },
+    "choosePath": "Choose Path",
+    "chooseLogPath": "Choose your log path",
+    "chooseDirCerts": "Choose your TLS certificate path"
   }
 }

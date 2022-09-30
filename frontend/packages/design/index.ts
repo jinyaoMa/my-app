@@ -6,9 +6,21 @@ import {
   MyLink,
   MyMenu,
   MyForm,
+  MySelect,
+  MyInput,
+  MyButton,
 } from "@jinyaoma/my-app-components";
 
-const components = [MyIcon, MyContainer, MyLink, MyMenu, MyForm];
+const components = [
+  MyIcon,
+  MyContainer,
+  MyLink,
+  MyMenu,
+  MyForm,
+  MySelect,
+  MyInput,
+  MyButton,
+];
 
 const install = (app: App) => {
   components.map((item) => {

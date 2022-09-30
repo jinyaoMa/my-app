@@ -19,16 +19,19 @@ func DefaultWailsLifeCycle() *WailsLifeCycle {
 // startup is called at application startup
 func (wlc *WailsLifeCycle) startup(ctx context.Context) {
 	wlc.ctx = ctx
-	tray.Tray().SetWailsContext(ctx)
-	app.App().WailsLog().Print("WAILS START UP")
+	app.App().SetWailsContext(ctx).WailsLog().Print("WAILS START UP")
 }
 
 // domReady is called after the front-end dom has been loaded
 func (wlc *WailsLifeCycle) domReady(ctx context.Context) {
 	cfg := app.App().Config()
-	tray.Tray().
+	t := tray.Tray().
 		ChangeColorTheme(cfg.ColorTheme).
 		ChangeLanguage(cfg.DisplayLanguage)
+	if cfg.Web.AutoStart == "true" {
+		t.StartWebService()
+	}
+
 	app.App().WailsLog().Print("WAILS DOM READY")
 }
 

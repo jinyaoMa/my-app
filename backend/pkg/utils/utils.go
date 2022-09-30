@@ -27,3 +27,22 @@ func init() {
 func GetExecutablePath(elem ...string) string {
 	return filepath.Join(append([]string{executablePath}, elem...)...)
 }
+
+func IsDir(path string) bool {
+	s, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return s.IsDir()
+}
+
+func GetDialogDirectoryPath(path string) string {
+	if IsDir(path) {
+		return path
+	}
+	next := filepath.Dir(path)
+	if next == path {
+		return path
+	}
+	return GetDialogDirectoryPath(path)
+}

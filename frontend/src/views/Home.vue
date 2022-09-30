@@ -29,7 +29,7 @@ const { t } = useI18n();
       </a>
     </div>
     <div class="appname">{{ t("appname") }}</div>
-    <div class="by">By jinyaoMa</div>
+    <div class="by">{{ t("by") }}</div>
   </my-container>
 </template>
 

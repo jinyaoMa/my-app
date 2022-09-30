@@ -3,10 +3,14 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { EventsOn } from "../../wailsjs/runtime";
 import { BrowserOpenURL } from "../../wailsjs/runtime";
+import { IsWebServiceRunning } from "../../wailsjs/go/tray/tray";
 
 const { t } = useI18n();
 
 const isWebServiceStart = ref(false);
+IsWebServiceRunning().then((isStart) => {
+  isWebServiceStart.value = isStart;
+});
 EventsOn("onWebServiceChanged", (isStart: boolean) => {
   console.log("onWebServiceChanged", isStart);
   isWebServiceStart.value = isStart;

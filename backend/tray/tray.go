@@ -1,7 +1,6 @@
 package tray
 
 import (
-	"context"
 	"embed"
 	"fmt"
 	"my-app/backend/app"
@@ -24,7 +23,6 @@ var (
 )
 
 type tray struct {
-	wailsCtx        context.Context
 	openWindow      *menus.OpenWindow
 	webService      *menus.WebService
 	displayLanguage *menus.DisplayLanguage
@@ -40,9 +38,8 @@ func Tray() *tray {
 	return instance
 }
 
-func (t *tray) SetWailsContext(ctx context.Context) *tray {
-	t.wailsCtx = ctx
-	return t
+func (t *tray) IsWebServiceRunning() bool {
+	return t.webService.IsEnabled()
 }
 
 func (t *tray) StartWebService() *tray {
@@ -134,7 +131,7 @@ func (t *tray) onExit() {
 	t.quit.StopWatch()
 
 	web.Web().Stop()
-	runtime.Quit(t.wailsCtx)
+	runtime.Quit(app.App().WailsContext())
 }
 
 func (t *tray) refreshTooltip() {
@@ -142,7 +139,7 @@ func (t *tray) refreshTooltip() {
 	separator := ": "
 
 	WebServiceState := locale.WebService.Disabled
-	if t.webService.IsEnabled() {
+	if t.IsWebServiceRunning() {
 		WebServiceState = locale.WebService.Enabled
 	}
 

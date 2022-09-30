@@ -18,9 +18,16 @@ namespace app {
     DisplayLanguage: string;
     LogPath: string;
     Web: {
+      AutoStart: string;
       DirCerts: string;
       PortHttp: string;
       PortHttps: string;
     };
+  };
+}
+namespace types {
+  declare type NormalResponse = {
+    Message: string;
+    Error: string;
   };
 }

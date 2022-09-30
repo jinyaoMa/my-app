@@ -3,6 +3,9 @@ package service
 import (
 	"my-app/backend/app"
 	"my-app/backend/model"
+	"path/filepath"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type settings struct{}
@@ -20,6 +23,8 @@ func (s *settings) SaveOption(name string, value string) error {
 			app.App().Config().ColorTheme = value
 		case app.CfgLogPath:
 			app.App().Config().LogPath = value
+		case app.CfgWebAutoStart:
+			app.App().Config().Web.AutoStart = value
 		case app.CfgWebPortHttp:
 			app.App().Config().Web.PortHttp = value
 		case app.CfgWebPortHttps:
@@ -39,6 +44,8 @@ func (s *settings) GetOption(name string) string {
 		return app.App().Config().ColorTheme
 	case app.CfgLogPath:
 		return app.App().Config().LogPath
+	case app.CfgWebAutoStart:
+		return app.App().Config().Web.AutoStart
 	case app.CfgWebPortHttp:
 		return app.App().Config().Web.PortHttp
 	case app.CfgWebPortHttps:
@@ -51,4 +58,29 @@ func (s *settings) GetOption(name string) string {
 
 func (s *settings) GetOptions() *app.Config {
 	return app.App().Config()
+}
+
+func (s *settings) ChooseLogPath(path string, title string) string {
+	chosenPath, err := runtime.OpenFileDialog(app.App().WailsContext(), runtime.OpenDialogOptions{
+		DefaultDirectory:           filepath.Dir(path),
+		DefaultFilename:            filepath.Base(path),
+		Title:                      title,
+		ShowHiddenFiles:            true,
+		CanCreateDirectories:       true,
+		ResolvesAliases:            false,
+		TreatPackagesAsDirectories: false,
+	})
+	if err != nil {
+		app.App().ServiceLog().Fatalf("fail to open directory dialog: %+v\n", err)
+		return ""
+	}
+
+	if chosenPath != "" {
+		err = s.SaveOption(app.CfgLogPath, chosenPath)
+		if err != nil {
+			app.App().ServiceLog().Fatalf("fail to update log path: %+v\n", err)
+			return ""
+		}
+	}
+	return chosenPath
 }

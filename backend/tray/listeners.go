@@ -15,7 +15,7 @@ import (
 func (t *tray) openWindowListener() menus.OpenWindowListener {
 	return menus.OpenWindowListener{
 		OnOpenWindow: func() {
-			runtime.Show(t.wailsCtx)
+			runtime.Show(app.App().WailsContext())
 		},
 	}
 }
@@ -24,26 +24,26 @@ func (t *tray) webServiceListener() menus.WebServiceListener {
 	return menus.WebServiceListener{
 		OnOpenVitePress: func() {
 			runtime.BrowserOpenURL(
-				t.wailsCtx,
+				app.App().WailsContext(),
 				fmt.Sprintf("https://localhost%s/docs/", app.App().WebConfig().PortHttps),
 			)
 		},
 		OnOpenSwagger: func() {
 			runtime.BrowserOpenURL(
-				t.wailsCtx,
+				app.App().WailsContext(),
 				fmt.Sprintf("https://localhost%s/swagger/index.html", app.App().WebConfig().PortHttps),
 			)
 		},
 		OnStart: func() (ok bool, complete func()) {
 			return web.Web().Start(), func() {
 				t.refreshTooltip()
-				runtime.EventsEmit(t.wailsCtx, "onWebServiceChanged", true)
+				runtime.EventsEmit(app.App().WailsContext(), "onWebServiceChanged", true)
 			}
 		},
 		OnStop: func() (ok bool, complete func()) {
 			return web.Web().Stop(), func() {
 				t.refreshTooltip()
-				runtime.EventsEmit(t.wailsCtx, "onWebServiceChanged", false)
+				runtime.EventsEmit(app.App().WailsContext(), "onWebServiceChanged", false)
 			}
 		},
 	}
@@ -53,9 +53,10 @@ func (t *tray) displayLanguageListener() menus.DisplayLanguageListener {
 	return menus.DisplayLanguageListener{
 		OnDisplayLanguageChanged: func(lang string) (ok bool, complete func()) {
 			locale := i18n.I18n().Change(lang).Locale()
+			ctx := app.App().WailsContext()
 
-			runtime.WindowSetTitle(t.wailsCtx, locale.AppName)
-			runtime.EventsEmit(t.wailsCtx, "onDisplayLanguageChanged", lang)
+			runtime.WindowSetTitle(ctx, locale.AppName)
+			runtime.EventsEmit(ctx, "onDisplayLanguageChanged", lang)
 
 			systray.SetTitle(locale.AppName)
 
@@ -79,15 +80,17 @@ func (t *tray) displayLanguageListener() menus.DisplayLanguageListener {
 func (t *tray) colorThemeListener() menus.ColorThemeListener {
 	return menus.ColorThemeListener{
 		OnColorThemeChanged: func(theme string) (ok bool, complete func()) {
+			ctx := app.App().WailsContext()
+
 			switch theme {
 			case app.ColorThemeLight:
-				runtime.WindowSetLightTheme(t.wailsCtx)
+				runtime.WindowSetLightTheme(ctx)
 			case app.ColorThemeDark:
-				runtime.WindowSetDarkTheme(t.wailsCtx)
+				runtime.WindowSetDarkTheme(ctx)
 			default:
-				runtime.WindowSetSystemDefaultTheme(t.wailsCtx)
+				runtime.WindowSetSystemDefaultTheme(ctx)
 			}
-			runtime.EventsEmit(t.wailsCtx, "onColorThemeChanged", theme)
+			runtime.EventsEmit(ctx, "onColorThemeChanged", theme)
 
 			if err := service.Settings().SaveOption(app.CfgColorTheme, theme); err != nil {
 				app.App().TrayLog().Fatalf("failed to update theme option: %+v\n", err)
@@ -104,7 +107,7 @@ func (t *tray) quitListener() menus.QuitListener {
 	return menus.QuitListener{
 		OnQuit: func() {
 			locale := i18n.I18n().Locale()
-			dialog, err := runtime.MessageDialog(t.wailsCtx, runtime.MessageDialogOptions{
+			dialog, err := runtime.MessageDialog(app.App().WailsContext(), runtime.MessageDialogOptions{
 				Type:    runtime.QuestionDialog,
 				Title:   locale.AppName,
 				Message: locale.QuitDialog.Message,

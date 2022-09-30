@@ -32,10 +32,10 @@ const msg = ref("Wails + Vite + Vue");
     </div>
     <h1>{{ msg }}</h1>
     <div class="card">
-      <button @click="Hide">Hide</button>&nbsp;
+      <button type="button" @click="count++">count is {{ count }}</button>&nbsp;
+      <button @click="Hide">WindowHide</button>&nbsp;
       <button @click="WindowMinimise">WindowMinimise</button>&nbsp;
-      <button @click="WindowToggleMaximise">WindowToggleMaximise</button>&nbsp;
-      <button type="button" @click="count++">count is {{ count }}</button>
+      <button @click="WindowToggleMaximise">WindowToggleMaximise</button>
       <p>
         Edit
         <code>views/Test.vue</code> to test HMR
@@ -52,7 +52,9 @@ const msg = ref("Wails + Vite + Vue");
       <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
       in your IDE for a better DX
     </p>
-    <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
+    <p class="read-the-docs">
+      Click on the Wails, Vite, Vue and My logos to learn more
+    </p>
   </div>
 </template>
 

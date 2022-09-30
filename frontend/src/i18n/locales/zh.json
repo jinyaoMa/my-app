@@ -1,11 +1,15 @@
 {
-  "lang": "简体中文",
+  "lang": {
+    "en": "English",
+    "zh": "简体中文"
+  },
   "theme": {
     "system": "跟随系统",
     "light": "浅色",
     "dark": "深色"
   },
   "appname": "我的应用程序",
+  "by": "由 jinyaoMa 开发",
   "menu": {
     "main": {
       "title": "主菜单",
@@ -31,9 +35,13 @@
     },
     "webService": {
       "legend": "Web 服务",
+      "autoStart": "随应用启动",
       "portHttp": "HTTP 端口",
       "portHttps": "HTTPS 端口",
       "dirCerts": "TLS 证书路径"
-    }
+    },
+    "choosePath": "选择路径",
+    "chooseLogPath": "选择日志保存路径",
+    "chooseDirCerts": "选择 TLS 证书路径"
   }
 }

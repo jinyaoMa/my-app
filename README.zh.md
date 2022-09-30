@@ -1,10 +1,10 @@
-# My Application (my-app)
+# 我的应用程序 (my-app)
 
-My Application is a continuously updated personal service collection.
+“我的应用程序” 是一个不断更新的个人服务集合。
 
-## Technologies
+## 技术
 
-| Technology  | Role                                                  | Sources                                 |
+| 技术        | 作用                                                  | 来源                                    |
 | :---------- | :---------------------------------------------------- | :-------------------------------------- |
 | Go          | Backend programming language                          | https://pkg.go.dev/std                  |
 | TypeScript  | Frontend programming language                         | https://typescriptlang.org/             |
@@ -22,9 +22,9 @@ My Application is a continuously updated personal service collection.
 | SQLite      | GORM sqlite driver                                    | https://github.com/go-gorm/sqlite       |
 | SVG To Font | Generator of fonts from SVG icons                     | https://github.com/jaywcjlove/svgtofont |
 
-## Setup
+## 安装
 
-Prepare and install environment for development in Window 10/11?
+安装并准备好在 windows 10/11 中的开发环境
 
 - Git v2.37+, https://git-scm.com/
 - Go v1.19+, https://go.dev/
@@ -33,13 +33,13 @@ Prepare and install environment for development in Window 10/11?
 - VS Code v1.71+ with GCC, https://code.visualstudio.com/docs/cpp/config-mingw
 - WebView2 v104+, https://developer.microsoft.com/en-us/microsoft-edge/webview2/
 
-> Setup VS Code by installing recommended extensions. To do this, enter in `@recommended` while searching for extensions.
+> 安装 VS Code 推荐插件，在插件搜索栏中输入 `@recommended` 查看推荐插件。
 
-> Run command `go env -w CGO_ENABLED=1` to prepare for _CGO_ enabled packages
+> 为 _CGO_ 包做准备，执行命令 `go env -w CGO_ENABLED=1` 。
 
-> Run command `pnpm install` at project root directory to setup.
+> 安装项目依赖，在项目根目录中，执行命令 `pnpm install` 。
 
-## NPM Scripts
+## NPM 脚本
 
 ```shell
 $ pnpm wails:dev # run wails in development mode
@@ -54,7 +54,7 @@ $ pnpm design:build # build frontend/packages/design
 $ pnpm <[install|preinstall]:[task]> # install/preinstall scripts trigger during project setup
 ```
 
-## Directory Structure
+## 目录结构
 
 ```yaml
 .
@@ -115,6 +115,6 @@ $ pnpm <[install|preinstall]:[task]> # install/preinstall scripts trigger during
 └── # ...
 ```
 
-## Development View
+## 开发视图
 
 ![Package Diagram](./diagrams/package.png)

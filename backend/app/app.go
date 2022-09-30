@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"my-app/backend/model"
 	"my-app/backend/pkg/log"
 	"os"
@@ -15,9 +16,10 @@ var (
 )
 
 type app struct {
-	logger *Logger
-	env    *Env
-	config *Config
+	wailsContext context.Context
+	logger       *Logger
+	env          *Env
+	config       *Config
 }
 
 func init() {
@@ -48,6 +50,15 @@ func App() *app {
 	return instance
 }
 
+func (a *app) SetWailsContext(ctx context.Context) *app {
+	a.wailsContext = ctx
+	return a
+}
+
+func (a *app) WailsContext() context.Context {
+	return a.wailsContext
+}
+
 func (a *app) Config() *Config {
 	return a.config
 }
@@ -74,4 +85,8 @@ func (a *app) TrayLog() *log.Logger {
 
 func (a *app) WailsLog() logger.Logger {
 	return a.logger.Wails
+}
+
+func (a *app) ServiceLog() *log.Logger {
+	return a.logger.Service
 }

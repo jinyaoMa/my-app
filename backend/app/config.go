@@ -7,10 +7,11 @@ import (
 )
 
 const (
-	CfgTotalNumberOfOptions = 6
+	CfgTotalNumberOfOptions = 7
 	CfgDisplayLanguage      = "Config.DisplayLanguage"
 	CfgColorTheme           = "Config.ColorTheme"
 	CfgLogPath              = "Config.LogPath"
+	CfgWebAutoStart         = "Config.Web.AutoStart"
 	CfgWebPortHttp          = "Config.Web.PortHttp"
 	CfgWebPortHttps         = "Config.Web.PortHttps"
 	CfgWebDirCerts          = "Config.Web.DirCerts"
@@ -30,6 +31,7 @@ type Config struct {
 }
 
 type WebConfig struct {
+	AutoStart string
 	PortHttp  string
 	PortHttps string
 	DirCerts  string
@@ -41,6 +43,7 @@ func DefaultConfig() *Config {
 		ColorTheme:      ColorThemeSystem,
 		LogPath:         utils.GetExecutablePath("MyApp.log"),
 		Web: &WebConfig{
+			AutoStart: "true",
 			PortHttp:  ":10080",
 			PortHttps: ":10443",
 			DirCerts:  "",
@@ -73,6 +76,7 @@ func (c *Config) updateOptions(options model.MyOptions) {
 		{CfgDisplayLanguage, c.DisplayLanguage},
 		{CfgColorTheme, c.ColorTheme},
 		{CfgLogPath, c.LogPath},
+		{CfgWebAutoStart, c.Web.AutoStart},
 		{CfgWebPortHttp, c.Web.PortHttp},
 		{CfgWebPortHttps, c.Web.PortHttps},
 		{CfgWebDirCerts, c.Web.DirCerts},
@@ -120,6 +124,10 @@ func (c *Config) saveOptions(options model.MyOptions) {
 		Value: c.LogPath,
 	})
 	options = append(options, model.MyOption{
+		Name:  CfgWebAutoStart,
+		Value: c.Web.AutoStart,
+	})
+	options = append(options, model.MyOption{
 		Name:  CfgWebPortHttp,
 		Value: c.Web.PortHttp,
 	})
@@ -147,6 +155,8 @@ func (c *Config) loadOptions(options model.MyOptions) {
 			c.ColorTheme = option.Value
 		case CfgLogPath:
 			c.LogPath = option.Value
+		case CfgWebAutoStart:
+			c.Web.AutoStart = option.Value
 		case CfgWebPortHttp:
 			c.Web.PortHttp = option.Value
 		case CfgWebPortHttps:

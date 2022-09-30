@@ -17,3 +17,5 @@ export type DirectionRef = Ref<Direction>;
 
 export type LabelPosition = "left" | "top";
 export type LabelPositionRef = Ref<LabelPosition>;
+
+export type ResponseState = "success" | "warning" | "error";
