@@ -42,6 +42,8 @@
     },
     "choosePath": "选择路径",
     "chooseLogPath": "选择日志保存路径",
-    "chooseDirCerts": "选择 TLS 证书路径"
+    "chooseDirCerts": "选择 TLS 证书路径",
+    "save": "保存",
+    "footnote": "* 大部分设置需重启应用程序后生效。"
   }
 }

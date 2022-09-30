@@ -62,25 +62,25 @@
   @include main-colors(
     $colorsMap: (
       // brand color
-      $TypePrimary: #409eff 18.5%,
+      $TypePrimary: #409eff 17.5%,
       // functional color
-      $TypeSuccess: #67c23a 14.5%,
-      $TypeWarning: #e6a23c 16.5%,
-      $TypeDanger: #f56c6c 20.5%,
-      $TypeInfo: #909399 16.5%,
+      $TypeSuccess: #67c23a 13.5%,
+      $TypeWarning: #e6a23c 15.5%,
+      $TypeDanger: hsl(0, 100%, 38%) 10.5%,
+      $TypeInfo: #a2a4a9 16.5%,
     ),
     $dark: true
   );
   // font color
-  --my-color-text-primary: #cdced0;
-  --my-color-text-regular: #999b9f;
-  --my-color-text-secondary: #676a6f;
-  --my-color-text-placeholder: #32363e;
+  --my-color-text-primary: #e7e8e9;
+  --my-color-text-regular: #b3b4b7;
+  --my-color-text-secondary: #808389;
+  --my-color-text-placeholder: #5d6574;
   // border color
   --my-color-border-base: #333333;
   --my-color-border-light: #2b2b2b;
   --my-color-border-lighter: #222222;
-  --my-color-border-extra-light: #111111;
+  --my-color-border-extra-light: #1a1a1a;
   // background color
   --my-color-white: #000000;
   --my-color-black: #ffffff;

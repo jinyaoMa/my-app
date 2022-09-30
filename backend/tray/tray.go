@@ -42,6 +42,16 @@ func (t *tray) IsWebServiceRunning() bool {
 	return t.webService.IsEnabled()
 }
 
+func (t *tray) OpenVitePress() *tray {
+	t.webService.ClickOpenVitePress()
+	return t
+}
+
+func (t *tray) OpenSwagger() *tray {
+	t.webService.ClickOpenSwagger()
+	return t
+}
+
 func (t *tray) StartWebService() *tray {
 	t.webService.ClickStart()
 	return t

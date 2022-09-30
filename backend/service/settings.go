@@ -78,7 +78,7 @@ func (s *settings) ChooseLogPath(path string, title string) string {
 	if chosenPath != "" {
 		err = s.SaveOption(app.CfgLogPath, chosenPath)
 		if err != nil {
-			app.App().ServiceLog().Fatalf("fail to update log path: %+v\n", err)
+			app.App().ServiceLog().Fatalf("fail to update CfgLogPath: %+v\n", err)
 			return ""
 		}
 	}
@@ -102,9 +102,36 @@ func (s *settings) ChooseDirCerts(path string, title string) string {
 	if chosenPath != "" {
 		err = s.SaveOption(app.CfgWebDirCerts, chosenPath)
 		if err != nil {
-			app.App().ServiceLog().Fatalf("fail to update dir certs: %+v\n", err)
+			app.App().ServiceLog().Fatalf("fail to update CfgWebDirCerts: %+v\n", err)
 			return ""
 		}
 	}
 	return chosenPath
+}
+
+func (s *settings) SavePortHttp(port string) bool {
+	err := s.SaveOption(app.CfgWebPortHttp, port)
+	if err != nil {
+		app.App().ServiceLog().Fatalf("fail to update CfgWebPortHttp: %+v\n", err)
+		return false
+	}
+	return true
+}
+
+func (s *settings) SavePortHttps(port string) bool {
+	err := s.SaveOption(app.CfgWebPortHttps, port)
+	if err != nil {
+		app.App().ServiceLog().Fatalf("fail to update CfgWebPortHttps: %+v\n", err)
+		return false
+	}
+	return true
+}
+
+func (s *settings) SaveAutoStart(isStart string) bool {
+	err := s.SaveOption(app.CfgWebAutoStart, isStart)
+	if err != nil {
+		app.App().ServiceLog().Fatalf("fail to update CfgWebAutoStart: %+v\n", err)
+		return false
+	}
+	return true
 }

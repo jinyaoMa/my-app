@@ -62,12 +62,19 @@ const style = computed<StyleValue>(() => {
 });
 
 const currentType = ref(props.type);
+let allowUpdate = true;
+onUpdated(() => {
+  if (allowUpdate) {
+    currentType.value = props.type;
+  }
+});
 
 let timeoutClick: number;
 const handleClick = (e: MouseEvent) => {
   if (!props.disabled) {
     clearTimeout(timeoutClick);
     emit("click", (state: ResponseState) => {
+      allowUpdate = false;
       switch (state) {
         case "success":
           currentType.value = "success";
@@ -80,6 +87,7 @@ const handleClick = (e: MouseEvent) => {
       }
       timeoutClick = window.setTimeout(() => {
         currentType.value = props.type;
+        allowUpdate = true;
       }, 5000);
     });
   }

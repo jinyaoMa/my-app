@@ -19,9 +19,9 @@ namespace app {
     LogPath: string;
     Web: {
       AutoStart: string;
-      DirCerts: string;
       PortHttp: string;
       PortHttps: string;
+      DirCerts: string;
     };
   };
 }

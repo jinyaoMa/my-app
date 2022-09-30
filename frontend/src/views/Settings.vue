@@ -6,18 +6,32 @@ import {
   GetOptions,
   ChooseLogPath,
   ChooseDirCerts,
+  SavePortHttp,
+  SavePortHttps,
+  SaveAutoStart,
 } from "../../wailsjs/go/service/settings";
 import { ChangeLanguage, ChangeColorTheme } from "../../wailsjs/go/tray/tray";
 import { ResponseState } from "../../packages/components/types";
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 
 const { t, locale, availableLocales } = useI18n();
 const colorTheme = useColorTheme();
 
-const options = ref<app.Config>();
-GetOptions().then((config) => {
-  console.log(config);
-  options.value = config;
+const options = reactive({
+  LogPath: "",
+  Web: {
+    AutoStart: false,
+    PortHttp: "",
+    PortHttps: "",
+    DirCerts: "",
+  },
+});
+GetOptions().then((config: app.Config) => {
+  options.LogPath = config.LogPath;
+  options.Web.AutoStart = config.Web.AutoStart == "true";
+  options.Web.PortHttp = config.Web.PortHttp.substring(1);
+  options.Web.PortHttps = config.Web.PortHttps.substring(1);
+  options.Web.DirCerts = config.Web.DirCerts;
 });
 
 const changeDisplayLanguage = (newLang: string) => {
@@ -28,32 +42,53 @@ const changeColorTheme = (newTheme: string) => {
 };
 
 const changeLogPath = async (res: (state: ResponseState) => void) => {
-  if (options.value) {
-    const newLogPath = await ChooseLogPath(
-      options.value.LogPath,
-      t("settings.chooseLogPath")
-    );
-    if (newLogPath === "") {
-      res("warning");
+  const newLogPath = await ChooseLogPath(
+    options.LogPath,
+    t("settings.chooseLogPath")
+  );
+  if (newLogPath === "") {
+    res("warning");
+    return;
+  }
+  options.LogPath = newLogPath;
+  res("success");
+};
+const changeDirCerts = async (res: (state: ResponseState) => void) => {
+  const newDirCerts = await ChooseDirCerts(
+    options.Web.DirCerts,
+    t("settings.chooseDirCerts")
+  );
+  if (newDirCerts === "") {
+    res("warning");
+    return;
+  }
+  options.Web.DirCerts = newDirCerts;
+  res("success");
+};
+const changePortHttp = async (res: (state: ResponseState) => void) => {
+  if (options.Web.PortHttp) {
+    const newPort = ":" + options.Web.PortHttp;
+    const ok = await SavePortHttp(newPort);
+    if (!ok) {
+      res("error");
       return;
     }
-    options.value!.LogPath = newLogPath;
     res("success");
   }
 };
-const changeDirCerts = async (res: (state: ResponseState) => void) => {
-  if (options.value) {
-    const newDirCerts = await ChooseDirCerts(
-      options.value!.Web.DirCerts,
-      t("settings.chooseDirCerts")
-    );
-    if (newDirCerts === "") {
-      res("warning");
+const changePortHttps = async (res: (state: ResponseState) => void) => {
+  if (options.Web.PortHttps) {
+    const newPort = ":" + options.Web.PortHttps;
+    const ok = await SavePortHttps(newPort);
+    if (!ok) {
+      res("error");
       return;
     }
-    options.value!.Web.DirCerts = newDirCerts;
     res("success");
   }
+};
+const changeAutoStart = async (res: (state: ResponseState) => void) => {
+  SaveAutoStart(`${options.Web.AutoStart}`);
 };
 </script>
 
@@ -99,7 +134,12 @@ const changeDirCerts = async (res: (state: ResponseState) => void) => {
             </my-select>
           </my-form-item>
           <my-form-item :label="t('settings.general.logPath')">
-            <my-input name="LogPath" :display-value="options?.LogPath" disabled>
+            <my-input
+              name="LogPath"
+              width="100%"
+              v-model="options.LogPath"
+              disabled
+            >
               <template #append>
                 <my-button type="primary" @click="changeLogPath">
                   {{ t("settings.choosePath") }}
@@ -113,18 +153,53 @@ const changeDirCerts = async (res: (state: ResponseState) => void) => {
           :label-width="locale === 'zh' ? '7em' : '10em'"
         >
           <my-form-item :label="t('settings.webService.autoStart')">
-            {{ options?.Web.AutoStart }}
+            <my-input
+              type="checkbox"
+              name="AutoStart"
+              v-model="options.Web.AutoStart"
+              @change="changeAutoStart"
+            >
+            </my-input>
           </my-form-item>
           <my-form-item :label="t('settings.webService.portHttp')">
-            {{ options?.Web.PortHttp }}
+            <my-input
+              type="number"
+              name="Web.PortHttp"
+              width="6.5em"
+              :min="0"
+              :max="65536"
+              v-model="options.Web.PortHttp"
+            >
+              <template #prepend>:</template>
+              <template #append>
+                <my-button type="primary" @click="changePortHttp">
+                  {{ t("settings.save") }}
+                </my-button>
+              </template>
+            </my-input>
           </my-form-item>
           <my-form-item :label="t('settings.webService.portHttps')">
-            {{ options?.Web.PortHttps }}
+            <my-input
+              type="number"
+              name="Web.PortHttps"
+              width="6.5em"
+              :min="0"
+              :max="65536"
+              v-model="options.Web.PortHttps"
+            >
+              <template #prepend>:</template>
+              <template #append>
+                <my-button type="primary" @click="changePortHttps">
+                  {{ t("settings.save") }}
+                </my-button>
+              </template>
+            </my-input>
           </my-form-item>
           <my-form-item :label="t('settings.webService.dirCerts')">
             <my-input
-              name="DirCerts"
-              :display-value="options?.Web.DirCerts"
+              name="Web.DirCerts"
+              width="100%"
+              v-model="options.Web.DirCerts"
               disabled
             >
               <template #append>
@@ -136,6 +211,7 @@ const changeDirCerts = async (res: (state: ResponseState) => void) => {
           </my-form-item>
         </my-form-group>
       </my-form>
+      <p>{{ t("settings.footnote") }}</p>
     </my-main>
   </my-container>
 </template>
@@ -148,5 +224,9 @@ const changeDirCerts = async (res: (state: ResponseState) => void) => {
 h2 {
   font-size: 2em;
   margin-top: 0;
+}
+p {
+  font-size: 0.85em;
+  color: var(--my-color-danger-1);
 }
 </style>

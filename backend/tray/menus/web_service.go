@@ -127,6 +127,11 @@ func (ws *WebService) StopWatch() *WebService {
 	return ws
 }
 
+func (ws *WebService) ClickOpenVitePress() *WebService {
+	ws.vitepress.ClickedCh <- struct{}{}
+	return ws
+}
+
 func (ws *WebService) ClickOpenSwagger() *WebService {
 	ws.swagger.ClickedCh <- struct{}{}
 	return ws

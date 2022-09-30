@@ -75,6 +75,7 @@ const handleChange = (payload: Event) => {
   border-color: var(--my-color-border-lighter);
   border-radius: var(--my-border-radius-sm);
   background-color: var(--my-color-background-base);
+  color: var(--my-color-text-primary);
   line-height: var(--my-line-height-none);
 
   &:hover {

@@ -3,7 +3,11 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { EventsOn } from "../../wailsjs/runtime";
 import { BrowserOpenURL } from "../../wailsjs/runtime";
-import { IsWebServiceRunning } from "../../wailsjs/go/tray/tray";
+import {
+  IsWebServiceRunning,
+  OpenVitePress,
+  OpenSwagger,
+} from "../../wailsjs/go/tray/tray";
 
 const { t } = useI18n();
 
@@ -15,14 +19,8 @@ EventsOn("onWebServiceChanged", (isStart: boolean) => {
   console.log("onWebServiceChanged", isStart);
   isWebServiceStart.value = isStart;
 });
-
-const openVitePress = () => {
-  BrowserOpenURL("https://localhost:10443/docs/");
-};
-const openSwagger = () => {
-  BrowserOpenURL("https://localhost:10443/swagger/index.html");
-};
 </script>
+
 <template>
   <my-container class="sidebar" height="100%">
     <my-main class="sidebar-main">
@@ -52,13 +50,13 @@ const openSwagger = () => {
     <my-footer class="sidebar-footer">
       <template v-if="isWebServiceStart">
         <div class="sidebar-footer-line">
-          <my-link @click="openVitePress" underline>
+          <my-link @click="OpenVitePress" underline>
             <my-icon name="external-link"></my-icon>
             <span>{{ t("footer.openVitePress") }}</span>
           </my-link>
         </div>
         <div class="sidebar-footer-line">
-          <my-link @click="openSwagger" underline>
+          <my-link @click="OpenSwagger" underline>
             <my-icon name="external-link"></my-icon>
             <span>{{ t("footer.openSwagger") }}</span>
           </my-link>

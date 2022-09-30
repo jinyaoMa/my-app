@@ -42,6 +42,8 @@
     },
     "choosePath": "Choose Path",
     "chooseLogPath": "Choose your log path",
-    "chooseDirCerts": "Choose your TLS certificate path"
+    "chooseDirCerts": "Choose your TLS certificate path",
+    "save": "Save",
+    "footnote": "* Most of the settings need restarting the application to take effect."
   }
 }
