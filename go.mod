@@ -75,10 +75,10 @@ require (
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	github.com/wailsapp/mimetype v1.4.1 // indirect
 	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be
-	golang.org/x/exp v0.0.0-20220921164117-439092de6870
-	golang.org/x/net v0.0.0-20220923203811-8be639271d50 // indirect
-	golang.org/x/sync v0.0.0-20220923202941-7f9b1623fab7
-	golang.org/x/sys v0.0.0-20220926163933-8cfa568d3c25 // indirect
+	golang.org/x/exp v0.0.0-20220930202632-ec3f01382ef9
+	golang.org/x/net v0.0.0-20220930213112-107f3e3c3b0b // indirect
+	golang.org/x/sync v0.0.0-20220929204114-8fcdb60fdcc0
+	golang.org/x/sys v0.0.0-20220928140112-f11e5e49a4ec // indirect
 	golang.org/x/text v0.3.7 // indirect
 	gorm.io/driver/sqlite v1.3.6
 	gorm.io/gorm v1.23.10

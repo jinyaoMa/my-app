@@ -6,7 +6,8 @@
   "peerDependencies": {
     "sass": "^1.54.9",
     "typescript": "^4.6.4",
-    "vue": "^3.2.37"
+    "vue": "^3.2.37",
+    "vue-router": "^4.1.5"
   },
   "dependencies": {
     "@jinyaoma/my-app-icons": "workspace:*"

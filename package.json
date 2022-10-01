@@ -29,7 +29,7 @@
     "@types/node": "^18.7.16",
     "cross-env": "^7.0.3",
     "mkdirp": "^1.0.4",
-    "vitepress": "^1.0.0-alpha.15",
+    "vitepress": "^1.0.0-alpha.17",
     "vue": "^3.2.37"
   },
   "repository": {

@@ -5,7 +5,7 @@
       active: to === $route.path,
     }"
     :style="style"
-    @click="$router.push(to)"
+    @click="router.push(to)"
   >
     <slot></slot>
   </li>
@@ -13,7 +13,10 @@
 
 <script setup lang="ts" name="MyMenuItem">
 import { StyleValue, computed, inject, withDefaults } from "vue";
+import { useRouter } from "vue-router";
 import { Size, SizeRef } from "../../types";
+
+const router = useRouter();
 
 const props = withDefaults(
   defineProps<{
