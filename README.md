@@ -9,8 +9,8 @@ My Application is a continuously updated personal service collection.
 > You can find all preview screenshots [here](./screenshots/).
 
 <p align="center">
-<img width="50%" src="./screenshots/home.jpg" alt="Home">
-<img width="50%" src="./screenshots/settings.jpg" alt="Settings">
+<img width="49%" src="./screenshots/home.jpg" alt="Home">
+<img width="49%" src="./screenshots/settings.jpg" alt="Settings">
 </p>
 
 ## Technologies
