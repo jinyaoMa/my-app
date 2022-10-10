@@ -100,6 +100,10 @@ func (t *tray) onReady() {
 
 	systray.AddSeparator()
 
+	systray.AddMenuItem("© 2022 jinyaoMa", "© 2022 jinyaoMa").Disable()
+
+	systray.AddSeparator()
+
 	// quit menu
 	t.quit = menus.NewItem(ct.Quit, ct.Quit)
 

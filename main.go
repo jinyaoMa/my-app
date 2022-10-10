@@ -45,8 +45,8 @@ func main() {
 		OnShutdown:         w.shutdown,
 		OnBeforeClose:      w.beforeClose,
 		Bind: []interface{}{
-			service.Service(),
 			tray.Tray(),
+			service.Service(),
 		},
 		WindowStartState: options.Normal,
 		Windows: &windows.Options{
