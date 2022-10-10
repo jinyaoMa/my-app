@@ -9,8 +9,8 @@ My Application is a continuously updated personal service collection.
 > You can find all preview screenshots [here](./screenshots/).
 
 <p align="center">
-<img width="1024" src="./screenshots/home.jpg" alt="Home">
-<img width="1024" src="./screenshots/settings.jpg" alt="Settings">
+<img width="50%" src="./screenshots/home.jpg" alt="Home">
+<img width="50%" src="./screenshots/settings.jpg" alt="Settings">
 </p>
 
 ## Technologies
@@ -56,7 +56,7 @@ Prepare and install environment for development in Window 10/11?
 $ pnpm wails:dev # run wails in development mode
 $ pnpm wails:build # build wails application
 $ pnpm upx:compress # compress the generated executable by `wails:build` script
-$ pnpm air:dev # test web service individually
+$ pnpm air:dev # test API service individually
 $ pnpm swag:docs # generate/update swagger docs
 $ pnpm docs:dev # test vitepress docs individually
 $ pnpm docs:build # generate/update vitepress docs
@@ -77,40 +77,47 @@ $ pnpm <[install|preinstall]:[task]> # install/preinstall scripts trigger during
 │   └── main.go # run web service individually w/o wails and tray
 ├── backend # sources related to backend code
 │   ├── app # app module, business layer
-│   │   ├── app.go # contain global state and resources
-│   │   ├── config.go # load application options from database
-│   │   ├── env.go # load os environment variable
-│   │   ├── logger.go # setup loggers
-│   ├── model # model module, data layer
-│   │   ├── model.go # database setup
-│   │   └── my_option.go # define application options for app config storage
+│   │   ├── config # load application options from database, global resource
+│   |   │   ├── config.go # application config with functions for state and database manupulation
+│   |   │   ├── config.web.go # web config
+│   |   │   └── env.go # load os environment variable
+│   │   ├── i18n # manage locale/translation strings for backend, global resource
+│   │   ├── logger # setup loggers
+│   │   └── app.go # setup global state and resources
+│   ├── database # database module, persistence layer
+│   │   ├── option # define application options for app config storage
+│   │   └── database.go # setup database
 │   ├── pkg # pkg module, cross cutting
-│   │   ├── i18n # manage locale/translation strings for backend
-│   │   ├── log # define loggers for backend
 │   │   └── utils # helper functions
 │   ├── service # service module, business layer
 │   │   ├── service.go # initialize provided services
 │   │   └── settings.go # functions about configure application
-│   ├── tray # tray module, presentations & services layer
+│   ├── tray # tray module, presentation layer
 │   │   ├── icons # tray icons
-│   │   ├── menus # tray menus
-│   │   ├── listeners.go # listen to tray menu-item click events
-│   │   └── tray.go # system tray
-│   └── web # web module, presentations & services layer
+│   │   ├── menus # tray menu types
+│   │   ├── expose.go # functions exposed to wails frontend
+│   │   ├── listen.go # listen to tray menu-item click events
+│   │   ├── ready.go # onReady() for system tray to initialize tray menu
+│   │   ├── refresh.go # refresh functions for language switch and tray icon tooltip
+│   │   └── tray.go # setup system tray
+│   └── web # web module, service layer
 │       ├── api # API services
 │       ├── auth # Auth services
 │       ├── middleware # custom gin middlewares
 │       ├── static # static websites and sources
 │       │   ├── certs # auto-generated for localhost TLS, try script `install:certs`
-│       │   ├── docs # auto-generated, try script `docs:build`
 │       │   ├── swagger # auto-generated, try script `swag:docs`
 │       │   ├── static.go # manage static sources
 │       │   └── # ...
-│       ├── air.go # special function for air to run web service individually
+│       ├── air.go # special function for air to test API service individually
 │       ├── router.go # entry point of swaggo docs generator, manage routes for API
 │       └── web.go # web service
 ├── build # sources to use during wails build process
 │   ├── bin # auto-generated, try script `wails:dev` or `wails:build`
+│   │   ├── Assets # wails frontend static resources, auto-generated, try script `wails:build`
+│   │   ├── Docs # vitepress docs static resources, auto-generated, try script `docs:build`
+│   │   ├── UserData # webview2 user data, auto-generated during application runtime
+│   │   └── # ...
 │   └── # ...
 ├── diagrams # diagrams about 4+1 view model
 ├── docs # vitepress documentation
@@ -120,8 +127,9 @@ $ pnpm <[install|preinstall]:[task]> # install/preinstall scripts trigger during
 │   │   ├── vite-env.d.ts # put go struct associated types into it
 │   │   └── # ...
 │   └── # ...
-├── main.go # wails main application, presentations & services layer
-├── wails_life_cycle.go # wails life cycle
+├── screenshots # README application preview screenshots
+├── main.go # wails main application, presentation layer
+├── main.wails.go # wails life cycle
 ├── wails.json # wails CLI config
 └── # ...
 ```

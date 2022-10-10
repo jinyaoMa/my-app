@@ -38,7 +38,8 @@
       "autoStart": "随应用启动",
       "portHttp": "HTTP 端口",
       "portHttps": "HTTPS 端口",
-      "dirCerts": "TLS 证书路径"
+      "dirCerts": "TLS 证书路径",
+      "dirCertsPlaceholder": "当前正在使用内置证书"
     },
     "choosePath": "选择路径",
     "chooseLogPath": "选择日志保存路径",

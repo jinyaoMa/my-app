@@ -71,9 +71,11 @@ a {
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
   @media (prefers-color-scheme: light) {
     color: #747bff;
+  }
+  @media (prefers-color-scheme: dark) {
+    color: #535bf2;
   }
 }
 
@@ -89,9 +91,11 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   @media (prefers-color-scheme: light) {
     background-color: #f9f9f9;
+  }
+  @media (prefers-color-scheme: dark) {
+    background-color: #1a1a1a;
   }
   cursor: pointer;
   transition: border-color 0.25s;
@@ -135,6 +139,15 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+:root.my-theme-dark {
+  a:hover {
+    color: #535bf2;
+  }
+  button {
+    background-color: #1a1a1a;
   }
 }
 </style>

@@ -18,7 +18,8 @@
     "install:frontend": "pnpm icons:build && pnpm design:build",
     "install:certs": "mkdirp backend/web/static/certs && openssl req -x509 -nodes -days 36524 -newkey rsa:2048 -keyout backend/web/static/certs/localhost.key -out backend/web/static/certs/localhost.crt -subj \"//SKIP=skip/CN=localhost\"",
     "install:docs": "pnpm swag:docs && pnpm docs:build",
-    "install": "pnpm install:dist && pnpm install:frontend && pnpm install:certs && pnpm install:docs && go mod tidy",
+    "install:build": "go mod tidy && pnpm wails:build && pnpm upx:compress",
+    "install": "pnpm install:dist && pnpm install:frontend && pnpm install:certs && pnpm install:docs && pnpm install:build",
     "preinstall:air": "cross-env GOBIN=\"%cd%\\.tools\" go install github.com/cosmtrek/air@latest",
     "preinstall:swag": "cross-env GOBIN=\"%cd%\\.tools\" go install github.com/swaggo/swag/cmd/swag@latest",
     "preinstall:upx": "curl -L https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win64.zip > upx.zip && unzip -p upx.zip '*/upx.exe' > .tools/upx.exe && rm upx.zip",
@@ -29,7 +30,7 @@
     "@types/node": "^18.7.16",
     "cross-env": "^7.0.3",
     "mkdirp": "^1.0.4",
-    "vitepress": "^1.0.0-alpha.17",
+    "vitepress": "^1.0.0-alpha.19",
     "vue": "^3.2.37"
   },
   "repository": {
@@ -39,9 +40,5 @@
   "bugs": {
     "url": "https://github.com/jinyaoMa/my-app/issues"
   },
-  "homepage": "https://github.com/jinyaoMa/my-app#readme",
-  "dependencies": {
-    "@jinyaoma/my-app-components": "workspace:^0.1.0",
-    "mitt": "^3.0.0"
-  }
+  "homepage": "https://github.com/jinyaoMa/my-app#readme"
 }

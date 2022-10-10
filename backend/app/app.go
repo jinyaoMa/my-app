@@ -1,92 +1,63 @@
 package app
 
 import (
-	"context"
-	"my-app/backend/model"
-	"my-app/backend/pkg/log"
-	"os"
-	"sync"
-
-	"github.com/wailsapp/wails/v2/pkg/logger"
+	"my-app/backend/app/config"
+	"my-app/backend/app/i18n"
+	"my-app/backend/app/logger"
+	"my-app/backend/database"
 )
 
 var (
-	once     sync.Once
 	instance *app
 )
 
 type app struct {
-	wailsContext context.Context
-	logger       *Logger
-	env          *Env
-	config       *Config
+	cfg  *config.Config
+	env  *config.Env
+	log  *logger.Logger
+	i18n *i18n.I18n
 }
 
 func init() {
+	var log *logger.Logger
+	cfg := config.LoadConfig()
+	env := config.LoadEnv().
+		Log2Console(func() {
+			log = logger.NewConsoleLogger()
+		}).
+		Log2File(func() {
+			log = logger.NewFileLogger(cfg.LogPath)
+		})
+
 	instance = &app{
-		env:    LoadEnv(),
-		logger: LoadConsoleLogger(),
+		cfg:  cfg,
+		env:  env,
+		log:  log,
+		i18n: i18n.NewI18n(),
 	}
+
+	database.SetLogger(instance.log.Database())
 }
 
 func App() *app {
-	once.Do(func() {
-		instance.config = LoadConfig()
-
-		if instance.env.Log2File() {
-			logFile, err := os.OpenFile(
-				instance.config.LogPath,
-				os.O_CREATE|os.O_WRONLY|os.O_APPEND,
-				0666,
-			)
-			if err != nil {
-				instance.logger.App.Fatalf("failed to open log file: %+v\n", err)
-			}
-			instance.logger = LoadFileLogger(logFile)
-		}
-
-		model.SetLogger(instance.logger.Model)
-	})
 	return instance
 }
 
-func (a *app) SetWailsContext(ctx context.Context) *app {
-	a.wailsContext = ctx
-	return a
+func (a *app) Config() *config.Config {
+	return a.cfg
 }
 
-func (a *app) WailsContext() context.Context {
-	return a.wailsContext
-}
-
-func (a *app) Config() *Config {
-	return a.config
-}
-
-func (a *app) WebConfig() *WebConfig {
-	return a.config.Web
-}
-
-func (a *app) Env() *Env {
+func (a *app) Env() *config.Env {
 	return a.env
 }
 
-func (a *app) AppLog() *log.Logger {
-	return a.logger.App
+func (a *app) Log() *logger.Logger {
+	return a.log
 }
 
-func (a *app) WebLog() *log.Logger {
-	return a.logger.Web
-}
-
-func (a *app) TrayLog() *log.Logger {
-	return a.logger.Tray
-}
-
-func (a *app) WailsLog() logger.Logger {
-	return a.logger.Wails
-}
-
-func (a *app) ServiceLog() *log.Logger {
-	return a.logger.Service
+func (a *app) CurrentTranslation() *i18n.Translation {
+	if t := a.i18n.Translation(a.cfg.DisplayLanguage); t != nil {
+		return t
+	}
+	return &i18n.Translation{}
 }

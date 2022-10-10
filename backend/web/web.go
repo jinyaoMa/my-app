@@ -8,17 +8,14 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
-	"sync"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/acme/autocert"
 	"golang.org/x/sync/errgroup"
 )
 
-var (
-	once     sync.Once
-	instance *web
-)
+var instance *web
 
 type web struct {
 	isRunning bool
@@ -27,11 +24,21 @@ type web struct {
 	https     *http.Server // server (tls)
 }
 
-func Web() *web {
-	once.Do(func() {
-		instance = &web{}
+func init() {
+	app.App().Env().Log2File(func() {
+		gin.SetMode(gin.ReleaseMode)
+		gin.DisableConsoleColor()
 	})
+	gin.DefaultWriter = app.App().Log().Web().Writer()
+	instance = &web{}
+}
+
+func Web() *web {
 	return instance
+}
+
+func (w *web) IsRunning() bool {
+	return w.isRunning
 }
 
 func (w *web) Start() (ok bool) {
@@ -56,17 +63,17 @@ func (w *web) Stop() (ok bool) {
 		ctxHttp, cancelHttp := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancelHttp()
 		if err := w.http.Shutdown(ctxHttp); err != nil && err != http.ErrServerClosed {
-			app.App().WebLog().Printf("server (http) shutdown error: %+v\n", err)
+			app.App().Log().Web().Printf("server (http) shutdown error: %+v\n", err)
 		}
 
 		ctxHttps, cancelHttps := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancelHttps()
 		if err := w.https.Shutdown(ctxHttps); err != nil && err != http.ErrServerClosed {
-			app.App().WebLog().Printf("server (http/s) shutdown error: %+v\n", err)
+			app.App().Log().Web().Printf("server (http/s) shutdown error: %+v\n", err)
 		}
 
 		if err := w.errGroup.Wait(); err != nil && err != http.ErrServerClosed {
-			app.App().WebLog().Printf("server running error: %+v\n", err)
+			app.App().Log().Web().Printf("server running error: %+v\n", err)
 		}
 
 		w.isRunning = false
@@ -76,7 +83,7 @@ func (w *web) Stop() (ok bool) {
 }
 
 func (w *web) reset() {
-	cfg := app.App().WebConfig()
+	cfg := app.App().Config().Web()
 
 	manager := &autocert.Manager{
 		Prompt: autocert.AcceptTOS,

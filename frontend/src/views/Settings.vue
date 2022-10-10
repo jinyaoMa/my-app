@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { reactive } from "vue";
 import { useI18n } from "vue-i18n";
+import { useLoading } from "../store/loading";
 import { useColorTheme } from "../store/color-theme";
-import { EventsOn } from "../../wailsjs/runtime";
 import {
   GetOptions,
   ChooseLogPath,
@@ -9,86 +10,105 @@ import {
   SavePortHttp,
   SavePortHttps,
   SaveAutoStart,
-} from "../../wailsjs/go/service/settings";
-import { ChangeLanguage, ChangeColorTheme } from "../../wailsjs/go/tray/tray";
+} from "../../wailsjs/go/service/service";
+import {
+  ChangeDisplayLanguage,
+  ChangeColorTheme,
+  IsWebServiceRunning,
+  StartWebService,
+} from "../../wailsjs/go/tray/tray";
 import { ResponseState } from "../../packages/components/types";
-import { reactive, ref } from "vue";
+
+const { startLoading, endLoading } = useLoading();
 
 const { t, locale, availableLocales } = useI18n();
 const colorTheme = useColorTheme();
 
 const options = reactive({
   LogPath: "",
-  Web: {
-    AutoStart: false,
-    PortHttp: "",
-    PortHttps: "",
-    DirCerts: "",
-  },
+  AutoStart: false,
+  PortHttp: 80,
+  PortHttps: 443,
+  DirCerts: "",
 });
-GetOptions().then((config: app.Config) => {
+GetOptions().then((config: config.Config) => {
   options.LogPath = config.LogPath;
-  options.Web.AutoStart = config.Web.AutoStart == "true";
-  options.Web.PortHttp = config.Web.PortHttp.substring(1);
-  options.Web.PortHttps = config.Web.PortHttps.substring(1);
-  options.Web.DirCerts = config.Web.DirCerts;
+  options.AutoStart = config.AutoStart == "true";
+  options.PortHttp = parseInt(config.PortHttp.substring(1));
+  options.PortHttps = parseInt(config.PortHttps.substring(1));
+  options.DirCerts = config.DirCerts;
 });
 
-const changeDisplayLanguage = (newLang: string) => {
-  ChangeLanguage(newLang);
+const changeDisplayLanguage = async (newLang: string) => {
+  startLoading();
+  await ChangeDisplayLanguage(newLang);
 };
-const changeColorTheme = (newTheme: string) => {
-  ChangeColorTheme(newTheme);
+const changeColorTheme = async (newTheme: string) => {
+  startLoading();
+  await ChangeColorTheme(newTheme);
 };
 
 const changeLogPath = async (res: (state: ResponseState) => void) => {
+  startLoading();
   const newLogPath = await ChooseLogPath(
     options.LogPath,
     t("settings.chooseLogPath")
   );
-  if (newLogPath === "") {
+  if (newLogPath) {
+    options.LogPath = newLogPath;
+    res("success");
+  } else {
     res("warning");
-    return;
   }
-  options.LogPath = newLogPath;
-  res("success");
+  endLoading();
 };
 const changeDirCerts = async (res: (state: ResponseState) => void) => {
+  startLoading();
   const newDirCerts = await ChooseDirCerts(
-    options.Web.DirCerts,
+    options.DirCerts,
     t("settings.chooseDirCerts")
   );
-  if (newDirCerts === "") {
+  if (newDirCerts) {
+    options.DirCerts = newDirCerts;
+    res("success");
+  } else {
     res("warning");
-    return;
   }
-  options.Web.DirCerts = newDirCerts;
-  res("success");
+  endLoading();
 };
 const changePortHttp = async (res: (state: ResponseState) => void) => {
-  if (options.Web.PortHttp) {
-    const newPort = ":" + options.Web.PortHttp;
-    const ok = await SavePortHttp(newPort);
-    if (!ok) {
+  if (options.PortHttp) {
+    startLoading();
+    const success = await SavePortHttp(options.PortHttp);
+    if (success) {
+      res("success");
+    } else {
       res("error");
-      return;
     }
-    res("success");
+    endLoading();
   }
 };
 const changePortHttps = async (res: (state: ResponseState) => void) => {
-  if (options.Web.PortHttps) {
-    const newPort = ":" + options.Web.PortHttps;
-    const ok = await SavePortHttps(newPort);
-    if (!ok) {
+  if (options.PortHttps) {
+    startLoading();
+    const success = await SavePortHttps(options.PortHttps);
+    if (success) {
+      res("success");
+    } else {
       res("error");
-      return;
     }
-    res("success");
+    endLoading();
   }
 };
-const changeAutoStart = async (res: (state: ResponseState) => void) => {
-  SaveAutoStart(`${options.Web.AutoStart}`);
+const changeAutoStart = async () => {
+  startLoading();
+  const success = await SaveAutoStart(options.AutoStart);
+  if (success) {
+    !(await IsWebServiceRunning()) && StartWebService();
+  } else {
+    options.AutoStart = !options.AutoStart;
+  }
+  endLoading();
 };
 </script>
 
@@ -156,7 +176,7 @@ const changeAutoStart = async (res: (state: ResponseState) => void) => {
             <my-input
               type="checkbox"
               name="AutoStart"
-              v-model="options.Web.AutoStart"
+              v-model="options.AutoStart"
               @change="changeAutoStart"
             >
             </my-input>
@@ -168,7 +188,7 @@ const changeAutoStart = async (res: (state: ResponseState) => void) => {
               width="6.5em"
               :min="0"
               :max="65536"
-              v-model="options.Web.PortHttp"
+              v-model="options.PortHttp"
             >
               <template #prepend>:</template>
               <template #append>
@@ -185,7 +205,7 @@ const changeAutoStart = async (res: (state: ResponseState) => void) => {
               width="6.5em"
               :min="0"
               :max="65536"
-              v-model="options.Web.PortHttps"
+              v-model="options.PortHttps"
             >
               <template #prepend>:</template>
               <template #append>
@@ -199,7 +219,8 @@ const changeAutoStart = async (res: (state: ResponseState) => void) => {
             <my-input
               name="Web.DirCerts"
               width="100%"
-              v-model="options.Web.DirCerts"
+              v-model="options.DirCerts"
+              :placeholder="t('settings.webService.dirCertsPlaceholder')"
               disabled
             >
               <template #append>
@@ -219,7 +240,7 @@ const changeAutoStart = async (res: (state: ResponseState) => void) => {
 <style lang="scss" scoped>
 .settings {
   width: 100%;
-  max-width: 560px;
+  max-width: 580px;
 }
 h2 {
   font-size: 2em;

@@ -40,5 +40,5 @@ export default defineConfig({
 
   // set it to subdirectory in production inserting into /backend/web/static/docs/
   base: process.env.NODE_ENV === "production" ? "/docs/" : "/",
-  outDir: "../backend/web/static/docs/",
+  outDir: "../build/bin/Docs/",
 });

@@ -1,19 +1,6 @@
 package i18n
 
-import (
-	"embed"
-	"encoding/json"
-)
-
-//go:embed locales
-var locales embed.FS
-
-const (
-	En = "en"
-	Zh = "zh"
-)
-
-type Locale struct {
+type Translation struct {
 	Lang struct {
 		Code string `json:"code"`
 		Text string `json:"text"`
@@ -24,6 +11,8 @@ type Locale struct {
 	DisplayLanguage struct {
 		Label string `json:"label"`
 		Title string `json:"title"`
+		En    string `json:"en"`
+		Zh    string `json:"zh"`
 	} `json:"display_language"`
 	ColorTheme struct {
 		Label  string `json:"label"`
@@ -46,21 +35,4 @@ type Locale struct {
 		DefaultButton string `json:"default_button"`
 		CancelButton  string `json:"cancel_button"`
 	} `json:"quit_dialog"`
-}
-
-func load() (localeMap map[string]Locale, availableLanguages []string) {
-	dirLocales := "locales"
-	var al []string
-	lm := make(map[string]Locale)
-	files, _ := locales.ReadDir(dirLocales)
-	for _, f := range files {
-		if !f.IsDir() { // load only locale JSON file
-			t := Locale{}
-			data, _ := locales.ReadFile(dirLocales + "/" + f.Name()) // embed use slash as separator
-			json.Unmarshal(data, &t)
-			lm[t.Lang.Code] = t
-			al = append(al, t.Lang.Code)
-		}
-	}
-	return lm, al
 }

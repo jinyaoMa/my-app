@@ -12,12 +12,14 @@ import {
 const { t } = useI18n();
 
 const isWebServiceStart = ref(false);
-IsWebServiceRunning().then((isStart) => {
-  isWebServiceStart.value = isStart;
+IsWebServiceRunning().then((isRunning) => {
+  isWebServiceStart.value = isRunning;
 });
-EventsOn("onWebServiceChanged", (isStart: boolean) => {
-  console.log("onWebServiceChanged", isStart);
-  isWebServiceStart.value = isStart;
+EventsOn("onWebServiceStart", () => {
+  isWebServiceStart.value = true;
+});
+EventsOn("onWebServiceStop", () => {
+  isWebServiceStart.value = false;
 });
 </script>
 

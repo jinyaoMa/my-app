@@ -4,9 +4,7 @@
 air/bin
 build/bin
 frontend/wailsjs
-frontend/public/docs
 backend/web/static/certs
-backend/web/static/docs
 backend/web/static/swagger
 *-res.syso
 

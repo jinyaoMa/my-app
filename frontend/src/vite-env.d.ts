@@ -12,22 +12,14 @@ declare module "*.md" {
   export default Component;
 }
 
-namespace app {
+namespace config {
   declare type Config = {
     ColorTheme: string;
     DisplayLanguage: string;
     LogPath: string;
-    Web: {
-      AutoStart: string;
-      PortHttp: string;
-      PortHttps: string;
-      DirCerts: string;
-    };
-  };
-}
-namespace types {
-  declare type NormalResponse = {
-    Message: string;
-    Error: string;
+    AutoStart: string;
+    PortHttp: string;
+    PortHttps: string;
+    DirCerts: string;
   };
 }

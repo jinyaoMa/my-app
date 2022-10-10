@@ -38,7 +38,8 @@
       "autoStart": "Auto Start",
       "portHttp": "HTTP Port",
       "portHttps": "HTTPS Port",
-      "dirCerts": "TLS Certificate Path"
+      "dirCerts": "TLS Certificate Path",
+      "dirCertsPlaceholder": "Built-in certificates are used currently"
     },
     "choosePath": "Choose Path",
     "chooseLogPath": "Choose your log path",

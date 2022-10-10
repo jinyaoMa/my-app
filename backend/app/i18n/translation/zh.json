@@ -1,14 +1,12 @@
 {
-  "lang": {
-    "code": "zh",
-    "text": "简体中文"
-  },
   "appname": "我的应用程序",
   "open_window": "打开 我的应用程序",
   "quit": "退出",
   "display_language": {
     "label": "显示语言",
-    "title": "选择 显示语言"
+    "title": "选择 显示语言",
+    "en": "English",
+    "zh": "简体中文"
   },
   "color_theme": {
     "label": "颜色主题",

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"embed"
 	"my-app/backend/app"
 	"my-app/backend/pkg/utils"
 	"my-app/backend/service"
 	"my-app/backend/tray"
+	"os"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -15,14 +15,11 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
-//go:embed frontend/dist
-var frontend embed.FS
-
 func main() {
-	wlc := DefaultWailsLifeCycle()
+	w := &wailsapp{}
 
 	err := wails.Run(&options.App{
-		Title:             "My Application",
+		Title:             w.title(),
 		Width:             1024, // 16:10
 		Height:            640,  // 16:10
 		DisableResize:     false,
@@ -37,19 +34,19 @@ func main() {
 		AlwaysOnTop:       false,
 		// BackgroundColour:  &options.RGBA{R: 242, G: 242, B: 242, A: 0},
 		// RGBA:              &options.RGBA{},
-		Assets:             frontend,
+		Assets:             os.DirFS(utils.GetExecutablePath("Assets")),
 		AssetsHandler:      nil,
 		Menu:               nil,
-		Logger:             app.App().WailsLog(),
+		Logger:             app.App().Log().Wails(),
 		LogLevel:           logger.INFO,
 		LogLevelProduction: logger.ERROR,
-		OnStartup:          wlc.startup,
-		OnDomReady:         wlc.domReady,
-		OnShutdown:         wlc.shutdown,
-		OnBeforeClose:      wlc.beforeClose,
+		OnStartup:          w.startup,
+		OnDomReady:         w.domReady,
+		OnShutdown:         w.shutdown,
+		OnBeforeClose:      w.beforeClose,
 		Bind: []interface{}{
+			service.Service(),
 			tray.Tray(),
-			service.Settings(),
 		},
 		WindowStartState: options.Normal,
 		Windows: &windows.Options{
@@ -59,7 +56,7 @@ func main() {
 			DisableFramelessWindowDecorations: false,
 			WebviewUserDataPath:               utils.GetExecutablePath("UserData"),
 			WebviewBrowserPath:                "",
-			Theme:                             windows.SystemDefault,
+			Theme:                             w.windowTheme(),
 			CustomTheme:                       nil, /*&windows.ThemeSettings{
 				// Theme to use when window is active
 				DarkModeTitleBar:   windows.RGB(255, 0, 0), // Red
@@ -78,8 +75,8 @@ func main() {
 			},*/
 			Messages:         nil,
 			ResizeDebounceMS: 0,
-			OnSuspend:        wlc.suspend,
-			OnResume:         wlc.resume,
+			OnSuspend:        w.suspend,
+			OnResume:         w.resume,
 		},
 		Mac:          &mac.Options{},
 		Linux:        &linux.Options{},
@@ -87,6 +84,6 @@ func main() {
 	})
 
 	if err != nil {
-		app.App().WailsLog().Fatal("fail to run wails: " + err.Error())
+		app.App().Log().Wails().Fatal("fail to run wails: " + err.Error())
 	}
 }

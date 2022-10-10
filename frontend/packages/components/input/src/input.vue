@@ -18,6 +18,7 @@
       :type="props.type"
       :name="props.name"
       :id="props.name"
+      :placeholder="placeholder"
       :step="step"
       :min="min"
       :max="max"
@@ -40,6 +41,7 @@ const props = withDefaults(
     type?: "text" | "number" | "checkbox";
     name: string;
     modelValue: string | number | boolean;
+    placeholder?: string;
     size?: Size;
     disabled?: boolean;
     width?: string;
@@ -199,6 +201,10 @@ const handleChange = (payload: Event) => {
     background-color: var(--my-color-background-base);
     line-height: var(--my-line-height-none);
     outline: none;
+
+    &::placeholder {
+      color: var(--my-color-text-placeholder);
+    }
 
     &[type="checkbox"] {
       appearance: none;

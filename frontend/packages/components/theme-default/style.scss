@@ -56,6 +56,7 @@
   --my-color-white: #ffffff;
   --my-color-black: #000000;
   --my-color-background-base: #ffffff;
+  --my-color-background-transparent: #ffffffcc;
 }
 @mixin dark-colors {
   color-scheme: dark;
@@ -85,6 +86,7 @@
   --my-color-white: #000000;
   --my-color-black: #ffffff;
   --my-color-background-base: #000000;
+  --my-color-background-transparent: #000000cc;
 }
 
 @media (prefers-color-scheme: light) {

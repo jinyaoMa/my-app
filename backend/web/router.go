@@ -1,7 +1,6 @@
 package web
 
 import (
-	"my-app/backend/app"
 	"my-app/backend/web/api/test"
 	"my-app/backend/web/middleware"
 	"my-app/backend/web/static"
@@ -28,15 +27,11 @@ import (
 // @description Authorization Header should contain value started with "Bearer " and followed by a JSON Web Token.
 
 func router() *gin.Engine {
-	if app.App().Env().Log2File() {
-		gin.SetMode(gin.ReleaseMode)
-		gin.DisableConsoleColor()
-	}
-	gin.DefaultWriter = app.App().WebLog().Writer()
-
 	r := gin.Default()
 	{
-		static.Setup(r)
+		static.SetupFavicon(r)
+		static.SetupSwaggerUI(r)
+		static.SetupVitePress(r)
 	}
 
 	a := r.Group("/auth")

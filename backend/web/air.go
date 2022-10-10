@@ -1,7 +1,6 @@
 package web
 
 import (
-	// "context"
 	"my-app/backend/app"
 	// "time"
 )
@@ -9,7 +8,7 @@ import (
 // For API service test purpose, testing with air
 // Uncomment code below to run http redirector
 func (w *web) Air() {
-	if app.App().Env().UseAir() {
+	app.App().Env().UseAir(func() {
 		w.reset()
 		// go w.http.ListenAndServe()
 		w.https.ListenAndServeTLS("", "")
@@ -18,5 +17,5 @@ func (w *web) Air() {
 		// defer cancel()
 		// w.http.Shutdown(ctx)
 		// <-ctx.Done()
-	}
+	})
 }

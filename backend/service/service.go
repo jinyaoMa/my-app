@@ -1,19 +1,20 @@
 package service
 
-var (
-	instance *service
-)
+import "context"
+
+var instance *service
 
 type service struct {
-	Settings *settings
+	ctx context.Context
 }
 
 func init() {
-	instance = &service{
-		Settings: &settings{},
-	}
+	instance = &service{}
 }
 
-func Settings() *settings {
-	return instance.Settings
+func Service(ctxs ...context.Context) *service {
+	if len(ctxs) > 0 {
+		instance.ctx = ctxs[0]
+	}
+	return instance
 }

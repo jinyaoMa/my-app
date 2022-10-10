@@ -2,7 +2,7 @@ package static
 
 import (
 	"embed"
-	"io/fs"
+	"my-app/backend/pkg/utils"
 	_ "my-app/backend/web/static/swagger"
 	"net/http"
 
@@ -11,7 +11,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-//go:embed certs docs favicon.ico
+//go:embed certs favicon.ico
 var static embed.FS
 
 // Get self-signed certificate and key for TLS
@@ -21,16 +21,14 @@ func Certs() (crt []byte, key []byte) {
 	return
 }
 
-// Setup static resources and websites
-func Setup(r *gin.Engine) *gin.Engine {
-	// setup favicon
+// setup favicon
+func SetupFavicon(r *gin.Engine) *gin.Engine {
 	r.StaticFileFS("/favicon.ico", "favicon.ico", http.FS(static))
+	return r
+}
 
-	// setup vitepress docs
-	vp, _ := fs.Sub(static, "docs")
-	r.StaticFS("/docs", http.FS(vp))
-
-	// setup swagger ui
+// setup swagger ui
+func SetupSwaggerUI(r *gin.Engine) *gin.Engine {
 	r.GET("/swagger", func(ctx *gin.Context) {
 		ctx.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
 	})
@@ -41,6 +39,11 @@ func Setup(r *gin.Engine) *gin.Engine {
 			ginSwagger.PersistAuthorization(true),
 		),
 	)
+	return r
+}
 
+// setup vitepress docs
+func SetupVitePress(r *gin.Engine) *gin.Engine {
+	r.Static("/docs", utils.GetExecutablePath("Docs")) // build/bin/Docs
 	return r
 }

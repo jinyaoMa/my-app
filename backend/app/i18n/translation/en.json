@@ -1,14 +1,12 @@
 {
-  "lang": {
-    "code": "en",
-    "text": "English"
-  },
   "appname": "My Application",
   "open_window": "Open My Application",
   "quit": "Quit",
   "display_language": {
     "label": "Language",
-    "title": "Display Language"
+    "title": "Display Language",
+    "en": "English",
+    "zh": "简体中文"
   },
   "color_theme": {
     "label": "Theme",

@@ -1,13 +1,10 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useColorTheme } from "../store/color-theme";
-import { EventsOn } from "../../wailsjs/runtime";
 import README from "../../../README.md";
 import README_ZH from "../../../README.zh.md";
-import { computed } from "vue";
 
-const { t, locale } = useI18n();
-const { theme, changeTheme } = useColorTheme();
+const { locale } = useI18n();
 
 const readme = computed(() => {
   switch (locale.value) {
