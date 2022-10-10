@@ -14,6 +14,7 @@
     "docs:build": "vitepress build docs",
     "icons:build": "pnpm --filter @jinyaoma/my-app-icons exec node build.js",
     "design:build": "pnpm --filter @jinyaoma/my-app-design exec vue-tsc --noEmit && pnpm --filter @jinyaoma/my-app-design exec vite build",
+    "update:dependencies": "pnpm up -r --latest && go get -u && go mod tidy",
     "install:dist": "mkdirp frontend/dist && echo \"\" > frontend/dist/index.html",
     "install:frontend": "pnpm icons:build && pnpm design:build",
     "install:certs": "mkdirp backend/web/static/certs && openssl req -x509 -nodes -days 36524 -newkey rsa:2048 -keyout backend/web/static/certs/localhost.key -out backend/web/static/certs/localhost.crt -subj \"//SKIP=skip/CN=localhost\"",
@@ -27,11 +28,11 @@
     "preinstall": "pnpm preinstall:air && pnpm preinstall:wails && pnpm preinstall:swag && pnpm preinstall:upx"
   },
   "devDependencies": {
-    "@types/node": "^18.7.16",
+    "@types/node": "^18.8.3",
     "cross-env": "^7.0.3",
     "mkdirp": "^1.0.4",
-    "vitepress": "^1.0.0-alpha.19",
-    "vue": "^3.2.37"
+    "vitepress": "1.0.0-alpha.19",
+    "vue": "^3.2.40"
   },
   "repository": {
     "type": "git",

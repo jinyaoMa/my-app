@@ -50,6 +50,8 @@ Prepare and install environment for development in Window 10/11?
 
 > Run command `pnpm install` at project root directory to setup.
 
+> Want to update dependencies? Run command `pnpm update:dependencies` at project root directory to setup.
+
 ## NPM Scripts
 
 ```shell

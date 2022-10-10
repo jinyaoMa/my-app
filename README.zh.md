@@ -50,6 +50,8 @@
 
 > 安装项目依赖，在项目根目录中，执行命令 `pnpm install` 。
 
+> 想要更新依赖？在项目根目录中，执行命令 `pnpm update:dependencies` 。
+
 ## NPM 脚本
 
 ```shell
