@@ -194,6 +194,7 @@ const changeAutoStart = async () => {
               <template #append>
                 <my-button type="primary" @click="changePortHttp">
                   {{ t("settings.save") }}
+                  {{ t("settings.webService.portHttp") }}
                 </my-button>
               </template>
             </my-input>
@@ -211,6 +212,7 @@ const changeAutoStart = async () => {
               <template #append>
                 <my-button type="primary" @click="changePortHttps">
                   {{ t("settings.save") }}
+                  {{ t("settings.webService.portHttps") }}
                 </my-button>
               </template>
             </my-input>
