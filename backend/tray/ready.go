@@ -3,6 +3,7 @@ package tray
 import (
 	"my-app/backend/app"
 	"my-app/backend/app/config"
+	"my-app/backend/pkg"
 	"my-app/backend/tray/menus"
 
 	"github.com/getlantern/systray"
@@ -100,7 +101,7 @@ func (t *tray) onReady() {
 
 	systray.AddSeparator()
 
-	systray.AddMenuItem("© 2022 jinyaoMa", "© 2022 jinyaoMa").Disable()
+	systray.AddMenuItem(pkg.Copyright, pkg.Copyright).Disable()
 
 	systray.AddSeparator()
 

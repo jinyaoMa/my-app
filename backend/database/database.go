@@ -1,6 +1,7 @@
 package database
 
 import (
+	"my-app/backend/pkg"
 	"my-app/backend/pkg/utils"
 
 	"gorm.io/driver/sqlite"
@@ -10,7 +11,8 @@ import (
 )
 
 var (
-	db *gorm.DB
+	db  *gorm.DB
+	aes *utils.AES
 )
 
 func init() {
@@ -28,12 +30,22 @@ func init() {
 	if err != nil {
 		panic("failed to connect database")
 	}
+
+	aes = utils.NewAES(pkg.Copyright)
 }
 
 func DB() *gorm.DB {
 	return db
 }
 
+func AES() *utils.AES {
+	return aes
+}
+
 func SetLogger(logger logger.Interface) {
 	db.Logger = logger
+}
+
+func SetAES(a *utils.AES) {
+	aes = a
 }

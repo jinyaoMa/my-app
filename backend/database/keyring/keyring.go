@@ -2,12 +2,9 @@ package keyring
 
 import (
 	"my-app/backend/database"
-	"my-app/backend/pkg/utils"
 
 	"gorm.io/gorm"
 )
-
-var aes *utils.AES
 
 type Keyring struct {
 	gorm.Model
@@ -19,16 +16,15 @@ type Keyring struct {
 }
 
 func init() {
-	aes = utils.NewAES("test")
 	database.DB().AutoMigrate(&Keyring{})
 }
 
 func (k *Keyring) BeforeCreate(tx *gorm.DB) (err error) {
 	if !k.IsEncypted {
-		if k.Password, err = aes.Encrypt(k.Password); err != nil {
+		if k.Password, err = database.AES().Encrypt(k.Password); err != nil {
 			return
 		}
-		if k.More, err = aes.Encrypt(k.More); err != nil {
+		if k.More, err = database.AES().Encrypt(k.More); err != nil {
 			return
 		}
 		k.IsEncypted = true
@@ -38,10 +34,10 @@ func (k *Keyring) BeforeCreate(tx *gorm.DB) (err error) {
 
 func (k *Keyring) AfterFind(tx *gorm.DB) (err error) {
 	if k.IsEncypted {
-		if k.Password, err = aes.Decrypt(k.Password); err != nil {
+		if k.Password, err = database.AES().Decrypt(k.Password); err != nil {
 			return
 		}
-		if k.More, err = aes.Decrypt(k.More); err != nil {
+		if k.More, err = database.AES().Decrypt(k.More); err != nil {
 			return
 		}
 		k.IsEncypted = false
