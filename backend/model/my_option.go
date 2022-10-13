@@ -1,8 +1,6 @@
-package option
+package model
 
 import (
-	"my-app/backend/database"
-
 	"gorm.io/gorm"
 )
 
@@ -12,18 +10,26 @@ type Option struct {
 	Value string ``              // Option value associated with name
 }
 
-func init() {
-	database.DB().AutoMigrate(&Option{})
-}
-
 func (o *Option) Find() (ok bool) {
-	result := database.DB().Where(o).Find(o)
+	result := db.Where(o).Find(o)
 	return result.RowsAffected > 0
 }
 
 func (o *Option) Update(newValue string) (ok bool) {
-	result := database.DB().Model(o).Where(o).Updates(Option{
+	result := db.Model(o).Where(o).Updates(Option{
 		Value: newValue,
 	})
 	return result.RowsAffected == 1
+}
+
+type Options []Option
+
+func (os *Options) Find() (ok bool) {
+	result := db.Find(os)
+	return result.RowsAffected > 0
+}
+
+func (os *Options) Save() (ok bool) {
+	result := db.Save(os)
+	return result.Error == nil
 }

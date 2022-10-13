@@ -4,7 +4,7 @@ import (
 	"my-app/backend/app/config"
 	"my-app/backend/app/i18n"
 	"my-app/backend/app/logger"
-	"my-app/backend/database"
+	"my-app/backend/model"
 )
 
 var (
@@ -36,7 +36,7 @@ func init() {
 		i18n: i18n.NewI18n(),
 	}
 
-	database.SetLogger(instance.log.Database())
+	model.SetLogger(instance.log.Model())
 }
 
 func App() *app {

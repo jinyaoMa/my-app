@@ -1,4 +1,4 @@
-package database
+package model
 
 import (
 	"my-app/backend/pkg/utils"
@@ -28,10 +28,18 @@ func init() {
 	if err != nil {
 		panic("failed to connect database")
 	}
-}
 
-func DB() *gorm.DB {
-	return db
+	// enable foreign_keys for SQLite
+	if res := db.Exec("PRAGMA foreign_keys = ON"); res.Error != nil {
+		panic("failed to enable foreign_keys")
+	}
+
+	if db.AutoMigrate(
+		&Option{},
+	) != nil {
+		panic("failed to auto migrate")
+	}
+
 }
 
 func SetLogger(logger logger.Interface) {

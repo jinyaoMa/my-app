@@ -4,11 +4,11 @@
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="184" value="" style="whiteSpace=wrap;html=1;strokeColor=default;rounded=0;" vertex="1" parent="1">
+                <mxCell id="184" value="" style="whiteSpace=wrap;html=1;strokeColor=default;rounded=0;" parent="1" vertex="1">
                     <mxGeometry width="1160" height="1640" as="geometry"/>
                 </mxCell>
                 <mxCell id="22" value="&lt;span style=&quot;&quot;&gt;Inflastructure (go.mod)&lt;/span&gt;" style="shape=folder;fontStyle=0;tabWidth=240;tabHeight=30;tabPosition=left;html=1;boundedLbl=1;labelInHeader=1;container=1;collapsible=0;recursiveResize=0;fontSize=14;align=left;spacingLeft=10;dashed=1;" parent="1" vertex="1">
-                    <mxGeometry x="40" y="1480" width="1080" height="100" as="geometry"/>
+                    <mxGeometry x="40" y="1470" width="1080" height="100" as="geometry"/>
                 </mxCell>
                 <mxCell id="23" value="wails" style="html=1;fontSize=14;fontStyle=0" parent="22" vertex="1">
                     <mxGeometry width="120" height="30" relative="1" as="geometry">
@@ -60,8 +60,8 @@
                 <mxCell id="111" value="&lt;span style=&quot;&quot;&gt;Presentation Layer (main)&lt;/span&gt;" style="shape=folder;fontStyle=0;tabWidth=240;tabHeight=30;tabPosition=left;html=1;boundedLbl=1;labelInHeader=1;container=1;collapsible=0;recursiveResize=0;fontSize=14;align=left;spacingLeft=10;" parent="170" vertex="1">
                     <mxGeometry x="20" y="155" width="200" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="183" value="&lt;span style=&quot;font-size: 14px&quot;&gt;main&lt;/span&gt;" style="shape=folder;fontStyle=0;tabWidth=40;tabHeight=10;tabPosition=left;html=1;boundedLbl=1;fontSize=12;" parent="111" vertex="1">
-                    <mxGeometry x="40" y="50" width="120" height="50" as="geometry"/>
+                <mxCell id="187" value="wails" style="html=1;fontSize=14;fontStyle=0" parent="111" vertex="1">
+                    <mxGeometry x="40" y="60" width="120" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="131" value="Presentation Layer&lt;span&gt;&amp;nbsp;(tray)&lt;/span&gt;" style="shape=folder;fontStyle=0;tabWidth=180;tabHeight=30;tabPosition=left;html=1;boundedLbl=1;labelInHeader=1;container=1;collapsible=0;recursiveResize=0;fontSize=14;align=left;spacingLeft=10;" parent="170" vertex="1">
                     <mxGeometry x="280" y="155" width="360" height="120" as="geometry"/>
@@ -91,10 +91,10 @@
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="175" value="&lt;span&gt;Level 2&lt;/span&gt;" style="shape=folder;fontStyle=0;tabWidth=240;tabHeight=30;tabPosition=left;html=1;boundedLbl=1;labelInHeader=1;container=1;collapsible=0;recursiveResize=0;fontSize=14;align=left;spacingLeft=10;dashed=1;" parent="1" vertex="1">
-                    <mxGeometry x="40" y="520" width="1080" height="880" as="geometry"/>
+                    <mxGeometry x="40" y="520" width="1080" height="870" as="geometry"/>
                 </mxCell>
                 <mxCell id="14" value="Cross Cutting (pkg)" style="shape=folder;xSize=90;align=left;spacingLeft=4;align=left;verticalAlign=top;spacingLeft=5;spacingTop=0;tabWidth=240;tabHeight=30;tabPosition=left;html=1;strokeWidth=1;recursiveResize=0;fontSize=14;fontStyle=0" parent="175" vertex="1">
-                    <mxGeometry x="900" y="50" width="160" height="810" as="geometry"/>
+                    <mxGeometry x="900" y="50" width="160" height="800" as="geometry"/>
                 </mxCell>
                 <mxCell id="63" value="&lt;br&gt;utils" style="strokeColor=inherit;fillColor=inherit;gradientColor=inherit;shape=folder;spacingLeft=10;tabWidth=40;tabHeight=14;tabPosition=left;fontSize=14;html=1;whiteSpace=wrap;spacingRight=10;fontStyle=0" parent="14" vertex="1">
                     <mxGeometry x="20" y="50" width="118.75" height="50" as="geometry"/>
@@ -102,22 +102,11 @@
                 <mxCell id="119" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;fontSize=14;endArrow=open;endFill=0;endSize=8;fontStyle=0" parent="175" source="86" target="14" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="86" value="&lt;span style=&quot;&quot;&gt;Persistence Layer (database)&lt;/span&gt;" style="shape=folder;fontStyle=0;tabWidth=240;tabHeight=30;tabPosition=left;html=1;boundedLbl=1;labelInHeader=1;container=1;collapsible=0;recursiveResize=0;fontSize=14;align=left;spacingLeft=10;" parent="175" vertex="1">
-                    <mxGeometry x="20" y="580" width="800" height="280" as="geometry"/>
+                <mxCell id="86" value="&lt;span&gt;Persistence Layer (model)&lt;/span&gt;" style="shape=folder;fontStyle=0;tabWidth=240;tabHeight=30;tabPosition=left;html=1;boundedLbl=1;labelInHeader=1;container=1;collapsible=0;recursiveResize=0;fontSize=14;align=left;spacingLeft=10;" parent="175" vertex="1">
+                    <mxGeometry x="20" y="650" width="800" height="200" as="geometry"/>
                 </mxCell>
-                <mxCell id="91" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;database&lt;/font&gt;" style="shape=folder;fontStyle=0;tabWidth=40;tabHeight=10;tabPosition=left;html=1;boundedLbl=1;fontSize=12;" parent="86" vertex="1">
-                    <mxGeometry x="340" y="210" width="120" height="50" as="geometry"/>
-                </mxCell>
-                <mxCell id="93" style="edgeStyle=orthogonalEdgeStyle;html=1;fontSize=12;dashed=1;endArrow=open;endFill=0;endSize=8;fontStyle=0" parent="86" source="127" target="91" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="640" y="75" as="sourcePoint"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="127" value="&lt;span style=&quot;&quot;&gt;Model&lt;/span&gt;" style="shape=folder;fontStyle=0;tabWidth=100;tabHeight=30;tabPosition=left;html=1;boundedLbl=1;labelInHeader=1;container=1;collapsible=0;recursiveResize=0;fontSize=14;align=left;spacingLeft=10;dashed=1;" parent="86" vertex="1">
-                    <mxGeometry x="20" y="50" width="760" height="120" as="geometry"/>
-                </mxCell>
-                <mxCell id="135" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;option&lt;/span&gt;" style="shape=folder;fontStyle=0;tabWidth=40;tabHeight=10;tabPosition=left;html=1;boundedLbl=1;fontSize=12;" parent="127" vertex="1">
-                    <mxGeometry x="20" y="50" width="120" height="50" as="geometry"/>
+                <mxCell id="185" value="option" style="html=1;fontSize=14;fontStyle=0" parent="86" vertex="1">
+                    <mxGeometry x="20" y="50" width="120" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="105" style="edgeStyle=orthogonalEdgeStyle;html=1;dashed=1;fontSize=14;endArrow=open;endFill=0;endSize=8;fontStyle=0" parent="175" source="96" target="86" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -126,13 +115,13 @@
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="96" value="&lt;span style=&quot;&quot;&gt;Business Layer&lt;/span&gt;" style="shape=folder;fontStyle=0;tabWidth=240;tabHeight=30;tabPosition=left;html=1;boundedLbl=1;labelInHeader=1;container=1;collapsible=0;recursiveResize=0;fontSize=14;align=left;spacingLeft=10;dashed=1;" parent="175" vertex="1">
-                    <mxGeometry x="20" y="50" width="800" height="440" as="geometry"/>
+                    <mxGeometry x="20" y="50" width="800" height="530" as="geometry"/>
                 </mxCell>
                 <mxCell id="129" value="&lt;span style=&quot;&quot;&gt;app&lt;/span&gt;" style="shape=folder;fontStyle=0;tabWidth=100;tabHeight=30;tabPosition=left;html=1;boundedLbl=1;labelInHeader=1;container=1;collapsible=0;recursiveResize=0;fontSize=14;align=left;spacingLeft=10;" parent="96" vertex="1">
-                    <mxGeometry x="20" y="140" width="760" height="277" as="geometry"/>
+                    <mxGeometry x="20" y="150" width="760" height="360" as="geometry"/>
                 </mxCell>
                 <mxCell id="138" value="&lt;span style=&quot;&quot;&gt;Global Resource&lt;/span&gt;" style="shape=folder;fontStyle=0;tabWidth=160;tabHeight=30;tabPosition=left;html=1;boundedLbl=1;labelInHeader=1;container=1;collapsible=0;recursiveResize=0;fontSize=14;align=left;spacingLeft=10;dashed=1;" parent="129" vertex="1">
-                    <mxGeometry x="20" y="140" width="720" height="120" as="geometry"/>
+                    <mxGeometry x="20" y="150" width="720" height="190" as="geometry"/>
                 </mxCell>
                 <mxCell id="134" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;config&lt;/span&gt;" style="shape=folder;fontStyle=0;tabWidth=40;tabHeight=10;tabPosition=left;html=1;boundedLbl=1;fontSize=12;" parent="138" vertex="1">
                     <mxGeometry x="20" y="50" width="120" height="50" as="geometry"/>
