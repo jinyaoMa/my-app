@@ -80,15 +80,15 @@ $ pnpm <[install|preinstall]:[task]> # install/preinstall scripts trigger during
 ├── backend # sources related to backend code
 │   ├── app # app module, business layer
 │   │   ├── config # load application options from database, global resource
-│   |   │   ├── config.go # application config with functions for state and database manupulation
-│   |   │   ├── config.web.go # web config
-│   |   │   └── env.go # load os environment variable
+│   │   │   ├── config.go # application config with functions for state and database manupulation
+│   │   │   ├── config.web.go # web config
+│   │   │   └── env.go # load os environment variable
 │   │   ├── i18n # manage locale/translation strings for backend, global resource
 │   │   ├── logger # setup loggers
 │   │   └── app.go # setup global state and resources
-│   ├── database # database module, persistence layer
-│   │   ├── option # define application options for app config storage
-│   │   └── database.go # setup database
+│   ├── model # model module, persistence layer
+│   │   ├── model.go # setup database, table prefix `my_`
+│   │   └── my_option.go # define application options for app config storage
 │   ├── pkg # pkg module, cross cutting
 │   │   └── utils # helper functions
 │   ├── service # service module, business layer

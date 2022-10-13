@@ -80,15 +80,15 @@ $ pnpm <[install|preinstall]:[task]> # 安装项目依赖时会触发这些 inst
 ├── backend # 后端相关源文件
 │   ├── app # app 模块，业务层
 │   │   ├── config # 从数据库加载应用设置，全局资源
-│   |   │   ├── config.go # 应用设置，与状态和数据操作相关的函数
-│   |   │   ├── config.web.go # Web 设置
-│   |   │   └── env.go # 加载系统环境变量
+│   │   │   ├── config.go # 应用设置，与状态和数据操作相关的函数
+│   │   │   ├── config.web.go # Web 设置
+│   │   │   └── env.go # 加载系统环境变量
 │   │   ├── i18n # 后端 i18n 语言源文件，全局资源
 │   │   ├── logger # 定义后端 loggers
 │   │   ├── app.go # 存放全局状态及资源
-│   ├── database # database 模块，持久层
-│   │   ├── option # 定义 options 表，用于储存应用设置
-│   │   └── database.go # 初始化 database
+│   ├── model # model 模块，持久层
+│   │   ├── model.go # 初始化数据库，表前缀 `my_`
+│   │   └── my_option.go # 定义 options 表，用于储存应用设置
 │   ├── pkg # pkg 模块，横切层
 │   │   └── utils # 辅助函数/方法
 │   ├── service # service 模块，业务层
