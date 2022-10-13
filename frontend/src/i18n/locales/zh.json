@@ -17,6 +17,10 @@
       "settings": "设置",
       "about": "关于"
     },
+    "application": {
+      "title": "应用菜单",
+      "keyring": "钥匙扣"
+    },
     "test": {
       "title": "测试菜单",
       "test": "测试页面"
@@ -40,6 +44,13 @@
       "portHttps": "HTTPS 端口",
       "dirCerts": "TLS 证书路径",
       "dirCertsPlaceholder": "当前正在使用内置证书"
+    },
+    "changeSuperUserPassword": {
+      "legend": "更改超级用户（{account}）密码",
+      "oldPassword": "旧密码",
+      "newPassword": "新密码",
+      "change": "确认并更改",
+      "clear": "重新输入"
     },
     "choosePath": "选择路径",
     "chooseLogPath": "选择日志保存路径",

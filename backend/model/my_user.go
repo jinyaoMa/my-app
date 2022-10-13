@@ -1,0 +1,52 @@
+package model
+
+import (
+	"my-app/backend/pkg/utils"
+
+	"gorm.io/gorm"
+)
+
+type User struct {
+	gorm.Model
+	Account  string `gorm:"unique,index"` // User account
+	Password string ``                    // User password
+	Keyrings Keyrings
+
+	PasswordHashed bool `gorm:"-:all"` // indicate if password is hashed
+}
+
+func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+	if !u.PasswordHashed {
+		u.Password = utils.SHA1(u.Password)
+		u.PasswordHashed = true
+	}
+	return
+}
+
+func (u *User) BeforeSave(tx *gorm.DB) (err error) {
+	if !u.PasswordHashed {
+		u.Password = utils.SHA1(u.Password)
+		u.PasswordHashed = true
+	}
+	return
+}
+
+func (u *User) AfterFind(tx *gorm.DB) (err error) {
+	u.PasswordHashed = true
+	return
+}
+
+func (u *User) Find() (ok bool) {
+	tx := db.Where(u).Find(u)
+	return tx.RowsAffected > 0
+}
+
+func (u *User) Create() (ok bool) {
+	tx := db.Create(u)
+	return tx.RowsAffected == 1
+}
+
+func (u *User) Save() (ok bool) {
+	tx := db.Save(u)
+	return tx.RowsAffected == 1
+}

@@ -9,28 +9,28 @@ import (
 )
 
 const (
-	LogPrefixWails    = "WLS"
-	LogPrefixTray     = "TRY"
-	LogPrefixWeb      = "WEB"
-	LogPrefixService  = "SEV"
-	LogPrefixDatabase = "DBS"
+	LogPrefixWails   = "WLS"
+	LogPrefixTray    = "TRY"
+	LogPrefixWeb     = "WEB"
+	LogPrefixService = "SEV"
+	LogPrefixModel   = "MDL"
 )
 
 type Logger struct {
-	wails    wailsLogger.Logger
-	tray     *log.Logger
-	web      *log.Logger
-	service  *log.Logger
-	database gormLogger.Interface
+	wails   wailsLogger.Logger
+	tray    *log.Logger
+	web     *log.Logger
+	service *log.Logger
+	model   gormLogger.Interface
 }
 
 func NewConsoleLogger() *Logger {
 	return &Logger{
-		wails:    wailsConsoleLogger(LogPrefixWails),
-		tray:     consoleLogger(LogPrefixTray),
-		web:      consoleLogger(LogPrefixWeb),
-		service:  consoleLogger(LogPrefixService),
-		database: databaseConsoleLogger(LogPrefixDatabase),
+		wails:   wailsConsoleLogger(LogPrefixWails),
+		tray:    consoleLogger(LogPrefixTray),
+		web:     consoleLogger(LogPrefixWeb),
+		service: consoleLogger(LogPrefixService),
+		model:   modelConsoleLogger(LogPrefixModel),
 	}
 }
 
@@ -44,11 +44,11 @@ func NewFileLogger(logPath string) *Logger {
 		panic("failed to open log file")
 	}
 	return &Logger{
-		wails:    wailsFileLogger(LogPrefixWails, logFile),
-		tray:     fileLogger(LogPrefixTray, logFile),
-		web:      fileLogger(LogPrefixWeb, logFile),
-		service:  fileLogger(LogPrefixService, logFile),
-		database: databaseFileLogger(LogPrefixDatabase, logFile),
+		wails:   wailsFileLogger(LogPrefixWails, logFile),
+		tray:    fileLogger(LogPrefixTray, logFile),
+		web:     fileLogger(LogPrefixWeb, logFile),
+		service: fileLogger(LogPrefixService, logFile),
+		model:   modelFileLogger(LogPrefixModel, logFile),
 	}
 }
 
@@ -68,8 +68,8 @@ func (l *Logger) Service() *log.Logger {
 	return l.service
 }
 
-func (l *Logger) Database() gormLogger.Interface {
-	return l.database
+func (l *Logger) Model() gormLogger.Interface {
+	return l.model
 }
 
 func consoleLogger(prefix string) *log.Logger {

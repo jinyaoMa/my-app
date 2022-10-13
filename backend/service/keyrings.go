@@ -1,9 +1,9 @@
 package service
 
 import (
-	"my-app/backend/database/keyring"
+	"my-app/backend/model"
 )
 
-func (s *service) AddKeyring(k keyring.Keyring) bool {
+func (s *service) AddKeyring(k model.Keyring) bool {
 	return false
 }

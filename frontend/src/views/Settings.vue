@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useLoading } from "../store/loading";
 import { useColorTheme } from "../store/color-theme";
@@ -10,6 +10,8 @@ import {
   SavePortHttp,
   SavePortHttps,
   SaveAutoStart,
+  GetSuperUserAccount,
+  UpdateSuperUserPassword,
 } from "../../wailsjs/go/service/service";
 import {
   ChangeDisplayLanguage,
@@ -30,6 +32,8 @@ const options = reactive({
   PortHttp: 80,
   PortHttps: 443,
   DirCerts: "",
+  SuperUserOldPassword: "",
+  SuperUserNewPassword: "",
 });
 GetOptions().then((config: config.Config) => {
   options.LogPath = config.LogPath;
@@ -37,6 +41,11 @@ GetOptions().then((config: config.Config) => {
   options.PortHttp = parseInt(config.PortHttp.substring(1));
   options.PortHttps = parseInt(config.PortHttps.substring(1));
   options.DirCerts = config.DirCerts;
+});
+
+const superUserAccount = ref("");
+GetSuperUserAccount().then((account: string) => {
+  superUserAccount.value = account;
 });
 
 const changeDisplayLanguage = async (newLang: string) => {
@@ -107,6 +116,23 @@ const changeAutoStart = async () => {
     !(await IsWebServiceRunning()) && StartWebService();
   } else {
     options.AutoStart = !options.AutoStart;
+  }
+  endLoading();
+};
+const clearSuperUserPassword = () => {
+  options.SuperUserOldPassword = "";
+  options.SuperUserNewPassword = "";
+};
+const changeSuperUserPassword = async (res: (state: ResponseState) => void) => {
+  startLoading();
+  const success = await UpdateSuperUserPassword(
+    options.SuperUserOldPassword,
+    options.SuperUserNewPassword
+  );
+  if (success) {
+    res("success");
+  } else {
+    res("error");
   }
   endLoading();
 };
@@ -231,6 +257,43 @@ const changeAutoStart = async () => {
                 </my-button>
               </template>
             </my-input>
+          </my-form-item>
+        </my-form-group>
+        <my-form-group
+          :legend="
+            t('settings.changeSuperUserPassword.legend', {
+              account: superUserAccount,
+            })
+          "
+          :label-width="locale === 'zh' ? '5em' : '8em'"
+        >
+          <my-form-item
+            :label="t('settings.changeSuperUserPassword.oldPassword')"
+          >
+            <my-input
+              type="password"
+              v-model="options.SuperUserOldPassword"
+              :placeholder="t('settings.changeSuperUserPassword.oldPassword')"
+            >
+            </my-input>
+          </my-form-item>
+          <my-form-item
+            :label="t('settings.changeSuperUserPassword.newPassword')"
+          >
+            <my-input
+              type="password"
+              v-model="options.SuperUserNewPassword"
+              :placeholder="t('settings.changeSuperUserPassword.newPassword')"
+            >
+            </my-input>
+          </my-form-item>
+          <my-form-item>
+            <my-button type="primary" @click="changeSuperUserPassword">
+              {{ t("settings.changeSuperUserPassword.change") }}
+            </my-button>
+            <my-button @click="clearSuperUserPassword">
+              {{ t("settings.changeSuperUserPassword.clear") }}
+            </my-button>
           </my-form-item>
         </my-form-group>
       </my-form>

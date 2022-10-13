@@ -38,7 +38,7 @@ import { Size, SizeRef } from "../../types";
 
 const props = withDefaults(
   defineProps<{
-    type?: "text" | "number" | "checkbox";
+    type?: "text" | "number" | "checkbox" | "password";
     name: string;
     modelValue: string | number | boolean;
     placeholder?: string;

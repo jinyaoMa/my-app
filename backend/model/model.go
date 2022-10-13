@@ -1,7 +1,6 @@
-package database
+package model
 
 import (
-	"my-app/backend/pkg"
 	"my-app/backend/pkg/utils"
 
 	"gorm.io/driver/sqlite"
@@ -10,10 +9,7 @@ import (
 	"gorm.io/gorm/schema"
 )
 
-var (
-	db  *gorm.DB
-	aes *utils.AES
-)
+var db *gorm.DB
 
 func init() {
 	var err error
@@ -31,21 +27,20 @@ func init() {
 		panic("failed to connect database")
 	}
 
-	aes = utils.NewAES(pkg.Copyright)
-}
+	// enable foreign_keys for SQLite
+	if res := db.Exec("PRAGMA foreign_keys = ON"); res.Error != nil {
+		panic("failed to enable foreign_keys")
+	}
 
-func DB() *gorm.DB {
-	return db
-}
-
-func AES() *utils.AES {
-	return aes
+	if db.AutoMigrate(
+		&Option{},
+		&User{},
+		&Keyring{},
+	) != nil {
+		panic("failed to auto migrate")
+	}
 }
 
 func SetLogger(logger logger.Interface) {
 	db.Logger = logger
-}
-
-func SetAES(a *utils.AES) {
-	aes = a
 }

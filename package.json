@@ -28,10 +28,10 @@
     "preinstall": "pnpm preinstall:air && pnpm preinstall:wails && pnpm preinstall:swag && pnpm preinstall:upx"
   },
   "devDependencies": {
-    "@types/node": "^18.8.3",
+    "@types/node": "^18.8.5",
     "cross-env": "^7.0.3",
     "mkdirp": "^1.0.4",
-    "vitepress": "1.0.0-alpha.19",
+    "vitepress": "1.0.0-alpha.20",
     "vue": "^3.2.40"
   },
   "repository": {

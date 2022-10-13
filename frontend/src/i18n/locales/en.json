@@ -17,6 +17,10 @@
       "settings": "Settings",
       "about": "About"
     },
+    "application": {
+      "title": "Application",
+      "keyring": "Keyring"
+    },
     "test": {
       "title": "Test",
       "test": "Test"
@@ -40,6 +44,13 @@
       "portHttps": "HTTPS Port",
       "dirCerts": "TLS Certificate Path",
       "dirCertsPlaceholder": "Built-in certificates are used currently"
+    },
+    "changeSuperUserPassword": {
+      "legend": "Change Super User ({account}) Password",
+      "oldPassword": "Old Password",
+      "newPassword": "New Password",
+      "change": "Confirm and Change",
+      "clear": "Clear"
     },
     "choosePath": "Choose Path",
     "chooseLogPath": "Choose your log path",

@@ -1,7 +1,7 @@
 package config
 
 import (
-	"my-app/backend/database/option"
+	"my-app/backend/model"
 	"my-app/backend/pkg/utils"
 )
 
@@ -51,7 +51,7 @@ func DefaultConfig() *Config {
 func LoadConfig() *Config {
 	cfg := DefaultConfig()
 
-	var opts option.Options
+	var opts model.Options
 	if opts.Find() {
 		cfg.load(opts)
 	} else {
@@ -63,7 +63,7 @@ func LoadConfig() *Config {
 
 // save all config into database
 func (c *Config) Save() (ok bool) {
-	var options option.Options
+	var options model.Options
 	for _, opt := range [][]string{
 		{CfgDisplayLanguage, c.DisplayLanguage},
 		{CfgColorTheme, c.ColorTheme},
@@ -73,7 +73,7 @@ func (c *Config) Save() (ok bool) {
 		{CfgWebPortHttps, c.PortHttps},
 		{CfgWebDirCerts, c.DirCerts},
 	} {
-		options = append(options, option.Option{
+		options = append(options, model.Option{
 			Name:  opt[0],
 			Value: opt[1],
 		})
@@ -83,14 +83,14 @@ func (c *Config) Save() (ok bool) {
 
 // update option's value into database and set config's option value
 func (c *Config) Update(name string, value string) (ok bool) {
-	opt := &option.Option{
+	opt := &model.Option{
 		Name: name,
 	}
 	return opt.Update(value) && c.set(name, value)
 }
 
 // load options into config and save new options into database
-func (c *Config) load(options option.Options) (ok bool) {
+func (c *Config) load(options model.Options) (ok bool) {
 	for _, option := range options {
 		if !c.set(option.Name, option.Value) {
 			return false
@@ -107,7 +107,7 @@ func (c *Config) load(options option.Options) (ok bool) {
 		CfgWebDirCerts:     c.DirCerts,
 	}
 
-	var newOptions option.Options
+	var newOptions model.Options
 	for name, value := range optionPairs {
 		optionNotExist := true
 		for _, option := range options {
@@ -120,7 +120,7 @@ func (c *Config) load(options option.Options) (ok bool) {
 		}
 		if optionNotExist {
 			// initialize new options
-			newOptions = append(newOptions, option.Option{
+			newOptions = append(newOptions, model.Option{
 				Name:  name,
 				Value: value,
 			})

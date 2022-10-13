@@ -1,12 +1,8 @@
 <template>
   <div class="my-form-item" :style="style">
-    <label
-      class="my-form-item__label"
-      v-if="props.label"
-      :for="props.for"
-      :style="labelStyle"
-      >{{ props.label }}</label
-    >
+    <label class="my-form-item__label" :for="props.for" :style="labelStyle">
+      {{ props.label }}
+    </label>
     <div class="my-form-item__inner">
       <slot></slot>
     </div>
@@ -83,6 +79,10 @@ const labelStyle = computed<StyleValue>(() => {
 
   &__inner {
     flex-grow: 1;
+
+    > .my-button:not(:last-child) {
+      margin-right: 0.85em;
+    }
   }
 }
 </style>

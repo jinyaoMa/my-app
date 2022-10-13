@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"crypto/sha1"
+	"encoding/hex"
 	"os"
 	"path/filepath"
 )
@@ -19,4 +21,10 @@ func init() {
 
 func GetExecutablePath(elem ...string) string {
 	return filepath.Join(append([]string{executablePath}, elem...)...)
+}
+
+// sha1 hash, str => string to hash, return hexadecimal encoded hashed string
+func SHA1(str string) string {
+	hashed := sha1.Sum([]byte(str))
+	return hex.EncodeToString(hashed[:])
 }

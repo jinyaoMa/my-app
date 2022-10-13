@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func databaseConsoleLogger(prefix string) logger.Interface {
+func modelConsoleLogger(prefix string) logger.Interface {
 	return logger.New(
 		consoleLogger(prefix),
 		logger.Config{
@@ -19,7 +19,7 @@ func databaseConsoleLogger(prefix string) logger.Interface {
 	)
 }
 
-func databaseFileLogger(prefix string, file *os.File) logger.Interface {
+func modelFileLogger(prefix string, file *os.File) logger.Interface {
 	return logger.New(
 		fileLogger(prefix, file),
 		logger.Config{

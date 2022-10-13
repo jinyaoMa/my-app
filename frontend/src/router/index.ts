@@ -1,8 +1,9 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
-import Test from "@/views/Test.vue";
 import Home from "@/views/Home.vue";
 import Settings from "@/views/Settings.vue";
 import About from "@/views/About.vue";
+import Test from "@/views/Test.vue";
+import Keyring from "@/views/Keyring.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -24,6 +25,11 @@ export const routes: Array<RouteRecordRaw> = [
     path: "/test",
     name: "Test",
     component: Test,
+  },
+  {
+    path: "/keyring",
+    name: "Keyring",
+    component: Keyring,
   },
 ];
 

@@ -41,6 +41,12 @@ EventsOn("onWebServiceStop", () => {
             <span>{{ t("menu.main.about") }}</span>
           </my-menu-item>
         </my-menu-group>
+        <my-menu-group :title="t('menu.application.title')">
+          <my-menu-item to="/keyring">
+            <my-icon name="key" fix-width></my-icon>
+            <span>{{ t("menu.application.keyring") }}</span>
+          </my-menu-item>
+        </my-menu-group>
         <my-menu-group :title="t('menu.test.title')">
           <my-menu-item to="/test">
             <my-icon name="home" fix-width></my-icon>

@@ -36,7 +36,10 @@ func (w *wailsapp) windowTheme() (t windows.Theme) {
 // startup is called at application startup
 func (w *wailsapp) startup(ctx context.Context) {
 	w.ctx = ctx
-	service.Service(ctx)
+	s := service.Service(ctx)
+	{
+		s.InitializeSuperUser()
+	}
 	tray.Tray(ctx)
 	app.App().Log().Wails().Print("WAILS START UP")
 }
