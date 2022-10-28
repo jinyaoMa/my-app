@@ -272,6 +272,7 @@ const changeSuperUserPassword = async (res: (state: ResponseState) => void) => {
           >
             <my-input
               type="password"
+              width="20em"
               v-model="options.SuperUserOldPassword"
               :placeholder="t('settings.changeSuperUserPassword.oldPassword')"
             >
@@ -282,6 +283,7 @@ const changeSuperUserPassword = async (res: (state: ResponseState) => void) => {
           >
             <my-input
               type="password"
+              width="20em"
               v-model="options.SuperUserNewPassword"
               :placeholder="t('settings.changeSuperUserPassword.newPassword')"
             >

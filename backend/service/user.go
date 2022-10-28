@@ -23,6 +23,13 @@ func (s *service) InitializeSuperUser() bool {
 	return admin.Create()
 }
 
+func (s *service) CheckSuperUserPassword(password string) bool {
+	admin := &model.User{
+		Account: SuperUserAccount,
+	}
+	return admin.Find() && admin.Password == utils.SHA1(password)
+}
+
 func (s *service) UpdateSuperUserPassword(oldPassword string, newPassword string) bool {
 	admin := &model.User{
 		Account: SuperUserAccount,

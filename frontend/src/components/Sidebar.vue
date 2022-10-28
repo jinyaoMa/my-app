@@ -32,13 +32,13 @@ EventsOn("onWebServiceStop", () => {
             <my-icon name="home" fix-width></my-icon>
             <span>{{ t("menu.main.home") }}</span>
           </my-menu-item>
-          <my-menu-item to="/settings">
-            <my-icon name="settings" fix-width></my-icon>
-            <span>{{ t("menu.main.settings") }}</span>
-          </my-menu-item>
           <my-menu-item to="/about">
             <my-icon name="info" fix-width></my-icon>
             <span>{{ t("menu.main.about") }}</span>
+          </my-menu-item>
+          <my-menu-item to="/settings">
+            <my-icon name="settings" fix-width></my-icon>
+            <span>{{ t("menu.main.settings") }}</span>
           </my-menu-item>
         </my-menu-group>
         <my-menu-group :title="t('menu.application.title')">
@@ -49,7 +49,7 @@ EventsOn("onWebServiceStop", () => {
         </my-menu-group>
         <my-menu-group :title="t('menu.test.title')">
           <my-menu-item to="/test">
-            <my-icon name="home" fix-width></my-icon>
+            <my-icon fix-width></my-icon>
             <span>{{ t("menu.test.test") }}</span>
           </my-menu-item>
         </my-menu-group>

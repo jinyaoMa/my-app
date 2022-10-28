@@ -57,5 +57,12 @@
     "chooseDirCerts": "Choose your TLS certificate path",
     "save": "Save",
     "footnote": "* Most of the settings need restarting the application to take effect."
+  },
+  "keyring": {
+    "auth": {
+      "password": "Please enter super user ({account}) password",
+      "confirm": "Confirm"
+    },
+    "search": "Search"
   }
 }

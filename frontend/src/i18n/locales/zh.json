@@ -57,5 +57,12 @@
     "chooseDirCerts": "选择 TLS 证书路径",
     "save": "保存",
     "footnote": "* 大部分设置需重启应用程序后生效。"
+  },
+  "keyring": {
+    "auth": {
+      "password": "请输入超级用户（{account}）密码",
+      "confirm": "确认"
+    },
+    "search": "搜索"
   }
 }
