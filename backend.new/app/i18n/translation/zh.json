@@ -1,0 +1,34 @@
+{
+  "lang": {
+    "code": "zh",
+    "text": "简体中文"
+  },
+  "appname": "我的应用程序",
+  "open_window": "打开 我的应用程序",
+  "quit": "退出",
+  "display_language": {
+    "label": "显示语言",
+    "title": "选择 显示语言"
+  },
+  "color_theme": {
+    "label": "颜色主题",
+    "title": "选择 颜色主题",
+    "system": "跟随系统",
+    "light": "浅色",
+    "dark": "深色"
+  },
+  "web_service": {
+    "label": "Web 服务",
+    "enabled": "已启动",
+    "disabled": "未启动",
+    "vitepress": "打开 VitePress 文档",
+    "swagger": "打开 Swagger 文档",
+    "start": "开启 Web 服务",
+    "stop": "关闭 Web 服务"
+  },
+  "quit_dialog": {
+    "message": "确认退出 我的应用程序 吗？",
+    "default_button": "退出",
+    "cancel_button": "取消"
+  }
+}
