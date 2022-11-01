@@ -1,15 +1,34 @@
 package app
 
 import (
+	"fmt"
 	"my-app/backend.new/model"
 	"my-app/backend.new/utils"
 
 	"gorm.io/gorm"
 )
 
-type Config struct {
-	db *gorm.DB
+const (
+	ConfigOptionColorThemeSystem ConfigOptionColorTheme = "system"
+	ConfigOptionColorThemeLight  ConfigOptionColorTheme = "light"
+	ConfigOptionColorThemeDark   ConfigOptionColorTheme = "dark"
 
+	ConfigOptionTrue  ConfigOptionBool = "true"
+	ConfigOptionFalse ConfigOptionBool = "false"
+)
+
+type ConfigOptionColorTheme string
+
+type ConfigOptionBool string
+
+type ConfigOptionPort uint
+
+func (cop ConfigOptionPort) ToString() string {
+	return fmt.Sprintf(":%d", cop)
+}
+
+type Config struct {
+	db    *gorm.DB
 	_list model.Options
 	_map  map[model.OptionName]string
 }
@@ -23,48 +42,48 @@ func DefaultConfig(db *gorm.DB) *Config {
 	// default config as list
 	c._list = model.Options{
 		{
-			Name:  model.OptionDisplayLanguage,
-			Value: "en",
+			Name:  model.OptionNameDisplayLanguage,
+			Value: "",
 		},
 		{
-			Name:  model.OptionColorTheme,
-			Value: utils.ColorThemeSystem.ToString(),
+			Name:  model.OptionNameColorTheme,
+			Value: string(ConfigOptionColorThemeSystem),
 		},
 		{
-			Name:  model.OptionFileLog,
+			Name:  model.OptionNameFileLog,
 			Value: utils.Utils().GetExecutablePath("MyApp.log"),
 		},
 		{
-			Name:  model.OptionDirLanguages,
+			Name:  model.OptionNameDirLanguages,
 			Value: utils.Utils().GetExecutablePath("Languages"),
 		},
 		{
-			Name:  model.OptionDirAssets,
+			Name:  model.OptionNameDirAssets,
 			Value: utils.Utils().GetExecutablePath("Assets"),
 		},
 		{
-			Name:  model.OptionDirUserData,
+			Name:  model.OptionNameDirUserData,
 			Value: utils.Utils().GetExecutablePath("UserData"),
 		},
 		{
-			Name:  model.OptionDirDocs,
+			Name:  model.OptionNameDirDocs,
 			Value: utils.Utils().GetExecutablePath("Docs"),
 		},
 		{
-			Name:  model.OptionWebAutoStart,
-			Value: "false",
+			Name:  model.OptionNameWebAutoStart,
+			Value: string(ConfigOptionFalse),
 		},
 		{
-			Name:  model.OptionWebPortHttp,
-			Value: ":10080",
+			Name:  model.OptionNameWebPortHttp,
+			Value: ConfigOptionPort(10080).ToString(),
 		},
 		{
-			Name:  model.OptionWebPortHttps,
-			Value: ":10443",
+			Name:  model.OptionNameWebPortHttps,
+			Value: ConfigOptionPort(10443).ToString(),
 		},
 		{
-			Name:  model.OptionWebDirCerts,
-			Value: "",
+			Name:  model.OptionNameWebDirCerts,
+			Value: utils.Utils().GetExecutablePath("Certs"),
 		},
 	}
 	c.generateMap()
@@ -80,6 +99,8 @@ func LoadConfig(db *gorm.DB) *Config {
 		for _, opt := range c._list {
 			c._map[opt.Name] = opt.Value
 		}
+	} else {
+		utils.Utils().PanicLogger().Fatalln("failed to load config")
 	}
 
 	return c
@@ -87,7 +108,10 @@ func LoadConfig(db *gorm.DB) *Config {
 
 // Get get value of an option by the given option name
 func (c *Config) Get(name model.OptionName) string {
-	return c._map[name]
+	if v, ok := c._map[name]; ok {
+		return v
+	}
+	return ""
 }
 
 // Set set new value of an option by the given option name

@@ -6,26 +6,22 @@ import (
 
 // option names
 const (
-	OptionDisplayLanguage OptionName = "DisplayLanguage"
-	OptionColorTheme      OptionName = "ColorTheme"
+	OptionNameDisplayLanguage OptionName = "DisplayLanguage"
+	OptionNameColorTheme      OptionName = "ColorTheme"
 
-	OptionFileLog      OptionName = "FileLog"
-	OptionDirLanguages OptionName = "DirLanguages"
-	OptionDirAssets    OptionName = "DirAssets"
-	OptionDirUserData  OptionName = "DirUserData"
-	OptionDirDocs      OptionName = "DirDocs"
+	OptionNameFileLog      OptionName = "FileLog"
+	OptionNameDirLanguages OptionName = "DirLanguages"
+	OptionNameDirAssets    OptionName = "DirAssets"
+	OptionNameDirUserData  OptionName = "DirUserData"
+	OptionNameDirDocs      OptionName = "DirDocs"
 
-	OptionWebAutoStart OptionName = "Web.AutoStart"
-	OptionWebPortHttp  OptionName = "Web.PortHttp"
-	OptionWebPortHttps OptionName = "Web.PortHttps"
-	OptionWebDirCerts  OptionName = "Web.DirCerts"
+	OptionNameWebAutoStart OptionName = "Web.AutoStart"
+	OptionNameWebPortHttp  OptionName = "Web.PortHttp"
+	OptionNameWebPortHttps OptionName = "Web.PortHttps"
+	OptionNameWebDirCerts  OptionName = "Web.DirCerts"
 )
 
 type OptionName string
-
-func (on OptionName) ToString() string {
-	return string(on)
-}
 
 type Option struct {
 	gorm.Model

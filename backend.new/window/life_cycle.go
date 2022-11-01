@@ -15,11 +15,12 @@ func (w *window) startup(ctx context.Context) {
 
 // domReady is called after the front-end dom has been loaded
 func (w *window) domReady(ctx context.Context) {
-	app.App().UseCfg(func(cfg *app.Config) {
-		if cfg.Get(model.OptionWebAutoStart) == "true" {
+	app.App().UseConfig(func(cfg *app.Config) {
+		if cfg.Get(model.OptionNameWebAutoStart) == string(app.ConfigOptionTrue) {
 			tray.Tray().StartWebService()
 		}
-	}).Log().Wails().Print("WAILS DOM READY")
+	})
+	app.App().Log().Wails().Print("WAILS DOM READY")
 }
 
 // beforeClose is called when the application is about to quit,

@@ -1,0 +1,59 @@
+basePath: /api
+info:
+  contact:
+    name: GitHub Discussions
+    url: https://github.com/jinyaoMa/my-app/discussions
+  description: '"My App is a continuously updated personal service collection."'
+  license:
+    name: MIT
+    url: https://github.com/jinyaoMa/my-app/blob/main/LICENSE
+  title: My App (backend/web/router.go)
+  version: 1.0.0
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Login and get access token
+      parameters:
+      - description: Username
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Password
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Login
+      tags:
+      - Auth
+  /test:
+    get:
+      consumes:
+      - application/json
+      description: Test pass path
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Pass Path
+          schema:
+            type: string
+      summary: Pass
+      tags:
+      - Test
+schemes:
+- https
+securityDefinitions:
+  BearerToken:
+    description: Authorization Header should contain value started with "Bearer "
+      and followed by a JSON Web Token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

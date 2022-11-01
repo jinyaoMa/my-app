@@ -12,7 +12,7 @@ func NewService() *Service {
 }
 
 func (s *Service) GetOptions() (opts map[model.OptionName]string) {
-	app.App().UseCfg(func(cfg *app.Config) {
+	app.App().UseConfig(func(cfg *app.Config) {
 		opts = cfg.Map()
 	})
 	return

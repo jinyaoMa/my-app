@@ -9,23 +9,51 @@ import (
 )
 
 const (
-	LogPrefixDatabase = "DBS"
-	LogPrefixWails    = "WLS"
-	LogPrefixTray     = "TRY"
-	LogPrefixWeb      = "WEB"
-	LogPrefixService  = "SEV"
+	LoggerPrefixDatabase = "DBS"
+	LoggerPrefixWails    = "WLS"
+	LoggerPrefixI18n     = "I18"
+	LoggerPrefixTray     = "TRY"
+	LoggerPrefixWeb      = "WEB"
+	LoggerPrefixService  = "SEV"
 )
 
 type Logger struct {
 	database gormLogger.Interface
 	wails    wailsLogger.Logger
+	i18n     *utils.Logger
 	tray     *utils.Logger
 	web      *utils.Logger
 	service  *utils.Logger
 }
 
-func (l *Logger) Database() gormLogger.Interface {
-	return l.database
+func NewConsoleLogger() *Logger {
+	return &Logger{
+		database: utils.NewGormConsoleLogger(LoggerPrefixDatabase),
+		wails:    utils.NewWailsConsoleLogger(LoggerPrefixWails),
+		i18n:     utils.NewConsoleLogger(LoggerPrefixI18n),
+		tray:     utils.NewConsoleLogger(LoggerPrefixTray),
+		web:      utils.NewConsoleLogger(LoggerPrefixWeb),
+		service:  utils.NewConsoleLogger(LoggerPrefixService),
+	}
+}
+
+func NewFileLogger(logPath string) *Logger {
+	logFile, err := os.OpenFile(
+		logPath,
+		os.O_CREATE|os.O_WRONLY|os.O_APPEND,
+		0666,
+	)
+	if err != nil {
+		utils.Utils().PanicLogger().Fatalf("failed to open log file: %+v\n", err)
+	}
+	return &Logger{
+		database: utils.NewGormFileLogger(LoggerPrefixDatabase, logFile),
+		wails:    utils.NewWailsFileLogger(LoggerPrefixWails, logFile),
+		i18n:     utils.NewFileLogger(LoggerPrefixI18n, logFile),
+		tray:     utils.NewFileLogger(LoggerPrefixTray, logFile),
+		web:      utils.NewFileLogger(LoggerPrefixWeb, logFile),
+		service:  utils.NewFileLogger(LoggerPrefixService, logFile),
+	}
 }
 
 func (l *Logger) Wails() wailsLogger.Logger {
@@ -42,32 +70,4 @@ func (l *Logger) Web() *utils.Logger {
 
 func (l *Logger) Service() *utils.Logger {
 	return l.service
-}
-
-func NewConsoleLogger() *Logger {
-	return &Logger{
-		database: utils.NewGormConsoleLogger(LogPrefixDatabase),
-		wails:    utils.NewWailsConsoleLogger(LogPrefixWails),
-		tray:     utils.NewConsoleLogger(LogPrefixTray),
-		web:      utils.NewConsoleLogger(LogPrefixWeb),
-		service:  utils.NewConsoleLogger(LogPrefixService),
-	}
-}
-
-func NewFileLogger(logPath string) *Logger {
-	logFile, err := os.OpenFile(
-		logPath,
-		os.O_CREATE|os.O_WRONLY|os.O_APPEND,
-		0666,
-	)
-	if err != nil {
-		panic("failed to open log file")
-	}
-	return &Logger{
-		database: utils.NewGormFileLogger(LogPrefixDatabase, logFile),
-		wails:    utils.NewWailsFileLogger(LogPrefixWails, logFile),
-		tray:     utils.NewFileLogger(LogPrefixTray, logFile),
-		web:      utils.NewFileLogger(LogPrefixWeb, logFile),
-		service:  utils.NewFileLogger(LogPrefixService, logFile),
-	}
 }

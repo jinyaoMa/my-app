@@ -19,6 +19,7 @@ var (
 
 type utils struct {
 	executableDir string
+	panicLogger   *Logger
 }
 
 // Utils get utils global instance
@@ -31,12 +32,27 @@ func Utils() *utils {
 		}
 		executableDir := filepath.Dir(exe)
 
+		panicLogPath := filepath.Join(executableDir, "PANIC.log")
+		panicFile, err := os.OpenFile(
+			panicLogPath,
+			os.O_CREATE|os.O_WRONLY|os.O_APPEND,
+			0666,
+		)
+		if err != nil {
+			panic("failed to open panic log: " + panicLogPath)
+		}
+		panicLogger := NewFileLogger("", panicFile)
+
 		// initialize utils
 		instance = &utils{
 			executableDir: executableDir,
+			panicLogger:   panicLogger,
 		}
 	})
 	return instance
+}
+func (u *utils) PanicLogger() *Logger {
+	return u.panicLogger
 }
 
 // GetExecutablePath get the path started from application's executable directory

@@ -27,7 +27,7 @@ func (t *tray) onReady() {
 
 	systray.AddSeparator()
 
-	// display language menu
+	// web service menu
 	t.webService = menus.NewMenuSwitch([]string{
 		MniWebServiceStart,
 		MniWebServiceVitePress,

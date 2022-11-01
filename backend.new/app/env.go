@@ -4,7 +4,7 @@ import "os"
 
 const (
 	EnvMyAppAir = "MY_APP_AIR" // set MY_APP_AIR=1 to indicate using air hot reload tool
-	EnvMyAppLog = "MY_APP_LOG" // set MY_APP_LOG=1 to log to file
+	EnvMyAppLog = "MY_APP_LOG" // set MY_APP_LOG=1 to log to file, otherwise log to console
 )
 
 type Env struct {
@@ -35,26 +35,12 @@ func LoadEnv() *Env {
 	return e
 }
 
-// UseAir run callback if use air hot reload tool
-func (e *Env) UseAir(callback func()) *Env {
-	if e.pairs[EnvMyAppAir] == "1" {
-		callback()
-	}
-	return e
+// IsAir check if use air hot reload tool
+func (e *Env) IsAir() bool {
+	return e.pairs[EnvMyAppAir] == "1"
 }
 
-// Log2Console run callback if log to console
-func (e *Env) Log2Console(callback func()) *Env {
-	if e.pairs[EnvMyAppLog] != "1" {
-		callback()
-	}
-	return e
-}
-
-// run callback if log to file
-func (e *Env) Log2File(callback func()) *Env {
-	if e.pairs[EnvMyAppLog] == "1" {
-		callback()
-	}
-	return e
+// IsLog2File check if log to file
+func (e *Env) IsLog2File() bool {
+	return e.pairs[EnvMyAppLog] == "1"
 }

@@ -16,7 +16,7 @@ type AssetHelper interface {
 	LoadJSON(v any, filePaths ...string) error
 	// Walk walk through all files shallowly in a directory of FS
 	Walk(callback func(path string, isDir bool, f fs.DirEntry) error, dirPaths ...string) error
-	// Extract extract directory to desinatiion at executable path
+	// Extract extract root directory to desinatiion directory
 	Extract(dst ...string) error
 }
 
@@ -83,8 +83,8 @@ func (ef *EmbedFS) Extract(dst ...string) error {
 }
 
 // NewEmbedFs get ready to read data from an embed FS with a root path specified
-func NewEmbedFS(fs embed.FS, rootPaths ...string) AssetHelper {
-	root := filepath.Join(rootPaths...)
+func NewEmbedFS(fs embed.FS, dirRoot ...string) AssetHelper {
+	root := filepath.Join(dirRoot...)
 	root = filepath.ToSlash(root)
 	return &EmbedFS{
 		fs:   fs,
@@ -152,8 +152,8 @@ func (df *DirFS) Extract(dst ...string) error {
 }
 
 // NewDirFS get ready to read data from a directory FS with a root path specified
-func NewDirFS(rootPaths ...string) AssetHelper {
-	root := filepath.Join(rootPaths...)
+func NewDirFS(dirRoot ...string) AssetHelper {
+	root := filepath.Join(dirRoot...)
 	return &DirFS{
 		fs:   os.DirFS(root),
 		root: root,

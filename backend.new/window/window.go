@@ -1,6 +1,7 @@
 package window
 
 import (
+	"embed"
 	"my-app/backend.new/app"
 	"my-app/backend.new/model"
 	"my-app/backend.new/services"
@@ -16,20 +17,19 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
+//go:embed assets
+var assets embed.FS
+
 var (
 	instance *window
 	once     sync.Once
 )
 
-type window struct {
-	bind *Bind
-}
+type window struct{}
 
 func Window() *window {
 	once.Do(func() {
-		instance = &window{
-			bind: NewBind(),
-		}
+		instance = &window{}
 	})
 	return instance
 }
@@ -37,7 +37,7 @@ func Window() *window {
 func (w *window) Run() {
 	// default wails options
 	opts := &options.App{
-		Title:             w.bind.GetAppName(),
+		Title:             services.Services().App().GetAppName(),
 		Width:             1024, // 16:10
 		Height:            640,  // 16:10
 		DisableResize:     false,
@@ -62,10 +62,8 @@ func (w *window) Run() {
 		OnDomReady:         w.domReady,
 		OnShutdown:         w.shutdown,
 		OnBeforeClose:      w.beforeClose,
-		Bind: append([]interface{}{
-			w.bind,
-		}, services.Services().All()...),
-		WindowStartState: options.Normal,
+		Bind:               services.Services().All(),
+		WindowStartState:   options.Normal,
 		Windows: &windows.Options{
 			WebviewIsTransparent:              true,
 			WindowIsTranslucent:               false,
@@ -101,23 +99,33 @@ func (w *window) Run() {
 	}
 
 	// configure wails options
-	app.App().UseCfg(func(cfg *app.Config) {
+	app.App().UseConfig(func(cfg *app.Config) {
 		// get stored Assets directory
-		opts.Assets = os.DirFS(cfg.Get(model.OptionDirAssets))
+		dirAssets := cfg.Get(model.OptionNameDirAssets)
+		if utils.Utils().HasDir(dirAssets) {
+			opts.Assets = os.DirFS(dirAssets)
+		} else {
+			opts.Assets = assets
+			// extract assets into dirAssets
+			assetHelper := utils.NewEmbedFS(assets, "assets")
+			if err := assetHelper.Extract(dirAssets); err != nil {
+				app.App().Log().Wails().Fatal("failed to extract embed assets into dirAssets (" + dirAssets + "): " + err.Error())
+			}
+		}
 		// get stored UserData directory
-		opts.Windows.WebviewUserDataPath = cfg.Get(model.OptionDirUserData)
+		opts.Windows.WebviewUserDataPath = cfg.Get(model.OptionNameDirUserData)
 		// get stored color theme
-		switch cfg.Get(model.OptionColorTheme) {
-		case utils.ColorThemeSystem.ToString():
+		switch cfg.Get(model.OptionNameColorTheme) {
+		case string(app.ConfigOptionColorThemeSystem):
 			opts.Windows.Theme = windows.SystemDefault
-		case utils.ColorThemeLight.ToString():
+		case string(app.ConfigOptionColorThemeLight):
 			opts.Windows.Theme = windows.Light
-		case utils.ColorThemeDark.ToString():
+		case string(app.ConfigOptionColorThemeDark):
 			opts.Windows.Theme = windows.Dark
 		}
 	})
 
 	if err := wails.Run(opts); err != nil {
-		app.App().Log().Wails().Fatal("fail to run wails: " + err.Error())
+		app.App().Log().Wails().Fatal("failed to run wails: " + err.Error())
 	}
 }

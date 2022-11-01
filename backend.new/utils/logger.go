@@ -49,5 +49,8 @@ func NewGormFileLogger(prefix string, file *os.File) logger.Interface {
 }
 
 func (l *Logger) modifyPrefix(prefix string) string {
+	if prefix == "" {
+		return prefix
+	}
 	return "[" + prefix + "] "
 }
