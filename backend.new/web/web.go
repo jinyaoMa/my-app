@@ -49,16 +49,17 @@ func Web() *web {
 		instance = &web{
 			isRunning: false,
 		}
+		app.App().Log().Web().Println("WEB INSTANCE INITIALIZED")
 	})
 	return instance
 }
 
-// IsRunning check if the web server is running
+// IsRunning check if the web service is running
 func (w *web) IsRunning() bool {
 	return w.isRunning
 }
 
-// Start Start the web server to run
+// Start Start the web service to run
 func (w *web) Start() (ok bool) {
 	if w.isRunning {
 		return false
@@ -76,7 +77,7 @@ func (w *web) Start() (ok bool) {
 	return true
 }
 
-// Stop stop the web server from running
+// Stop stop the web service from running
 func (w *web) Stop() (ok bool) {
 	if w.isRunning {
 		ctxHttp, cancelHttp := context.WithTimeout(context.Background(), 5*time.Second)
@@ -101,7 +102,7 @@ func (w *web) Stop() (ok bool) {
 	return false
 }
 
-// reset initialze http redirector and https server (tls) of the web server
+// reset initialze http redirector and https server (tls) of the web service
 func (w *web) reset() {
 	app.App().UseConfig(func(cfg *app.Config) {
 		portHttp := cfg.Get(model.OptionNameWebPortHttp)
@@ -142,11 +143,13 @@ func (s *web) getSelfSignedOrLetsEncryptCert(certManager *autocert.Manager) func
 	dirCerts := string(dirCache)
 	if ok && utils.Utils().HasDir(string(dirCerts)) { // if external dirCerts is set and occured
 		hasExternalCerts = true
+		app.App().Log().Web().Printf("WEB SERVICE LOAD CERTS FROM dirCerts: %s\n", dirCerts)
 	} else { // if dirCerts is empty in config, use embed certs
 		assetHelper := utils.NewEmbedFS(certs, "certs")
 		if err := assetHelper.Extract(dirCerts); err != nil {
 			app.App().Log().Web().Fatalf("failed to extract embed certs into dirCerts (%s): %+v\n", dirCerts, err)
 		}
+		app.App().Log().Web().Println("WEB SERVICE LOAD CERTS FROM embed: backend/web/certs")
 
 		crt, _ := assetHelper.GetFileBytes("localhost.crt")
 		key, _ := assetHelper.GetFileBytes("localhost.key")

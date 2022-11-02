@@ -21,9 +21,7 @@ var icons embed.FS
 //go:embed docs
 var docs embed.FS
 
-var ()
-
-// router get handler for https server of web server
+// router get handler for https server of web service
 func (w *web) router() *gin.Engine {
 	r := gin.Default()
 	{
@@ -52,13 +50,14 @@ func (w *web) router() *gin.Engine {
 			dirDocs := cfg.Get(model.OptionNameDirDocs)
 			if utils.Utils().HasDir(dirDocs) {
 				r.Static("/docs", dirDocs)
+				app.App().Log().Web().Printf("WEB SERVICE SERVES DOCS FROM dirDocs: %s\n", dirDocs)
 			} else {
 				sub, _ := fs.Sub(docs, "docs")
 				r.StaticFS("/docs", http.FS(sub))
 				// extract docs into dirDocs
 				assetHelper := utils.NewEmbedFS(docs, "docs")
 				if err := assetHelper.Extract(dirDocs); err != nil {
-					app.App().Log().Web().Printf("failed to extract embed docs into dirDocs (%s): %+v\n", dirDocs, err)
+					app.App().Log().Web().Println("WEB SERVICE SERVES DOCS FROM embed: backend/web/docs")
 				}
 			}
 		})

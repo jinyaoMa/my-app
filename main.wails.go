@@ -1,5 +1,6 @@
 package main
 
+/*
 import (
 	"context"
 	"my-app/backend/app"
@@ -75,3 +76,4 @@ func (w *wailsapp) suspend() {
 func (w *wailsapp) resume() {
 	app.App().Log().Wails().Print("WAILS RESUME")
 }
+*/

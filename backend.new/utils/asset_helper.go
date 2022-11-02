@@ -14,7 +14,7 @@ type AssetHelper interface {
 	GetFileBytes(filePaths ...string) (data []byte, err error)
 	// LoadJSON load JSON file to a go struct instance from FS
 	LoadJSON(v any, filePaths ...string) error
-	// Walk walk through all files shallowly in a directory of FS
+	// Walk walk through all files shallowly (not drill down to folders) in a directory of FS
 	Walk(callback func(path string, isDir bool, f fs.DirEntry) error, dirPaths ...string) error
 	// Extract extract root directory to desinatiion directory
 	Extract(dst ...string) error
@@ -23,6 +23,16 @@ type AssetHelper interface {
 type EmbedFS struct {
 	fs   embed.FS
 	root string
+}
+
+// NewEmbedFs get ready to read data from an embed FS with a root path specified
+func NewEmbedFS(fs embed.FS, dirRoot ...string) AssetHelper {
+	root := filepath.Join(dirRoot...)
+	root = filepath.ToSlash(root)
+	return &EmbedFS{
+		fs:   fs,
+		root: root,
+	}
 }
 
 // GetFileBytes implements MyFS
@@ -44,14 +54,18 @@ func (ef *EmbedFS) LoadJSON(v any, filePaths ...string) error {
 
 // Walk implements MyFS
 func (ef *EmbedFS) Walk(callback func(path string, isDir bool, f fs.DirEntry) error, dirPaths ...string) error {
-	dir := filepath.Join(append([]string{ef.root}, dirPaths...)...)
+	// current directory
+	cd := filepath.Join(dirPaths...)
+	cd = filepath.ToSlash(cd)
+
+	dir := filepath.Join(ef.root, cd)
 	dir = filepath.ToSlash(dir)
 	files, err := ef.fs.ReadDir(dir)
 	if err != nil {
 		return err
 	}
 	for _, f := range files {
-		if err := callback(dir+"/"+f.Name(), f.IsDir(), f); err != nil {
+		if err := callback(cd+"/"+f.Name(), f.IsDir(), f); err != nil {
 			return err
 		}
 	}
@@ -66,40 +80,70 @@ func (ef *EmbedFS) Extract(dst ...string) error {
 	}
 
 	dir := filepath.Join(dst...)
-	os.MkdirAll(dir, os.ModePerm)
+	err = os.MkdirAll(dir, os.ModePerm)
+	if err != nil {
+		return err
+	}
 
+	return ef._extract(files, ef.root, dir)
+}
+
+// _extract drill down the directory entry and extract all folders and files
+func (ef *EmbedFS) _extract(files []fs.DirEntry, cd string, ecd string) error {
 	for _, f := range files {
-		fileContent, err := ef.fs.ReadFile(ef.root + "/" + f.Name())
-		if err != nil {
-			return err
-		}
+		// path of current directory/file name
+		_cd := cd + "/" + f.Name()
+		// path of extracted current directory/file name
+		_ecd := filepath.Join(ecd, f.Name())
 
-		filename := filepath.Join(dir, f.Name())
-		if err := os.WriteFile(filename, fileContent, 0666); err != nil {
-			return err
+		if f.IsDir() { // extract the folder
+			_files, err := ef.fs.ReadDir(_cd)
+			if err != nil {
+				return err
+			}
+
+			err = os.MkdirAll(_ecd, os.ModePerm)
+			if err != nil {
+				return err
+			}
+
+			err = ef._extract(_files, _cd, _ecd)
+			if err != nil {
+				return err
+			}
+
+		} else { // extract the file
+			fileContent, err := ef.fs.ReadFile(_cd)
+			if err != nil {
+				return err
+			}
+
+			if err := os.WriteFile(_ecd, fileContent, 0666); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
 }
 
-// NewEmbedFs get ready to read data from an embed FS with a root path specified
-func NewEmbedFS(fs embed.FS, dirRoot ...string) AssetHelper {
-	root := filepath.Join(dirRoot...)
-	root = filepath.ToSlash(root)
-	return &EmbedFS{
-		fs:   fs,
-		root: root,
-	}
+type DirFS struct {
+	fs fs.FS
 }
 
-type DirFS struct {
-	fs   fs.FS
-	root string
+// NewDirFS get ready to read data from a directory FS with a root path specified
+func NewDirFS(dirRoot ...string) AssetHelper {
+	root := filepath.Join(dirRoot...)
+	root = filepath.ToSlash(root)
+	return &DirFS{
+		fs: os.DirFS(root),
+	}
 }
 
 // GetFileBytes implements MyFS
 func (df *DirFS) GetFileBytes(filePaths ...string) (data []byte, err error) {
-	data, err = fs.ReadFile(df.fs, filepath.Join(filePaths...))
+	name := filepath.Join(filePaths...)
+	name = filepath.ToSlash(name)
+	data, err = fs.ReadFile(df.fs, name)
 	return
 }
 
@@ -114,7 +158,12 @@ func (df *DirFS) LoadJSON(v any, filePaths ...string) error {
 
 // Walk implements MyFS
 func (df *DirFS) Walk(callback func(path string, isDir bool, f fs.DirEntry) error, dirPaths ...string) error {
-	dir := filepath.Join(dirPaths...)
+	// current directory
+	cd := filepath.Join(dirPaths...)
+	cd = filepath.ToSlash(cd)
+
+	dir := filepath.Join(".", cd)
+	dir = filepath.ToSlash(dir)
 	files, err := fs.ReadDir(df.fs, dir)
 	if err != nil {
 		return err
@@ -135,27 +184,48 @@ func (df *DirFS) Extract(dst ...string) error {
 	}
 
 	dir := filepath.Join(dst...)
-	os.MkdirAll(dir, os.ModePerm)
+	err = os.MkdirAll(dir, os.ModePerm)
+	if err != nil {
+		return err
+	}
 
+	return df._extract(files, ".", dir)
+}
+
+// _extract drill down the directory entry and extract all folders and files
+func (df *DirFS) _extract(files []fs.DirEntry, cd string, ecd string) error {
 	for _, f := range files {
-		fileContent, err := fs.ReadFile(df.fs, f.Name())
-		if err != nil {
-			return err
-		}
+		// path of current directory/file name
+		_cd := cd + "/" + f.Name()
+		// path of extracted current directory/file name
+		_ecd := filepath.Join(ecd, f.Name())
 
-		filename := filepath.Join(dir, f.Name())
-		if err := os.WriteFile(filename, fileContent, 0666); err != nil {
-			return err
+		if f.IsDir() { // extract the folder
+			_files, err := fs.ReadDir(df.fs, _cd)
+			if err != nil {
+				return err
+			}
+
+			err = os.MkdirAll(_ecd, os.ModePerm)
+			if err != nil {
+				return err
+			}
+
+			err = df._extract(_files, _cd, _ecd)
+			if err != nil {
+				return err
+			}
+
+		} else { // extract the file
+			fileContent, err := fs.ReadFile(df.fs, _cd)
+			if err != nil {
+				return err
+			}
+
+			if err := os.WriteFile(_ecd, fileContent, 0666); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
-}
-
-// NewDirFS get ready to read data from a directory FS with a root path specified
-func NewDirFS(dirRoot ...string) AssetHelper {
-	root := filepath.Join(dirRoot...)
-	return &DirFS{
-		fs:   os.DirFS(root),
-		root: root,
-	}
 }

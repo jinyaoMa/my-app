@@ -1,31 +1,12 @@
 package app
 
 import (
-	"fmt"
+	"my-app/backend.new/app/types"
 	"my-app/backend.new/model"
 	"my-app/backend.new/utils"
 
 	"gorm.io/gorm"
 )
-
-const (
-	ConfigOptionColorThemeSystem ConfigOptionColorTheme = "system"
-	ConfigOptionColorThemeLight  ConfigOptionColorTheme = "light"
-	ConfigOptionColorThemeDark   ConfigOptionColorTheme = "dark"
-
-	ConfigOptionTrue  ConfigOptionBool = "true"
-	ConfigOptionFalse ConfigOptionBool = "false"
-)
-
-type ConfigOptionColorTheme string
-
-type ConfigOptionBool string
-
-type ConfigOptionPort uint
-
-func (cop ConfigOptionPort) ToString() string {
-	return fmt.Sprintf(":%d", cop)
-}
 
 type Config struct {
 	db    *gorm.DB
@@ -47,7 +28,7 @@ func DefaultConfig(db *gorm.DB) *Config {
 		},
 		{
 			Name:  model.OptionNameColorTheme,
-			Value: string(ConfigOptionColorThemeSystem),
+			Value: types.ColorThemeDefault.ToString(),
 		},
 		{
 			Name:  model.OptionNameFileLog,
@@ -71,15 +52,15 @@ func DefaultConfig(db *gorm.DB) *Config {
 		},
 		{
 			Name:  model.OptionNameWebAutoStart,
-			Value: string(ConfigOptionFalse),
+			Value: types.BoolFalse.ToString(),
 		},
 		{
 			Name:  model.OptionNameWebPortHttp,
-			Value: ConfigOptionPort(10080).ToString(),
+			Value: types.NewPort(":10080").ToString(),
 		},
 		{
 			Name:  model.OptionNameWebPortHttps,
-			Value: ConfigOptionPort(10443).ToString(),
+			Value: types.NewPort(":10443").ToString(),
 		},
 		{
 			Name:  model.OptionNameWebDirCerts,

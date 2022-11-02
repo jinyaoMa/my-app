@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"my-app/backend.new/app/i18n"
+	"my-app/backend.new/app/types"
 	"my-app/backend.new/model"
 
 	"gorm.io/gorm"
@@ -30,7 +31,8 @@ func App() *app {
 	once.Do(func() {
 		env := LoadEnv()
 		db := ConnectDatabase()
-		cfg := LoadConfig(db)
+		//cfg := LoadConfig(db)
+		cfg := DefaultConfig(db)
 
 		var log *Logger
 		if env.IsLog2File() {
@@ -43,12 +45,10 @@ func App() *app {
 		i18n := i18n.NewI18n(cfg.Get(model.OptionNameDirLanguages), log.i18n)
 
 		// adjust config: color theme
-		switch cfg.Get(model.OptionNameColorTheme) {
-		case string(ConfigOptionColorThemeSystem):
-		case string(ConfigOptionColorThemeLight):
-		case string(ConfigOptionColorThemeDark):
-		default:
-			cfg.Set(model.OptionNameColorTheme, string(ConfigOptionColorThemeSystem))
+		storedColorTheme := cfg.Get(model.OptionNameColorTheme)
+		adjustedColorTheme := types.NewColorTheme(storedColorTheme).ToString()
+		if storedColorTheme != adjustedColorTheme {
+			cfg.Set(model.OptionNameColorTheme, adjustedColorTheme)
 		}
 		// adjust config: display language
 		availableLanguages := i18n.AvailableLanguages()
@@ -68,6 +68,10 @@ func App() *app {
 	return instance
 }
 
+func (a *app) Log() *Logger {
+	return a.log
+}
+
 func (a *app) UseEnv(callback func(env *Env)) *app {
 	callback(a.env)
 	return a
@@ -83,15 +87,21 @@ func (a *app) UseConfig(callback func(cfg *Config)) *app {
 	return a
 }
 
-func (a *app) Log() *Logger {
-	return a.log
-}
-
 // T -> get current translation
 func (a *app) UseI18n(callback func(T func() *i18n.Translation, i18n *i18n.I18n)) *app {
 	callback(func() *i18n.Translation {
 		return a.i18n.Translation(a.cfg.Get(model.OptionNameDisplayLanguage))
 	}, a.i18n)
+	return a
+}
+
+func (a *app) SetContext(ctx context.Context) *app {
+	a.ctx = ctx
+	return a
+}
+
+func (a *app) UseContext(callback func(ctx context.Context)) *app {
+	callback(a.ctx)
 	return a
 }
 
@@ -104,7 +114,31 @@ func (a *app) UseConfigAndI18n(callback func(cfg *Config, T func() *i18n.Transla
 	return a
 }
 
-func (a *app) SetContext(ctx context.Context) *app {
-	a.ctx = ctx
+func (a *app) UseContextAndI18n(callback func(ctx context.Context, T func() *i18n.Translation, i18n *i18n.I18n)) *app {
+	a.UseContext(func(ctx context.Context) {
+		a.UseI18n(func(T func() *i18n.Translation, i18n *i18n.I18n) {
+			callback(ctx, T, i18n)
+		})
+	})
+	return a
+}
+
+func (a *app) UseContextAndConfig(callback func(ctx context.Context, cfg *Config)) *app {
+	a.UseContext(func(ctx context.Context) {
+		a.UseConfig(func(cfg *Config) {
+			callback(ctx, cfg)
+		})
+	})
+	return a
+}
+
+func (a *app) UseContextAndConfigAndI18n(callback func(ctx context.Context, cfg *Config, T func() *i18n.Translation, i18n *i18n.I18n)) *app {
+	a.UseContext(func(ctx context.Context) {
+		a.UseConfig(func(cfg *Config) {
+			a.UseI18n(func(T func() *i18n.Translation, i18n *i18n.I18n) {
+				callback(ctx, cfg, T, i18n)
+			})
+		})
+	})
 	return a
 }

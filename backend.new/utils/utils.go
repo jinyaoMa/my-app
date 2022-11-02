@@ -32,7 +32,7 @@ func Utils() *utils {
 		}
 		executableDir := filepath.Dir(exe)
 
-		panicLogPath := filepath.Join(executableDir, "PANIC.log")
+		panicLogPath := filepath.Join(executableDir, "MyApp.panic")
 		panicFile, err := os.OpenFile(
 			panicLogPath,
 			os.O_CREATE|os.O_WRONLY|os.O_APPEND,

@@ -1,4 +1,4 @@
-package app
+package general
 
 import (
 	"my-app/backend.new/app"

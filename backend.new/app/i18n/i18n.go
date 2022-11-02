@@ -24,11 +24,13 @@ func NewI18n(dirLanguages string, log *utils.Logger) *I18n {
 	if utils.Utils().HasDir(dirLanguages) {
 		// Languages Directory available at executable directory
 		assetHelper = utils.NewDirFS(dirLanguages)
+		log.Printf("I18N LOAD ASSET FROM dirLanguages: %s\n", dirLanguages)
 	} else {
 		assetHelper = utils.NewEmbedFS(translations, "translations")
 		if err := assetHelper.Extract(dirLanguages); err != nil {
 			log.Fatalf("failed to extract embed translations into dirLanguages (%s): %+v\n", dirLanguages, err)
 		}
+		log.Println("I18N LOAD ASSET FROM embed: backend/app/i18n/translations")
 	}
 
 	// load translations

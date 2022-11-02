@@ -53,11 +53,11 @@ func (t *tray) refreshTooltip() {
 	ct := app.App().CurrentTranslation()
 	separator := ": "
 
-	var sebServiceState string
+	var webServiceState string
 	if web.Web().IsRunning() {
-		sebServiceState = ct.WebService.Enabled
+		webServiceState = ct.WebService.Enabled
 	} else {
-		sebServiceState = ct.WebService.Disabled
+		webServiceState = ct.WebService.Disabled
 	}
 
 	var displayLanguageText string
@@ -82,7 +82,7 @@ func (t *tray) refreshTooltip() {
 		fmt.Sprintf(
 			"%s\n%s\n%s\n%s",
 			ct.AppName,
-			ct.WebService.Label+separator+sebServiceState,
+			ct.WebService.Label+separator+webServiceState,
 			ct.DisplayLanguage.Label+separator+displayLanguageText,
 			ct.ColorTheme.Label+separator+colorThemeText,
 		),

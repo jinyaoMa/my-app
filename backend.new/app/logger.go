@@ -14,7 +14,7 @@ const (
 	LoggerPrefixI18n     = "I18"
 	LoggerPrefixTray     = "TRY"
 	LoggerPrefixWeb      = "WEB"
-	LoggerPrefixService  = "SEV"
+	LoggerPrefixServices = "SEV"
 )
 
 type Logger struct {
@@ -23,7 +23,7 @@ type Logger struct {
 	i18n     *utils.Logger
 	tray     *utils.Logger
 	web      *utils.Logger
-	service  *utils.Logger
+	services *utils.Logger
 }
 
 func NewConsoleLogger() *Logger {
@@ -33,7 +33,7 @@ func NewConsoleLogger() *Logger {
 		i18n:     utils.NewConsoleLogger(LoggerPrefixI18n),
 		tray:     utils.NewConsoleLogger(LoggerPrefixTray),
 		web:      utils.NewConsoleLogger(LoggerPrefixWeb),
-		service:  utils.NewConsoleLogger(LoggerPrefixService),
+		services: utils.NewConsoleLogger(LoggerPrefixServices),
 	}
 }
 
@@ -52,7 +52,7 @@ func NewFileLogger(logPath string) *Logger {
 		i18n:     utils.NewFileLogger(LoggerPrefixI18n, logFile),
 		tray:     utils.NewFileLogger(LoggerPrefixTray, logFile),
 		web:      utils.NewFileLogger(LoggerPrefixWeb, logFile),
-		service:  utils.NewFileLogger(LoggerPrefixService, logFile),
+		services: utils.NewFileLogger(LoggerPrefixServices, logFile),
 	}
 }
 
@@ -68,6 +68,6 @@ func (l *Logger) Web() *utils.Logger {
 	return l.web
 }
 
-func (l *Logger) Service() *utils.Logger {
-	return l.service
+func (l *Logger) Services() *utils.Logger {
+	return l.services
 }

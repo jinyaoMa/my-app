@@ -6,7 +6,8 @@ import (
 )
 
 type SwitchGroup struct {
-	flag bool
+	IRefresh
+	state bool
 
 	onOnce    sync.Once
 	onGroup   []*SingleItem
@@ -20,7 +21,7 @@ type SwitchGroup struct {
 }
 
 // capacity[0] -> On group capacity, capacity[1] -> Off group capacity
-func NewSwitchGroup(default_flag bool, capacity ...int) *SwitchGroup {
+func NewSwitchGroup(default_state bool, capacity ...int) *SwitchGroup {
 	capOn := 2
 	capOff := 2
 	if len(capacity) > 0 {
@@ -30,7 +31,7 @@ func NewSwitchGroup(default_flag bool, capacity ...int) *SwitchGroup {
 		capOff = capacity[1]
 	}
 	return (&SwitchGroup{
-		flag:       default_flag,
+		state:      default_state,
 		onGroup:    make([]*SingleItem, 0, capOn),
 		onCases:    make([]reflect.SelectCase, 0, capOn),
 		onClicked:  make(chan string),
@@ -47,7 +48,7 @@ func (sg *SwitchGroup) AddItems2OnGroup(items ...*SingleItem) *SwitchGroup {
 	}
 	sg.onCases = append(sg.onCases, cases...)
 	sg.onGroup = append(sg.onGroup, items...)
-	return sg.setFlag(sg.flag)
+	return sg.Switch(sg.state)
 }
 
 func (sg *SwitchGroup) AddItems2OffGroup(items ...*SingleItem) *SwitchGroup {
@@ -57,7 +58,7 @@ func (sg *SwitchGroup) AddItems2OffGroup(items ...*SingleItem) *SwitchGroup {
 	}
 	sg.offCases = append(sg.onCases, cases...)
 	sg.offGroup = append(sg.offGroup, items...)
-	return sg.setFlag(sg.flag)
+	return sg.Switch(sg.state)
 }
 
 func (sg *SwitchGroup) UpdateText() *SwitchGroup {
@@ -70,16 +71,14 @@ func (sg *SwitchGroup) UpdateText() *SwitchGroup {
 	return sg
 }
 
-func (sg *SwitchGroup) Toggle() *SwitchGroup {
-	return sg.setFlag(!sg.flag)
-}
-
 func (sg *SwitchGroup) OnGroupClicked() chan string {
 	sg.onOnce.Do(func() {
 		go func() {
 			for {
 				chosen, _, _ := reflect.Select(sg.onCases)
-				sg.onClicked <- sg.onGroup[chosen].GetID()
+				if sg.state {
+					sg.onClicked <- sg.onGroup[chosen].GetID()
+				}
 			}
 		}()
 	})
@@ -91,16 +90,18 @@ func (sg *SwitchGroup) OffGroupClicked() chan string {
 		go func() {
 			for {
 				chosen, _, _ := reflect.Select(sg.offCases)
-				sg.offClicked <- sg.offGroup[chosen].GetID()
+				if !sg.state {
+					sg.offClicked <- sg.offGroup[chosen].GetID()
+				}
 			}
 		}()
 	})
 	return sg.offClicked
 }
 
-func (sg *SwitchGroup) setFlag(flag bool) *SwitchGroup {
-	sg.flag = flag
-	if sg.flag {
+func (sg *SwitchGroup) Switch(state bool) *SwitchGroup {
+	sg.state = state
+	if sg.state {
 		for _, item := range sg.onGroup {
 			item.Show()
 		}

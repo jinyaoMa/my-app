@@ -6,6 +6,7 @@ import (
 
 	"my-app/backend.new/app"
 	"my-app/backend.new/app/i18n"
+	"my-app/backend.new/app/types"
 	"my-app/backend.new/model"
 	"my-app/backend.new/tray/menus"
 	"my-app/backend.new/utils"
@@ -34,6 +35,7 @@ func Tray() *tray {
 	once.Do(func() {
 		instance = &tray{}
 		systray.Register(instance.onReady, nil)
+		app.App().Log().Tray().Println("TRAY INSTANCE INITIALIZED")
 	})
 	return instance
 }
@@ -48,12 +50,16 @@ func (t *tray) onReady() {
 	icoWebStop, _ := assetHelper.GetFileBytes("web-stop.ico")
 	icoWebStart, _ := assetHelper.GetFileBytes("web-start.ico")
 
-	// setup menus
-	systray.SetTemplateIcon(ico, ico)
+	// setup tray icon and menus
 	app.App().UseConfigAndI18n(func(cfg *app.Config, T func() *i18n.Translation, i18n *i18n.I18n) {
+		// tray icon
+		systray.SetTitle(T().AppName)
+		systray.SetTemplateIcon(ico, ico)
+		t.updateIconTooltip()
+
 		// open window menu
 		t.openWindow = menus.NewSingleItem(
-			"OpenWindow", T().OpenWindow, icoOpenWindow,
+			MenuIdOpenWindow, T().OpenWindow, icoOpenWindow,
 		).SetTextUpdater(func(updateText func(text string)) {
 			updateText(T().OpenWindow)
 		})
@@ -62,27 +68,27 @@ func (t *tray) onReady() {
 
 		// web service menu
 		t.webService = menus.NewSwitchGroup(
-			cfg.Get(model.OptionNameWebAutoStart) == string(app.ConfigOptionTrue),
+			types.NewBool(cfg.Get(model.OptionNameWebAutoStart)).ToBool(),
 			3, 1,
 		).AddItems2OnGroup(
 			menus.NewSingleItem(
-				"OpenVitePress", T().WebService.VitePress, icoOpenVitePress,
+				MenuIdOpenVitePress, T().WebService.VitePress, icoOpenVitePress,
 			).SetTextUpdater(func(updateText func(text string)) {
 				updateText(T().WebService.VitePress)
 			}),
 			menus.NewSingleItem(
-				"OpenSwagger", T().WebService.Swagger, icoOpenSwagger,
+				MenuIdOpenSwagger, T().WebService.Swagger, icoOpenSwagger,
 			).SetTextUpdater(func(updateText func(text string)) {
 				updateText(T().WebService.Swagger)
 			}),
 			menus.NewSingleItem(
-				"WebStop", T().WebService.Stop, icoWebStop,
+				MenuIdStopWeb, T().WebService.Stop, icoWebStop,
 			).SetTextUpdater(func(updateText func(text string)) {
 				updateText(T().WebService.Stop)
 			}),
 		).AddItems2OffGroup(
 			menus.NewSingleItem(
-				"WebStart", T().WebService.Start, icoWebStart,
+				MenuIdStartWeb, T().WebService.Start, icoWebStart,
 			).SetTextUpdater(func(updateText func(text string)) {
 				updateText(T().WebService.Start)
 			}),
@@ -93,7 +99,7 @@ func (t *tray) onReady() {
 		// display language menu
 		t.displayLanguage = menus.NewSelectList(
 			menus.NewSingleItem(
-				"DisplayLanguage", T().DisplayLanguage.Title,
+				MenuIdDisplayLanguage, T().DisplayLanguage.Title,
 			).SetTextUpdater(func(updateText func(text string)) {
 				updateText(T().DisplayLanguage.Title)
 			}),
@@ -117,24 +123,24 @@ func (t *tray) onReady() {
 		// color theme menu
 		t.colorTheme = menus.NewSelectList(
 			menus.NewSingleItem(
-				"ColorTheme", T().ColorTheme.Title,
+				MenuIdColorTheme, T().ColorTheme.Title,
 			).SetTextUpdater(func(updateText func(text string)) {
 				updateText(T().ColorTheme.Title)
 			}),
 			3,
 		).AddOptions(
 			menus.NewSingleItem(
-				string(app.ConfigOptionColorThemeSystem), T().ColorTheme.System,
+				types.ColorThemeDefault.ToString(), T().ColorTheme.System,
 			).SetTextUpdater(func(updateText func(text string)) {
 				updateText(T().ColorTheme.System)
 			}),
 			menus.NewSingleItem(
-				string(app.ConfigOptionColorThemeLight), T().ColorTheme.Light,
+				types.ColorThemeLight.ToString(), T().ColorTheme.Light,
 			).SetTextUpdater(func(updateText func(text string)) {
 				updateText(T().ColorTheme.Light)
 			}),
 			menus.NewSingleItem(
-				string(app.ConfigOptionColorThemeDark), T().ColorTheme.Dark,
+				types.ColorThemeDark.ToString(), T().ColorTheme.Dark,
 			).SetTextUpdater(func(updateText func(text string)) {
 				updateText(T().ColorTheme.Dark)
 			}),
@@ -144,18 +150,18 @@ func (t *tray) onReady() {
 
 		// copyright menu
 		t.copyright = menus.NewSingleItem(
-			"Copyright", utils.Copyright,
+			MenuIdCopyright, utils.Copyright,
 		).Disable()
 
 		systray.AddSeparator()
 
 		// quit menu
 		t.quit = menus.NewSingleItem(
-			"Quit", T().Quit,
+			MenuIdQuit, T().Quit,
 		).SetTextUpdater(func(updateText func(text string)) {
 			updateText(T().Quit)
 		})
-	})
+	}).Log().Tray().Println("TRAY IS READY")
 
 	go t.watch()
 }

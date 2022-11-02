@@ -3,21 +3,21 @@ package window
 import (
 	"context"
 	"my-app/backend.new/app"
+	"my-app/backend.new/app/types"
 	"my-app/backend.new/model"
-	"my-app/backend/tray"
+	"my-app/backend.new/tray"
 )
 
 // startup is called at application startup
 func (w *window) startup(ctx context.Context) {
-	app.App().SetContext(ctx).
-		Log().Wails().Print("WAILS START UP")
+	app.App().SetContext(ctx).Log().Wails().Print("WAILS START UP")
 }
 
 // domReady is called after the front-end dom has been loaded
 func (w *window) domReady(ctx context.Context) {
 	app.App().UseConfig(func(cfg *app.Config) {
-		if cfg.Get(model.OptionNameWebAutoStart) == string(app.ConfigOptionTrue) {
-			tray.Tray().StartWebService()
+		if types.NewBool(cfg.Get(model.OptionNameWebAutoStart)) {
+			tray.Tray().ChangeWebServiceState(true)
 		}
 	})
 	app.App().Log().Wails().Print("WAILS DOM READY")

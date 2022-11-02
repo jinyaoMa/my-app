@@ -3,8 +3,10 @@ package window
 import (
 	"embed"
 	"my-app/backend.new/app"
+	"my-app/backend.new/app/types"
 	"my-app/backend.new/model"
 	"my-app/backend.new/services"
+	"my-app/backend.new/tray"
 	"my-app/backend.new/utils"
 	"os"
 	"sync"
@@ -30,6 +32,7 @@ type window struct{}
 func Window() *window {
 	once.Do(func() {
 		instance = &window{}
+		app.App().Log().Wails().Print("WINDOW INSTANCE INITIALIZED")
 	})
 	return instance
 }
@@ -37,7 +40,7 @@ func Window() *window {
 func (w *window) Run() {
 	// default wails options
 	opts := &options.App{
-		Title:             services.Services().App().GetAppName(),
+		Title:             services.Services().General().GetAppName(),
 		Width:             1024, // 16:10
 		Height:            640,  // 16:10
 		DisableResize:     false,
@@ -62,7 +65,7 @@ func (w *window) Run() {
 		OnDomReady:         w.domReady,
 		OnShutdown:         w.shutdown,
 		OnBeforeClose:      w.beforeClose,
-		Bind:               services.Services().All(),
+		Bind:               append(services.Services().All(), tray.Tray()),
 		WindowStartState:   options.Normal,
 		Windows: &windows.Options{
 			WebviewIsTransparent:              true,
@@ -104,6 +107,7 @@ func (w *window) Run() {
 		dirAssets := cfg.Get(model.OptionNameDirAssets)
 		if utils.Utils().HasDir(dirAssets) {
 			opts.Assets = os.DirFS(dirAssets)
+			app.App().Log().Wails().Print("WAILS LOAD ASSET FROM dirAssets: " + dirAssets)
 		} else {
 			opts.Assets = assets
 			// extract assets into dirAssets
@@ -111,16 +115,17 @@ func (w *window) Run() {
 			if err := assetHelper.Extract(dirAssets); err != nil {
 				app.App().Log().Wails().Fatal("failed to extract embed assets into dirAssets (" + dirAssets + "): " + err.Error())
 			}
+			app.App().Log().Wails().Print("WAILS LOAD ASSET FROM embed: backend/window/assets")
 		}
 		// get stored UserData directory
 		opts.Windows.WebviewUserDataPath = cfg.Get(model.OptionNameDirUserData)
 		// get stored color theme
 		switch cfg.Get(model.OptionNameColorTheme) {
-		case string(app.ConfigOptionColorThemeSystem):
+		default:
 			opts.Windows.Theme = windows.SystemDefault
-		case string(app.ConfigOptionColorThemeLight):
+		case types.ColorThemeLight.ToString():
 			opts.Windows.Theme = windows.Light
-		case string(app.ConfigOptionColorThemeDark):
+		case types.ColorThemeDark.ToString():
 			opts.Windows.Theme = windows.Dark
 		}
 	})
