@@ -34,6 +34,8 @@ func ConnectDatabase() *gorm.DB {
 	// migrate tables
 	if err := db.AutoMigrate(
 		&model.Option{},
+		&model.User{},
+		&model.Keyring{},
 	); err != nil {
 		utils.Utils().PanicLogger().Fatalf("failed to auto migrate: %+v\n", err)
 	}

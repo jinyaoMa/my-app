@@ -16,7 +16,7 @@ func (w *window) startup(ctx context.Context) {
 // domReady is called after the front-end dom has been loaded
 func (w *window) domReady(ctx context.Context) {
 	app.App().UseConfig(func(cfg *app.Config) {
-		if types.NewBool(cfg.Get(model.OptionNameWebAutoStart)) {
+		if types.ParseBoolean(cfg.Get(model.OptionNameWebAutoStart)) {
 			tray.Tray().ChangeWebServiceState(true)
 		}
 	})

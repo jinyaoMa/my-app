@@ -30,7 +30,10 @@ func (t *tray) ClickOpenVitePress() {
 	app.App().UseContextAndConfig(func(ctx context.Context, cfg *app.Config) {
 		runtime.BrowserOpenURL(
 			ctx,
-			fmt.Sprintf("https://localhost%s/docs/", cfg.Get(model.OptionNameWebPortHttp)),
+			fmt.Sprintf(
+				"https://localhost%s/docs/",
+				types.ParsePort(cfg.Get(model.OptionNameWebPortHttp)).ToString(),
+			),
 		)
 	}).Log().Tray().Println("OPEN VITEPRESS CLICKED")
 }
@@ -39,7 +42,10 @@ func (t *tray) ClickOpenSwagger() {
 	app.App().UseContextAndConfig(func(ctx context.Context, cfg *app.Config) {
 		runtime.BrowserOpenURL(
 			ctx,
-			fmt.Sprintf("https://localhost%s/swagger/index.html", cfg.Get(model.OptionNameWebPortHttps)),
+			fmt.Sprintf(
+				"https://localhost%s/swagger/index.html",
+				types.ParsePort(cfg.Get(model.OptionNameWebPortHttps)).ToString(),
+			),
 		)
 	}).Log().Tray().Println("OPEN SWAGGER CLICKED")
 }
@@ -72,7 +78,7 @@ func (t *tray) ChangeDisplayLanguage(lang string) {
 }
 
 func (t *tray) ChangeColorTheme(theme string) {
-	theme = types.NewColorTheme(theme).ToString()
+	theme = types.ParseColorTheme(theme).ToString()
 	app.App().UseContextAndConfigAndI18n(func(ctx context.Context, cfg *app.Config, T func() *i18n.Translation, i18n *i18n.I18n) {
 		if cfg.Set(model.OptionNameColorTheme, theme) {
 			runtime.EventsEmit(ctx, EventNameOnColorThemeChanged, theme)

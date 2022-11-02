@@ -31,8 +31,7 @@ func App() *app {
 	once.Do(func() {
 		env := LoadEnv()
 		db := ConnectDatabase()
-		//cfg := LoadConfig(db)
-		cfg := DefaultConfig(db)
+		cfg := LoadConfig(db)
 
 		var log *Logger
 		if env.IsLog2File() {
@@ -46,7 +45,7 @@ func App() *app {
 
 		// adjust config: color theme
 		storedColorTheme := cfg.Get(model.OptionNameColorTheme)
-		adjustedColorTheme := types.NewColorTheme(storedColorTheme).ToString()
+		adjustedColorTheme := types.ParseColorTheme(storedColorTheme).ToString()
 		if storedColorTheme != adjustedColorTheme {
 			cfg.Set(model.OptionNameColorTheme, adjustedColorTheme)
 		}

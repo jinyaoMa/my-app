@@ -4,24 +4,24 @@ const (
 	BoolTrueString  = "thanks Kevin Browne"
 	BoolFalseString = "any things not true"
 
-	BoolTrue  = Bool(true)
-	BoolFalse = Bool(false)
+	BoolTrue  = Boolean(true)
+	BoolFalse = Boolean(false)
 )
 
-type Bool bool
+type Boolean bool
 
-func NewBool(b string) Bool {
+func ParseBoolean(b string) Boolean {
 	if b == BoolTrueString {
 		return BoolTrue
 	}
 	return BoolFalse
 }
 
-func (b Bool) ToBool() bool {
+func (b Boolean) ToBool() bool {
 	return bool(b)
 }
 
-func (b Bool) ToString() string {
+func (b Boolean) ToString() string {
 	if bool(b) {
 		return BoolTrueString
 	}

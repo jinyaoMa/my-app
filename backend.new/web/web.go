@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"embed"
 	"my-app/backend.new/app"
+	"my-app/backend.new/app/types"
 	"my-app/backend.new/model"
 	"my-app/backend.new/utils"
 	"net/http"
@@ -105,8 +106,8 @@ func (w *web) Stop() (ok bool) {
 // reset initialze http redirector and https server (tls) of the web service
 func (w *web) reset() {
 	app.App().UseConfig(func(cfg *app.Config) {
-		portHttp := cfg.Get(model.OptionNameWebPortHttp)
-		portHttps := cfg.Get(model.OptionNameWebPortHttps)
+		portHttp := types.ParsePort(cfg.Get(model.OptionNameWebPortHttp)).ToString()
+		portHttps := types.ParsePort(cfg.Get(model.OptionNameWebPortHttps)).ToString()
 		dirCerts := cfg.Get(model.OptionNameWebDirCerts)
 
 		manager := &autocert.Manager{

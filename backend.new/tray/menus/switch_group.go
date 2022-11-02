@@ -56,7 +56,7 @@ func (sg *SwitchGroup) AddItems2OffGroup(items ...*SingleItem) *SwitchGroup {
 	for _, item := range items {
 		cases = append(cases, reflect.SelectCase{Dir: reflect.SelectRecv, Chan: reflect.ValueOf(item.Clicked())})
 	}
-	sg.offCases = append(sg.onCases, cases...)
+	sg.offCases = append(sg.offCases, cases...)
 	sg.offGroup = append(sg.offGroup, items...)
 	return sg.Switch(sg.state)
 }

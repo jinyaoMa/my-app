@@ -8,7 +8,7 @@ const (
 
 type ColorTheme string
 
-func NewColorTheme(theme string) ColorTheme {
+func ParseColorTheme(theme string) ColorTheme {
 	switch theme {
 	case ColorThemeLight.ToString():
 		return ColorThemeLight

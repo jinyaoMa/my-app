@@ -56,11 +56,11 @@ func DefaultConfig(db *gorm.DB) *Config {
 		},
 		{
 			Name:  model.OptionNameWebPortHttp,
-			Value: types.NewPort(":10080").ToString(),
+			Value: types.ParsePort(":10080").ToString(),
 		},
 		{
 			Name:  model.OptionNameWebPortHttps,
-			Value: types.NewPort(":10443").ToString(),
+			Value: types.ParsePort(":10443").ToString(),
 		},
 		{
 			Name:  model.OptionNameWebDirCerts,

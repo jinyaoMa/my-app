@@ -68,7 +68,7 @@ func (t *tray) onReady() {
 
 		// web service menu
 		t.webService = menus.NewSwitchGroup(
-			types.NewBool(cfg.Get(model.OptionNameWebAutoStart)).ToBool(),
+			types.ParseBoolean(cfg.Get(model.OptionNameWebAutoStart)).ToBool(),
 			3, 1,
 		).AddItems2OnGroup(
 			menus.NewSingleItem(
@@ -144,7 +144,7 @@ func (t *tray) onReady() {
 			).SetTextUpdater(func(updateText func(text string)) {
 				updateText(T().ColorTheme.Dark)
 			}),
-		).Check(cfg.Get(model.OptionNameColorTheme))
+		).Check(types.ParseColorTheme(cfg.Get(model.OptionNameColorTheme)).ToString())
 
 		systray.AddSeparator()
 
