@@ -87,5 +87,5 @@ func (a *app) SetCtx(ctx context.Context) *app {
 
 // T get current translation
 func (a *app) T() *i18n.Translation {
-	return a.i18n.Translation(a.cfg.Get(types.ConfigNameDisplayLanguage))
+	return a.i18n.Translation(a.i18n.ParseLanguage(a.cfg.Get(types.ConfigNameDisplayLanguage)))
 }

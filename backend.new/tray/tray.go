@@ -8,7 +8,7 @@ import (
 	"my-app/backend.new/app/types"
 	"my-app/backend.new/tray/menus"
 	"my-app/backend.new/utils"
-	"my-app/backend/web"
+	"my-app/backend.new/web"
 
 	"github.com/getlantern/systray"
 )
@@ -99,11 +99,10 @@ func Tray() *tray {
 				}),
 				len(i18n.AvailableLanguages()),
 			)
-			cLang := app.App().Cfg().Get(types.ConfigNameDisplayLanguage)
-			for _, l := range i18n.AvailableLanguages() {
-				lang := l.ToString()
+			cLang := i18n.ParseLanguage(app.App().Cfg().Get(types.ConfigNameDisplayLanguage))
+			for _, lang := range i18n.AvailableLanguages() {
 				opt := menus.NewSingleItem(
-					lang, i18n.Translation(lang).Lang.Text,
+					lang.ToString(), i18n.Translation(lang).Lang.Text,
 				).SetTextUpdater(func(updateText func(text string)) {
 					updateText(i18n.Translation(lang).Lang.Text)
 				})

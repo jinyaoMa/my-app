@@ -65,16 +65,16 @@ func NewI18n(dirLanguages string, log *utils.Logger) *I18n {
 }
 
 // Translation get translation of the given language
-func (i *I18n) Translation(lang string) *Translation {
-	if t, ok := i.translationMap[Language(lang)]; ok {
+func (i *I18n) Translation(lang Language) *Translation {
+	if t, ok := i.translationMap[lang]; ok {
 		// if the language is available
 		return t
 	}
 	return &TranslationPlaceholder
 }
 
-// Language get valid language
-func (i *I18n) Language(lang string) Language {
+// ParseLanguage get valid language
+func (i *I18n) ParseLanguage(lang string) Language {
 	language := Language(lang)
 	if _, ok := i.translationMap[language]; ok {
 		return language

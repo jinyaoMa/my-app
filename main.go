@@ -1,6 +1,6 @@
 package main
 
-import "my-app/backend.new/window"
+import "my-app/backend.new/wails"
 
 /*
 	"my-app/backend/app"
@@ -18,7 +18,7 @@ import "my-app/backend.new/window"
 */
 
 func main() {
-	window.Window().Run()
+	wails.Run()
 	/*
 		w := &wailsapp{}
 
