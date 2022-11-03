@@ -8,99 +8,93 @@ import (
 	"gorm.io/gorm"
 )
 
-type Config struct {
-	db    *gorm.DB
-	_list model.Options
-	_map  map[model.OptionName]string
+type config struct {
+	db          *gorm.DB
+	options     model.Options
+	optionPairs map[types.ConfigName]string
 }
 
 // default config
-func DefaultConfig(db *gorm.DB) *Config {
-	c := &Config{
+func DefaultConfig(db *gorm.DB) *config {
+	c := &config{
 		db: db,
+		// default config options
+		options: model.Options{
+			{
+				Name:  types.ConfigNameDisplayLanguage,
+				Value: "",
+			},
+			{
+				Name:  types.ConfigNameColorTheme,
+				Value: types.ColorThemeDefault.ToString(),
+			},
+			{
+				Name:  types.ConfigNameFileLog,
+				Value: utils.Utils().GetExecutablePath("MyApp.log"),
+			},
+			{
+				Name:  types.ConfigNameDirLanguages,
+				Value: utils.Utils().GetExecutablePath("Languages"),
+			},
+			{
+				Name:  types.ConfigNameDirAssets,
+				Value: utils.Utils().GetExecutablePath("Assets"),
+			},
+			{
+				Name:  types.ConfigNameDirUserData,
+				Value: utils.Utils().GetExecutablePath("UserData"),
+			},
+			{
+				Name:  types.ConfigNameDirDocs,
+				Value: utils.Utils().GetExecutablePath("Docs"),
+			},
+			{
+				Name:  types.ConfigNameWebAutoStart,
+				Value: types.BooleanFalse,
+			},
+			{
+				Name:  types.ConfigNameWebPortHttp,
+				Value: types.ParsePort(":10080").ToString(),
+			},
+			{
+				Name:  types.ConfigNameWebPortHttps,
+				Value: types.ParsePort(":10443").ToString(),
+			},
+			{
+				Name:  types.ConfigNameWebDirCerts,
+				Value: utils.Utils().GetExecutablePath("Certs"),
+			},
+		},
 	}
 
-	// default config as list
-	c._list = model.Options{
-		{
-			Name:  model.OptionNameDisplayLanguage,
-			Value: "",
-		},
-		{
-			Name:  model.OptionNameColorTheme,
-			Value: types.ColorThemeDefault.ToString(),
-		},
-		{
-			Name:  model.OptionNameFileLog,
-			Value: utils.Utils().GetExecutablePath("MyApp.log"),
-		},
-		{
-			Name:  model.OptionNameDirLanguages,
-			Value: utils.Utils().GetExecutablePath("Languages"),
-		},
-		{
-			Name:  model.OptionNameDirAssets,
-			Value: utils.Utils().GetExecutablePath("Assets"),
-		},
-		{
-			Name:  model.OptionNameDirUserData,
-			Value: utils.Utils().GetExecutablePath("UserData"),
-		},
-		{
-			Name:  model.OptionNameDirDocs,
-			Value: utils.Utils().GetExecutablePath("Docs"),
-		},
-		{
-			Name:  model.OptionNameWebAutoStart,
-			Value: types.BoolFalse.ToString(),
-		},
-		{
-			Name:  model.OptionNameWebPortHttp,
-			Value: types.ParsePort(":10080").ToString(),
-		},
-		{
-			Name:  model.OptionNameWebPortHttps,
-			Value: types.ParsePort(":10443").ToString(),
-		},
-		{
-			Name:  model.OptionNameWebDirCerts,
-			Value: utils.Utils().GetExecutablePath("Certs"),
-		},
-	}
-	c.generateMap()
-
-	return c
+	return c.generateOptionPairs()
 }
 
 // load config from database
-func LoadConfig(db *gorm.DB) *Config {
+func LoadConfig(db *gorm.DB) *config {
 	c := DefaultConfig(db)
 
-	if c._list.FindAndSave(db) {
-		for _, opt := range c._list {
-			c._map[opt.Name] = opt.Value
+	if c.options.FindAndSave(db) {
+		for _, opt := range c.options {
+			c.optionPairs[opt.Name] = opt.Value
 		}
 	} else {
-		utils.Utils().PanicLogger().Fatalln("failed to load config")
+		utils.Utils().Panic("failed to load config: db error")
 	}
 
 	return c
 }
 
 // Get get value of an option by the given option name
-func (c *Config) Get(name model.OptionName) string {
-	if v, ok := c._map[name]; ok {
+func (c *config) Get(name types.ConfigName) string {
+	if v, ok := c.optionPairs[name]; ok {
 		return v
 	}
 	return ""
 }
 
 // Set set new value of an option by the given option name
-func (c *Config) Set(name model.OptionName, newValue string) (ok bool) {
-	if c.db == nil {
-		return false
-	}
-
+func (c *config) Set(name types.ConfigName, newValue string) (ok bool) {
 	// update db
 	opt := model.Option{
 		Name:  name,
@@ -111,30 +105,31 @@ func (c *Config) Set(name model.OptionName, newValue string) (ok bool) {
 	}
 
 	// update config
-	for _, opt := range c._list {
+	for _, opt := range c.options {
 		if opt.Name == name {
 			opt.Value = newValue
-			c._map[name] = newValue
+			c.optionPairs[name] = newValue
 			return ok && true
 		}
 	}
 	return
 }
 
-// List get the list of config
-func (c *Config) List() model.Options {
-	return c._list
+// List get the option list of config
+func (c *config) Options() model.Options {
+	return c.options
 }
 
-// Map get the map of config
-func (c *Config) Map() map[model.OptionName]string {
-	return c._map
+// Map get the option pairs of config
+func (c *config) OptionPairs() map[types.ConfigName]string {
+	return c.optionPairs
 }
 
-// generateMap generate map from the list
-func (c *Config) generateMap() {
-	c._map = make(map[model.OptionName]string)
-	for _, opt := range c._list {
-		c._map[opt.Name] = opt.Value
+// generateMap generate option pairs from the option list
+func (c *config) generateOptionPairs() *config {
+	c.optionPairs = make(map[types.ConfigName]string)
+	for _, opt := range c.options {
+		c.optionPairs[opt.Name] = opt.Value
 	}
+	return c
 }

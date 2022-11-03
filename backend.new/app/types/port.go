@@ -6,8 +6,6 @@ import (
 	"strconv"
 )
 
-const PortDefault = Port(10000)
-
 var PortMatcher = regexp.MustCompile(`^:([0-9]{1,5})$`)
 
 type Port uint
@@ -19,7 +17,7 @@ func ParsePort(port string) Port {
 			return Port(p)
 		}
 	}
-	return PortDefault
+	return 0
 }
 
 func (p Port) ToUint() uint {

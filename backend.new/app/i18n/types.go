@@ -1,5 +1,42 @@
 package i18n
 
+const LanguagePlaceholder = Language("Thanks_Sharon_Scollard")
+
+var TranslationPlaceholder = Translation{
+	Lang: TranslationLang{
+		Code: LanguagePlaceholder.ToString(),
+		Text: LanguagePlaceholder.ToString(),
+	},
+	AppName:    "[AppName]",
+	OpenWindow: "[OpenWindow]",
+	Quit:       "[Quit]",
+	DisplayLanguage: TranslationDisplayLanguage{
+		Label: "[Label]",
+		Title: "[Title]",
+	},
+	ColorTheme: TranslationColorTheme{
+		Label:  "[Label]",
+		Title:  "[Title]",
+		System: "[System]",
+		Light:  "[Light]",
+		Dark:   "[Dark]",
+	},
+	WebService: TranslationWebService{
+		Label:     "[Label]",
+		Enabled:   "[Enabled]",
+		Disabled:  "[Disabled]",
+		VitePress: "[VitePress]",
+		Swagger:   "[Swagger]",
+		Start:     "[Start]",
+		Stop:      "[Stop]",
+	},
+	QuitDialog: TranslationQuitDialog{
+		Message:       "[Message]",
+		DefaultButton: "[DefaultButton]",
+		CancelButton:  "[CancelButton]",
+	},
+}
+
 type Translation struct {
 	Lang            TranslationLang            `json:"lang"`
 	AppName         string                     `json:"appname"`
@@ -45,39 +82,8 @@ type TranslationQuitDialog struct {
 	CancelButton  string `json:"cancel_button"`
 }
 
-func TranslationPlaceholder() *Translation {
-	return &Translation{
-		Lang: TranslationLang{
-			Code: "[LangCode]",
-			Text: "[LangText]",
-		},
-		AppName:    "[AppName]",
-		OpenWindow: "[OpenWindow]",
-		Quit:       "[Quit]",
-		DisplayLanguage: TranslationDisplayLanguage{
-			Label: "[Label]",
-			Title: "[Title]",
-		},
-		ColorTheme: TranslationColorTheme{
-			Label:  "[Label]",
-			Title:  "[Title]",
-			System: "[System]",
-			Light:  "[Light]",
-			Dark:   "[Dark]",
-		},
-		WebService: TranslationWebService{
-			Label:     "[Label]",
-			Enabled:   "[Enabled]",
-			Disabled:  "[Disabled]",
-			VitePress: "[VitePress]",
-			Swagger:   "[Swagger]",
-			Start:     "[Start]",
-			Stop:      "[Stop]",
-		},
-		QuitDialog: TranslationQuitDialog{
-			Message:       "[Message]",
-			DefaultButton: "[DefaultButton]",
-			CancelButton:  "[CancelButton]",
-		},
-	}
+type Language string
+
+func (l Language) ToString() string {
+	return string(l)
 }

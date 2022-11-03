@@ -1,15 +1,13 @@
-package window
+package wails
 
 import (
 	"embed"
 	"my-app/backend.new/app"
 	"my-app/backend.new/app/types"
-	"my-app/backend.new/model"
 	"my-app/backend.new/services"
 	"my-app/backend.new/tray"
 	"my-app/backend.new/utils"
 	"os"
-	"sync"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
@@ -22,25 +20,10 @@ import (
 //go:embed assets
 var assets embed.FS
 
-var (
-	instance *window
-	once     sync.Once
-)
-
-type window struct{}
-
-func Window() *window {
-	once.Do(func() {
-		instance = &window{}
-		app.App().Log().Wails().Print("WINDOW INSTANCE INITIALIZED")
-	})
-	return instance
-}
-
-func (w *window) Run() {
+func Run() {
 	// default wails options
 	opts := &options.App{
-		Title:             services.Services().General().GetAppName(),
+		Title:             app.App().T().AppName,
 		Width:             1024, // 16:10
 		Height:            640,  // 16:10
 		DisableResize:     false,
@@ -61,10 +44,10 @@ func (w *window) Run() {
 		Logger:             app.App().Log().Wails(),
 		LogLevel:           logger.INFO,
 		LogLevelProduction: logger.ERROR,
-		OnStartup:          w.startup,
-		OnDomReady:         w.domReady,
-		OnShutdown:         w.shutdown,
-		OnBeforeClose:      w.beforeClose,
+		OnStartup:          startup,
+		OnDomReady:         domReady,
+		OnShutdown:         shutdown,
+		OnBeforeClose:      beforeClose,
 		Bind:               append(services.Services().All(), tray.Tray()),
 		WindowStartState:   options.Normal,
 		Windows: &windows.Options{
@@ -93,42 +76,40 @@ func (w *window) Run() {
 			},*/
 			Messages:         nil,
 			ResizeDebounceMS: 0,
-			OnSuspend:        w.suspend,
-			OnResume:         w.resume,
+			OnSuspend:        suspend,
+			OnResume:         resume,
 		},
 		Mac:          &mac.Options{},
 		Linux:        &linux.Options{},
 		Experimental: &options.Experimental{},
 	}
 
-	// configure wails options
-	app.App().UseConfig(func(cfg *app.Config) {
-		// get stored Assets directory
-		dirAssets := cfg.Get(model.OptionNameDirAssets)
-		if utils.Utils().HasDir(dirAssets) {
-			opts.Assets = os.DirFS(dirAssets)
-			app.App().Log().Wails().Print("WAILS LOAD ASSET FROM dirAssets: " + dirAssets)
-		} else {
-			opts.Assets = assets
-			// extract assets into dirAssets
-			assetHelper := utils.NewEmbedFS(assets, "assets")
-			if err := assetHelper.Extract(dirAssets); err != nil {
-				app.App().Log().Wails().Fatal("failed to extract embed assets into dirAssets (" + dirAssets + "): " + err.Error())
-			}
-			app.App().Log().Wails().Print("WAILS LOAD ASSET FROM embed: backend/window/assets")
+	/* configure wails options */
+	// get stored Assets directory
+	dirAssets := app.App().Cfg().Get(types.ConfigNameDirAssets)
+	if utils.Utils().HasDir(dirAssets) {
+		opts.Assets = os.DirFS(dirAssets)
+		app.App().Log().Wails().Print("WAILS LOAD ASSET FROM dirAssets: " + dirAssets)
+	} else {
+		opts.Assets = assets
+		// extract assets into dirAssets
+		assetHelper := utils.NewEmbedFS(assets, "assets")
+		if err := assetHelper.Extract(dirAssets); err != nil {
+			app.App().Log().Wails().Fatal("failed to extract embed assets into dirAssets (" + dirAssets + "): " + err.Error())
 		}
-		// get stored UserData directory
-		opts.Windows.WebviewUserDataPath = cfg.Get(model.OptionNameDirUserData)
-		// get stored color theme
-		switch cfg.Get(model.OptionNameColorTheme) {
-		default:
-			opts.Windows.Theme = windows.SystemDefault
-		case types.ColorThemeLight.ToString():
-			opts.Windows.Theme = windows.Light
-		case types.ColorThemeDark.ToString():
-			opts.Windows.Theme = windows.Dark
-		}
-	})
+		app.App().Log().Wails().Print("WAILS LOAD ASSET FROM embed: backend/window/assets")
+	}
+	// get stored UserData directory
+	opts.Windows.WebviewUserDataPath = app.App().Cfg().Get(types.ConfigNameDirUserData)
+	// get stored color theme
+	switch app.App().Cfg().Get(types.ConfigNameColorTheme) {
+	default:
+		opts.Windows.Theme = windows.SystemDefault
+	case types.ColorThemeLight.ToString():
+		opts.Windows.Theme = windows.Light
+	case types.ColorThemeDark.ToString():
+		opts.Windows.Theme = windows.Dark
+	}
 
 	if err := wails.Run(opts); err != nil {
 		app.App().Log().Wails().Fatal("failed to run wails: " + err.Error())

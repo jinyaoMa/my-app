@@ -7,13 +7,13 @@ const (
 	EnvMyAppLog = "MY_APP_LOG" // set MY_APP_LOG=1 to log to file, otherwise log to console
 )
 
-type Env struct {
+type env struct {
 	pairs map[string]string
 }
 
 // DefaultEnv get default environment variables
-func DefaultEnv() *Env {
-	return &Env{
+func DefaultEnv() *env {
+	return &env{
 		pairs: map[string]string{
 			EnvMyAppAir: "0",
 			EnvMyAppLog: "1",
@@ -22,7 +22,7 @@ func DefaultEnv() *Env {
 }
 
 // LoadEnv load environment variables into map
-func LoadEnv() *Env {
+func LoadEnv() *env {
 	e := DefaultEnv()
 	for _, key := range []string{
 		EnvMyAppAir,
@@ -36,11 +36,11 @@ func LoadEnv() *Env {
 }
 
 // IsAir check if use air hot reload tool
-func (e *Env) IsAir() bool {
+func (e *env) IsAir() bool {
 	return e.pairs[EnvMyAppAir] == "1"
 }
 
 // IsLog2File check if log to file
-func (e *Env) IsLog2File() bool {
+func (e *env) IsLog2File() bool {
 	return e.pairs[EnvMyAppLog] == "1"
 }

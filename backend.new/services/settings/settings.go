@@ -2,7 +2,7 @@ package settings
 
 import (
 	"my-app/backend.new/app"
-	"my-app/backend.new/model"
+	"my-app/backend.new/app/types"
 )
 
 type Service struct{}
@@ -11,9 +11,6 @@ func NewService() *Service {
 	return &Service{}
 }
 
-func (s *Service) GetOptions() (opts map[model.OptionName]string) {
-	app.App().UseConfig(func(cfg *app.Config) {
-		opts = cfg.Map()
-	})
-	return
+func (s *Service) GetOptions() (opts map[types.ConfigName]string) {
+	return app.App().Cfg().OptionPairs()
 }

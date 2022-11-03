@@ -6,7 +6,6 @@ import (
 	"embed"
 	"my-app/backend.new/app"
 	"my-app/backend.new/app/types"
-	"my-app/backend.new/model"
 	"my-app/backend.new/utils"
 	"net/http"
 	"path/filepath"
@@ -22,37 +21,35 @@ import (
 //go:embed certs
 var certs embed.FS
 
-var (
-	instance *web
-	once     sync.Once
-)
+var _web = &web{}
 
 type web struct {
+	once      sync.Once
 	isRunning bool
 	errGroup  errgroup.Group
 	http      *http.Server // redirector
 	https     *http.Server // server (tls)
 }
 
+// web service
 func Web() *web {
-	once.Do(func() {
-		app.App().UseEnv(func(env *app.Env) {
-			// config gin if application is set to log to file
-			if env.IsLog2File() {
-				gin.SetMode(gin.ReleaseMode)
-				gin.DisableConsoleColor()
-			}
-		})
+	_web.once.Do(func() {
+		// config gin if application is set to log to file
+		if app.App().Env().IsLog2File() {
+			gin.SetMode(gin.ReleaseMode)
+			gin.DisableConsoleColor()
+		}
 
 		// set gin logger
 		gin.DefaultWriter = app.App().Log().Web().Writer()
 
-		instance = &web{
-			isRunning: false,
+		if types.ParseBoolean(app.App().Cfg().Get(types.ConfigNameWebAutoStart)) {
+			if !_web.Start() {
+				app.App().Log().Web().Fatalln("failed to auto start web service")
+			}
 		}
-		app.App().Log().Web().Println("WEB INSTANCE INITIALIZED")
 	})
-	return instance
+	return _web
 }
 
 // IsRunning check if the web service is running
@@ -105,38 +102,36 @@ func (w *web) Stop() (ok bool) {
 
 // reset initialze http redirector and https server (tls) of the web service
 func (w *web) reset() {
-	app.App().UseConfig(func(cfg *app.Config) {
-		portHttp := types.ParsePort(cfg.Get(model.OptionNameWebPortHttp)).ToString()
-		portHttps := types.ParsePort(cfg.Get(model.OptionNameWebPortHttps)).ToString()
-		dirCerts := cfg.Get(model.OptionNameWebDirCerts)
+	addrHttp := types.ParsePort(app.App().Cfg().Get(types.ConfigNameWebPortHttp)).ToString()
+	addrHttps := types.ParsePort(app.App().Cfg().Get(types.ConfigNameWebPortHttps)).ToString()
+	dirCerts := app.App().Cfg().Get(types.ConfigNameWebDirCerts)
 
-		manager := &autocert.Manager{
-			Prompt: autocert.AcceptTOS,
-			Cache:  autocert.DirCache(dirCerts),
-		}
+	manager := &autocert.Manager{
+		Prompt: autocert.AcceptTOS,
+		Cache:  autocert.DirCache(dirCerts),
+	}
 
-		w.http = &http.Server{
-			Addr: portHttp,
-			Handler: manager.HTTPHandler(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-				target := "https://" + strings.Replace(r.Host, portHttp, portHttps, 1) + r.RequestURI
-				http.Redirect(rw, r, target, http.StatusMovedPermanently)
-			})),
-		}
+	w.http = &http.Server{
+		Addr: addrHttp,
+		Handler: manager.HTTPHandler(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+			target := "https://" + strings.Replace(r.Host, addrHttp, addrHttps, 1) + r.RequestURI
+			http.Redirect(rw, r, target, http.StatusMovedPermanently)
+		})),
+	}
 
-		tlsConfig := manager.TLSConfig()
-		tlsConfig.GetCertificate = w.getSelfSignedOrLetsEncryptCert(manager)
+	tlsConfig := manager.TLSConfig()
+	tlsConfig.GetCertificate = w.getSelfSignedOrLetsEncryptCert(manager)
 
-		w.https = &http.Server{
-			Addr:      portHttps,
-			Handler:   w.router(),
-			TLSConfig: tlsConfig,
-		}
-	})
+	w.https = &http.Server{
+		Addr:      addrHttps,
+		Handler:   w.router(),
+		TLSConfig: tlsConfig,
+	}
 }
 
 // getSelfSignedOrLetsEncryptCert override tlsConfig.GetCertificate
 // to enable self-signed certs
-func (s *web) getSelfSignedOrLetsEncryptCert(certManager *autocert.Manager) func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
+func (w *web) getSelfSignedOrLetsEncryptCert(certManager *autocert.Manager) func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 	var certificate tls.Certificate
 	var err error
 	hasExternalCerts := false

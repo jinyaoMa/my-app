@@ -1,32 +1,15 @@
 package model
 
 import (
+	"my-app/backend.new/app/types"
+
 	"gorm.io/gorm"
 )
 
-// option names
-const (
-	OptionNameDisplayLanguage OptionName = "DisplayLanguage"
-	OptionNameColorTheme      OptionName = "ColorTheme"
-
-	OptionNameFileLog      OptionName = "FileLog"
-	OptionNameDirLanguages OptionName = "DirLanguages"
-	OptionNameDirAssets    OptionName = "DirAssets"
-	OptionNameDirUserData  OptionName = "DirUserData"
-	OptionNameDirDocs      OptionName = "DirDocs"
-
-	OptionNameWebAutoStart OptionName = "Web.AutoStart"
-	OptionNameWebPortHttp  OptionName = "Web.PortHttp"
-	OptionNameWebPortHttps OptionName = "Web.PortHttps"
-	OptionNameWebDirCerts  OptionName = "Web.DirCerts"
-)
-
-type OptionName string
-
 type Option struct {
 	gorm.Model
-	Name  OptionName `gorm:"unique"` // Option name
-	Value string     ``              // Option value associated with name
+	Name  types.ConfigName `gorm:"unique"` // Option name
+	Value string           ``              // Option value associated with name
 }
 
 func (o *Option) FindByName(db *gorm.DB) (ok bool) {

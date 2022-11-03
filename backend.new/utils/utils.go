@@ -12,27 +12,26 @@ const (
 	Copyright = "© 2022 jinyaoMa"
 )
 
-var (
-	instance *utils
-	once     sync.Once
-)
+var _utils = &utils{}
 
 type utils struct {
-	executableDir string
-	panicLogger   *Logger
+	once          sync.Once
+	executableDir string  // the folder that application executable located
+	panicLogger   *Logger // handle app initializing panics
 }
 
-// Utils get utils global instance
+// utils resources for global use
 func Utils() *utils {
-	once.Do(func() {
+	_utils.once.Do(func() {
 		// get executable directory
 		exe, err := os.Executable()
 		if err != nil {
 			panic("failed to get executable path")
 		}
-		executableDir := filepath.Dir(exe)
+		_utils.executableDir = filepath.Dir(exe)
 
-		panicLogPath := filepath.Join(executableDir, "MyApp.panic")
+		// initialize panic logger
+		panicLogPath := filepath.Join(_utils.executableDir, "MyApp.panic")
 		panicFile, err := os.OpenFile(
 			panicLogPath,
 			os.O_CREATE|os.O_WRONLY|os.O_APPEND,
@@ -41,18 +40,13 @@ func Utils() *utils {
 		if err != nil {
 			panic("failed to open panic log: " + panicLogPath)
 		}
-		panicLogger := NewFileLogger("", panicFile)
-
-		// initialize utils
-		instance = &utils{
-			executableDir: executableDir,
-			panicLogger:   panicLogger,
-		}
+		_utils.panicLogger = NewFileLogger("", panicFile)
 	})
-	return instance
+	return _utils
 }
-func (u *utils) PanicLogger() *Logger {
-	return u.panicLogger
+
+func (u *utils) Panic(v ...any) {
+	u.panicLogger.Panicln(v...)
 }
 
 // GetExecutablePath get the path started from application's executable directory

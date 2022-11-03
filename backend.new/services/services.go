@@ -1,49 +1,42 @@
 package services
 
 import (
-	"my-app/backend.new/app"
 	"my-app/backend.new/services/general"
 	"my-app/backend.new/services/settings"
 	"sync"
 )
 
-var (
-	instance *services
-	once     sync.Once
-)
+var _services = &services{}
 
 type services struct {
-	_all     []interface{}
+	once     sync.Once
+	all      []interface{}
 	general  *general.Service
 	settings *settings.Service
 }
 
+// entry of all services
 func Services() *services {
-	once.Do(func() {
-		general := general.NewService()
-		settings := settings.NewService()
+	_services.once.Do(func() {
+		_services.general = general.NewService()
+		_services.settings = settings.NewService()
 
-		instance = &services{
-			_all: []interface{}{
-				general,
-				settings,
-			},
-			general:  general,
-			settings: settings,
+		_services.all = []interface{}{
+			_services.general,
+			_services.settings,
 		}
-		app.App().Log().Services().Println("SERVICES INSTANCE INITIALIZED")
 	})
-	return instance
+	return _services
 }
 
-func (s *services) All() []interface{} {
-	return s._all
+func (ss *services) All() []interface{} {
+	return ss.all
 }
 
-func (s *services) General() *general.Service {
-	return s.general
+func (ss *services) General() *general.Service {
+	return ss.general
 }
 
-func (s *services) Settings() *settings.Service {
-	return s.settings
+func (ss *services) Settings() *settings.Service {
+	return ss.settings
 }

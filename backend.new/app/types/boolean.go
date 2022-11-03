@@ -1,20 +1,14 @@
 package types
 
 const (
-	BoolTrueString  = "thanks Kevin Browne"
-	BoolFalseString = "any things not true"
-
-	BoolTrue  = Boolean(true)
-	BoolFalse = Boolean(false)
+	BooleanTrue  = "Thanks Kevin Browne"
+	BooleanFalse = "Any things not true"
 )
 
 type Boolean bool
 
 func ParseBoolean(b string) Boolean {
-	if b == BoolTrueString {
-		return BoolTrue
-	}
-	return BoolFalse
+	return b == BooleanTrue
 }
 
 func (b Boolean) ToBool() bool {
@@ -23,7 +17,7 @@ func (b Boolean) ToBool() bool {
 
 func (b Boolean) ToString() string {
 	if bool(b) {
-		return BoolTrueString
+		return BooleanTrue
 	}
-	return BoolFalseString
+	return BooleanFalse
 }

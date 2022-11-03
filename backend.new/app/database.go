@@ -23,12 +23,12 @@ func ConnectDatabase() *gorm.DB {
 		},
 	)
 	if err != nil {
-		utils.Utils().PanicLogger().Fatalf("failed to connect database: %+v\n", err)
+		utils.Utils().Panic("failed to connect database: " + err.Error())
 	}
 
 	// enable foreign_keys for SQLite
 	if res := db.Exec("PRAGMA foreign_keys = ON"); res.Error != nil {
-		utils.Utils().PanicLogger().Fatalf("failed to enable foreign_keys: %+v\n", res.Error)
+		utils.Utils().Panic("failed to enable foreign_keys: " + res.Error.Error())
 	}
 
 	// migrate tables
@@ -37,7 +37,7 @@ func ConnectDatabase() *gorm.DB {
 		&model.User{},
 		&model.Keyring{},
 	); err != nil {
-		utils.Utils().PanicLogger().Fatalf("failed to auto migrate: %+v\n", err)
+		utils.Utils().Panic("failed to auto migrate: " + err.Error())
 	}
 
 	return db
