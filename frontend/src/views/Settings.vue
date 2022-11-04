@@ -5,19 +5,18 @@ import { useLoading } from "../store/loading";
 import { useColorTheme } from "../store/color-theme";
 import {
   GetOptions,
-  ChooseLogPath,
-  ChooseDirCerts,
+  ChooseLogFile,
+  ChooseDirectory,
   SavePortHttp,
   SavePortHttps,
   SaveAutoStart,
   GetSuperUserAccount,
   UpdateSuperUserPassword,
-} from "../../wailsjs/go/service/service";
+} from "../../wailsjs/go/local/service";
 import {
   ChangeDisplayLanguage,
   ChangeColorTheme,
-  IsWebServiceRunning,
-  StartWebService,
+  ChangeWebServiceState,
 } from "../../wailsjs/go/tray/tray";
 import { ResponseState } from "../../packages/components/types";
 
@@ -27,20 +26,28 @@ const { t, locale, availableLocales } = useI18n();
 const colorTheme = useColorTheme();
 
 const options = reactive({
-  LogPath: "",
-  AutoStart: false,
-  PortHttp: 80,
-  PortHttps: 443,
-  DirCerts: "",
+  LogFile: "",
+  DirLanguages: "",
+  DirAssets: "",
+  DirUserData: "",
+  DirDocs: "",
+  WebAutoStart: false,
+  WebPortHttp: 80,
+  WebPortHttps: 443,
+  WebDirCerts: "",
   SuperUserOldPassword: "",
   SuperUserNewPassword: "",
 });
-GetOptions().then((config: config.Config) => {
-  options.LogPath = config.LogPath;
-  options.AutoStart = config.AutoStart == "true";
-  options.PortHttp = parseInt(config.PortHttp.substring(1));
-  options.PortHttps = parseInt(config.PortHttps.substring(1));
-  options.DirCerts = config.DirCerts;
+GetOptions().then((config) => {
+  options.LogFile = config.LogFile;
+  options.DirLanguages = config.DirLanguages;
+  options.DirAssets = config.DirAssets;
+  options.DirUserData = config.DirUserData;
+  options.DirDocs = config.DirDocs;
+  options.WebAutoStart = config.WebAutoStart == "true";
+  options.WebPortHttp = parseInt(config.WebPortHttp.substring(1));
+  options.WebPortHttps = parseInt(config.WebPortHttps.substring(1));
+  options.WebDirCerts = config.WebDirCerts;
 });
 
 const superUserAccount = ref("");
@@ -57,14 +64,14 @@ const changeColorTheme = async (newTheme: string) => {
   await ChangeColorTheme(newTheme);
 };
 
-const changeLogPath = async (res: (state: ResponseState) => void) => {
+const changeLogFile = async (res: (state: ResponseState) => void) => {
   startLoading();
-  const newLogPath = await ChooseLogPath(
-    options.LogPath,
-    t("settings.chooseLogPath")
+  const newLogFile = await ChooseLogFile(
+    options.LogFile,
+    t("settings.ChooseLogFile")
   );
-  if (newLogPath) {
-    options.LogPath = newLogPath;
+  if (newLogFile) {
+    options.LogFile = newLogFile;
     res("success");
   } else {
     res("warning");
@@ -73,12 +80,13 @@ const changeLogPath = async (res: (state: ResponseState) => void) => {
 };
 const changeDirCerts = async (res: (state: ResponseState) => void) => {
   startLoading();
-  const newDirCerts = await ChooseDirCerts(
-    options.DirCerts,
+  const newDirCerts = await ChooseDirectory(
+    "certs",
+    options.WebDirCerts,
     t("settings.chooseDirCerts")
   );
   if (newDirCerts) {
-    options.DirCerts = newDirCerts;
+    options.WebDirCerts = newDirCerts;
     res("success");
   } else {
     res("warning");
@@ -86,9 +94,9 @@ const changeDirCerts = async (res: (state: ResponseState) => void) => {
   endLoading();
 };
 const changePortHttp = async (res: (state: ResponseState) => void) => {
-  if (options.PortHttp) {
+  if (options.WebPortHttp) {
     startLoading();
-    const success = await SavePortHttp(options.PortHttp);
+    const success = await SavePortHttp(options.WebPortHttp);
     if (success) {
       res("success");
     } else {
@@ -98,9 +106,9 @@ const changePortHttp = async (res: (state: ResponseState) => void) => {
   }
 };
 const changePortHttps = async (res: (state: ResponseState) => void) => {
-  if (options.PortHttps) {
+  if (options.WebPortHttps) {
     startLoading();
-    const success = await SavePortHttps(options.PortHttps);
+    const success = await SavePortHttps(options.WebPortHttps);
     if (success) {
       res("success");
     } else {
@@ -111,11 +119,11 @@ const changePortHttps = async (res: (state: ResponseState) => void) => {
 };
 const changeAutoStart = async () => {
   startLoading();
-  const success = await SaveAutoStart(options.AutoStart);
+  const success = await SaveAutoStart(options.WebAutoStart);
   if (success) {
-    !(await IsWebServiceRunning()) && StartWebService();
+    ChangeWebServiceState(true);
   } else {
-    options.AutoStart = !options.AutoStart;
+    options.WebAutoStart = !options.WebAutoStart;
   }
   endLoading();
 };
@@ -179,15 +187,15 @@ const changeSuperUserPassword = async (res: (state: ResponseState) => void) => {
               </my-option>
             </my-select>
           </my-form-item>
-          <my-form-item :label="t('settings.general.logPath')">
+          <my-form-item :label="t('settings.general.LogFile')">
             <my-input
-              name="LogPath"
+              name="LogFile"
               width="100%"
-              v-model="options.LogPath"
+              v-model="options.LogFile"
               disabled
             >
               <template #append>
-                <my-button type="primary" @click="changeLogPath">
+                <my-button type="primary" @click="changeLogFile">
                   {{ t("settings.choosePath") }}
                 </my-button>
               </template>
@@ -202,7 +210,7 @@ const changeSuperUserPassword = async (res: (state: ResponseState) => void) => {
             <my-input
               type="checkbox"
               name="AutoStart"
-              v-model="options.AutoStart"
+              v-model="options.WebAutoStart"
               @change="changeAutoStart"
             >
             </my-input>
@@ -214,7 +222,7 @@ const changeSuperUserPassword = async (res: (state: ResponseState) => void) => {
               width="6.5em"
               :min="0"
               :max="65536"
-              v-model="options.PortHttp"
+              v-model="options.WebPortHttp"
             >
               <template #prepend>:</template>
               <template #append>
@@ -232,7 +240,7 @@ const changeSuperUserPassword = async (res: (state: ResponseState) => void) => {
               width="6.5em"
               :min="0"
               :max="65536"
-              v-model="options.PortHttps"
+              v-model="options.WebPortHttps"
             >
               <template #prepend>:</template>
               <template #append>
@@ -247,7 +255,7 @@ const changeSuperUserPassword = async (res: (state: ResponseState) => void) => {
             <my-input
               name="Web.DirCerts"
               width="100%"
-              v-model="options.DirCerts"
+              v-model="options.WebDirCerts"
               :placeholder="t('settings.webService.dirCertsPlaceholder')"
               disabled
             >

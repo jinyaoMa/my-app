@@ -39,7 +39,7 @@ func App() *app {
 		// setup log
 		_app.log = NewConsoleLogger()
 		if _app.env.IsLog2File() {
-			_app.log = NewFileLogger(_app.cfg.Get(types.ConfigNameFileLog))
+			_app.log = NewFileLogger(_app.cfg.Get(types.ConfigNameLogFile))
 		}
 		_app.db.Logger = _app.log.database
 

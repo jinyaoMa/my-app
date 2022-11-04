@@ -36,7 +36,7 @@ func (w *web) router() *gin.Engine {
 			"/swagger/*any",
 			func(ctx *gin.Context) {
 				any := ctx.Param("any")
-				if any == "" {
+				if any == "/" {
 					ctx.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
 				}
 				ctx.Next()

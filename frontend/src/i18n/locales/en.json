@@ -35,7 +35,7 @@
       "legend": "General",
       "displayLanguage": "Display Language",
       "colorTheme": "Color Theme",
-      "logPath": "Log Path"
+      "LogFile": "Log Path"
     },
     "webService": {
       "legend": "Web Service",
@@ -53,7 +53,7 @@
       "clear": "Clear"
     },
     "choosePath": "Choose Path",
-    "chooseLogPath": "Choose your log path",
+    "ChooseLogFile": "Choose your log file path",
     "chooseDirCerts": "Choose your TLS certificate path",
     "save": "Save",
     "footnote": "* Most of the settings need restarting the application to take effect."

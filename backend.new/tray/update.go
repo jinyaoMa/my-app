@@ -24,11 +24,12 @@ func (t *tray) updateLanguage() *tray {
 	t.updateIconTooltip()
 
 	// update menus
-	ms := reflect.ValueOf(t)
+	ms := reflect.ValueOf(*t)
 	for i := 0; i < ms.NumField(); i++ {
 		if ms.Field(i).CanInterface() {
-			if menu, ok := ms.Field(i).Interface().(menus.IRefresh); ok {
-				menu.UpdateText()
+			switch menu := ms.Field(i).Interface(); menu.(type) {
+			case menus.IRefresh:
+				menu.(menus.IRefresh).UpdateText()
 			}
 		}
 	}

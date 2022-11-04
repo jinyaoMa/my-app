@@ -5,16 +5,16 @@ const (
 	ConfigNameDisplayLanguage = ConfigName("DisplayLanguage")
 	ConfigNameColorTheme      = ConfigName("ColorTheme")
 
-	ConfigNameFileLog      = ConfigName("FileLog")
+	ConfigNameLogFile      = ConfigName("LogFile")
 	ConfigNameDirLanguages = ConfigName("DirLanguages")
 	ConfigNameDirAssets    = ConfigName("DirAssets")
 	ConfigNameDirUserData  = ConfigName("DirUserData")
 	ConfigNameDirDocs      = ConfigName("DirDocs")
 
-	ConfigNameWebAutoStart = ConfigName("Web.AutoStart")
-	ConfigNameWebPortHttp  = ConfigName("Web.PortHttp")
-	ConfigNameWebPortHttps = ConfigName("Web.PortHttps")
-	ConfigNameWebDirCerts  = ConfigName("Web.DirCerts")
+	ConfigNameWebAutoStart = ConfigName("WebAutoStart")
+	ConfigNameWebPortHttp  = ConfigName("WebPortHttp")
+	ConfigNameWebPortHttps = ConfigName("WebPortHttps")
+	ConfigNameWebDirCerts  = ConfigName("WebDirCerts")
 )
 
 type ConfigName string

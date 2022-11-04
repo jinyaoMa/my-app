@@ -35,7 +35,7 @@
       "legend": "通用",
       "displayLanguage": "显示语言",
       "colorTheme": "颜色主题",
-      "logPath": "日志保存路径"
+      "LogFile": "日志保存路径"
     },
     "webService": {
       "legend": "Web 服务",
@@ -53,7 +53,7 @@
       "clear": "重新输入"
     },
     "choosePath": "选择路径",
-    "chooseLogPath": "选择日志保存路径",
+    "ChooseLogFile": "选择日志保存路径",
     "chooseDirCerts": "选择 TLS 证书路径",
     "save": "保存",
     "footnote": "* 大部分设置需重启应用程序后生效。"

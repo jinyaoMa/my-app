@@ -124,7 +124,7 @@ func Tray() *tray {
 				3,
 			).AddOptions(
 				menus.NewSingleItem(
-					types.ColorThemeDefault.ToString(), T.ColorTheme.System,
+					types.ColorThemeSystem.ToString(), T.ColorTheme.System,
 				).SetTextUpdater(func(updateText func(text string)) {
 					updateText(T.ColorTheme.System)
 				}),

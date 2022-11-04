@@ -11,15 +11,3 @@ declare module "*.md" {
   const Component: ComponentOptions;
   export default Component;
 }
-
-namespace config {
-  declare type Config = {
-    ColorTheme: string;
-    DisplayLanguage: string;
-    LogPath: string;
-    AutoStart: string;
-    PortHttp: string;
-    PortHttps: string;
-    DirCerts: string;
-  };
-}

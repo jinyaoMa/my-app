@@ -29,10 +29,9 @@ func (o *Option) FindByNameAndSave(db *gorm.DB) (ok bool) {
 		Name: o.Name,
 	}
 	if found.FindByName(db) { // option already exists in db
-		// update the old value
-		found.Value = o.Value
-		// assign current option back
-		o = found
+		// update the option with stored value
+		o.Model = found.Model
+		o.Value = found.Value
 	}
 	// insert or save the option
 	return o.Save(db)
@@ -68,15 +67,11 @@ func (os *Options) FindAndSave(db *gorm.DB) (ok bool) {
 	if founds.Find(db) { // already some options in db
 		for _, opt := range *os {
 			if i := founds.IndexOf(opt); i >= 0 {
-				// update the old value
-				founds[i].Value = opt.Value
-			} else {
-				// insert new option
-				founds = append(founds, opt)
+				// update the option with stored value
+				opt.Model = founds[i].Model
+				opt.Value = founds[i].Value
 			}
 		}
-		// assign current options back
-		os = &founds
 	}
 	// insert or save all options
 	return os.Save(db)

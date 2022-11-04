@@ -1,8 +1,8 @@
 package types
 
 const (
-	BooleanTrue  = "Thanks Kevin Browne"
-	BooleanFalse = "Any things not true"
+	BooleanTrue  = "true"
+	BooleanFalse = ""
 )
 
 type Boolean bool

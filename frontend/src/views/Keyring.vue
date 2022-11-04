@@ -5,7 +5,7 @@ import { useLoading } from "../store/loading";
 import {
   GetSuperUserAccount,
   CheckSuperUserPassword,
-} from "../../wailsjs/go/service/service";
+} from "../../wailsjs/go/local/service";
 import { ResponseState } from "../../packages/components/types";
 
 const { startLoading, endLoading } = useLoading();

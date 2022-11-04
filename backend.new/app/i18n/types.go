@@ -1,6 +1,6 @@
 package i18n
 
-const LanguagePlaceholder = Language("Thanks_Sharon_Scollard")
+const LanguagePlaceholder = Language("")
 
 var TranslationPlaceholder = Translation{
 	Lang: TranslationLang{

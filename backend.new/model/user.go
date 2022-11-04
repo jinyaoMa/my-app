@@ -36,9 +36,10 @@ func (u *User) AfterFind(tx *gorm.DB) (err error) {
 	return
 }
 
-/*
-func (u *User) Find(db *gorm.DB) (ok bool) {
-	tx := db.Where(u).Find(u)
+func (u *User) FindByAccount(db *gorm.DB) (ok bool) {
+	tx := db.Where(User{
+		Account: u.Account,
+	}).Find(u)
 	return tx.RowsAffected > 0
 }
 
@@ -51,4 +52,3 @@ func (u *User) Save(db *gorm.DB) (ok bool) {
 	tx := db.Save(u)
 	return tx.RowsAffected == 1
 }
-*/

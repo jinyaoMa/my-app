@@ -4,7 +4,7 @@ import (
 	"embed"
 	"my-app/backend.new/app"
 	"my-app/backend.new/app/types"
-	"my-app/backend.new/services"
+	"my-app/backend.new/services/local"
 	"my-app/backend.new/tray"
 	"my-app/backend.new/utils"
 	"os"
@@ -48,8 +48,12 @@ func Run() {
 		OnDomReady:         domReady,
 		OnShutdown:         shutdown,
 		OnBeforeClose:      beforeClose,
-		Bind:               append(services.Services().All(), tray.Tray()),
-		WindowStartState:   options.Normal,
+		Bind: []interface{}{
+			NewBinding(),
+			tray.Tray(),
+			local.Service(),
+		},
+		WindowStartState: options.Normal,
 		Windows: &windows.Options{
 			WebviewIsTransparent:              true,
 			WindowIsTranslucent:               false,

@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 )
 
@@ -15,9 +16,10 @@ const (
 var _utils = &utils{}
 
 type utils struct {
-	once          sync.Once
-	executableDir string  // the folder that application executable located
-	panicLogger   *Logger // handle app initializing panics
+	once           sync.Once
+	executableName string  // the file name (without extension) of application executable
+	executableDir  string  // the folder that application executable located
+	panicLogger    *Logger // handle app initializing panics
 }
 
 // utils resources for global use
@@ -28,10 +30,11 @@ func Utils() *utils {
 		if err != nil {
 			panic("failed to get executable path")
 		}
+		_utils.executableName = strings.SplitN(filepath.Base(exe), ".", 2)[0]
 		_utils.executableDir = filepath.Dir(exe)
 
 		// initialize panic logger
-		panicLogPath := filepath.Join(_utils.executableDir, "MyApp.panic")
+		panicLogPath := filepath.Join(_utils.executableDir, _utils.executableName+".panic")
 		panicFile, err := os.OpenFile(
 			panicLogPath,
 			os.O_CREATE|os.O_WRONLY|os.O_APPEND,
@@ -49,7 +52,13 @@ func (u *utils) Panic(v ...any) {
 	u.panicLogger.Panicln(v...)
 }
 
-// GetExecutablePath get the path started from application's executable directory
+// GetExecutableName get the filename with the same name as application executable
+// but specify a different extension
+func (u *utils) GetExecutableFileName(ext string) string {
+	return u.executableName + "." + ext
+}
+
+// GetExecutablePath get the path started from application executable's directory
 func (u *utils) GetExecutablePath(elem ...string) string {
 	if len(elem) == 0 {
 		return u.executableDir

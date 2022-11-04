@@ -13,7 +13,7 @@ import (
 func ConnectDatabase() *gorm.DB {
 	// connect database
 	db, err := gorm.Open(
-		sqlite.Open(utils.Utils().GetExecutablePath("MyApp.db")),
+		sqlite.Open(utils.Utils().GetExecutablePath(utils.Utils().GetExecutableFileName("db"))),
 		&gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
 				TablePrefix: "my_",

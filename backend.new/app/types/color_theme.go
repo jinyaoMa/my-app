@@ -1,9 +1,9 @@
 package types
 
 const (
-	ColorThemeDefault = ColorTheme("default")
-	ColorThemeLight   = ColorTheme("light")
-	ColorThemeDark    = ColorTheme("dark")
+	ColorThemeSystem = ColorTheme("system")
+	ColorThemeLight  = ColorTheme("light")
+	ColorThemeDark   = ColorTheme("dark")
 )
 
 type ColorTheme string
@@ -15,7 +15,7 @@ func ParseColorTheme(theme string) ColorTheme {
 	case ColorThemeDark.ToString():
 		return ColorThemeDark
 	}
-	return ColorThemeDefault
+	return ColorThemeSystem
 }
 
 func (ct ColorTheme) ToString() string {

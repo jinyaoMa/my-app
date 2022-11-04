@@ -58,7 +58,7 @@ const { t } = useI18n();
     filter: drop-shadow(0 0 0.5em #ff6767aa);
   }
   &.avatar:hover {
-    filter: drop-shadow(0 0 1em #66c7ffaa);
+    filter: drop-shadow(0 0 1.3em #46adea89);
   }
   &.vite:hover {
     filter: drop-shadow(0 0 1em #636bfaaa);

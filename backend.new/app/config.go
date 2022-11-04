@@ -26,11 +26,11 @@ func DefaultConfig(db *gorm.DB) *config {
 			},
 			{
 				Name:  types.ConfigNameColorTheme,
-				Value: types.ColorThemeDefault.ToString(),
+				Value: types.ColorThemeSystem.ToString(),
 			},
 			{
-				Name:  types.ConfigNameFileLog,
-				Value: utils.Utils().GetExecutablePath("MyApp.log"),
+				Name:  types.ConfigNameLogFile,
+				Value: utils.Utils().GetExecutablePath(utils.Utils().GetExecutableFileName("log")),
 			},
 			{
 				Name:  types.ConfigNameDirLanguages,
@@ -54,11 +54,11 @@ func DefaultConfig(db *gorm.DB) *config {
 			},
 			{
 				Name:  types.ConfigNameWebPortHttp,
-				Value: types.ParsePort(":10080").ToString(),
+				Value: types.Port(10080).ToString(),
 			},
 			{
 				Name:  types.ConfigNameWebPortHttps,
-				Value: types.ParsePort(":10443").ToString(),
+				Value: types.Port(10443).ToString(),
 			},
 			{
 				Name:  types.ConfigNameWebDirCerts,
