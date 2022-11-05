@@ -25,8 +25,8 @@
     "@jinyaoma/my-app-components": "workspace:*"
   },
   "peerDependencies": {
-    "vue": "^3.2.37",
-    "vue-router": "^4.1.5"
+    "vue": "^3.2.41",
+    "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.2.0",

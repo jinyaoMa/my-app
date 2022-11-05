@@ -13,7 +13,6 @@ const loading = computed(() => storeLoading.loading);
 const { locale } = useI18n();
 const { changeTheme } = useColorTheme();
 GetOptions().then((config) => {
-  console.log(config);
   locale.value = config.DisplayLanguage || locale.value;
   changeTheme(config.ColorTheme);
   storeLoading.endLoading();

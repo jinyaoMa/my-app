@@ -50,7 +50,7 @@ Prepare and install environment for development in Window 10/11?
 
 > Run command `pnpm install` at project root directory to setup.
 
-> Want to update dependencies? Run command `pnpm update:dependencies` at project root directory to setup.
+> Want to update dependencies? Run command `pnpm update:dependencies` at project root directory to setup. Also may need to manually edit `peerDependencies` in all `package.json` files inside `frontend/packages` folder and its sub folders.
 
 ## NPM Scripts
 
