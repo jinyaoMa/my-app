@@ -4,8 +4,10 @@
 air/bin
 build/bin
 frontend/wailsjs
-backend/web/static/certs
-backend/web/static/swagger
+backend/web/certs
+backend/web/docs
+backend/web/swagger
+backend/wails/assets
 *-res.syso
 
 # From the vue template of vite

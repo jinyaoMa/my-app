@@ -50,6 +50,6 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "../build/bin/Assets",
+    outDir: "../backend/wails/assets",
   },
 });

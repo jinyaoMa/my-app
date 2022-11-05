@@ -8,7 +8,7 @@ import (
 // For API service test purpose, testing with air
 // Uncomment code below to run http redirector
 func (w *web) Air() {
-	app.App().Env().UseAir(func() {
+	if app.App().Env().IsAir() {
 		w.reset()
 		// go w.http.ListenAndServe()
 		w.https.ListenAndServeTLS("", "")
@@ -17,5 +17,5 @@ func (w *web) Air() {
 		// defer cancel()
 		// w.http.Shutdown(ctx)
 		// <-ctx.Done()
-	})
+	}
 }

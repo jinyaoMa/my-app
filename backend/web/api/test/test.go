@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @Summary      Pass
+// @Summary      Test
 // @Description  Test pass path
 // @Tags         Test
 // @Accept       json

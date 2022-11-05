@@ -5,63 +5,94 @@ import (
 	"io/fs"
 	"strings"
 
-	"my-app/backend/pkg/utils"
+	"my-app/backend/utils"
 )
 
-//go:embed translation
-var translation embed.FS
+//go:embed translations
+var translations embed.FS
 
 type I18n struct {
-	embedFs            *utils.EmbedFs
-	translationMap     map[string]*Translation
-	availableLanguages []string
+	log                *utils.Logger
+	assetHelper        utils.AssetHelper
+	translationMap     map[Language]*Translation
+	availableLanguages []Language
 }
 
-func NewI18n() *I18n {
+func NewI18n(dirLanguages string, log *utils.Logger) *I18n {
+	// setup asset helper
+	var assetHelper utils.AssetHelper
+	if utils.Utils().HasDir(dirLanguages) {
+		// Languages Directory available at executable directory
+		assetHelper = utils.NewDirFS(dirLanguages)
+		log.Printf("I18N LOAD ASSET FROM dirLanguages: %s\n", dirLanguages)
+	} else {
+		assetHelper = utils.NewEmbedFS(translations, "translations")
+		if err := assetHelper.Extract(dirLanguages); err != nil {
+			log.Fatalf("failed to extract embed translations into dirLanguages (%s): %+v\n", dirLanguages, err)
+		}
+		log.Println("I18N LOAD ASSET FROM embed: backend/app/i18n/translations")
+	}
+
+	// load translations
+	translationMap := make(map[Language]*Translation)
+	countAvailableLanguages := 0
+	if err := assetHelper.Walk(func(path string, isDir bool, f fs.DirEntry) error {
+		if strings.HasSuffix(f.Name(), ".json") && !isDir {
+			t := &Translation{}
+			if err := assetHelper.LoadJSON(t, path); err != nil { // load translation from json file
+				return err
+			}
+			translationMap[Language(t.Lang.Code)] = t
+			countAvailableLanguages++
+		}
+		return nil
+	}); err != nil {
+		log.Fatalf("failed to load i18n: %+v\n", err)
+	}
+
+	// fill available languages
+	availableLanguages := make([]Language, 0, countAvailableLanguages)
+	for lang := range translationMap {
+		availableLanguages = append(availableLanguages, lang)
+	}
+
 	return &I18n{
-		embedFs:        utils.NewEmbedFs(translation, "translation"),
-		translationMap: make(map[string]*Translation),
+		log:                log,
+		assetHelper:        assetHelper,
+		translationMap:     translationMap,
+		availableLanguages: availableLanguages,
 	}
 }
 
-func (i *I18n) Translation(lang string) *Translation {
-	if !i.HasLanguage(lang) {
-		return nil
+// Translation get translation of the given language
+func (i *I18n) Translation(lang Language) *Translation {
+	if t, ok := i.translationMap[lang]; ok {
+		// if the language is available
+		return t
 	}
-	if i.translationMap[lang] == nil {
-		i.translationMap[lang] = &Translation{}
-		i.embedFs.LoadJSON(i.translationMap[lang], lang+".json")
-	}
-	return i.translationMap[lang]
+	return &TranslationPlaceholder
 }
 
+// ParseLanguage get valid language
+func (i *I18n) ParseLanguage(lang string) Language {
+	language := Language(lang)
+	if _, ok := i.translationMap[language]; ok {
+		return language
+	}
+	if len(i.availableLanguages) > 0 {
+		// default language
+		return i.availableLanguages[0]
+	}
+	return LanguagePlaceholder
+}
+
+// HasLanguage check if language is available
 func (i *I18n) HasLanguage(lang string) bool {
-	for _, l := range i.AvailableLanguages() {
-		if l == lang {
-			return true
-		}
-	}
-	return false
+	_, ok := i.translationMap[Language(lang)]
+	return ok
 }
 
-func (i *I18n) AvailableLanguages() []string {
-	if i.availableLanguages == nil {
-		i.availableLanguages = make([]string, 0, 18)
-		i.embedFs.WalkDir(func(path string, isDir bool, f fs.DirEntry) error {
-			i.availableLanguages = append(i.availableLanguages, strings.TrimSuffix(f.Name(), ".json"))
-			return nil
-		})
-	}
+// AvailableLanguages get available languages
+func (i *I18n) AvailableLanguages() []Language {
 	return i.availableLanguages
-}
-
-func (i *I18n) WalkTranslations(callback func(translation []byte)) error {
-	return i.embedFs.WalkDir(func(path string, isDir bool, f fs.DirEntry) error {
-		data, err := i.embedFs.GetFileBytes(path)
-		if err != nil {
-			return err
-		}
-		callback(data)
-		return nil
-	})
 }

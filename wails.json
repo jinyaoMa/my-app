@@ -1,7 +1,7 @@
 {
   "name": "My App",
   "outputfilename": "MyApp",
-  "assetdir": "frontend/dist",
+  "assetdir": "backend/wails/assets",
   "frontend:build": "pnpm exec vue-tsc --noEmit && pnpm exec vite build",
   "frontend:dev:watcher": "pnpm exec vite",
   "frontend:dev:serverUrl": "auto",

@@ -24,6 +24,6 @@
     }
   },
   "devDependencies": {
-    "svgtofont": "^3.18.0"
+    "svgtofont": "^3.19.0"
   }
 }
