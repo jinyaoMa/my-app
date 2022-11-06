@@ -45,6 +45,13 @@
       "dirCerts": "TLS Certificate Path",
       "dirCertsPlaceholder": "Built-in certificates are used currently"
     },
+    "otherPaths": {
+      "legend": "Other Paths",
+      "dirLanguages": "Languages Path",
+      "dirAssets": "Assets Path",
+      "dirUserData": "UserData Path",
+      "dirDocs": "Docs Path"
+    },
     "changeSuperUserPassword": {
       "legend": "Change Super User ({account}) Password",
       "oldPassword": "Old Password",
@@ -55,6 +62,10 @@
     "choosePath": "Choose Path",
     "ChooseLogFile": "Choose your log file path",
     "chooseDirCerts": "Choose your TLS certificate path",
+    "chooseDirLanguages": "Choose your Langauges path",
+    "chooseDirAssets": "Choose your Assets path",
+    "chooseDirUserData": "Choose your UserData path",
+    "chooseDirDocs": "Choose your Docs path",
     "save": "Save",
     "footnote": "* Most of the settings need restarting the application to take effect."
   },

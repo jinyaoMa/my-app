@@ -45,6 +45,13 @@
       "dirCerts": "TLS 证书路径",
       "dirCertsPlaceholder": "当前正在使用内置证书"
     },
+    "otherPaths": {
+      "legend": "其他路径",
+      "dirLanguages": "Languages 路径",
+      "dirAssets": "Assets 路径",
+      "dirUserData": "UserData 路径",
+      "dirDocs": "Docs 路径"
+    },
     "changeSuperUserPassword": {
       "legend": "更改超级用户（{account}）密码",
       "oldPassword": "旧密码",
@@ -55,6 +62,10 @@
     "choosePath": "选择路径",
     "ChooseLogFile": "选择日志保存路径",
     "chooseDirCerts": "选择 TLS 证书路径",
+    "chooseDirLanguages": "选择 Languages 路径",
+    "chooseDirAssets": "选择 Assets 路径",
+    "chooseDirUserData": "选择 UserData 路径",
+    "chooseDirDocs": "选择 Docs 路径",
     "save": "保存",
     "footnote": "* 大部分设置需重启应用程序后生效。"
   },

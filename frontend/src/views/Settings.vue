@@ -80,13 +80,73 @@ const changeLogFile = async (res: (state: ResponseState) => void) => {
 };
 const changeDirCerts = async (res: (state: ResponseState) => void) => {
   startLoading();
-  const newDirCerts = await ChooseDirectory(
+  const newDir = await ChooseDirectory(
     "certs",
     options.WebDirCerts,
     t("settings.chooseDirCerts")
   );
-  if (newDirCerts) {
-    options.WebDirCerts = newDirCerts;
+  if (newDir) {
+    options.WebDirCerts = newDir;
+    res("success");
+  } else {
+    res("warning");
+  }
+  endLoading();
+};
+const changeDirLanguages = async (res: (state: ResponseState) => void) => {
+  startLoading();
+  const newDir = await ChooseDirectory(
+    "languages",
+    options.DirLanguages,
+    t("settings.chooseDirLanguages")
+  );
+  if (newDir) {
+    options.DirLanguages = newDir;
+    res("success");
+  } else {
+    res("warning");
+  }
+  endLoading();
+};
+const changeDirAssets = async (res: (state: ResponseState) => void) => {
+  startLoading();
+  const newDir = await ChooseDirectory(
+    "assets",
+    options.DirAssets,
+    t("settings.chooseDirAssets")
+  );
+  if (newDir) {
+    options.DirAssets = newDir;
+    res("success");
+  } else {
+    res("warning");
+  }
+  endLoading();
+};
+const changeDirUserData = async (res: (state: ResponseState) => void) => {
+  startLoading();
+  const newDir = await ChooseDirectory(
+    "userdata",
+    options.DirUserData,
+    t("settings.chooseDirUserData")
+  );
+  if (newDir) {
+    options.DirUserData = newDir;
+    res("success");
+  } else {
+    res("warning");
+  }
+  endLoading();
+};
+const changeDirDocs = async (res: (state: ResponseState) => void) => {
+  startLoading();
+  const newDir = await ChooseDirectory(
+    "docs",
+    options.DirDocs,
+    t("settings.chooseDirDocs")
+  );
+  if (newDir) {
+    options.DirDocs = newDir;
     res("success");
   } else {
     res("warning");
@@ -209,7 +269,7 @@ const changeSuperUserPassword = async (res: (state: ResponseState) => void) => {
           <my-form-item :label="t('settings.webService.autoStart')">
             <my-input
               type="checkbox"
-              name="AutoStart"
+              name="WebAutoStart"
               v-model="options.WebAutoStart"
               @change="changeAutoStart"
             >
@@ -218,7 +278,7 @@ const changeSuperUserPassword = async (res: (state: ResponseState) => void) => {
           <my-form-item :label="t('settings.webService.portHttp')">
             <my-input
               type="number"
-              name="Web.PortHttp"
+              name="WebPortHttp"
               width="6.5em"
               :min="0"
               :max="65536"
@@ -236,7 +296,7 @@ const changeSuperUserPassword = async (res: (state: ResponseState) => void) => {
           <my-form-item :label="t('settings.webService.portHttps')">
             <my-input
               type="number"
-              name="Web.PortHttps"
+              name="WebPortHttps"
               width="6.5em"
               :min="0"
               :max="65536"
@@ -253,7 +313,7 @@ const changeSuperUserPassword = async (res: (state: ResponseState) => void) => {
           </my-form-item>
           <my-form-item :label="t('settings.webService.dirCerts')">
             <my-input
-              name="Web.DirCerts"
+              name="WebDirCerts"
               width="100%"
               v-model="options.WebDirCerts"
               :placeholder="t('settings.webService.dirCertsPlaceholder')"
@@ -261,6 +321,67 @@ const changeSuperUserPassword = async (res: (state: ResponseState) => void) => {
             >
               <template #append>
                 <my-button type="primary" @click="changeDirCerts">
+                  {{ t("settings.choosePath") }}
+                </my-button>
+              </template>
+            </my-input>
+          </my-form-item>
+        </my-form-group>
+        <my-form-group
+          :legend="t('settings.otherPaths.legend')"
+          label-width="8em"
+        >
+          <my-form-item :label="t('settings.otherPaths.dirLanguages')">
+            <my-input
+              name="DirLanguages"
+              width="100%"
+              v-model="options.DirLanguages"
+              disabled
+            >
+              <template #append>
+                <my-button type="primary" @click="changeDirLanguages">
+                  {{ t("settings.choosePath") }}
+                </my-button>
+              </template>
+            </my-input>
+          </my-form-item>
+          <my-form-item :label="t('settings.otherPaths.dirAssets')">
+            <my-input
+              name="DirAssets"
+              width="100%"
+              v-model="options.DirAssets"
+              disabled
+            >
+              <template #append>
+                <my-button type="primary" @click="changeDirAssets">
+                  {{ t("settings.choosePath") }}
+                </my-button>
+              </template>
+            </my-input>
+          </my-form-item>
+          <my-form-item :label="t('settings.otherPaths.dirUserData')">
+            <my-input
+              name="DirUserData"
+              width="100%"
+              v-model="options.DirUserData"
+              disabled
+            >
+              <template #append>
+                <my-button type="primary" @click="changeDirUserData">
+                  {{ t("settings.choosePath") }}
+                </my-button>
+              </template>
+            </my-input>
+          </my-form-item>
+          <my-form-item :label="t('settings.otherPaths.dirDocs')">
+            <my-input
+              name="DirDocs"
+              width="100%"
+              v-model="options.DirDocs"
+              disabled
+            >
+              <template #append>
+                <my-button type="primary" @click="changeDirDocs">
                   {{ t("settings.choosePath") }}
                 </my-button>
               </template>
