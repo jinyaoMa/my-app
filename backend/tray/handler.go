@@ -17,7 +17,7 @@ const (
 	EventNameOnColorThemeChanged      = "OnColorThemeChanged"
 )
 
-func (t *tray) ClickOpenWindow() {
+func (t *tray) clickOpenWindow() {
 	runtime.Show(app.App().Ctx())
 	app.App().Log().Tray().Println("OPEN WINDOW CLICKED")
 }
@@ -56,7 +56,7 @@ func (t *tray) ChangeWebServiceState(state bool) (ok bool) {
 }
 
 func (t *tray) ChangeDisplayLanguage(lang string) {
-	if app.App().I18n().HasLanguage(lang) && app.App().Cfg().Set(types.ConfigNameDisplayLanguage, lang) {
+	if app.App().SetT(lang) {
 		runtime.EventsEmit(app.App().Ctx(), EventNameOnDisplayLanguageChanged, lang)
 		t.displayLanguage.Check(lang)
 		t.updateLanguage().updateIconTooltip()
@@ -82,7 +82,7 @@ func (t *tray) ChangeColorTheme(theme string) {
 	}
 }
 
-func (t *tray) ClickQuit() {
+func (t *tray) clickQuit() (quit bool) {
 	app.App().Log().Tray().Println("QUIT CLICKED")
 	T := app.App().T()
 	dialog, err := runtime.MessageDialog(app.App().Ctx(), runtime.MessageDialogOptions{
@@ -106,5 +106,7 @@ func (t *tray) ClickQuit() {
 		web.Web().Stop()
 		systray.Quit()
 		runtime.Quit(app.App().Ctx())
+		quit = true
 	}
+	return
 }

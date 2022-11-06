@@ -13,13 +13,14 @@ import (
 var _app = &app{}
 
 type app struct {
-	once sync.Once
-	env  *env            // environment variables
-	db   *gorm.DB        // database connection
-	cfg  *config         // application config
-	log  *log            // loggers for whole application
-	i18n *i18n.I18n      // languages/translations
-	ctx  context.Context // wails context
+	once               sync.Once
+	env                *env            // environment variables
+	db                 *gorm.DB        // database connection
+	cfg                *config         // application config
+	log                *log            // loggers for whole application
+	i18n               *i18n.I18n      // languages/translations
+	ctx                context.Context // wails context
+	currentTranslation *i18n.Translation
 }
 
 // application global resources and states,
@@ -45,6 +46,7 @@ func App() *app {
 
 		// setup i18n
 		_app.i18n = i18n.NewI18n(_app.cfg.Get(types.ConfigNameDirLanguages), _app.log.i18n)
+		_app.SetT(_app.i18n.ParseLanguage(_app.cfg.Get(types.ConfigNameDisplayLanguage)))
 	})
 	return _app
 }
@@ -87,5 +89,14 @@ func (a *app) SetCtx(ctx context.Context) *app {
 
 // T get current translation
 func (a *app) T() *i18n.Translation {
-	return a.i18n.Translation(a.i18n.ParseLanguage(a.cfg.Get(types.ConfigNameDisplayLanguage)))
+	return a.currentTranslation
+}
+
+// SetLang set current translation
+func (a *app) SetT(lang string) bool {
+	if a.i18n.HasLanguage(lang) && a.cfg.Set(types.ConfigNameDisplayLanguage, lang) {
+		a.currentTranslation = a.i18n.Translation(lang)
+		return true
+	}
+	return false
 }

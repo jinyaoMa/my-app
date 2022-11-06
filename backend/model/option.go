@@ -29,9 +29,7 @@ func (o *Option) FindByNameAndSave(db *gorm.DB) (ok bool) {
 		Name: o.Name,
 	}
 	if found.FindByName(db) { // option already exists in db
-		// update the option with stored value
 		o.Model = found.Model
-		o.Value = found.Value
 	}
 	// insert or save the option
 	return o.Save(db)

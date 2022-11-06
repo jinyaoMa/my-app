@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"my-app/backend/app"
 	"my-app/backend/app/types"
-	"my-app/backend/tray/menus"
 	"my-app/backend/web"
-	"reflect"
 
 	"github.com/getlantern/systray"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -24,15 +22,11 @@ func (t *tray) updateLanguage() *tray {
 	t.updateIconTooltip()
 
 	// update menus
-	ms := reflect.ValueOf(*t)
-	for i := 0; i < ms.NumField(); i++ {
-		if ms.Field(i).CanInterface() {
-			switch menu := ms.Field(i).Interface(); menu.(type) {
-			case menus.IRefresh:
-				menu.(menus.IRefresh).UpdateText()
-			}
-		}
-	}
+	t.openWindow.UpdateText()
+	t.webService.UpdateText()
+	t.displayLanguage.UpdateText()
+	t.colorTheme.UpdateText()
+	t.quit.UpdateText()
 	return t
 }
 

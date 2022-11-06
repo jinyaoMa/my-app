@@ -6,7 +6,6 @@ import (
 )
 
 type SelectList struct {
-	IRefresh
 	head     *SingleItem
 	once     sync.Once
 	options  []*SingleItem

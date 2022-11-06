@@ -14,8 +14,8 @@ var translations embed.FS
 type I18n struct {
 	log                *utils.Logger
 	assetHelper        utils.AssetHelper
-	translationMap     map[Language]*Translation
-	availableLanguages []Language
+	translationMap     map[string]*Translation
+	availableLanguages []string
 }
 
 func NewI18n(dirLanguages string, log *utils.Logger) *I18n {
@@ -34,7 +34,7 @@ func NewI18n(dirLanguages string, log *utils.Logger) *I18n {
 	}
 
 	// load translations
-	translationMap := make(map[Language]*Translation)
+	translationMap := make(map[string]*Translation)
 	countAvailableLanguages := 0
 	if err := assetHelper.Walk(func(path string, isDir bool, f fs.DirEntry) error {
 		if strings.HasSuffix(f.Name(), ".json") && !isDir {
@@ -42,7 +42,7 @@ func NewI18n(dirLanguages string, log *utils.Logger) *I18n {
 			if err := assetHelper.LoadJSON(t, path); err != nil { // load translation from json file
 				return err
 			}
-			translationMap[Language(t.Lang.Code)] = t
+			translationMap[t.Lang.Code] = t
 			countAvailableLanguages++
 		}
 		return nil
@@ -51,7 +51,7 @@ func NewI18n(dirLanguages string, log *utils.Logger) *I18n {
 	}
 
 	// fill available languages
-	availableLanguages := make([]Language, 0, countAvailableLanguages)
+	availableLanguages := make([]string, 0, countAvailableLanguages)
 	for lang := range translationMap {
 		availableLanguages = append(availableLanguages, lang)
 	}
@@ -65,7 +65,7 @@ func NewI18n(dirLanguages string, log *utils.Logger) *I18n {
 }
 
 // Translation get translation of the given language
-func (i *I18n) Translation(lang Language) *Translation {
+func (i *I18n) Translation(lang string) *Translation {
 	if t, ok := i.translationMap[lang]; ok {
 		// if the language is available
 		return t
@@ -74,10 +74,9 @@ func (i *I18n) Translation(lang Language) *Translation {
 }
 
 // ParseLanguage get valid language
-func (i *I18n) ParseLanguage(lang string) Language {
-	language := Language(lang)
-	if _, ok := i.translationMap[language]; ok {
-		return language
+func (i *I18n) ParseLanguage(lang string) string {
+	if _, ok := i.translationMap[lang]; ok {
+		return lang
 	}
 	if len(i.availableLanguages) > 0 {
 		// default language
@@ -88,11 +87,11 @@ func (i *I18n) ParseLanguage(lang string) Language {
 
 // HasLanguage check if language is available
 func (i *I18n) HasLanguage(lang string) bool {
-	_, ok := i.translationMap[Language(lang)]
+	_, ok := i.translationMap[lang]
 	return ok
 }
 
 // AvailableLanguages get available languages
-func (i *I18n) AvailableLanguages() []Language {
+func (i *I18n) AvailableLanguages() []string {
 	return i.availableLanguages
 }

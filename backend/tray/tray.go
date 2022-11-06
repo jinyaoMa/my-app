@@ -13,6 +13,19 @@ import (
 	"github.com/getlantern/systray"
 )
 
+// menu ids
+const (
+	MenuIdOpenWindow      = "OpenWindow"
+	MenuIdOpenVitePress   = "OpenVitePress"
+	MenuIdOpenSwagger     = "OpenSwagger"
+	MenuIdStopWeb         = "StopWeb"
+	MenuIdStartWeb        = "StartWeb"
+	MenuIdDisplayLanguage = "DisplayLanguage"
+	MenuIdColorTheme      = "ColorTheme"
+	MenuIdCopyright       = "Copyright"
+	MenuIdQuit            = "Quit"
+)
+
 //go:embed icons
 var icons embed.FS
 
@@ -42,20 +55,18 @@ func Tray() *tray {
 			icoWebStop, _ := assetHelper.GetFileBytes("web-stop.ico")
 			icoWebStart, _ := assetHelper.GetFileBytes("web-start.ico")
 
-			// setup tray icon and menus
-			T := app.App().T()
-			i18n := app.App().I18n()
+			/* setup tray icon and menus */
 
 			// tray icon
-			systray.SetTitle(T.AppName)
+			systray.SetTitle(app.App().T().AppName)
 			systray.SetTemplateIcon(ico, ico)
 			_tray.updateIconTooltip()
 
 			// open window menu
 			_tray.openWindow = menus.NewSingleItem(
-				MenuIdOpenWindow, T.OpenWindow, icoOpenWindow,
-			).SetTextUpdater(func(updateText func(text string)) {
-				updateText(T.OpenWindow)
+				MenuIdOpenWindow, app.App().T().OpenWindow, icoOpenWindow,
+			).SetTextUpdater(func(id string) (updateText string) {
+				return app.App().T().OpenWindow
 			})
 
 			systray.AddSeparator()
@@ -66,25 +77,25 @@ func Tray() *tray {
 				3, 1,
 			).AddItems2OnGroup(
 				menus.NewSingleItem(
-					MenuIdOpenVitePress, T.WebService.VitePress, icoOpenVitePress,
-				).SetTextUpdater(func(updateText func(text string)) {
-					updateText(T.WebService.VitePress)
+					MenuIdOpenVitePress, app.App().T().WebService.VitePress, icoOpenVitePress,
+				).SetTextUpdater(func(id string) (updateText string) {
+					return app.App().T().WebService.VitePress
 				}),
 				menus.NewSingleItem(
-					MenuIdOpenSwagger, T.WebService.Swagger, icoOpenSwagger,
-				).SetTextUpdater(func(updateText func(text string)) {
-					updateText(T.WebService.Swagger)
+					MenuIdOpenSwagger, app.App().T().WebService.Swagger, icoOpenSwagger,
+				).SetTextUpdater(func(id string) (updateText string) {
+					return app.App().T().WebService.Swagger
 				}),
 				menus.NewSingleItem(
-					MenuIdStopWeb, T.WebService.Stop, icoWebStop,
-				).SetTextUpdater(func(updateText func(text string)) {
-					updateText(T.WebService.Stop)
+					MenuIdStopWeb, app.App().T().WebService.Stop, icoWebStop,
+				).SetTextUpdater(func(id string) (updateText string) {
+					return app.App().T().WebService.Stop
 				}),
 			).AddItems2OffGroup(
 				menus.NewSingleItem(
-					MenuIdStartWeb, T.WebService.Start, icoWebStart,
-				).SetTextUpdater(func(updateText func(text string)) {
-					updateText(T.WebService.Start)
+					MenuIdStartWeb, app.App().T().WebService.Start, icoWebStart,
+				).SetTextUpdater(func(id string) (updateText string) {
+					return app.App().T().WebService.Start
 				}),
 			)
 
@@ -93,18 +104,18 @@ func Tray() *tray {
 			// display language menu
 			_tray.displayLanguage = menus.NewSelectList(
 				menus.NewSingleItem(
-					MenuIdDisplayLanguage, T.DisplayLanguage.Title,
-				).SetTextUpdater(func(updateText func(text string)) {
-					updateText(T.DisplayLanguage.Title)
+					MenuIdDisplayLanguage, app.App().T().DisplayLanguage.Title,
+				).SetTextUpdater(func(id string) (updateText string) {
+					return app.App().T().DisplayLanguage.Title
 				}),
-				len(i18n.AvailableLanguages()),
+				len(app.App().I18n().AvailableLanguages()),
 			)
-			cLang := i18n.ParseLanguage(app.App().Cfg().Get(types.ConfigNameDisplayLanguage))
-			for _, lang := range i18n.AvailableLanguages() {
+			cLang := app.App().I18n().ParseLanguage(app.App().Cfg().Get(types.ConfigNameDisplayLanguage))
+			for _, lang := range app.App().I18n().AvailableLanguages() {
 				opt := menus.NewSingleItem(
-					lang.ToString(), i18n.Translation(lang).Lang.Text,
-				).SetTextUpdater(func(updateText func(text string)) {
-					updateText(i18n.Translation(lang).Lang.Text)
+					lang, app.App().I18n().Translation(lang).Lang.Text,
+				).SetTextUpdater(func(id string) (updateText string) {
+					return app.App().I18n().Translation(id).Lang.Text
 				})
 				if cLang == lang {
 					opt.Check()
@@ -117,26 +128,26 @@ func Tray() *tray {
 			// color theme menu
 			_tray.colorTheme = menus.NewSelectList(
 				menus.NewSingleItem(
-					MenuIdColorTheme, T.ColorTheme.Title,
-				).SetTextUpdater(func(updateText func(text string)) {
-					updateText(T.ColorTheme.Title)
+					MenuIdColorTheme, app.App().T().ColorTheme.Title,
+				).SetTextUpdater(func(id string) (updateText string) {
+					return app.App().T().ColorTheme.Title
 				}),
 				3,
 			).AddOptions(
 				menus.NewSingleItem(
-					types.ColorThemeSystem.ToString(), T.ColorTheme.System,
-				).SetTextUpdater(func(updateText func(text string)) {
-					updateText(T.ColorTheme.System)
+					types.ColorThemeSystem.ToString(), app.App().T().ColorTheme.System,
+				).SetTextUpdater(func(id string) (updateText string) {
+					return app.App().T().ColorTheme.System
 				}),
 				menus.NewSingleItem(
-					types.ColorThemeLight.ToString(), T.ColorTheme.Light,
-				).SetTextUpdater(func(updateText func(text string)) {
-					updateText(T.ColorTheme.Light)
+					types.ColorThemeLight.ToString(), app.App().T().ColorTheme.Light,
+				).SetTextUpdater(func(id string) (updateText string) {
+					return app.App().T().ColorTheme.Light
 				}),
 				menus.NewSingleItem(
-					types.ColorThemeDark.ToString(), T.ColorTheme.Dark,
-				).SetTextUpdater(func(updateText func(text string)) {
-					updateText(T.ColorTheme.Dark)
+					types.ColorThemeDark.ToString(), app.App().T().ColorTheme.Dark,
+				).SetTextUpdater(func(id string) (updateText string) {
+					return app.App().T().ColorTheme.Dark
 				}),
 			).Check(types.ParseColorTheme(app.App().Cfg().Get(types.ConfigNameColorTheme)).ToString())
 
@@ -151,9 +162,9 @@ func Tray() *tray {
 
 			// quit menu
 			_tray.quit = menus.NewSingleItem(
-				MenuIdQuit, T.Quit,
-			).SetTextUpdater(func(updateText func(text string)) {
-				updateText(T.Quit)
+				MenuIdQuit, app.App().T().Quit,
+			).SetTextUpdater(func(id string) (updateText string) {
+				return app.App().T().Quit
 			})
 
 			_tray.watch()

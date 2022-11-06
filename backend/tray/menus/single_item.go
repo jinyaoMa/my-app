@@ -2,15 +2,12 @@ package menus
 
 import "github.com/getlantern/systray"
 
-type IRefresh interface {
-	UpdateText() IRefresh
-}
+type TextUpdater func(id string) (updateText string)
 
 type SingleItem struct {
-	IRefresh
 	id          string
 	item        *systray.MenuItem
-	textUpdater func(updateText func(text string))
+	textUpdater TextUpdater
 	isShowed    bool
 	isEnabled   bool
 	isChecked   bool
@@ -34,31 +31,30 @@ func (si *SingleItem) GetID() string {
 	return si.id
 }
 
-func (si *SingleItem) SetTextUpdater(textUpdater func(updateText func(text string))) *SingleItem {
+func (si *SingleItem) SetTextUpdater(textUpdater TextUpdater) *SingleItem {
 	si.textUpdater = textUpdater
 	return si
 }
 
 func (si *SingleItem) UpdateText() *SingleItem {
-	si.textUpdater(func(text string) {
-		si.item.SetTitle(text)
-		si.item.SetTooltip(text)
-		if si.isShowed {
-			si.Show()
-		} else {
-			si.Hide()
-		}
-		if si.isEnabled {
-			si.Enable()
-		} else {
-			si.Disable()
-		}
-		if si.isChecked {
-			si.Check()
-		} else {
-			si.Uncheck()
-		}
-	})
+	text := si.textUpdater(si.id)
+	si.item.SetTitle(text)
+	si.item.SetTooltip(text)
+	if si.isShowed {
+		si.item.Show()
+	} else {
+		si.item.Hide()
+	}
+	if si.isEnabled {
+		si.item.Enable()
+	} else {
+		si.item.Disable()
+	}
+	if si.isChecked {
+		si.item.Check()
+	} else {
+		si.item.Uncheck()
+	}
 	return si
 }
 

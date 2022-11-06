@@ -1,11 +1,11 @@
 package i18n
 
-const LanguagePlaceholder = Language("")
+const LanguagePlaceholder = ""
 
 var TranslationPlaceholder = Translation{
 	Lang: TranslationLang{
-		Code: LanguagePlaceholder.ToString(),
-		Text: LanguagePlaceholder.ToString(),
+		Code: "[LangCode]",
+		Text: "[LangText]",
 	},
 	AppName:    "[AppName]",
 	OpenWindow: "[OpenWindow]",
@@ -80,10 +80,4 @@ type TranslationQuitDialog struct {
 	Message       string `json:"message"`
 	DefaultButton string `json:"default_button"`
 	CancelButton  string `json:"cancel_button"`
-}
-
-type Language string
-
-func (l Language) ToString() string {
-	return string(l)
 }

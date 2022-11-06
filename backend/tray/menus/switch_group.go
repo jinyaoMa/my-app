@@ -6,7 +6,6 @@ import (
 )
 
 type SwitchGroup struct {
-	IRefresh
 	state bool
 
 	onOnce    sync.Once
@@ -68,6 +67,26 @@ func (sg *SwitchGroup) UpdateText() *SwitchGroup {
 	for _, item := range sg.offGroup {
 		item.UpdateText()
 	}
+	return sg.Switch(sg.state)
+}
+
+func (sg *SwitchGroup) Switch(state bool) *SwitchGroup {
+	sg.state = state
+	if sg.state {
+		for _, item := range sg.onGroup {
+			item.Show()
+		}
+		for _, item := range sg.offGroup {
+			item.Hide()
+		}
+	} else {
+		for _, item := range sg.onGroup {
+			item.Hide()
+		}
+		for _, item := range sg.offGroup {
+			item.Show()
+		}
+	}
 	return sg
 }
 
@@ -97,24 +116,4 @@ func (sg *SwitchGroup) OffGroupClicked() chan string {
 		}()
 	})
 	return sg.offClicked
-}
-
-func (sg *SwitchGroup) Switch(state bool) *SwitchGroup {
-	sg.state = state
-	if sg.state {
-		for _, item := range sg.onGroup {
-			item.Show()
-		}
-		for _, item := range sg.offGroup {
-			item.Hide()
-		}
-	} else {
-		for _, item := range sg.onGroup {
-			item.Hide()
-		}
-		for _, item := range sg.offGroup {
-			item.Show()
-		}
-	}
-	return sg
 }
