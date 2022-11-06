@@ -14,13 +14,14 @@ var _app = &app{}
 
 type app struct {
 	once               sync.Once
-	env                *env            // environment variables
-	db                 *gorm.DB        // database connection
-	cfg                *config         // application config
-	log                *log            // loggers for whole application
-	i18n               *i18n.I18n      // languages/translations
-	ctx                context.Context // wails context
+	env                *env       // environment variables
+	db                 *gorm.DB   // database connection
+	cfg                *config    // application config
+	log                *log       // loggers for whole application
+	i18n               *i18n.I18n // languages/translations
+	currentLanguage    string
 	currentTranslation *i18n.Translation
+	ctx                context.Context // wails context
 }
 
 // application global resources and states,
@@ -76,15 +77,9 @@ func (a *app) I18n() *i18n.I18n {
 	return a.i18n
 }
 
-// Ctx get wails context
-func (a *app) Ctx() context.Context {
-	return a.ctx
-}
-
-// SetCtx set wails context
-func (a *app) SetCtx(ctx context.Context) *app {
-	a.ctx = ctx
-	return a
+// Lang get current language
+func (a *app) Lang() string {
+	return a.currentLanguage
 }
 
 // T get current translation
@@ -95,8 +90,20 @@ func (a *app) T() *i18n.Translation {
 // SetLang set current translation
 func (a *app) SetT(lang string) bool {
 	if a.i18n.HasLanguage(lang) && a.cfg.Set(types.ConfigNameDisplayLanguage, lang) {
+		a.currentLanguage = lang
 		a.currentTranslation = a.i18n.Translation(lang)
 		return true
 	}
 	return false
+}
+
+// Ctx get wails context
+func (a *app) Ctx() context.Context {
+	return a.ctx
+}
+
+// SetCtx set wails context
+func (a *app) SetCtx(ctx context.Context) *app {
+	a.ctx = ctx
+	return a
 }

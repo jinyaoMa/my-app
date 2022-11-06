@@ -110,14 +110,13 @@ func Tray() *tray {
 				}),
 				len(app.App().I18n().AvailableLanguages()),
 			)
-			cLang := app.App().I18n().ParseLanguage(app.App().Cfg().Get(types.ConfigNameDisplayLanguage))
 			for _, lang := range app.App().I18n().AvailableLanguages() {
 				opt := menus.NewSingleItem(
 					lang, app.App().I18n().Translation(lang).Lang.Text,
 				).SetTextUpdater(func(id string) (updateText string) {
 					return app.App().I18n().Translation(id).Lang.Text
 				})
-				if cLang == lang {
+				if app.App().Lang() == lang {
 					opt.Check()
 				}
 				_tray.displayLanguage.AddOption(opt)
