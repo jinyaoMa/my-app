@@ -15,7 +15,7 @@ export default defineConfig({
   },
 
   locales: {
-    "/en/": {
+    "/": {
       lang: "en-US",
       title: "My Documentation",
       description:
@@ -30,6 +30,13 @@ export default defineConfig({
 
   themeConfig: {
     // Type is `DefaultTheme.Config`
+    siteTitle: false,
+    logo: "/logo.png",
+    nav: [
+      { text: "指南", link: "/guide/installation.html" },
+      { text: "组件", link: "/examples/button.html" },
+    ],
+    socialLinks: [{ icon: "github", link: "https://gitee.com/geeksdidi" }],
   },
 
   head: [],
