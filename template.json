@@ -1,7 +1,0 @@
-{
-  "name": "My Application",
-  "shortname": "my-app",
-  "author": "jinyaoMa <jinyao.ma@outlook.com>",
-  "description": "A wails v2 template using vue3, ts, systray and gin.",
-  "helpurl": "https://github.com/jinyaoMa/my-app/tree/starter-code"
-}
