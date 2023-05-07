@@ -1,0 +1,24 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "My App",
+  "outputfilename": "MyApp",
+  "build:dir": "../../build",
+  "frontend:dir": "../../../",
+  "frontend:install": "pnpm install",
+  "frontend:build": "pnpm --filter @jinyaoma/my-app-desktop exec vite build",
+  "frontend:dev:watcher": "pnpm --filter @jinyaoma/my-app-desktop exec vite",
+  "frontend:dev:serverUrl": "auto",
+  "debounceMS": 1000,
+  "devServer": "localhost:34115",
+  "author": {
+    "name": "Jinyao Ma",
+    "email": "jinyao.ma@outlook.com"
+  },
+  "info": {
+    "companyName": "Jinyao Ma's Individual Project",
+    "productName": "My Application by jinyaoMa",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright © 2022 jinyaoMa",
+    "comments": "Continuously updated personal service collection. Built using Wails (https://wails.app)"
+  }
+}

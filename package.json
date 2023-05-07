@@ -1,0 +1,9 @@
+{
+  "name": "my-app",
+  "description": "My App is a continuously updated personal service collection.",
+  "author": "jinyaoMa",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

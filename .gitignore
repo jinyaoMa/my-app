@@ -1,5 +1,7 @@
-# Custom
-#
+# Wails
+node_modules
+backend/build/bin
+frontend/desktop/wailsjs
 
 
 # Editor directories and files
