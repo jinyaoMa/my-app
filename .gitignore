@@ -2,6 +2,7 @@
 node_modules
 backend/build/bin
 frontend/desktop/wailsjs
+*.db
 
 
 # Editor directories and files

@@ -21,10 +21,12 @@ type Snowflake struct {
 	nodeShift uint8
 }
 
+// Default return Snowflake Id generator with default options
 func Default() (*Snowflake, error) {
 	return New(DefaultOptions())
 }
 
+// New return Snowflake Id generator with custom options
 func New(options *Options) (*Snowflake, error) {
 	options = NewOptions(options)
 

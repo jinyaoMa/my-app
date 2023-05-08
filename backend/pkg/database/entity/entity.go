@@ -7,17 +7,10 @@ import (
 
 type IEntity interface {
 	SetSnowflake(*snowflake.Snowflake)
-	BeforeInsert()
-	BeforeUpdate()
-	BeforeDelete()
-	AfterLoad()
-	AfterInsert()
-	AfterUpdate()
-	AfterDelete()
 }
 
 type Entity struct {
-	IEntity
+	IEntity    `xorm:"-"`
 	_snowflake *snowflake.Snowflake `xorm:"-"`
 
 	Id         int64
@@ -37,6 +30,6 @@ func (e *Entity) BeforeInsert() {
 }
 
 type EntitySafe struct {
-	Entity
+	Entity    `xorm:"extends"`
 	DeletedAt time.Time `xorm:"deleted"`
 }

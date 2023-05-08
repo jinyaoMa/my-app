@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	TotalShareBits uint8 = 22
+	TotalShareBits uint8 = 22 // total 22 bits to share between node/step
 )
 
 type Options struct {
@@ -17,6 +17,7 @@ type Options struct {
 	NodeNumber int64     // current node id/number
 }
 
+// DefaultOptions return default options with node id 1023
 func DefaultOptions() *Options {
 	var epoch time.Time = time.Date(2023, 5, 7, 23, 23, 23, 233, time.UTC) // 2023-05-07 23:23:23.233
 	var nodeBits uint8 = 10                                                // max 1024 nodes
@@ -26,10 +27,11 @@ func DefaultOptions() *Options {
 		Epoch:      epoch,
 		NodeBits:   nodeBits,
 		StepBits:   stepBits,
-		NodeNumber: 1024, // max node id
+		NodeNumber: 1023, // max node id
 	}
 }
 
+// NewOptions override the default options of Snowflake
 func NewOptions(opts *Options) *Options {
 	src := DefaultOptions()
 

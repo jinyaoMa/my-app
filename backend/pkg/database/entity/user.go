@@ -6,19 +6,18 @@ import (
 )
 
 type User struct {
-	EntitySafe
+	EntitySafe   `xorm:"extends"`
 	Account      string `xorm:"varchar(64) notnull unique"`
 	Password     string `xorm:"-"`
 	PasswordHash string `xorm:"varchar(64) notnull"`
 }
 
 func (u *User) BeforeInsert() {
-	u.EntitySafe.BeforeInsert()
+	u.EntitySafe.Entity.BeforeInsert()
 	u.hashPassword()
 }
 
 func (u *User) BeforeUpdate() {
-	u.EntitySafe.BeforeUpdate()
 	u.hashPassword()
 }
 
