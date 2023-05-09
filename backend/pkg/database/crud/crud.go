@@ -6,22 +6,37 @@ import (
 )
 
 type ICrud[T entity.IEntity] interface {
-	Delete(id int64) (bool, error)
+	GetById(id int64) (entity *T, has bool, err error)
+	List() (entity []T, count int64, err error)
+	Delete(id int64) (affected int64, err error)
 }
 
 type Crud[T entity.IEntity] struct {
-	ICrud[T]
-	_engine engine.Engine[T]
+	_engine *engine.Engine[T]
 	_entity T
 }
 
-func New[T entity.IEntity](engine engine.Engine[T], entity T) *Crud[T] {
+// Delete implements ICrud
+func (c *Crud[T]) Delete(id int64) (affected int64, err error) {
+	affected, err = c._engine.Engine.ID(id).Delete(c._entity)
+	return
+}
+
+// List implements ICrud
+func (c *Crud[T]) List() (entity []T, count int64, err error) {
+	count, err = c._engine.Engine.FindAndCount(&entity)
+	return
+}
+
+// GetById implements ICrud
+func (c *Crud[T]) GetById(id int64) (entity *T, has bool, err error) {
+	has, err = c._engine.Engine.ID(id).Get(entity)
+	return
+}
+
+func New[T entity.IEntity](engine *engine.Engine[T], entity T) ICrud[T] {
 	return &Crud[T]{
 		_engine: engine,
 		_entity: entity,
 	}
-}
-
-func (c *Crud[T]) Delete(id int64) (int64, error) {
-	return c._engine.Engine.ID(id).Delete(c._entity)
 }

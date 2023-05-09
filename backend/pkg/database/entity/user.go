@@ -6,14 +6,14 @@ import (
 )
 
 type User struct {
-	EntityNotDeleted `xorm:"extends"`
-	Account          string `xorm:"varchar(64) notnull unique"`
-	Password         string `xorm:"-"`
-	PasswordHash     string `xorm:"varchar(64) notnull"`
+	Entity       `xorm:"extends"`
+	Account      string `xorm:"varchar(64) notnull unique"`
+	Password     string `xorm:"-"`
+	PasswordHash string `xorm:"varchar(64) notnull"`
 }
 
 func (u *User) BeforeInsert() {
-	u.EntityNotDeleted.Entity.BeforeInsert()
+	u.Entity.EntityBase.BeforeInsert()
 	u.hashPassword()
 }
 

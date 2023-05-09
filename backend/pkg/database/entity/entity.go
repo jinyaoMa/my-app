@@ -10,7 +10,11 @@ type IEntity interface {
 }
 
 type Entity struct {
-	IEntity    `xorm:"-"`
+	EntityBase `xorm:"extends"`
+	DeletedAt  time.Time `xorm:"deleted"`
+}
+
+type EntityBase struct {
 	_snowflake *snowflake.Snowflake `xorm:"-"`
 
 	Id         int64
@@ -19,17 +23,17 @@ type Entity struct {
 	Version    int64     `xorm:"version"`
 }
 
-func (e *Entity) SetSnowflake(snowflake *snowflake.Snowflake) {
+// SetSnowflake implements IEntity
+func (e *EntityBase) SetSnowflake(snowflake *snowflake.Snowflake) {
 	e._snowflake = snowflake
 }
 
-func (e *Entity) BeforeInsert() {
+func (e *EntityBase) BeforeInsert() {
 	if e.Id == 0 && e._snowflake != nil {
 		e.Id = e._snowflake.Generate()
 	}
 }
 
-type EntityNotDeleted struct {
-	Entity    `xorm:"extends"`
-	DeletedAt time.Time `xorm:"deleted"`
+func NewEntityBase(entityBase *EntityBase) IEntity {
+	return entityBase
 }

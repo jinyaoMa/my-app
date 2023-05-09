@@ -12,7 +12,9 @@ type Engine[T entity.IEntity] struct {
 	*Options
 }
 
-func New(opts *Options) (*Engine[entity.IEntity], error) {
+func NewEngine(opts *Options) (*Engine[entity.IEntity], error) {
+	opts = NewOptions(opts)
+
 	engine, err := xorm.NewEngine(opts.Driver, opts.DataSource)
 	if err != nil {
 		return nil, err

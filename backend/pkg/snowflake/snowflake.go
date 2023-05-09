@@ -23,11 +23,11 @@ type Snowflake struct {
 
 // Default return Snowflake Id generator with default options
 func Default() (*Snowflake, error) {
-	return New(DefaultOptions())
+	return NewSnowflake(DefaultOptions())
 }
 
 // New return Snowflake Id generator with custom options
-func New(options *Options) (*Snowflake, error) {
+func NewSnowflake(options *Options) (*Snowflake, error) {
 	options = NewOptions(options)
 
 	var shareBits uint8 = options.NodeBits + options.StepBits

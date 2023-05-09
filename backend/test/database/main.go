@@ -12,10 +12,8 @@ func main() {
 		panic(err)
 	}
 
-	engine, err := engine.New(&engine.Options{
-		Driver:     engine.DrvSQLite3,
-		DataSource: "./test.db",
-		Snowflake:  idGen,
+	engine, err := engine.NewEngine(&engine.Options{
+		Snowflake: idGen,
 	})
 	if err != nil {
 		panic(err)
