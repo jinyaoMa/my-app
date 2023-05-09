@@ -1,4 +1,4 @@
-package database
+package engine
 
 import "my-app/backend/pkg/snowflake"
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"my-app/backend/pkg/database"
+	"my-app/backend/pkg/database/engine"
 	"my-app/backend/pkg/database/entity"
 	"my-app/backend/pkg/snowflake"
 )
@@ -12,8 +12,8 @@ func main() {
 		panic(err)
 	}
 
-	engine, err := database.New(&database.Options{
-		Driver:     database.DrvSQLite3,
+	engine, err := engine.New(&engine.Options{
+		Driver:     engine.DrvSQLite3,
 		DataSource: "./test.db",
 		Snowflake:  idGen,
 	})

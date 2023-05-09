@@ -29,7 +29,7 @@ func (e *Entity) BeforeInsert() {
 	}
 }
 
-type EntitySafe struct {
+type EntityNotDeleted struct {
 	Entity    `xorm:"extends"`
 	DeletedAt time.Time `xorm:"deleted"`
 }
