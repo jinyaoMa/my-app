@@ -7,6 +7,10 @@ import (
 	"time"
 )
 
+type ISnowflake interface {
+	Generate() int64
+}
+
 type Snowflake struct {
 	mu    sync.Mutex
 	epoch time.Time
@@ -22,12 +26,12 @@ type Snowflake struct {
 }
 
 // Default return Snowflake Id generator with default options
-func Default() (*Snowflake, error) {
+func Default() (ISnowflake, error) {
 	return NewSnowflake(DefaultOptions())
 }
 
 // New return Snowflake Id generator with custom options
-func NewSnowflake(options *Options) (*Snowflake, error) {
+func NewSnowflake(options *Options) (ISnowflake, error) {
 	options = NewOptions(options)
 
 	var shareBits uint8 = options.NodeBits + options.StepBits

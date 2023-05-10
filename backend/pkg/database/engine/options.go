@@ -13,7 +13,7 @@ const (
 type Options struct {
 	Driver     string
 	DataSource string
-	Snowflake  *snowflake.Snowflake
+	Snowflake  snowflake.ISnowflake
 }
 
 func DefaultOptions() *Options {

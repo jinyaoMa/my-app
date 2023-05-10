@@ -6,7 +6,7 @@ import (
 )
 
 type IEntity interface {
-	SetSnowflake(*snowflake.Snowflake)
+	SetSnowflake(snowflake.ISnowflake)
 }
 
 type Entity struct {
@@ -15,7 +15,7 @@ type Entity struct {
 }
 
 type EntityBase struct {
-	_snowflake *snowflake.Snowflake `xorm:"-"`
+	_snowflake snowflake.ISnowflake `xorm:"-"`
 
 	Id         int64
 	CreatedAt  time.Time `xorm:"created"`
@@ -24,7 +24,7 @@ type EntityBase struct {
 }
 
 // SetSnowflake implements IEntity
-func (e *EntityBase) SetSnowflake(snowflake *snowflake.Snowflake) {
+func (e *EntityBase) SetSnowflake(snowflake snowflake.ISnowflake) {
 	e._snowflake = snowflake
 }
 

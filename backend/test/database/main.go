@@ -28,7 +28,12 @@ func main() {
 		panic(err)
 	}
 
-	_, err = engine.Insert(option)
+	log := engine.NewEntity(&entity.Log{
+		Tag:     "TEST",
+		Code:    1,
+		Message: "test test test ...",
+	})
+	_, err = engine.Insert(log)
 	if err != nil {
 		panic(err)
 	}
