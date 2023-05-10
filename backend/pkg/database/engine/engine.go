@@ -5,6 +5,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 	"xorm.io/xorm"
+	"xorm.io/xorm/log"
 )
 
 type Engine[T entity.IEntity] struct {
@@ -19,6 +20,15 @@ func NewEngine(opts *Options) (*Engine[entity.IEntity], error) {
 	if err != nil {
 		return nil, err
 	}
+
+	logger := log.NewSimpleLogger3(
+		opts.Logger.Writer,
+		opts.Logger.PrefixTemplate(opts.Logger.Tag),
+		opts.Logger.Flags,
+		opts.Logger.LogLevel,
+	)
+	logger.ShowSQL(opts.Logger.ShowSQL)
+	engine.SetLogger(logger)
 
 	err = sync(engine)
 	if err != nil {

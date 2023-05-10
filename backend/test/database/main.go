@@ -14,6 +14,9 @@ func main() {
 
 	engine, err := engine.NewEngine(&engine.Options{
 		Snowflake: idGen,
+		Logger: &engine.OptionsLogger{
+			ShowSQL: true,
+		},
 	})
 	if err != nil {
 		panic(err)
