@@ -20,7 +20,7 @@ type EntityBase struct {
 	Id         int64
 	CreatedAt  time.Time `xorm:"created"`
 	ModifiedAt time.Time `xorm:"updated"`
-	Version    int64     `xorm:"version"`
+	Version    int64     `xorm:"version default(1)"`
 }
 
 // SetSnowflake implements IEntity

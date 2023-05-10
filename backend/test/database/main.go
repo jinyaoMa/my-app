@@ -19,14 +19,28 @@ func main() {
 		panic(err)
 	}
 
-	user := engine.NewEntity(&entity.User{
-		Account:  "test",
-		Password: "test",
+	option := engine.NewEntity(&entity.Option{
+		Key:   "test",
+		Value: "test",
 	})
-	count, err := engine.Insert(user)
+	_, err = engine.Insert(option)
 	if err != nil {
 		panic(err)
 	}
 
-	println("Insert:", count)
+	_, err = engine.Insert(option)
+	if err != nil {
+		panic(err)
+	}
+
+	user := engine.NewEntity(&entity.User{
+		Account:  "test",
+		Password: "test",
+	})
+	_, err = engine.Insert(user)
+	if err != nil {
+		panic(err)
+	}
+
+	println("Inserted")
 }

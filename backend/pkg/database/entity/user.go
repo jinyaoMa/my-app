@@ -10,6 +10,7 @@ type User struct {
 	Account      string `xorm:"varchar(64) notnull unique"`
 	Password     string `xorm:"-"`
 	PasswordHash string `xorm:"varchar(64) notnull"`
+	IsFrozen     bool   `xorm:"notnull"`
 }
 
 func (u *User) BeforeInsert() {

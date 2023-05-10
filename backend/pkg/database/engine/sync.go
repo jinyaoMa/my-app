@@ -8,6 +8,8 @@ import (
 
 func sync(e *xorm.Engine) error {
 	return e.Sync(
+		new(entity.Option),
+		new(entity.Log),
 		new(entity.User),
 	)
 }
