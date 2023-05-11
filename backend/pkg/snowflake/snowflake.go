@@ -2,14 +2,11 @@ package snowflake
 
 import (
 	"fmt"
+	"my-app/backend/pkg/snowflake/interfaces"
 	"strconv"
 	"sync"
 	"time"
 )
-
-type ISnowflake interface {
-	Generate() int64
-}
 
 type Snowflake struct {
 	mu    sync.Mutex
@@ -26,12 +23,12 @@ type Snowflake struct {
 }
 
 // Default return Snowflake Id generator with default options
-func Default() (ISnowflake, error) {
+func Default() (interfaces.ISnowflake, error) {
 	return NewSnowflake(DefaultOptions())
 }
 
 // New return Snowflake Id generator with custom options
-func NewSnowflake(options *Options) (ISnowflake, error) {
+func NewSnowflake(options *Options) (interfaces.ISnowflake, error) {
 	options = NewOptions(options)
 
 	var shareBits uint8 = options.NodeBits + options.StepBits
@@ -55,10 +52,7 @@ func NewSnowflake(options *Options) (ISnowflake, error) {
 	}, nil
 }
 
-// Generate creates and returns a unique snowflake ID
-// To help guarantee uniqueness
-// - Make sure your system is keeping accurate system time
-// - Make sure you never have multiple nodes running with the same node ID
+// Generate implements IUtility
 func (s *Snowflake) Generate() int64 {
 	s.mu.Lock()
 	defer s.mu.Unlock()

@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"my-app/backend/pkg/snowflake"
+	isnowflake "my-app/backend/pkg/snowflake/interfaces"
 	"os"
 
 	"github.com/imdario/mergo"
@@ -17,7 +18,7 @@ const (
 type Options struct {
 	Driver     string
 	DataSource string
-	Snowflake  snowflake.ISnowflake
+	Snowflake  isnowflake.ISnowflake
 	Logger     *OptionsLogger
 }
 
@@ -40,7 +41,7 @@ func DefaultOptions() *Options {
 		Logger: &OptionsLogger{
 			Tag: "DBS",
 			PrefixTemplate: func(tag string) string {
-				return "[" + tag + "]"
+				return "[" + tag + "] "
 			},
 			Writer:   os.Stderr,
 			Flags:    log.Ldate | log.Ltime | log.Lmicroseconds | log.Llongfile,

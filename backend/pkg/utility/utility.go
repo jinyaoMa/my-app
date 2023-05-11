@@ -1,26 +1,18 @@
 package utility
 
 import (
+	"my-app/backend/pkg/utility/interfaces"
 	"os"
 	"path/filepath"
 	"strings"
 )
-
-type IUtility interface {
-	// GetExecutableName get the filename with the same name as application executable
-	// but specify a different extension
-	GetExecutableFileName(ext string) string
-
-	// GetExecutablePath get the path started from application executable's directory
-	GetExecutablePath(elem ...string) string
-}
 
 type Utility struct {
 	executableName string // the file name (without extension) of application executable
 	executableDir  string // the folder that application executable located
 }
 
-func NewUtility() (IUtility, error) {
+func NewUtility() (interfaces.IUtility, error) {
 	// get executable directory
 	exe, err := os.Executable()
 	if err != nil {

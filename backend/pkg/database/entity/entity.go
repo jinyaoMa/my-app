@@ -1,14 +1,10 @@
 package entity
 
 import (
-	"my-app/backend/pkg/snowflake"
+	"my-app/backend/pkg/database/interfaces"
+	snowflake "my-app/backend/pkg/snowflake/interfaces"
 	"time"
 )
-
-type IEntity interface {
-	// Set Id generator for entity
-	SetSnowflake(snowflake.ISnowflake)
-}
 
 type Entity struct {
 	EntityBase `xorm:"extends"`
@@ -35,6 +31,6 @@ func (e *EntityBase) BeforeInsert() {
 	}
 }
 
-func NewEntityBase(entityBase *EntityBase) IEntity {
+func NewEntityBase(entityBase *EntityBase) interfaces.IEntity {
 	return entityBase
 }
