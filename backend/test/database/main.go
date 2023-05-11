@@ -3,6 +3,7 @@ package main
 import (
 	"my-app/backend/pkg/database/engine"
 	"my-app/backend/pkg/database/entity"
+	"my-app/backend/pkg/database/options"
 	"my-app/backend/pkg/snowflake"
 )
 
@@ -12,9 +13,9 @@ func main() {
 		panic(err)
 	}
 
-	engine, err := engine.NewEngine(&engine.Options{
+	engine, err := engine.NewEngine(&options.OEngine{
 		Snowflake: idGen,
-		Logger: &engine.OptionsLogger{
+		Logger: &options.OEngineLogger{
 			ShowSQL: true,
 		},
 	})

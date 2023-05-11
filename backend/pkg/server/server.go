@@ -2,13 +2,14 @@ package server
 
 import (
 	"my-app/backend/pkg/server/interfaces"
+	"my-app/backend/pkg/server/options"
 	"net/http"
 
 	"golang.org/x/sync/errgroup"
 )
 
 type Server struct {
-	options   *Options
+	options   *options.OServer
 	isRunning bool
 	errGroup  errgroup.Group
 	http      *http.Server // redirector
@@ -20,8 +21,8 @@ func (s *Server) IsRunning() bool {
 	return s.isRunning
 }
 
-func NewServer(opts *Options) interfaces.IServer {
-	opts = NewOptions(opts)
+func NewServer(opts *options.OServer) interfaces.IServer {
+	opts = options.NewOServer(opts)
 
 	return &Server{
 		options: opts,

@@ -2,6 +2,7 @@ package engine
 
 import (
 	"my-app/backend/pkg/database/interfaces"
+	"my-app/backend/pkg/database/options"
 
 	_ "github.com/mattn/go-sqlite3"
 	"xorm.io/xorm"
@@ -10,11 +11,11 @@ import (
 
 type Engine[T interfaces.IEntity] struct {
 	*xorm.Engine
-	*Options
+	*options.OEngine
 }
 
-func NewEngine(opts *Options) (*Engine[interfaces.IEntity], error) {
-	opts = NewOptions(opts)
+func NewEngine(opts *options.OEngine) (*Engine[interfaces.IEntity], error) {
+	opts = options.NewOEngine(opts)
 
 	engine, err := xorm.NewEngine(opts.Driver, opts.DataSource)
 	if err != nil {
@@ -37,7 +38,7 @@ func NewEngine(opts *Options) (*Engine[interfaces.IEntity], error) {
 
 	return &Engine[interfaces.IEntity]{
 		Engine:  engine,
-		Options: opts,
+		OEngine: opts,
 	}, nil
 }
 

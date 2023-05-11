@@ -3,15 +3,16 @@ package logger
 import (
 	"log"
 	"my-app/backend/pkg/logger/interfaces"
+	"my-app/backend/pkg/logger/options"
 )
 
 type Logger struct {
 	*log.Logger
-	*Options
+	*options.OLogger
 }
 
-func NewLogger(opts *Options) interfaces.ILogger {
-	opts = NewOptions(opts)
+func NewLogger(opts *options.OLogger) interfaces.ILogger {
+	opts = options.NewOLogger(opts)
 
 	logger := log.Default()
 	logger.SetOutput(opts.Writer)
@@ -20,6 +21,6 @@ func NewLogger(opts *Options) interfaces.ILogger {
 
 	return &Logger{
 		Logger:  logger,
-		Options: opts,
+		OLogger: opts,
 	}
 }

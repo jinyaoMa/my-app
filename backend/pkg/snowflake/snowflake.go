@@ -3,6 +3,7 @@ package snowflake
 import (
 	"fmt"
 	"my-app/backend/pkg/snowflake/interfaces"
+	"my-app/backend/pkg/snowflake/options"
 	"strconv"
 	"sync"
 	"time"
@@ -24,31 +25,31 @@ type Snowflake struct {
 
 // Default return Snowflake Id generator with default options
 func Default() (interfaces.ISnowflake, error) {
-	return NewSnowflake(DefaultOptions())
+	return NewSnowflake(options.DefaultOSnowflake())
 }
 
-// New return Snowflake Id generator with custom options
-func NewSnowflake(options *Options) (interfaces.ISnowflake, error) {
-	options = NewOptions(options)
+// NewSnowflake return Snowflake Id generator with custom options
+func NewSnowflake(opts *options.OSnowflake) (interfaces.ISnowflake, error) {
+	opts = options.NewOSnowflake(opts)
 
-	var shareBits uint8 = options.NodeBits + options.StepBits
-	if shareBits > TotalShareBits {
-		return nil, fmt.Errorf("remember, you have a total %d bits to share between node/step", TotalShareBits)
+	var shareBits uint8 = opts.NodeBits + opts.StepBits
+	if shareBits > options.TotalShareBits {
+		return nil, fmt.Errorf("remember, you have a total %d bits to share between node/step", options.TotalShareBits)
 	}
 
-	var nodeMax int64 = -1 ^ (-1 << options.NodeBits)
-	if options.NodeNumber < 0 || options.NodeNumber > nodeMax {
+	var nodeMax int64 = -1 ^ (-1 << opts.NodeBits)
+	if opts.NodeNumber < 0 || opts.NodeNumber > nodeMax {
 		return nil, fmt.Errorf("node number must be between 0 and %s", strconv.FormatInt(nodeMax, 10))
 	}
 
 	return &Snowflake{
-		epoch:     options.Epoch,
-		node:      options.NodeNumber,
+		epoch:     opts.Epoch,
+		node:      opts.NodeNumber,
 		nodeMax:   nodeMax,
-		nodeMask:  nodeMax << options.StepBits,
-		stepMask:  -1 ^ (-1 << options.StepBits),
+		nodeMask:  nodeMax << opts.StepBits,
+		stepMask:  -1 ^ (-1 << opts.StepBits),
 		timeShift: shareBits,
-		nodeShift: options.StepBits,
+		nodeShift: opts.StepBits,
 	}, nil
 }
 

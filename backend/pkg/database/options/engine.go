@@ -1,4 +1,4 @@
-package engine
+package options
 
 import (
 	"io"
@@ -15,14 +15,14 @@ const (
 	DrvSQLite3 string = "sqlite3"
 )
 
-type Options struct {
+type OEngine struct {
 	Driver     string
 	DataSource string
 	Snowflake  isnowflake.ISnowflake
-	Logger     *OptionsLogger
+	Logger     *OEngineLogger
 }
 
-type OptionsLogger struct {
+type OEngineLogger struct {
 	Tag            string
 	PrefixTemplate func(tag string) string
 	Writer         io.Writer
@@ -31,14 +31,14 @@ type OptionsLogger struct {
 	ShowSQL        bool
 }
 
-func DefaultOptions() *Options {
+func DefaultOEngine() *OEngine {
 	idGenerator, _ := snowflake.Default()
 
-	return &Options{
+	return &OEngine{
 		Driver:     DrvSQLite3,
 		DataSource: "./" + DrvSQLite3 + ".db",
 		Snowflake:  idGenerator,
-		Logger: &OptionsLogger{
+		Logger: &OEngineLogger{
 			Tag: "DBS",
 			PrefixTemplate: func(tag string) string {
 				return "[" + tag + "] "
@@ -51,13 +51,13 @@ func DefaultOptions() *Options {
 	}
 }
 
-func NewOptions(opts *Options) *Options {
-	src := DefaultOptions()
+func NewOEngine(dst *OEngine) *OEngine {
+	src := DefaultOEngine()
 
-	err := mergo.Merge(opts, *src)
+	err := mergo.Merge(dst, *src)
 	if err != nil {
 		return src
 	}
 
-	return opts
+	return dst
 }
