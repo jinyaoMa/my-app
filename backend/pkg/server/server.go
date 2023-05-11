@@ -16,6 +16,16 @@ type Server struct {
 	https     *http.Server // server (tls)
 }
 
+// Start implements interfaces.IServer
+func (*Server) Start(opts options.OServer) (ok bool) {
+	panic("unimplemented")
+}
+
+// Stop implements interfaces.IServer
+func (*Server) Stop() (ok bool) {
+	panic("unimplemented")
+}
+
 // IsRunning implements interfaces.IServer
 func (s *Server) IsRunning() bool {
 	return s.isRunning

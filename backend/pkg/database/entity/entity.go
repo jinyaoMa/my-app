@@ -20,7 +20,7 @@ type EntityBase struct {
 	Version    int64     `xorm:"version default(1)"`
 }
 
-// SetSnowflake implements IEntity
+// SetSnowflake implements interfaces.IEntity
 func (e *EntityBase) SetSnowflake(snowflake snowflake.ISnowflake) {
 	e.snowflake = snowflake
 }

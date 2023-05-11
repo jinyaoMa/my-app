@@ -12,6 +12,19 @@ type Utility struct {
 	executableDir  string // the folder that application executable located
 }
 
+// GetExecutableFileName implements interfaces.IUtility
+func (u *Utility) GetExecutableFileName(ext string) string {
+	return u.executableName + "." + ext
+}
+
+// GetExecutablePath implements interfaces.IUtility
+func (u *Utility) GetExecutablePath(elem ...string) string {
+	if len(elem) == 0 {
+		return u.executableDir
+	}
+	return filepath.Join(append([]string{u.executableDir}, elem...)...)
+}
+
 func NewUtility() (interfaces.IUtility, error) {
 	// get executable directory
 	exe, err := os.Executable()
@@ -25,17 +38,4 @@ func NewUtility() (interfaces.IUtility, error) {
 		executableName: executableName,
 		executableDir:  executableDir,
 	}, nil
-}
-
-// GetExecutableFileName implements IUtility
-func (u *Utility) GetExecutableFileName(ext string) string {
-	return u.executableName + "." + ext
-}
-
-// GetExecutablePath implements IUtility
-func (u *Utility) GetExecutablePath(elem ...string) string {
-	if len(elem) == 0 {
-		return u.executableDir
-	}
-	return filepath.Join(append([]string{u.executableDir}, elem...)...)
 }

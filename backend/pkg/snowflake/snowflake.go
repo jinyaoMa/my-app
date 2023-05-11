@@ -23,6 +23,35 @@ type Snowflake struct {
 	nodeShift uint8
 }
 
+// Generate implements interfaces.ISnowflake
+func (s *Snowflake) Generate() int64 {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	now := time.Since(s.epoch).Milliseconds()
+
+	if now == s.time {
+		s.step = (s.step + 1) & s.stepMask
+
+		if s.step == 0 {
+			for now <= s.time {
+				now = time.Since(s.epoch).Milliseconds()
+			}
+		}
+	} else {
+		s.step = 0
+	}
+
+	s.time = now
+
+	r := int64((now)<<s.timeShift |
+		(s.node << s.nodeShift) |
+		(s.step),
+	)
+
+	return r
+}
+
 // Default return Snowflake Id generator with default options
 func Default() (interfaces.ISnowflake, error) {
 	return NewSnowflake(options.DefaultOSnowflake())
@@ -51,33 +80,4 @@ func NewSnowflake(opts *options.OSnowflake) (interfaces.ISnowflake, error) {
 		timeShift: shareBits,
 		nodeShift: opts.StepBits,
 	}, nil
-}
-
-// Generate implements IUtility
-func (s *Snowflake) Generate() int64 {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	now := time.Since(s.epoch).Milliseconds()
-
-	if now == s.time {
-		s.step = (s.step + 1) & s.stepMask
-
-		if s.step == 0 {
-			for now <= s.time {
-				now = time.Since(s.epoch).Milliseconds()
-			}
-		}
-	} else {
-		s.step = 0
-	}
-
-	s.time = now
-
-	r := int64((now)<<s.timeShift |
-		(s.node << s.nodeShift) |
-		(s.step),
-	)
-
-	return r
 }
