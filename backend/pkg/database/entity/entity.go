@@ -6,6 +6,7 @@ import (
 )
 
 type IEntity interface {
+	// Set Id generator for entity
 	SetSnowflake(snowflake.ISnowflake)
 }
 
@@ -15,7 +16,7 @@ type Entity struct {
 }
 
 type EntityBase struct {
-	_snowflake snowflake.ISnowflake `xorm:"-"`
+	snowflake snowflake.ISnowflake `xorm:"-"`
 
 	Id         int64
 	CreatedAt  time.Time `xorm:"created"`
@@ -25,12 +26,12 @@ type EntityBase struct {
 
 // SetSnowflake implements IEntity
 func (e *EntityBase) SetSnowflake(snowflake snowflake.ISnowflake) {
-	e._snowflake = snowflake
+	e.snowflake = snowflake
 }
 
 func (e *EntityBase) BeforeInsert() {
-	if e.Id == 0 && e._snowflake != nil {
-		e.Id = e._snowflake.Generate()
+	if e.Id == 0 && e.snowflake != nil {
+		e.Id = e.snowflake.Generate()
 	}
 }
 
