@@ -7,7 +7,7 @@ type IServer interface {
 	IsRunning() bool
 
 	// Start start the server with options
-	Start(opts options.OServer) (ok bool)
+	Start(opts *options.OServer) (ok bool)
 
 	// Start stop the server from running
 	Stop() (ok bool)
