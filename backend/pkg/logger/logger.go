@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"io"
 	"log"
 	"my-app/backend/pkg/logger/interfaces"
 	"my-app/backend/pkg/logger/options"
@@ -9,6 +10,11 @@ import (
 type Logger struct {
 	*log.Logger
 	*options.OLogger
+}
+
+// Writer implements interfaces.ILogger
+func (l *Logger) Writer() io.Writer {
+	return l.Logger.Writer()
 }
 
 func NewLogger(opts *options.OLogger) interfaces.ILogger {

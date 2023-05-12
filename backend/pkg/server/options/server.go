@@ -9,14 +9,24 @@ import (
 )
 
 type OServer struct {
-	Logger   interfaces.ILogger
-	UseHttps bool
+	IsDev  bool
+	Logger interfaces.ILogger
+	Ports  *OServerPorts
+}
+
+type OServerPorts struct {
+	Http  uint16
+	Https uint16
 }
 
 func DefaultOServer() *OServer {
 	return &OServer{
-		Logger:   logger.NewLogger(options.DefaultOLogger()),
-		UseHttps: true,
+		IsDev:  false,
+		Logger: logger.NewLogger(options.DefaultOLogger()),
+		Ports: &OServerPorts{
+			Http:  8091,
+			Https: 0,
+		},
 	}
 }
 

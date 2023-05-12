@@ -1,6 +1,10 @@
 package interfaces
 
+import "io"
+
 type ILogger interface {
+	Writer() io.Writer
+	Prefix() string
 	Fatal(v ...any)
 	Fatalf(format string, v ...any)
 	Fatalln(v ...any)

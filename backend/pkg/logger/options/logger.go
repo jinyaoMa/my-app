@@ -20,7 +20,7 @@ func DefaultOLogger() *OLogger {
 		Writer: os.Stderr,
 		Tag:    "STD",
 		PrefixTemplate: func(tag string) (prefix string) {
-			return "[" + tag + "] "
+			return "[" + tag + "]"
 		},
 		Flags: log.Ldate | log.Ltime | log.Lmicroseconds | log.Llongfile,
 	}
