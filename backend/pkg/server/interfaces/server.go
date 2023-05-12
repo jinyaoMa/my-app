@@ -6,6 +6,9 @@ type IServer interface {
 	// IsRunning check if the server is running
 	IsRunning() bool
 
+	// HasErrors check if the server has errors
+	HasErrors() bool
+
 	// Start start the server with options
 	Start(opts *options.OServer) (ok bool)
 

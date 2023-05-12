@@ -2,14 +2,18 @@ package server
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"my-app/backend/pkg/server/interfaces"
 	"my-app/backend/pkg/server/options"
 	"net/http"
+	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/acme/autocert"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -17,6 +21,7 @@ type Server struct {
 	*options.OServer
 	mu        sync.Mutex
 	isRunning bool
+	hasErrors bool
 	errGroup  errgroup.Group
 	http      *http.Server // redirector
 	https     *http.Server // server (tls)
@@ -47,18 +52,31 @@ func (s *Server) Stop() (ok bool) {
 	return false
 }
 
+// HasErrors implements interfaces.IServer
+func (s *Server) HasErrors() bool {
+	return s.hasErrors
+}
+
 // IsRunning implements interfaces.IServer
 func (s *Server) IsRunning() bool {
 	return s.isRunning
 }
 
+func NewServer() interfaces.IServer {
+	return &Server{}
+}
+
 func (s *Server) start() (ok bool) {
+	s.hasErrors = false
+
 	engine := gin.New()
 
+	engine.UseH2C = true
+	engine.Use(gin.Recovery())
 	engine.Use(gin.LoggerWithConfig(gin.LoggerConfig{
 		Formatter: func(param gin.LogFormatterParams) string {
 			var statusColor, methodColor, resetColor string
-			if param.IsOutputColor() {
+			if param.IsOutputColor() && s.OServer.IsDev {
 				statusColor = param.StatusCodeColor()
 				methodColor = param.MethodColor()
 				resetColor = param.ResetColor()
@@ -80,7 +98,24 @@ func (s *Server) start() (ok bool) {
 		Output: s.OServer.Logger.Writer(),
 	}))
 
-	return false
+	s.setup(engine)
+	s.errGroup.Go(func() error {
+		err := s.http.ListenAndServe()
+		if err != nil {
+			s.hasErrors = true
+		}
+		return err
+	})
+	s.errGroup.Go(func() error {
+		err := s.https.ListenAndServeTLS("", "")
+		if err != nil {
+			s.hasErrors = true
+		}
+		return err
+	})
+
+	s.isRunning = true
+	return true
 }
 
 func (s *Server) stop() (ok bool) {
@@ -88,21 +123,62 @@ func (s *Server) stop() (ok bool) {
 	defer cancelHttp()
 	if err := s.http.Shutdown(ctxHttp); err != nil && err != http.ErrServerClosed {
 		s.OServer.Logger.Printf("server (http) shutdown error: %+v\n", err)
+		s.hasErrors = true
 	}
 
 	ctxHttps, cancelHttps := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelHttps()
 	if err := s.https.Shutdown(ctxHttps); err != nil && err != http.ErrServerClosed {
 		s.OServer.Logger.Printf("server (http/s) shutdown error: %+v\n", err)
+		s.hasErrors = true
 	}
 
 	if err := s.errGroup.Wait(); err != nil && err != http.ErrServerClosed {
 		s.OServer.Logger.Printf("server running error: %+v\n", err)
+		s.hasErrors = true
 	}
 
+	s.isRunning = false
 	return true
 }
 
-func NewServer() interfaces.IServer {
-	return &Server{}
+func (s *Server) setup(engine *gin.Engine) {
+	addrHttp := fmt.Sprintf(":%d", s.OServer.Http.Port)
+	addrHttps := fmt.Sprintf(":%d", s.OServer.Https.Port)
+
+	manager := &autocert.Manager{
+		Prompt: autocert.AcceptTOS,
+		Cache:  autocert.DirCache(s.OServer.Https.DirCerts),
+	}
+
+	s.http = &http.Server{
+		Addr: addrHttp,
+		Handler: manager.HTTPHandler(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+			target := "https://" + strings.Replace(r.Host, addrHttp, addrHttps, 1) + r.RequestURI
+			http.Redirect(rw, r, target, http.StatusMovedPermanently)
+		})),
+	}
+
+	tlsConfig := manager.TLSConfig()
+	tlsConfig.GetCertificate = s.getSelfSignedOrLetsEncryptCert(manager)
+
+	s.https = &http.Server{
+		Addr:      addrHttps,
+		Handler:   s.OServer.Setup(engine).Handler(),
+		TLSConfig: tlsConfig,
+	}
+}
+
+// getSelfSignedOrLetsEncryptCert override tlsConfig.GetCertificate to enable self-signed certs
+func (s *Server) getSelfSignedOrLetsEncryptCert(certManager *autocert.Manager) func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
+	return func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
+		keyFile := filepath.Join(s.OServer.Https.DirCerts, hello.ServerName+".key")
+		crtFile := filepath.Join(s.OServer.Https.DirCerts, hello.ServerName+".crt")
+		certificate, err := tls.LoadX509KeyPair(crtFile, keyFile)
+		if err != nil {
+			// fallback to default cert
+			return certManager.GetCertificate(hello)
+		}
+		return &certificate, err
+	}
 }

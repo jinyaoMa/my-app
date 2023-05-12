@@ -5,27 +5,40 @@ import (
 	"my-app/backend/pkg/logger/interfaces"
 	"my-app/backend/pkg/logger/options"
 
+	"github.com/gin-gonic/gin"
 	"github.com/imdario/mergo"
 )
 
 type OServer struct {
 	IsDev  bool
 	Logger interfaces.ILogger
-	Ports  *OServerPorts
+	Http   *OServerHttp
+	Https  *OServerHttps
+	Setup  func(engine *gin.Engine) *gin.Engine
 }
 
-type OServerPorts struct {
-	Http  uint16
-	Https uint16
+type OServerHttp struct {
+	Port uint16
+}
+
+type OServerHttps struct {
+	Port     uint16
+	DirCerts string
 }
 
 func DefaultOServer() *OServer {
 	return &OServer{
 		IsDev:  false,
 		Logger: logger.NewLogger(options.DefaultOLogger()),
-		Ports: &OServerPorts{
-			Http:  8091,
-			Https: 0,
+		Http: &OServerHttp{
+			Port: 10080,
+		},
+		Https: &OServerHttps{
+			Port:     10443,
+			DirCerts: "",
+		},
+		Setup: func(engine *gin.Engine) *gin.Engine {
+			return engine
 		},
 	}
 }
