@@ -9,7 +9,7 @@ import (
 	"xorm.io/xorm/log"
 )
 
-type Engine[T interfaces.IEntity] struct {
+type Engine[TEntity interfaces.IEntity] struct {
 	*xorm.Engine
 	*options.OEngine
 }
@@ -42,7 +42,7 @@ func NewEngine(opts *options.OEngine) (*Engine[interfaces.IEntity], error) {
 	}, nil
 }
 
-func (e *Engine[T]) NewEntity(entity T) T {
+func (e *Engine[TEntity]) NewEntity(entity TEntity) TEntity {
 	entity.SetSnowflake(e.Snowflake)
 	return entity
 }
