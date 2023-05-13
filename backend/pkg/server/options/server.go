@@ -2,7 +2,7 @@ package options
 
 import (
 	"my-app/backend/pkg/logger"
-	"my-app/backend/pkg/logger/interfaces"
+	iLogger "my-app/backend/pkg/logger/interfaces"
 	"my-app/backend/pkg/logger/options"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +11,7 @@ import (
 
 type OServer struct {
 	IsDev  bool
-	Logger interfaces.ILogger
+	Logger iLogger.ILogger
 	Http   *OServerHttp
 	Https  *OServerHttps
 	Setup  func(engine *gin.Engine) *gin.Engine

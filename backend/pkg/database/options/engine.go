@@ -4,7 +4,7 @@ import (
 	"io"
 	"log"
 	"my-app/backend/pkg/snowflake"
-	isnowflake "my-app/backend/pkg/snowflake/interfaces"
+	iSnowflake "my-app/backend/pkg/snowflake/interfaces"
 	"os"
 
 	"github.com/imdario/mergo"
@@ -18,7 +18,7 @@ const (
 type OEngine struct {
 	Driver     string
 	DataSource string
-	Snowflake  isnowflake.ISnowflake
+	Snowflake  iSnowflake.ISnowflake
 	Logger     *OEngineLogger
 }
 
