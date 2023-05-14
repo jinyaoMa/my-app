@@ -7,10 +7,11 @@ import (
 
 type User struct {
 	Entity       `xorm:"extends"`
-	Account      string `xorm:"varchar(64) notnull unique"`
-	Password     string `xorm:"-"`
-	PasswordHash string `xorm:"varchar(64) notnull"`
-	IsFrozen     bool   `xorm:"notnull"`
+	Account      string          `xorm:"varchar(64) notnull unique"`
+	Password     string          `xorm:"-"`
+	PasswordHash string          `xorm:"varchar(64) notnull"`
+	IsFrozen     bool            `xorm:"notnull"`
+	OldPasswords []*UserPassword `xorm:"extends"`
 }
 
 func (u *User) BeforeInsert() {
@@ -26,5 +27,8 @@ func (u *User) hashPassword() {
 	if u.Password != "" {
 		passwordSum := sha256.Sum256([]byte(u.Password))
 		u.PasswordHash = fmt.Sprintf("%x", passwordSum)
+		u.OldPasswords = append(u.OldPasswords, &UserPassword{
+			PasswordHash: u.PasswordHash,
+		})
 	}
 }

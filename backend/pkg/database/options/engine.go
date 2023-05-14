@@ -20,6 +20,7 @@ type OEngine struct {
 	DataSource string
 	Snowflake  iSnowflake.ISnowflake
 	Logger     *OEngineLogger
+	Sync       []interface{}
 }
 
 type OEngineLogger struct {

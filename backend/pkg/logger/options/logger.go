@@ -22,7 +22,7 @@ func DefaultOLogger() *OLogger {
 		PrefixTemplate: func(tag string) (prefix string) {
 			return "[" + tag + "]"
 		},
-		Flags: log.Ldate | log.Ltime | log.Lmicroseconds | log.Llongfile,
+		Flags: log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile,
 	}
 }
 

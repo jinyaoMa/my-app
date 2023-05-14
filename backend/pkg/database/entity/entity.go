@@ -9,17 +9,17 @@ import (
 )
 
 type Entity struct {
-	EntityBase `xorm:"extends"`
-	DeletedAt  time.Time `xorm:"deleted"`
+	EntityBase
+	DeletedAt time.Time `xorm:"deleted"`
 }
 
 type EntityBase struct {
-	snowflake iSnowflake.ISnowflake `xorm:"-"`
+	snowflake iSnowflake.ISnowflake `gorm:"-:all"`
 
-	Id         int64
-	CreatedAt  time.Time `xorm:"created"`
-	ModifiedAt time.Time `xorm:"updated"`
-	Version    int64     `xorm:"version default(1)"`
+	ID        int64 `gorm:"primaryKey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Version   int64 `gorm:"not null; default(1)"`
 }
 
 // AfterDelete implements interfaces.IEntity
