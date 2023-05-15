@@ -3,20 +3,20 @@ package interfaces
 import (
 	iSnowflake "my-app/backend/pkg/snowflake/interfaces"
 
-	"xorm.io/xorm"
+	"gorm.io/gorm"
 )
 
 type IEntity interface {
 	// Set Id generator for entity
 	SetSnowflake(iSnowflake.ISnowflake)
 
-	BeforeInsert()
-	BeforeUpdate()
-	BeforeDelete()
-	BeforeSet(name string, cell xorm.Cell)
-	AfterSet(name string, cell xorm.Cell)
-	AfterLoad(*xorm.Session)
-	AfterInsert()
-	AfterUpdate()
-	AfterDelete()
+	BeforeSave(tx *gorm.DB) (err error)
+	BeforeCreate(tx *gorm.DB) (err error)
+	BeforeUpdate(tx *gorm.DB) (err error)
+	BeforeDelete(tx *gorm.DB) (err error)
+	AfterFind(tx *gorm.DB) (err error)
+	AfterDelete(tx *gorm.DB) (err error)
+	AfterUpdate(tx *gorm.DB) (err error)
+	AfterCreate(tx *gorm.DB) (err error)
+	AfterSave(tx *gorm.DB) (err error)
 }

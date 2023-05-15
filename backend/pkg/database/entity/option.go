@@ -1,7 +1,7 @@
 package entity
 
 type Option struct {
-	Entity `xorm:"extends"`
-	Key    string `xorm:"varchar(255) notnull"`
-	Value  string `xorm:"varchar(255) notnull"`
+	Entity
+	Key   string `xorm:"size:256"`
+	Value string `xorm:"size:256"`
 }

@@ -1,53 +1,58 @@
 package options
 
 import (
-	"io"
 	"log"
+	"my-app/backend/pkg/logger"
+	"my-app/backend/pkg/logger/options"
 	"my-app/backend/pkg/snowflake"
 	iSnowflake "my-app/backend/pkg/snowflake/interfaces"
 	"os"
+	"time"
 
 	"github.com/imdario/mergo"
-	xormLog "xorm.io/xorm/log"
-)
-
-const (
-	DrvSQLite3 string = "sqlite3"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	gormLogger "gorm.io/gorm/logger"
 )
 
 type OEngine struct {
-	Driver     string
-	DataSource string
-	Snowflake  iSnowflake.ISnowflake
-	Logger     *OEngineLogger
-	Sync       []interface{}
+	Dialector gorm.Dialector
+	Options   []gorm.Option
+	Snowflake iSnowflake.ISnowflake
+	Logger    *OEngineLogger
+	Migrate   []any
 }
 
 type OEngineLogger struct {
-	Tag            string
-	PrefixTemplate func(tag string) string
-	Writer         io.Writer
-	Flags          int
-	LogLevel       xormLog.LogLevel
-	ShowSQL        bool
+	Writer gormLogger.Writer
+	Config gormLogger.Config
 }
 
 func DefaultOEngine() *OEngine {
 	idGenerator, _ := snowflake.Default()
 
 	return &OEngine{
-		Driver:     DrvSQLite3,
-		DataSource: "./" + DrvSQLite3 + ".db",
-		Snowflake:  idGenerator,
+		Dialector: sqlite.Open("./sqlite.db"),
+		Options: []gorm.Option{
+			&gorm.Config{},
+		},
+		Snowflake: idGenerator,
 		Logger: &OEngineLogger{
-			Tag: "DBS",
-			PrefixTemplate: func(tag string) string {
-				return "[" + tag + "] "
+			Writer: logger.NewLogger(&options.OLogger{
+				Writer: os.Stderr,
+				Tag:    "DBS",
+				PrefixTemplate: func(tag string) (prefix string) {
+					return "[" + tag + "]"
+				},
+				Flags: log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile,
+			}),
+			Config: gormLogger.Config{
+				SlowThreshold:             time.Second,
+				Colorful:                  true,
+				IgnoreRecordNotFoundError: false,
+				ParameterizedQueries:      false,
+				LogLevel:                  gormLogger.Info,
 			},
-			Writer:   os.Stderr,
-			Flags:    log.Ldate | log.Ltime | log.Lmicroseconds | log.Llongfile,
-			LogLevel: xormLog.DEFAULT_LOG_LEVEL,
-			ShowSQL:  false,
 		},
 	}
 }

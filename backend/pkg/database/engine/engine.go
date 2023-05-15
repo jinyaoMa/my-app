@@ -4,40 +4,33 @@ import (
 	"my-app/backend/pkg/database/interfaces"
 	"my-app/backend/pkg/database/options"
 
-	_ "github.com/mattn/go-sqlite3"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"xorm.io/xorm"
-	"xorm.io/xorm/log"
 )
 
 type Engine[TEntity interfaces.IEntity] struct {
-	*xorm.Engine
+	*gorm.DB
 	*options.OEngine
 }
 
 func NewEngine(opts *options.OEngine) (*Engine[interfaces.IEntity], error) {
 	opts = options.NewOEngine(opts)
 
-	engine, err := xorm.NewEngine(opts.Driver, opts.DataSource)
+	db, err := gorm.Open(opts.Dialector, opts.Options...)
 	if err != nil {
 		return nil, err
 	}
 
-	logger := log.NewSimpleLogger3(
-		opts.Logger.Writer,
-		opts.Logger.PrefixTemplate(opts.Logger.Tag),
-		opts.Logger.Flags,
-		opts.Logger.LogLevel,
-	)
-	logger.ShowSQL(opts.Logger.ShowSQL)
-	engine.SetLogger(logger)
+	db.Logger = logger.New(opts.Logger.Writer, opts.Logger.Config)
 
-	err = sync(engine, opts.Sync)
+	err = migrate(db, opts.Migrate...)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Engine[interfaces.IEntity]{
-		Engine:  engine,
+		DB:      db,
 		OEngine: opts,
 	}, nil
 }

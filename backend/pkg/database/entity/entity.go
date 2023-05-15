@@ -5,52 +5,73 @@ import (
 	iSnowflake "my-app/backend/pkg/snowflake/interfaces"
 	"time"
 
-	"xorm.io/xorm"
+	"gorm.io/gorm"
 )
 
 type Entity struct {
 	EntityBase
-	DeletedAt time.Time `xorm:"deleted"`
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 type EntityBase struct {
-	snowflake iSnowflake.ISnowflake `gorm:"-:all"`
+	snowflake iSnowflake.ISnowflake
 
-	ID        int64 `gorm:"primaryKey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	Version   int64 `gorm:"not null; default(1)"`
+	ID        int64     `gorm:"primaryKey"`
+	CreatedAt time.Time `gorm:""`
+	UpdatedAt time.Time `gorm:""`
+	Version   int64     `gorm:""`
+}
+
+// AfterCreate implements interfaces.IEntity
+func (*EntityBase) AfterCreate(tx *gorm.DB) (err error) {
+	return
 }
 
 // AfterDelete implements interfaces.IEntity
-func (*EntityBase) AfterDelete() {}
+func (*EntityBase) AfterDelete(tx *gorm.DB) (err error) {
+	return
+}
 
-// AfterInsert implements interfaces.IEntity
-func (*EntityBase) AfterInsert() {}
+// AfterFind implements interfaces.IEntity
+func (*EntityBase) AfterFind(tx *gorm.DB) (err error) {
+	return
+}
 
-// AfterLoad implements interfaces.IEntity
-func (*EntityBase) AfterLoad(*xorm.Session) {}
-
-// AfterSet implements interfaces.IEntity
-func (*EntityBase) AfterSet(name string, cell xorm.Cell) {}
+// AfterSave implements interfaces.IEntity
+func (*EntityBase) AfterSave(tx *gorm.DB) (err error) {
+	return
+}
 
 // AfterUpdate implements interfaces.IEntity
-func (*EntityBase) AfterUpdate() {}
+func (*EntityBase) AfterUpdate(tx *gorm.DB) (err error) {
+	return
+}
+
+// BeforeCreate implements interfaces.IEntity
+func (e *EntityBase) BeforeCreate(tx *gorm.DB) (err error) {
+	if e.ID == 0 && e.snowflake != nil {
+		e.ID = e.snowflake.Generate()
+	}
+	if e.Version == 0 {
+		e.Version = 1
+	}
+	return
+}
 
 // BeforeDelete implements interfaces.IEntity
-func (*EntityBase) BeforeDelete() {}
+func (*EntityBase) BeforeDelete(tx *gorm.DB) (err error) {
+	return
+}
 
-// BeforeSet implements interfaces.IEntity
-func (*EntityBase) BeforeSet(name string, cell xorm.Cell) {}
+// BeforeSave implements interfaces.IEntity
+func (*EntityBase) BeforeSave(tx *gorm.DB) (err error) {
+	return
+}
 
 // BeforeUpdate implements interfaces.IEntity
-func (*EntityBase) BeforeUpdate() {}
-
-// BeforeInsert implements interfaces.IEntity
-func (e *EntityBase) BeforeInsert() {
-	if e.Id == 0 && e.snowflake != nil {
-		e.Id = e.snowflake.Generate()
-	}
+func (e *EntityBase) BeforeUpdate(tx *gorm.DB) (err error) {
+	e.Version += 1
+	return
 }
 
 // SetSnowflake implements interfaces.IEntity

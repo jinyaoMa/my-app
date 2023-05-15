@@ -3,31 +3,42 @@ package entity
 import (
 	"crypto/sha256"
 	"fmt"
+
+	"gorm.io/gorm"
 )
 
 type User struct {
-	Entity       `xorm:"extends"`
-	Account      string          `xorm:"varchar(64) notnull unique"`
-	Password     string          `xorm:"-"`
-	PasswordHash string          `xorm:"varchar(64) notnull"`
-	IsFrozen     bool            `xorm:"notnull"`
-	OldPasswords []*UserPassword `xorm:"extends"`
+	Entity
+	Account      string `gorm:"size:64; unique"`
+	Password     string `gorm:"-:all"`
+	PasswordHash string `gorm:"size:64"`
+	IsFrozen     bool   `gorm:""`
+	OldPasswords []UserPassword
 }
 
-func (u *User) BeforeInsert() {
-	u.Entity.EntityBase.BeforeInsert()
+func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+	if err = u.Entity.EntityBase.BeforeCreate(tx); err != nil {
+		return
+	}
+
 	u.hashPassword()
+	return
 }
 
-func (u *User) BeforeUpdate() {
+func (u *User) BeforeUpdate(tx *gorm.DB) (err error) {
+	if err = u.Entity.EntityBase.BeforeUpdate(tx); err != nil {
+		return
+	}
+
 	u.hashPassword()
+	return
 }
 
 func (u *User) hashPassword() {
 	if u.Password != "" {
 		passwordSum := sha256.Sum256([]byte(u.Password))
 		u.PasswordHash = fmt.Sprintf("%x", passwordSum)
-		u.OldPasswords = append(u.OldPasswords, &UserPassword{
+		u.OldPasswords = append(u.OldPasswords, UserPassword{
 			PasswordHash: u.PasswordHash,
 		})
 	}
