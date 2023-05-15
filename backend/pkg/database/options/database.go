@@ -2,10 +2,7 @@ package options
 
 import (
 	"log"
-	"my-app/backend/pkg/logger"
 	"my-app/backend/pkg/logger/options"
-	"my-app/backend/pkg/snowflake"
-	iSnowflake "my-app/backend/pkg/snowflake/interfaces"
 	"os"
 	"time"
 
@@ -15,37 +12,33 @@ import (
 	gormLogger "gorm.io/gorm/logger"
 )
 
-type OEngine struct {
+type ODatabase struct {
 	Dialector gorm.Dialector
 	Options   []gorm.Option
-	Snowflake iSnowflake.ISnowflake
-	Logger    *OEngineLogger
 	Migrate   []any
+	Logger    ODatabaseLogger
 }
 
-type OEngineLogger struct {
-	Writer gormLogger.Writer
+type ODatabaseLogger struct {
+	options.OLogger
 	Config gormLogger.Config
 }
 
-func DefaultOEngine() *OEngine {
-	idGenerator, _ := snowflake.Default()
-
-	return &OEngine{
+func DefaultODatabase() *ODatabase {
+	return &ODatabase{
 		Dialector: sqlite.Open("./sqlite.db"),
 		Options: []gorm.Option{
 			&gorm.Config{},
 		},
-		Snowflake: idGenerator,
-		Logger: &OEngineLogger{
-			Writer: logger.NewLogger(&options.OLogger{
+		Logger: ODatabaseLogger{
+			OLogger: options.OLogger{
 				Writer: os.Stderr,
 				Tag:    "DBS",
 				PrefixTemplate: func(tag string) (prefix string) {
 					return "[" + tag + "] "
 				},
 				Flags: log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile,
-			}),
+			},
 			Config: gormLogger.Config{
 				SlowThreshold:             time.Second,
 				Colorful:                  true,
@@ -57,8 +50,8 @@ func DefaultOEngine() *OEngine {
 	}
 }
 
-func NewOEngine(dst *OEngine) *OEngine {
-	src := DefaultOEngine()
+func NewODatabase(dst *ODatabase) *ODatabase {
+	src := DefaultODatabase()
 
 	err := mergo.Merge(dst, *src)
 	if err != nil {

@@ -3,6 +3,7 @@ package entity
 import (
 	"crypto/sha256"
 	"fmt"
+	iSnowflake "my-app/backend/pkg/snowflake/interfaces"
 
 	"gorm.io/gorm"
 )
@@ -13,7 +14,12 @@ type User struct {
 	Password     string `gorm:"-:all"`
 	PasswordHash string `gorm:"size:64"`
 	IsFrozen     bool   `gorm:""`
-	OldPasswords []UserPassword
+	OldPasswords []*UserPassword
+}
+
+func NewUser(snowflake iSnowflake.ISnowflake, user *User) *User {
+	user.snowflake = snowflake
+	return user
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
@@ -38,8 +44,8 @@ func (u *User) hashPassword() {
 	if u.Password != "" {
 		passwordSum := sha256.Sum256([]byte(u.Password))
 		u.PasswordHash = fmt.Sprintf("%x", passwordSum)
-		u.OldPasswords = append(u.OldPasswords, UserPassword{
+		u.OldPasswords = append(u.OldPasswords, NewUserPassword(u.snowflake, &UserPassword{
 			PasswordHash: u.PasswordHash,
-		})
+		}))
 	}
 }

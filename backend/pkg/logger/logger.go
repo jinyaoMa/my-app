@@ -8,8 +8,8 @@ import (
 )
 
 type Logger struct {
-	*log.Logger
-	*options.OLogger
+	log.Logger
+	options *options.OLogger
 }
 
 // Writer implements interfaces.ILogger
@@ -26,7 +26,7 @@ func NewLogger(opts *options.OLogger) interfaces.ILogger {
 	logger.SetFlags(opts.Flags)
 
 	return &Logger{
-		Logger:  logger,
-		OLogger: opts,
+		Logger:  *logger,
+		options: opts,
 	}
 }

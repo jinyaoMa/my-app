@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
+	"my-app/backend/pkg/database"
 	"my-app/backend/pkg/database/crud"
-	"my-app/backend/pkg/database/engine"
 	"my-app/backend/pkg/database/entity"
 	"my-app/backend/pkg/database/options"
+	optionsLogger "my-app/backend/pkg/logger/options"
 	"my-app/backend/pkg/snowflake"
 
 	"gorm.io/driver/sqlite"
-	"xorm.io/builder"
 )
 
 func main() {
@@ -18,58 +18,62 @@ func main() {
 		panic(err)
 	}
 
-	engine, err := engine.NewEngine(&options.OEngine{
+	db, err := database.NewDatabase(&options.ODatabase{
 		Dialector: sqlite.Open("test.db?_pragma=foreign_keys(1)"),
-		Snowflake: idGen,
+		Logger: options.ODatabaseLogger{
+			OLogger: optionsLogger.OLogger{
+				Tag: "TST",
+			},
+		},
 	})
 	if err != nil {
 		panic(err)
 	}
 
-	option := engine.NewEntity(&entity.Option{
+	option := entity.NewOption(idGen, &entity.Option{
 		Key:   "test",
 		Value: "test",
 	})
-	tx := engine.Create(option)
+	tx := db.Create(option)
 	if tx.Error != nil {
 		panic(tx.Error)
 	}
 
-	log := engine.NewEntity(&entity.Log{
+	log := entity.NewLog(idGen, &entity.Log{
 		Tag:     "TEST",
 		Code:    1,
 		Message: "test test test ...",
 	})
-	tx = engine.Create(log)
+	tx = db.Create(log)
 	if tx.Error != nil {
 		panic(tx.Error)
 	}
 
-	var users []any
+	var users []*entity.User
 	for i := 0; i < 20; i++ {
 		test := "test"
 		if i%2 == 0 {
 			test += "_"
 		}
-		users = append(users, engine.NewEntity(&entity.User{
+		users = append(users, entity.NewUser(idGen, &entity.User{
 			Account:  fmt.Sprint(i) + test,
 			Password: fmt.Sprint(i) + test,
 		}))
 	}
-	tx = engine.Table("user").CreateInBatches(users, len(users))
+	tx = db.CreateInBatches(users, len(users))
 	if tx.Error != nil {
 		panic(tx.Error)
 	}
 
 	println("Inserted", tx.RowsAffected, "users")
 
-	crud := crud.NewCrud(engine, new(entity.User))
+	crud := crud.NewCrud(db, new(entity.User))
 	queryUsers, err := crud.Query(options.NewOCriteria(&options.OCriteria{
 		Page: 1,
 		Size: 3,
-		Sorts: []*options.OCriteriaSort{
+		Sorts: []options.OCriteriaSort{
 			{
-				Column: "modified_at",
+				Column: "updated_at",
 				Order:  options.OrdDescending,
 			},
 			{
@@ -77,8 +81,8 @@ func main() {
 				Order:  options.OrdDescending,
 			},
 		},
-	}), func() (query interface{}, args []interface{}) {
-		return builder.Like{"account", "test_"}, nil
+	}), func(where func(query any, args ...any)) {
+		where("account LIKE ?", "%test_%")
 	})
 	if err != nil {
 		panic(err)

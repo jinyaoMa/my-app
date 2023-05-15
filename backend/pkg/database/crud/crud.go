@@ -1,7 +1,7 @@
 package crud
 
 import (
-	"my-app/backend/pkg/database/engine"
+	"my-app/backend/pkg/database"
 	"my-app/backend/pkg/database/interfaces"
 	"my-app/backend/pkg/database/options"
 
@@ -9,7 +9,7 @@ import (
 )
 
 type Crud[TEntity interfaces.IEntity] struct {
-	*engine.Engine[interfaces.IEntity]
+	db *database.Database
 }
 
 // GetById implements interfaces.ICrud
@@ -18,10 +18,10 @@ func (c *Crud[TEntity]) GetById(id int64) (entity TEntity) {
 }
 
 // Query implements interfaces.ICrud
-func (c *Crud[TEntity]) Query(criteria *options.OCriteria, conditions ...interfaces.QueryCondition) (entities []TEntity, err error) {
+func (c *Crud[TEntity]) Query(criteria *options.OCriteria, condition interfaces.QueryCondition) (entities []TEntity, err error) {
 	criteria = options.NewOCriteria(criteria)
 
-	err = c.Transaction(func(tx *gorm.DB) error {
+	err = c.db.Transaction(func(tx *gorm.DB) error {
 		tx = tx.Limit(criteria.Size).Offset(criteria.Offset())
 
 		if len(criteria.Fields) > 0 {
@@ -37,10 +37,9 @@ func (c *Crud[TEntity]) Query(criteria *options.OCriteria, conditions ...interfa
 			}
 		}
 
-		for _, condition := range conditions {
-			query, args := condition()
+		condition(func(query any, args ...any) {
 			tx = tx.Where(query, args...)
-		}
+		})
 
 		return tx.Find(&entities).Error
 	})
@@ -48,8 +47,8 @@ func (c *Crud[TEntity]) Query(criteria *options.OCriteria, conditions ...interfa
 	return
 }
 
-func NewCrud[TEntity interfaces.IEntity](engine *engine.Engine[interfaces.IEntity], entity TEntity) interfaces.ICrud[TEntity] {
+func NewCrud[TEntity interfaces.IEntity](database *database.Database, entity TEntity) interfaces.ICrud[TEntity] {
 	return &Crud[TEntity]{
-		Engine: engine,
+		db: database,
 	}
 }

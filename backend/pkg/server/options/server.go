@@ -12,8 +12,8 @@ import (
 type OServer struct {
 	IsDev  bool
 	Logger iLogger.ILogger
-	Http   *OServerHttp
-	Https  *OServerHttps
+	Http   OServerHttp
+	Https  OServerHttps
 	Setup  func(engine *gin.Engine) *gin.Engine
 }
 
@@ -30,10 +30,10 @@ func DefaultOServer() *OServer {
 	return &OServer{
 		IsDev:  false,
 		Logger: logger.NewLogger(options.DefaultOLogger()),
-		Http: &OServerHttp{
+		Http: OServerHttp{
 			Port: 10080,
 		},
-		Https: &OServerHttps{
+		Https: OServerHttps{
 			Port:     10443,
 			DirCerts: "",
 		},

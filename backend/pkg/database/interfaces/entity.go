@@ -7,8 +7,7 @@ import (
 )
 
 type IEntity interface {
-	// Set Id generator for entity
-	SetSnowflake(iSnowflake.ISnowflake)
+	SetSnowflake(snowflake iSnowflake.ISnowflake)
 
 	BeforeSave(tx *gorm.DB) (err error)
 	BeforeCreate(tx *gorm.DB) (err error)

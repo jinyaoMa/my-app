@@ -1,4 +1,4 @@
-package engine
+package database
 
 import (
 	"my-app/backend/pkg/database/entity"

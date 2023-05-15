@@ -13,7 +13,7 @@ type OCriteria struct {
 	Page   int
 	Size   int
 	Fields []string
-	Sorts  []*OCriteriaSort
+	Sorts  []OCriteriaSort
 }
 
 type OCriteriaSort struct {
@@ -32,7 +32,7 @@ func DefaultOCriteria() *OCriteria {
 		Page:   1,
 		Size:   10,
 		Fields: []string{},
-		Sorts:  []*OCriteriaSort{},
+		Sorts:  []OCriteriaSort{},
 	}
 }
 
