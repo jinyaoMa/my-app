@@ -6,7 +6,6 @@ import (
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"xorm.io/xorm"
 )
 
 type Engine[TEntity interfaces.IEntity] struct {
@@ -38,22 +37,4 @@ func NewEngine(opts *options.OEngine) (*Engine[interfaces.IEntity], error) {
 func (e *Engine[TEntity]) NewEntity(entity TEntity) TEntity {
 	entity.SetSnowflake(e.Snowflake)
 	return entity
-}
-
-type SessionCallback func(session *xorm.Session) error
-
-func (e *Engine[TEntity]) HandleSession(callback SessionCallback) (err error) {
-	session := e.NewSession()
-	defer session.Close()
-
-	if err = session.Begin(); err != nil {
-		return
-	}
-
-	if err = callback(session); err != nil {
-		return
-	}
-
-	err = session.Commit()
-	return
 }

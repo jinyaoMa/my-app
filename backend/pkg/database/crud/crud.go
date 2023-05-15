@@ -5,11 +5,11 @@ import (
 	"my-app/backend/pkg/database/interfaces"
 	"my-app/backend/pkg/database/options"
 
-	"xorm.io/xorm"
+	"gorm.io/gorm"
 )
 
 type Crud[TEntity interfaces.IEntity] struct {
-	engine *engine.Engine[interfaces.IEntity]
+	*engine.Engine[interfaces.IEntity]
 }
 
 // GetById implements interfaces.ICrud
@@ -19,36 +19,37 @@ func (c *Crud[TEntity]) GetById(id int64) (entity TEntity) {
 
 // Query implements interfaces.ICrud
 func (c *Crud[TEntity]) Query(criteria *options.OCriteria, conditions ...interfaces.QueryCondition) (entities []TEntity, err error) {
-	err = c.engine.HandleSession(func(session *xorm.Session) error {
-		criteria = options.NewOCriteria(criteria)
+	criteria = options.NewOCriteria(criteria)
 
-		session = session.Limit(criteria.Size, criteria.Offset())
+	err = c.Transaction(func(tx *gorm.DB) error {
+		tx = tx.Limit(criteria.Size).Offset(criteria.Offset())
 
 		if len(criteria.Fields) > 0 {
-			session = session.Cols(criteria.Fields...)
+			tx = tx.Select(criteria.Fields)
 		}
 
 		for _, sort := range criteria.Sorts {
 			switch sort.Order {
 			case options.OrdAscending:
-				session = session.Asc(sort.Column)
+				tx = tx.Order(sort.Column + " asc")
 			case options.OrdDescending:
-				session = session.Desc(sort.Column)
+				tx = tx.Order(sort.Column + " desc")
 			}
 		}
 
 		for _, condition := range conditions {
 			query, args := condition()
-			session = session.Where(query, args...)
+			tx = tx.Where(query, args...)
 		}
 
-		return session.Find(&entities)
+		return tx.Find(&entities).Error
 	})
+
 	return
 }
 
 func NewCrud[TEntity interfaces.IEntity](engine *engine.Engine[interfaces.IEntity], entity TEntity) interfaces.ICrud[TEntity] {
 	return &Crud[TEntity]{
-		engine: engine,
+		Engine: engine,
 	}
 }

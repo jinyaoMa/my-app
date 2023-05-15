@@ -42,7 +42,7 @@ func DefaultOEngine() *OEngine {
 				Writer: os.Stderr,
 				Tag:    "DBS",
 				PrefixTemplate: func(tag string) (prefix string) {
-					return "[" + tag + "]"
+					return "[" + tag + "] "
 				},
 				Flags: log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile,
 			}),
