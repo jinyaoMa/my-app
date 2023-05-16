@@ -92,9 +92,40 @@ func main() {
 		println(u.Account)
 	}
 
-	user1 := crud.GetById(users[0].ID)
+	user1, err := crud.GetById(users[0].ID)
+	if err != nil {
+		panic(err)
+	}
 	println(user1.ID)
 
-	users1 := crud.All()
+	users1, err := crud.All()
+	if err != nil {
+		panic(err)
+	}
 	println(len(users1))
+
+	user2, err := crud.FindOne(func(where func(query any, args ...any)) {
+		where("id = ?", user1.ID)
+	})
+	if err != nil {
+		panic(err)
+	}
+	println(user2.Account)
+
+	tmpHash := user2.PasswordHash
+	user2.Password = "abc123"
+	affected, err := crud.Save(user2)
+	if err != nil {
+		panic(err)
+	}
+	println(user2.PasswordHash)
+	println(tmpHash)
+	println(user2.PasswordHash != tmpHash)
+	println(affected)
+
+	affected, err = crud.Delete(user2.ID)
+	if err != nil {
+		panic(err)
+	}
+	println(affected)
 }

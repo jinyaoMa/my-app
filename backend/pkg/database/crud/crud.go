@@ -4,53 +4,78 @@ import (
 	"my-app/backend/pkg/database"
 	"my-app/backend/pkg/database/interfaces"
 	"my-app/backend/pkg/database/options"
-
-	"gorm.io/gorm"
 )
 
 type Crud[TEntity interfaces.IEntity] struct {
 	db *database.Database
 }
 
+// Save implements interfaces.ICrud
+func (c *Crud[TEntity]) Delete(id int64) (affected int64, err error) {
+	result := c.db.Delete(new(TEntity), id)
+	affected = result.RowsAffected
+	err = result.Error
+	return
+}
+
+// Save implements interfaces.ICrud
+func (c *Crud[TEntity]) Save(entity TEntity) (affected int64, err error) {
+	result := c.db.Save(&entity)
+	affected = result.RowsAffected
+	err = result.Error
+	return
+}
+
+// FindOne implements interfaces.ICrud
+func (c *Crud[TEntity]) FindOne(condition interfaces.QueryCondition) (entity TEntity, err error) {
+	tx := c.db.Limit(1)
+	condition(func(query any, args ...any) {
+		tx = tx.Where(query, args...)
+	})
+	err = tx.Find(&entity).Error
+	return
+}
+
 // All implements interfaces.ICrud
-func (c *Crud[TEntity]) All() (entities []TEntity) {
-	c.db.Find(&entities)
+func (c *Crud[TEntity]) All() (entities []TEntity, err error) {
+	err = c.db.Find(&entities).Error
 	return
 }
 
 // GetById implements interfaces.ICrud
-func (c *Crud[TEntity]) GetById(id int64) (entity TEntity) {
-	c.db.Limit(1).Find(&entity, id)
+func (c *Crud[TEntity]) GetById(id int64) (entity TEntity, err error) {
+	err = c.db.First(&entity, id).Error
 	return
 }
 
 // Query implements interfaces.ICrud
-func (c *Crud[TEntity]) Query(criteria *options.OCriteria, condition interfaces.QueryCondition) (entities []TEntity, err error) {
+func (c *Crud[TEntity]) Query(criteria *options.OCriteria, condition interfaces.QueryCondition, includes ...string) (entities []TEntity, err error) {
 	criteria = options.NewOCriteria(criteria)
 
-	err = c.db.Transaction(func(tx *gorm.DB) error {
-		tx = tx.Limit(criteria.Size).Offset(criteria.Offset())
+	tx := c.db.Limit(criteria.Size).Offset(criteria.Offset())
 
-		if len(criteria.Fields) > 0 {
-			tx = tx.Select(criteria.Fields)
+	for _, include := range includes {
+		tx = tx.Preload(include)
+	}
+
+	if len(criteria.Fields) > 0 {
+		tx = tx.Select(criteria.Fields)
+	}
+
+	for _, sort := range criteria.Sorts {
+		switch sort.Order {
+		case options.OrdAscending:
+			tx = tx.Order(sort.Column + " asc")
+		case options.OrdDescending:
+			tx = tx.Order(sort.Column + " desc")
 		}
+	}
 
-		for _, sort := range criteria.Sorts {
-			switch sort.Order {
-			case options.OrdAscending:
-				tx = tx.Order(sort.Column + " asc")
-			case options.OrdDescending:
-				tx = tx.Order(sort.Column + " desc")
-			}
-		}
-
-		condition(func(query any, args ...any) {
-			tx = tx.Where(query, args...)
-		})
-
-		return tx.Find(&entities).Error
+	condition(func(query any, args ...any) {
+		tx = tx.Where(query, args...)
 	})
 
+	err = tx.Find(&entities).Error
 	return
 }
 
