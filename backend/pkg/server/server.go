@@ -68,6 +68,11 @@ func NewServer() interfaces.IServer {
 
 func (s *Server) start() (ok bool) {
 	s.hasErrors = false
+	if s.options.IsDev {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	engine := gin.New()
 
