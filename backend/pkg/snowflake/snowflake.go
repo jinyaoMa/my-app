@@ -33,7 +33,7 @@ func (s *Snowflake) Generate() int64 {
 	if now == s.time {
 		s.step = (s.step + 1) & s.stepMask
 
-		if s.step == 0 {
+		if s.step == 0 { // step bits go over, move to next timestamp
 			for now <= s.time {
 				now = time.Since(s.epoch).Milliseconds()
 			}

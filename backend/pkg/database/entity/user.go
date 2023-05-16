@@ -10,7 +10,7 @@ import (
 
 type User struct {
 	Entity
-	Account      string `gorm:"size:64; unique"`
+	Account      string `gorm:"size:64; unique; ndex"`
 	Password     string `gorm:"-:all"`
 	PasswordHash string `gorm:"size:64"`
 	IsFrozen     bool   `gorm:""`
