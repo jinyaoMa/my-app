@@ -91,4 +91,10 @@ func main() {
 	for _, u := range queryUsers {
 		println(u.Account)
 	}
+
+	user1 := crud.GetById(users[0].ID)
+	println(user1.ID)
+
+	users1 := crud.All()
+	println(len(users1))
 }

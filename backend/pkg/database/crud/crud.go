@@ -12,9 +12,16 @@ type Crud[TEntity interfaces.IEntity] struct {
 	db *database.Database
 }
 
+// All implements interfaces.ICrud
+func (c *Crud[TEntity]) All() (entities []TEntity) {
+	c.db.Find(&entities)
+	return
+}
+
 // GetById implements interfaces.ICrud
 func (c *Crud[TEntity]) GetById(id int64) (entity TEntity) {
-	panic("unimplemented")
+	c.db.Limit(1).Find(&entity, id)
+	return
 }
 
 // Query implements interfaces.ICrud
