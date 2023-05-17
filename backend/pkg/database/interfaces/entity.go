@@ -1,14 +1,10 @@
 package interfaces
 
 import (
-	iSnowflake "my-app/backend/pkg/snowflake/interfaces"
-
 	"gorm.io/gorm"
 )
 
 type IEntity interface {
-	SetSnowflake(snowflake iSnowflake.ISnowflake)
-
 	BeforeSave(tx *gorm.DB) (err error)
 	BeforeCreate(tx *gorm.DB) (err error)
 	BeforeUpdate(tx *gorm.DB) (err error)

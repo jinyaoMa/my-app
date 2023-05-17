@@ -1,4 +1,5 @@
 ### todo
 
-- [ ] entity.Option.Value encryption
+- [x] entity.Option.Value encryption
+- [ ] entity snowflake+aes change
 - [ ] jwt

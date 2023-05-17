@@ -11,6 +11,12 @@ type Crud[TEntity interfaces.IEntity] struct {
 	db *database.Database
 }
 
+func NewCrud[TEntity interfaces.IEntity](database *database.Database, entity TEntity) crud.ICrud[TEntity] {
+	return &Crud[TEntity]{
+		db: database,
+	}
+}
+
 // Save implements interfaces.ICrud
 func (c *Crud[TEntity]) Delete(id int64) (affected int64, err error) {
 	result := c.db.Delete(new(TEntity), id)
@@ -78,10 +84,4 @@ func (c *Crud[TEntity]) Query(criteria *options.OCriteria, condition crud.QueryC
 
 	err = tx.Find(&entities).Error
 	return
-}
-
-func NewCrud[TEntity interfaces.IEntity](database *database.Database, entity TEntity) crud.ICrud[TEntity] {
-	return &Crud[TEntity]{
-		db: database,
-	}
 }

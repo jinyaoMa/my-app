@@ -3,10 +3,24 @@ package entity
 import (
 	"my-app/backend/pkg/database/interfaces"
 	iSnowflake "my-app/backend/pkg/snowflake/interfaces"
+	iUtility "my-app/backend/pkg/utility/interfaces"
 	"time"
 
 	"gorm.io/gorm"
 )
+
+var (
+	snowflake iSnowflake.ISnowflake
+	aes       iUtility.IAes
+)
+
+func SetSnowflake(snowflake_ iSnowflake.ISnowflake) {
+	snowflake = snowflake_
+}
+
+func SetAes(aes_ iUtility.IAes) {
+	aes = aes_
+}
 
 type Entity struct {
 	EntityBase
@@ -14,17 +28,14 @@ type Entity struct {
 }
 
 type EntityBase struct {
-	snowflake iSnowflake.ISnowflake
-
 	ID        int64     `gorm:"primaryKey"`
 	CreatedAt time.Time `gorm:""`
 	UpdatedAt time.Time `gorm:""`
 	Version   int64     `gorm:"default:1"`
 }
 
-// SetSnowflake implements interfaces.IEntity
-func (e *EntityBase) SetSnowflake(snowflake iSnowflake.ISnowflake) {
-	e.snowflake = snowflake
+func NewEntityBase(entityBase EntityBase) interfaces.IEntity {
+	return &entityBase
 }
 
 // AfterCreate implements interfaces.IEntity
@@ -54,8 +65,8 @@ func (e *EntityBase) AfterUpdate(tx *gorm.DB) (err error) {
 
 // BeforeCreate implements interfaces.IEntity
 func (e *EntityBase) BeforeCreate(tx *gorm.DB) (err error) {
-	if e.ID == 0 && e.snowflake != nil {
-		e.ID = e.snowflake.Generate()
+	if e != nil && e.ID == 0 && snowflake != nil {
+		e.ID = snowflake.Generate()
 	}
 	return
 }
@@ -72,10 +83,8 @@ func (e *EntityBase) BeforeSave(tx *gorm.DB) (err error) {
 
 // BeforeUpdate implements interfaces.IEntity
 func (e *EntityBase) BeforeUpdate(tx *gorm.DB) (err error) {
-	e.Version += 1
+	if e != nil {
+		e.Version += 1
+	}
 	return
-}
-
-func NewEntityBase(entityBase *EntityBase) interfaces.IEntity {
-	return entityBase
 }
