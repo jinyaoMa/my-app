@@ -12,6 +12,6 @@ type CrudUserPassword struct {
 
 func NewCrudUserPassword(database *database.Database) crud.ICrudUserPassword {
 	return &CrudUserPassword{
-		ICrud: NewCrud(database, new(entity.UserPassword)),
+		ICrud: NewCrud[*entity.UserPassword](database),
 	}
 }

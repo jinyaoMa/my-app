@@ -9,10 +9,10 @@ import (
 
 type User struct {
 	Entity
-	Account      string `gorm:"size:64; unique; ndex"`
+	Account      string `gorm:"size:64; unique; index; not null"`
 	Password     string `gorm:"-:all"`
 	PasswordHash string `gorm:"size:64"`
-	IsFrozen     bool   `gorm:""`
+	IsFrozen     bool   `gorm:"default:false"`
 	OldPasswords []*UserPassword
 }
 

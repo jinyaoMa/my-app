@@ -78,7 +78,7 @@ func main() {
 
 	println("Inserted", tx.RowsAffected, "users")
 
-	crudUser := crud.NewCrud(db, new(entity.User))
+	crudUser := crud.NewCrud[*entity.User](db)
 	queryUsers, err := crudUser.Query(options.NewOCriteria(&options.OCriteria{
 		Page: 1,
 		Size: 3,
@@ -124,6 +124,7 @@ func main() {
 	println(user2.Account)
 
 	tmpHash := user2.PasswordHash
+	user2.Account = "deleted"
 	user2.Password = "abc123"
 	affected, err := crudUser.Save(user2)
 	if err != nil {
@@ -148,4 +149,13 @@ func main() {
 	println(option.Value)
 	println(option1.Value)
 	println(option.Value == option1.Value)
+
+	affected1, err := crudOption.Save(&entity.Option{
+		Key:   "Not_Encrypted",
+		Value: "Plain",
+	})
+	if err != nil {
+		panic(err)
+	}
+	println(affected1)
 }

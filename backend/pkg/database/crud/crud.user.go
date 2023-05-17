@@ -12,6 +12,6 @@ type CrudUser struct {
 
 func NewCrudUser(database *database.Database) crud.ICrudUser {
 	return &CrudUser{
-		ICrud: NewCrud(database, new(entity.User)),
+		ICrud: NewCrud[*entity.User](database),
 	}
 }

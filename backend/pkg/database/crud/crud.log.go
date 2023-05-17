@@ -12,6 +12,6 @@ type CrudLog struct {
 
 func NewCrudLog(database *database.Database) crud.ICrudLog {
 	return &CrudLog{
-		ICrud: NewCrud(database, new(entity.Log)),
+		ICrud: NewCrud[*entity.Log](database),
 	}
 }

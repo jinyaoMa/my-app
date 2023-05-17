@@ -2,25 +2,10 @@ package entity
 
 import (
 	"my-app/backend/pkg/database/interfaces"
-	iSnowflake "my-app/backend/pkg/snowflake/interfaces"
-	iUtility "my-app/backend/pkg/utility/interfaces"
 	"time"
 
 	"gorm.io/gorm"
 )
-
-var (
-	snowflake iSnowflake.ISnowflake
-	aes       iUtility.IAes
-)
-
-func SetSnowflake(snowflake_ iSnowflake.ISnowflake) {
-	snowflake = snowflake_
-}
-
-func SetAes(aes_ iUtility.IAes) {
-	aes = aes_
-}
 
 type Entity struct {
 	EntityBase
@@ -28,10 +13,10 @@ type Entity struct {
 }
 
 type EntityBase struct {
-	ID        int64     `gorm:"primaryKey"`
-	CreatedAt time.Time `gorm:""`
-	UpdatedAt time.Time `gorm:""`
-	Version   int64     `gorm:"default:1"`
+	ID        int64     `gorm:"primaryKey; autoIncrement"`
+	CreatedAt time.Time `gorm:"autoCreateTime"`
+	UpdatedAt time.Time `gorm:"autoUpdateTime"`
+	Version   int64     `gorm:"default:1; <-:update"`
 }
 
 func NewEntityBase(entityBase EntityBase) interfaces.IEntity {

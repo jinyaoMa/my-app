@@ -6,10 +6,10 @@ import (
 
 type Option struct {
 	Entity
-	Key            string `gorm:"size:100; unique; index"`
-	Value          string `gorm:"size:100"`
-	ValueEncrypted string `gorm:"size:255"`
-	Encrypted      bool   `gorm:""`
+	Key            string `gorm:"size:100; unique; index; not null"`
+	Value          string `gorm:"size:2048; default:''"`
+	ValueEncrypted string `gorm:"size:2048; default:''"`
+	Encrypted      bool   `gorm:"default:false"`
 }
 
 func (o *Option) BeforeCreate(tx *gorm.DB) (err error) {

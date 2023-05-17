@@ -11,7 +11,7 @@ type Crud[TEntity interfaces.IEntity] struct {
 	db *database.Database
 }
 
-func NewCrud[TEntity interfaces.IEntity](database *database.Database, entity TEntity) crud.ICrud[TEntity] {
+func NewCrud[TEntity interfaces.IEntity](database *database.Database) crud.ICrud[TEntity] {
 	return &Crud[TEntity]{
 		db: database,
 	}

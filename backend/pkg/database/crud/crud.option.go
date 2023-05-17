@@ -12,6 +12,6 @@ type CrudOption struct {
 
 func NewCrudOption(database *database.Database) crud.ICrudOption {
 	return &CrudOption{
-		ICrud: NewCrud(database, new(entity.Option)),
+		ICrud: NewCrud[*entity.Option](database),
 	}
 }
