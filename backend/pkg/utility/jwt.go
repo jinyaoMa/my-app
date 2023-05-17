@@ -12,8 +12,10 @@ type Jwt[TClaims jwt.Claims] struct {
 }
 
 // GetToken implements interfaces.IJwt
-func (*Jwt[TClaims]) GetToken() (token string, err error) {
-	panic("unimplemented")
+func (j *Jwt[TClaims]) GetToken() (token string, err error) {
+	ready := jwt.NewWithClaims(jwt.SigningMethodHS512, j.claims)
+	token, err = ready.SignedString([]byte(j.key))
+	return
 }
 
 // ParseToken implements interfaces.IJwt
