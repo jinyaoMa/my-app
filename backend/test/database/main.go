@@ -94,13 +94,14 @@ func main() {
 		},
 	}), func(where func(query any, args ...any)) {
 		where("account LIKE ?", "%test_%")
-	})
+	}, "OldPasswords")
 	if err != nil {
 		panic(err)
 	}
 
 	for _, u := range queryUsers {
 		println(u.Account)
+		println(u.OldPasswords[0].PasswordHash)
 	}
 
 	user1, err := crudUser.GetById(users[0].ID)
