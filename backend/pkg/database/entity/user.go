@@ -3,17 +3,21 @@ package entity
 import (
 	"crypto/sha256"
 	"fmt"
+	"my-app/backend/pkg/utility"
+	"time"
 
 	"gorm.io/gorm"
 )
 
 type User struct {
 	Entity
-	Account      string `gorm:"size:64; unique; index; not null"`
-	Password     string `gorm:"-:all"`
-	PasswordHash string `gorm:"size:64"`
-	IsFrozen     bool   `gorm:"default:false"`
-	OldPasswords []*UserPassword
+	Account               string    `gorm:"size:64; unique; index; not null"`
+	Password              string    `gorm:"-:all"`
+	PasswordHash          string    `gorm:"size:64; not null"`
+	Verification          string    `gorm:"size:6; not null"`
+	VerificationExpiredAt time.Time `gorm:"not null"`
+	IsFrozen              bool      `gorm:"default:false"`
+	OldPasswords          []*UserPassword
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
@@ -46,4 +50,10 @@ func (u *User) hashPassword() {
 			PasswordHash: u.PasswordHash,
 		})
 	}
+}
+
+func (u *User) FillVerification(size int, expiredAt time.Time) *User {
+	u.Verification = utility.NewRandom().GenerateCode(size)
+	u.VerificationExpiredAt = expiredAt
+	return u
 }
