@@ -21,28 +21,28 @@ type User struct {
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
-	if err = u.Entity.EntityBase.BeforeCreate(tx); err != nil {
+	if err = u.Entity.BeforeCreate(tx); err != nil {
 		return
 	}
 
 	if u != nil {
-		u.hashPassword()
+		err = u.hashPassword(tx)
 	}
 	return
 }
 
 func (u *User) BeforeUpdate(tx *gorm.DB) (err error) {
-	if err = u.Entity.EntityBase.BeforeUpdate(tx); err != nil {
+	if err = u.Entity.BeforeUpdate(tx); err != nil {
 		return
 	}
 
 	if u != nil {
-		u.hashPassword()
+		err = u.hashPassword(tx)
 	}
 	return
 }
 
-func (u *User) hashPassword() {
+func (u *User) hashPassword(tx *gorm.DB) (err error) {
 	if u.Password != "" {
 		passwordSum := sha256.Sum256([]byte(u.Password))
 		u.PasswordHash = fmt.Sprintf("%x", passwordSum)
@@ -50,6 +50,7 @@ func (u *User) hashPassword() {
 			PasswordHash: u.PasswordHash,
 		})
 	}
+	return
 }
 
 func (u *User) FillVerification(size int, expiredAt time.Time) *User {

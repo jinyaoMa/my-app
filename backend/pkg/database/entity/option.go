@@ -13,7 +13,7 @@ type Option struct {
 }
 
 func (o *Option) BeforeCreate(tx *gorm.DB) (err error) {
-	if err = o.Entity.EntityBase.BeforeCreate(tx); err != nil {
+	if err = o.Entity.BeforeCreate(tx); err != nil {
 		return
 	}
 
@@ -24,7 +24,7 @@ func (o *Option) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 func (o *Option) BeforeUpdate(tx *gorm.DB) (err error) {
-	if err = o.Entity.EntityBase.BeforeUpdate(tx); err != nil {
+	if err = o.Entity.BeforeUpdate(tx); err != nil {
 		return
 	}
 
@@ -35,7 +35,7 @@ func (o *Option) BeforeUpdate(tx *gorm.DB) (err error) {
 }
 
 func (o *Option) AfterFind(tx *gorm.DB) (err error) {
-	if err = o.Entity.EntityBase.AfterFind(tx); err != nil {
+	if err = o.Entity.AfterFind(tx); err != nil {
 		return
 	}
 
