@@ -4,6 +4,7 @@ import (
 	"errors"
 	"regexp"
 	"strings"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -19,6 +20,7 @@ type File struct {
 	Name        string `gorm:"size:512"`
 	Size        int64  `gorm:"default:0"`
 	Extension   FileExtension
+	VisitedAt   time.Time
 
 	// md5:sha512:File.Size => 32 + 128 = 160 hex digits + 2[:] + 20[int64] = 182 (size)
 	// for file, md5 and sha512 are hashed using file's data
@@ -49,6 +51,17 @@ func (f *File) BeforeUpdate(tx *gorm.DB) (err error) {
 		if tx.Statement.Changed("Checksum") {
 			f.validateChecksum(tx)
 		}
+	}
+	return
+}
+
+func (f *File) AfterFind(tx *gorm.DB) (err error) {
+	if err = f.Entity.AfterFind(tx); err != nil {
+		return
+	}
+
+	if f != nil {
+		tx.Statement.UpdateColumn("VisitedAt", time.Now())
 	}
 	return
 }
