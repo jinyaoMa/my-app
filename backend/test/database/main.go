@@ -175,8 +175,9 @@ func main() {
 		Size:            0,
 		FileExtensionID: ext.ID,
 		Checksum:        "00000000000000000000000000000000:00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000:0",
-		Users: []*entity.User{
-			user1,
+		UserID:          user1.ID,
+		AccessableUsers: []*entity.User{
+			user2,
 		},
 	}
 	tx = db.Create(file)

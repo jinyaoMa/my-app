@@ -21,8 +21,9 @@ type User struct {
 	IsFrozen              bool      `gorm:"default:false"`
 
 	/* relational fields */
-	UserPasswords []*UserPassword `gorm:""`
-	Files         []*File         `gorm:"many2many:users_files"`
+	UserPasswords   []*UserPassword `gorm:""`
+	OwnedFiles      []*File         `gorm:""`
+	AccessableFiles []*File         `gorm:"many2many:users_files"`
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
@@ -31,7 +32,9 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 	}
 
 	if u != nil {
-		err = u.hashPassword(tx)
+		if err = u.hashPassword(tx); err != nil {
+			return
+		}
 	}
 	return
 }
@@ -42,9 +45,13 @@ func (u *User) BeforeUpdate(tx *gorm.DB) (err error) {
 	}
 
 	if u != nil {
-		err = u.hashPassword(tx)
+		if err = u.hashPassword(tx); err != nil {
+			return
+		}
 		if tx.Statement.Changed("PasswordHash") {
-			err = u.AddUserPassword(tx)
+			if err = u.AddUserPassword(tx); err != nil {
+				return
+			}
 		}
 	}
 	return

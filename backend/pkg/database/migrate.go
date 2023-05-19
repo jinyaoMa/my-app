@@ -8,13 +8,14 @@ import (
 
 func migrate(db *gorm.DB, dst ...any) error {
 	dst = append(dst, []interface{}{
-		new(entity.Option),
-		new(entity.Log),
-		new(entity.User),
-		new(entity.UserPassword),
 		new(entity.File),
 		new(entity.FileCategory),
 		new(entity.FileExtension),
+		new(entity.Log),
+		new(entity.Option),
+		new(entity.User),
+		new(entity.UserFile),
+		new(entity.UserPassword),
 	}...)
 	return db.AutoMigrate(dst...)
 }

@@ -22,7 +22,9 @@ func (o *Option) BeforeCreate(tx *gorm.DB) (err error) {
 	}
 
 	if o != nil {
-		err = o.encryptValue(tx)
+		if err = o.encryptValue(tx); err != nil {
+			return
+		}
 	}
 	return
 }
@@ -33,7 +35,9 @@ func (o *Option) BeforeUpdate(tx *gorm.DB) (err error) {
 	}
 
 	if o != nil {
-		err = o.encryptValue(tx)
+		if err = o.encryptValue(tx); err != nil {
+			return
+		}
 	}
 	return
 }
@@ -44,7 +48,9 @@ func (o *Option) AfterFind(tx *gorm.DB) (err error) {
 	}
 
 	if o != nil {
-		err = o.decryptValue(tx)
+		if err = o.decryptValue(tx); err != nil {
+			return
+		}
 	}
 	return
 }

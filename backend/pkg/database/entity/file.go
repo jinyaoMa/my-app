@@ -31,7 +31,8 @@ type File struct {
 	Checksum string `gorm:"size:182; unique; index"`
 
 	/* relational fields */
-	Users           []*User `gorm:"many2many:users_files"`
+	UserID          int64
+	AccessableUsers []*User `gorm:"many2many:users_files"`
 	FileExtensionID int64   `gorm:""`
 }
 
@@ -41,7 +42,9 @@ func (f *File) BeforeCreate(tx *gorm.DB) (err error) {
 	}
 
 	if f != nil {
-		f.validateName(tx)
+		if err = f.validateName(tx); err != nil {
+			return
+		}
 	}
 	return
 }
@@ -56,10 +59,14 @@ func (f *File) BeforeUpdate(tx *gorm.DB) (err error) {
 			return errors.New("File is set to ReadOnly")
 		}
 		if tx.Statement.Changed("Name") {
-			f.validateName(tx)
+			if err = f.validateName(tx); err != nil {
+				return
+			}
 		}
 		if tx.Statement.Changed("Checksum") {
-			f.validateChecksum(tx)
+			if err = f.validateChecksum(tx); err != nil {
+				return
+			}
 		}
 	}
 	return
