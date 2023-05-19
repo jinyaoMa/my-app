@@ -12,6 +12,9 @@ func migrate(db *gorm.DB, dst ...any) error {
 		new(entity.Log),
 		new(entity.User),
 		new(entity.UserPassword),
+		new(entity.File),
+		new(entity.FileCategory),
+		new(entity.FileExtension),
 	}...)
 	return db.AutoMigrate(dst...)
 }

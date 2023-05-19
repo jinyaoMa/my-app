@@ -14,10 +14,10 @@ type User struct {
 	Account               string    `gorm:"size:64; unique; index; not null"`
 	Password              string    `gorm:"-:all"`
 	PasswordHash          string    `gorm:"size:64; not null"`
-	Verification          string    `gorm:"size:6; not null"`
+	Verification          string    `gorm:"size:64; not null"`
 	VerificationExpiredAt time.Time `gorm:"not null"`
 	IsFrozen              bool      `gorm:"default:false"`
-	OldPasswords          []*UserPassword
+	OldPasswords          []UserPassword
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
@@ -46,7 +46,7 @@ func (u *User) hashPassword(tx *gorm.DB) (err error) {
 	if u.Password != "" {
 		passwordSum := sha256.Sum256([]byte(u.Password))
 		u.PasswordHash = fmt.Sprintf("%x", passwordSum)
-		u.OldPasswords = append(u.OldPasswords, &UserPassword{
+		u.OldPasswords = append(u.OldPasswords, UserPassword{
 			PasswordHash: u.PasswordHash,
 		})
 	}

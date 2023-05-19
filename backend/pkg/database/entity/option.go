@@ -6,7 +6,7 @@ import (
 
 type Option struct {
 	Entity
-	Key            string `gorm:"size:100; unique; index; not null"`
+	Key            string `gorm:"size:128; unique; index; not null"`
 	Value          string `gorm:"size:2048; default:''"`
 	ValueEncrypted string `gorm:"size:2048; default:''"`
 	Encrypted      bool   `gorm:"default:false"`

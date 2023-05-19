@@ -18,6 +18,7 @@ type File struct {
 	Path        string `gorm:"size:4096"`
 	Name        string `gorm:"size:512"`
 	Size        int64  `gorm:"default:0"`
+	Extension   FileExtension
 
 	// md5:sha512:File.Size => 32 + 128 = 160 hex digits + 2[:] + 20[int64] = 182 (size)
 	// for file, md5 and sha512 are hashed using file's data

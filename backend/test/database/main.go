@@ -159,4 +159,19 @@ func main() {
 		panic(err)
 	}
 	println(affected1)
+
+	file := &entity.File{
+		Path: "/",
+		Name: "file",
+		Size: 0,
+		Extension: entity.FileExtension{
+			Name:    "Ext",
+			DotName: "ext",
+		},
+		Checksum: "00000000000000000000000000000000:00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000:0",
+	}
+	tx = db.Create(file)
+	if tx.Error != nil {
+		panic(tx.Error)
+	}
 }
