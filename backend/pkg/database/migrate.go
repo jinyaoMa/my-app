@@ -12,6 +12,7 @@ func migrate(db *gorm.DB, dst ...any) error {
 		new(entity.FileCategory),
 		new(entity.FileExtension),
 		new(entity.Log),
+		new(entity.Node),
 		new(entity.Option),
 		new(entity.User),
 		new(entity.UserFile),

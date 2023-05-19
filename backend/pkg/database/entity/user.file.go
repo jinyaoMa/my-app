@@ -9,7 +9,8 @@ type UserFilePermission int
 const (
 	UserFilePermissionRead UserFilePermission = iota
 	UserFilePermissionReadWrite
-	UserFilePermissionReadWriteDelete
+	UserFilePermissionReadExecute
+	UserFilePermissionReadWriteExecute
 )
 
 type UserFile struct {

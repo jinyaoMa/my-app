@@ -32,6 +32,7 @@ type File struct {
 
 	/* relational fields */
 	UserID          int64
+	NodeID          int64
 	AccessableUsers []*User `gorm:"many2many:users_files"`
 	FileExtensionID int64   `gorm:""`
 }
