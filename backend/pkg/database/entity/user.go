@@ -11,13 +11,18 @@ import (
 
 type User struct {
 	Entity
+
+	/* internal fields */
 	Account               string    `gorm:"size:64; unique; index; not null"`
 	Password              string    `gorm:"-:all"`
 	PasswordHash          string    `gorm:"size:64; not null"`
 	Verification          string    `gorm:"size:64; not null"`
 	VerificationExpiredAt time.Time `gorm:"not null"`
 	IsFrozen              bool      `gorm:"default:false"`
-	OldPasswords          []UserPassword
+
+	/* relational fields */
+	UserPasswords []*UserPassword `gorm:""`
+	Files         []*File         `gorm:"many2many:users_files"`
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
@@ -38,6 +43,9 @@ func (u *User) BeforeUpdate(tx *gorm.DB) (err error) {
 
 	if u != nil {
 		err = u.hashPassword(tx)
+		if tx.Statement.Changed("PasswordHash") {
+			err = u.AddUserPassword(tx)
+		}
 	}
 	return
 }
@@ -46,7 +54,13 @@ func (u *User) hashPassword(tx *gorm.DB) (err error) {
 	if u.Password != "" {
 		passwordSum := sha256.Sum256([]byte(u.Password))
 		u.PasswordHash = fmt.Sprintf("%x", passwordSum)
-		u.OldPasswords = append(u.OldPasswords, UserPassword{
+	}
+	return
+}
+
+func (u *User) AddUserPassword(tx *gorm.DB) (err error) {
+	if u.PasswordHash != "" {
+		u.UserPasswords = append(u.UserPasswords, &UserPassword{
 			PasswordHash: u.PasswordHash,
 		})
 	}

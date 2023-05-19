@@ -6,10 +6,14 @@ import (
 
 type Option struct {
 	Entity
+
+	/* internal fields */
 	Key            string `gorm:"size:128; unique; index; not null"`
 	Value          string `gorm:"size:2048; default:''"`
 	ValueEncrypted string `gorm:"size:2048; default:''"`
 	Encrypted      bool   `gorm:"default:false"`
+
+	/* relational fields */
 }
 
 func (o *Option) BeforeCreate(tx *gorm.DB) (err error) {

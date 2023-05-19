@@ -15,17 +15,24 @@ var (
 
 type File struct {
 	Entity
-	IsDirectory bool   `gorm:"default:false"`
-	Path        string `gorm:"size:4096"`
-	Name        string `gorm:"size:512"`
-	Size        int64  `gorm:"default:0"`
-	Extension   FileExtension
-	VisitedAt   time.Time
+
+	/* internal fields */
+	IsDirectory bool      `gorm:"default:false"`
+	Path        string    `gorm:"size:4096"`
+	Name        string    `gorm:"size:512"`
+	Size        int64     `gorm:"default:0"`
+	ReadOnly    bool      `gorm:"default:false"`
+	Hidden      bool      `gorm:"default:false"`
+	VisitedAt   time.Time `gorm:""`
 
 	// md5:sha512:File.Size => 32 + 128 = 160 hex digits + 2[:] + 20[int64] = 182 (size)
 	// for file, md5 and sha512 are hashed using file's data
 	// for directory, md5 and sha512 are hashed using File.Path+File.Name
 	Checksum string `gorm:"size:182; unique; index"`
+
+	/* relational fields */
+	Users           []*User `gorm:"many2many:users_files"`
+	FileExtensionID int64   `gorm:""`
 }
 
 func (f *File) BeforeCreate(tx *gorm.DB) (err error) {
@@ -45,6 +52,9 @@ func (f *File) BeforeUpdate(tx *gorm.DB) (err error) {
 	}
 
 	if f != nil {
+		if !tx.Statement.Changed("ReadOnly") && f.ReadOnly {
+			return errors.New("File is set to ReadOnly")
+		}
 		if tx.Statement.Changed("Name") {
 			f.validateName(tx)
 		}

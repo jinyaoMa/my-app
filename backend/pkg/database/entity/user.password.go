@@ -2,6 +2,10 @@ package entity
 
 type UserPassword struct {
 	Entity
+
+	/* internal fields */
 	PasswordHash string `gorm:"size:64; notnull; <-:create"`
-	UserID       int64
+
+	/* relational fields */
+	UserID int64 `gorm:""`
 }

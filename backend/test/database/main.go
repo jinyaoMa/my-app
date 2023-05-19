@@ -94,14 +94,14 @@ func main() {
 		},
 	}), func(where func(query any, args ...any)) {
 		where("account LIKE ?", "%test_%")
-	}, "OldPasswords")
+	}, "UserPasswords")
 	if err != nil {
 		panic(err)
 	}
 
 	for _, u := range queryUsers {
 		println(u.Account)
-		println(u.OldPasswords[0].PasswordHash)
+		println(len(u.UserPasswords))
 	}
 
 	user1, err := crudUser.GetById(users[0].ID)
@@ -160,15 +160,24 @@ func main() {
 	}
 	println(affected1)
 
+	ext := &entity.FileExtension{
+		Name:    "Ext",
+		DotName: "ext",
+	}
+	tx = db.Create(ext)
+	if tx.Error != nil {
+		panic(tx.Error)
+	}
+
 	file := &entity.File{
-		Path: "/",
-		Name: "file",
-		Size: 0,
-		Extension: entity.FileExtension{
-			Name:    "Ext",
-			DotName: "ext",
+		Path:            "/",
+		Name:            "file",
+		Size:            0,
+		FileExtensionID: ext.ID,
+		Checksum:        "00000000000000000000000000000000:00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000:0",
+		Users: []*entity.User{
+			user1,
 		},
-		Checksum: "00000000000000000000000000000000:00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000:0",
 	}
 	tx = db.Create(file)
 	if tx.Error != nil {
