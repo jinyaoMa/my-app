@@ -28,6 +28,11 @@ func NewDatabase(opts *options.ODatabase) (*Database, error) {
 		return nil, err
 	}
 
+	err = join(db, opts.Join...)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Database{
 		DB:      *db,
 		options: opts,

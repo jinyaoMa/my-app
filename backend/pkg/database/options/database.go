@@ -16,7 +16,14 @@ type ODatabase struct {
 	Dialector gorm.Dialector
 	Options   []gorm.Option
 	Migrate   []any
+	Join      []ODatabaseJoin
 	Logger    ODatabaseLogger
+}
+
+type ODatabaseJoin struct {
+	Model     any
+	Field     string
+	JoinTable any
 }
 
 type ODatabaseLogger struct {
