@@ -22,7 +22,7 @@ func GetFilenameSameAsExecutable(ext string) (filename string, err error) {
 		return
 	}
 
-	filename = filename + "." + ext
+	filename += "." + ext
 	return
 }
 

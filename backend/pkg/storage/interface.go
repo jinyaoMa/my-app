@@ -1,5 +1,6 @@
 package storage
 
 type Interface interface {
-	AddPath()
+	// AddPaths add scopes to the storage for storing files
+	AddPaths(paths ...string) (added int)
 }
