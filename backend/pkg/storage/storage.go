@@ -10,7 +10,6 @@ func (*Storage) AddPath() {
 }
 
 func New(paths ...string) Interface {
-	return &Storage{
-		paths: paths,
-	}
+	s := &Storage{}
+	return s
 }

@@ -9,18 +9,18 @@ import (
 	"my-app/backend/pkg/database/options"
 	"my-app/backend/pkg/logger"
 	"my-app/backend/pkg/snowflake"
-	"my-app/backend/pkg/utility"
+	"my-app/backend/pkg/utils"
 
 	"gorm.io/driver/sqlite"
 )
 
 func main() {
-	util, err := utility.New()
+	key, err := utils.GetFilenameSameAsExecutable("option.key")
 	if err != nil {
 		panic(err)
 	}
 
-	entity.Cipher(crypto.NewAesWithSalt(util.GetExecutableFileName("option.key")))
+	entity.Cipher(crypto.NewAesWithSalt(key))
 
 	idGen, err := snowflake.Default()
 	if err != nil {
