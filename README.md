@@ -3,7 +3,7 @@
 - [x] entity.Option.Value encryption
 - [x] entity snowflake+aes change
 - [x] jwt
-- [ ] file, path+name length limit?
+- [x] file, path+name length limit?
 
 ### 文件
 
@@ -21,6 +21,12 @@
 -> 如果不存在记录，上传完毕后创建记录
 
 断点续传
--> 多用户同时上传相同的文件，服务端使用websocket拉取
+-> 多用户同时上传相同的文件，服务端使用websocket推上传文件range，客户端按照range需求上传数据
 
 （使用websocket实现上传下载）
+
+Websocket只推送，拦截接收
+Http上传限制线程，使用abort不等待
+
+下载文件
+-> 通过提交range头部下载数据

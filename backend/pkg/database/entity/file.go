@@ -19,7 +19,7 @@ type File struct {
 	/* internal fields */
 	IsDirectory bool      `gorm:"default:false"`
 	Path        string    `gorm:"size:4096"`
-	Name        string    `gorm:"size:512"`
+	Name        string    `gorm:"size:1024"`
 	Size        int64     `gorm:"default:0"`
 	ReadOnly    bool      `gorm:"default:false"`
 	Hidden      bool      `gorm:"default:false"`
@@ -43,6 +43,9 @@ func (f *File) BeforeCreate(tx *gorm.DB) (err error) {
 	}
 
 	if f != nil {
+		if err = f.validateIfExist(tx); err != nil {
+			return
+		}
 		if err = f.validateName(tx); err != nil {
 			return
 		}
@@ -58,6 +61,9 @@ func (f *File) BeforeUpdate(tx *gorm.DB) (err error) {
 	if f != nil {
 		if !tx.Statement.Changed("ReadOnly") && f.ReadOnly {
 			return errors.New("File is set to ReadOnly")
+		}
+		if err = f.validateIfExist(tx); err != nil {
+			return
 		}
 		if tx.Statement.Changed("Name") {
 			if err = f.validateName(tx); err != nil {
@@ -80,6 +86,18 @@ func (f *File) AfterFind(tx *gorm.DB) (err error) {
 
 	if f != nil {
 		tx.Statement.UpdateColumn("VisitedAt", time.Now())
+	}
+	return
+}
+
+func (f *File) validateIfExist(tx *gorm.DB) (err error) {
+	var count int64
+	tx.Model(&File{}).Where(&File{
+		Path: f.Path,
+		Name: f.Name,
+	}).Count(&count)
+	if count > 0 {
+		err = errors.New("File Path and Name exists")
 	}
 	return
 }
