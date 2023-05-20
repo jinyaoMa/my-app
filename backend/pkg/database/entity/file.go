@@ -31,8 +31,7 @@ type File struct {
 	Checksum string `gorm:"size:182; unique; index"`
 
 	/* relational fields */
-	UserID          int64
-	NodeID          int64
+	UserID          int64   `gorm:""`
 	AccessableUsers []*User `gorm:"many2many:users_files"`
 	FileExtensionID int64   `gorm:""`
 }

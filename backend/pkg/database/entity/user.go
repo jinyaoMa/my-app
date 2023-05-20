@@ -24,6 +24,7 @@ type User struct {
 	UserPasswords   []*UserPassword `gorm:""`
 	OwnedFiles      []*File         `gorm:""`
 	AccessableFiles []*File         `gorm:"many2many:users_files"`
+	Nodes           []*Node         `gorm:""`
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
