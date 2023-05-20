@@ -2,15 +2,15 @@ package crud
 
 import (
 	"my-app/backend/pkg/database"
+	"my-app/backend/pkg/database/crud/interfaces"
 	"my-app/backend/pkg/database/entity"
-	"my-app/backend/pkg/database/interfaces/crud"
 )
 
 type CrudFileCategory struct {
-	crud.ICrud[*entity.FileCategory]
+	interfaces.ICrud[*entity.FileCategory]
 }
 
-func NewCrudFileCategory(database *database.Database) crud.ICrudFileCategory {
+func NewCrudFileCategory(database *database.Database) interfaces.ICrudFileCategory {
 	return &CrudFileCategory{
 		ICrud: NewCrud[*entity.FileCategory](database),
 	}

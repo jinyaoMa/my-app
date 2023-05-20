@@ -4,8 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"my-app/backend/pkg/server/interfaces"
-	"my-app/backend/pkg/server/options"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -18,7 +16,7 @@ import (
 )
 
 type Server struct {
-	options   *options.OServer
+	options   *Option
 	mu        sync.Mutex
 	isRunning bool
 	hasErrors bool
@@ -27,8 +25,8 @@ type Server struct {
 	https     *http.Server // server (tls)
 }
 
-// Start implements interfaces.IServer
-func (s *Server) Start(opts *options.OServer) (ok bool) {
+// Start implements Interface
+func (s *Server) Start(opts *Option) (ok bool) {
 	if s.mu.TryLock() {
 		defer s.mu.Unlock()
 		if !s.isRunning {
@@ -40,7 +38,7 @@ func (s *Server) Start(opts *options.OServer) (ok bool) {
 	return false
 }
 
-// Stop implements interfaces.IServer
+// Stop implements Interface
 func (s *Server) Stop() (ok bool) {
 	if s.mu.TryLock() {
 		defer s.mu.Unlock()
@@ -52,18 +50,14 @@ func (s *Server) Stop() (ok bool) {
 	return false
 }
 
-// HasErrors implements interfaces.IServer
+// HasErrors implements Interface
 func (s *Server) HasErrors() bool {
 	return s.hasErrors
 }
 
-// IsRunning implements interfaces.IServer
+// IsRunning implements Interface
 func (s *Server) IsRunning() bool {
 	return s.isRunning
-}
-
-func NewServer() interfaces.IServer {
-	return &Server{}
 }
 
 func (s *Server) start() (ok bool) {
@@ -186,4 +180,8 @@ func (s *Server) getSelfSignedOrLetsEncryptCert(certManager *autocert.Manager) f
 		}
 		return &certificate, err
 	}
+}
+
+func New() Interface {
+	return &Server{}
 }

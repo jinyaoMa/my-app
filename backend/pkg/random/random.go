@@ -1,8 +1,7 @@
-package utility
+package random
 
 import (
 	"math/rand"
-	"my-app/backend/pkg/utility/interfaces"
 	"strings"
 	"time"
 )
@@ -12,7 +11,7 @@ type Random struct {
 	digitRunes []rune
 }
 
-// GenerateCode implements interfaces.IRandom
+// GenerateCode implements Interface
 func (r *Random) GenerateCode(size int, chars ...rune) string {
 	choices := append(r.digitRunes, chars...)
 	max := len(choices)
@@ -23,7 +22,7 @@ func (r *Random) GenerateCode(size int, chars ...rune) string {
 	return builder.String()
 }
 
-func NewRandom() interfaces.IRandom {
+func New() Interface {
 	return &Random{
 		rand:       rand.New(rand.NewSource(time.Now().UnixNano())),
 		digitRunes: []rune{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'},

@@ -1,6 +1,6 @@
-package interfaces
+package snowflake
 
-type ISnowflake interface {
+type Interface interface {
 	// Generate creates and returns a unique snowflake ID
 	// To help guarantee uniqueness
 	// - Make sure your system is keeping accurate system time

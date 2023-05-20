@@ -1,7 +1,7 @@
-package crud
+package interfaces
 
 import (
-	"my-app/backend/pkg/database/interfaces"
+	"my-app/backend/pkg/database/entity/interfaces"
 	"my-app/backend/pkg/database/options"
 )
 

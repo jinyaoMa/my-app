@@ -1,6 +1,6 @@
-package interfaces
+package crypto
 
-type IAes interface {
+type Interface interface {
 	// Encrypt encrypt plaintext to hexadecimal encoded ciphertext
 	Encrypt(plaintext string) (ciphertext string, err error)
 

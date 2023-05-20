@@ -1,8 +1,8 @@
-package interfaces
+package logger
 
 import "io"
 
-type ILogger interface {
+type Interface interface {
 	Writer() io.Writer
 	Prefix() string
 	Fatal(v ...any)

@@ -2,16 +2,16 @@ package crud
 
 import (
 	"my-app/backend/pkg/database"
-	"my-app/backend/pkg/database/interfaces"
-	"my-app/backend/pkg/database/interfaces/crud"
+	iCrud "my-app/backend/pkg/database/crud/interfaces"
+	iEntity "my-app/backend/pkg/database/entity/interfaces"
 	"my-app/backend/pkg/database/options"
 )
 
-type Crud[TEntity interfaces.IEntity] struct {
+type Crud[TEntity iEntity.IEntity] struct {
 	db *database.Database
 }
 
-func NewCrud[TEntity interfaces.IEntity](database *database.Database) crud.ICrud[TEntity] {
+func NewCrud[TEntity iEntity.IEntity](database *database.Database) iCrud.ICrud[TEntity] {
 	return &Crud[TEntity]{
 		db: database,
 	}
@@ -34,7 +34,7 @@ func (c *Crud[TEntity]) Save(entity TEntity) (affected int64, err error) {
 }
 
 // FindOne implements interfaces.ICrud
-func (c *Crud[TEntity]) FindOne(condition crud.QueryCondition) (entity TEntity, err error) {
+func (c *Crud[TEntity]) FindOne(condition iCrud.QueryCondition) (entity TEntity, err error) {
 	tx := c.db.Limit(1)
 	condition(func(query any, args ...any) {
 		tx = tx.Where(query, args...)
@@ -56,7 +56,7 @@ func (c *Crud[TEntity]) GetById(id int64) (entity TEntity, err error) {
 }
 
 // Query implements interfaces.ICrud
-func (c *Crud[TEntity]) Query(criteria *options.OCriteria, condition crud.QueryCondition, includes ...string) (entities []TEntity, err error) {
+func (c *Crud[TEntity]) Query(criteria *options.OCriteria, condition iCrud.QueryCondition, includes ...string) (entities []TEntity, err error) {
 	criteria = options.NewOCriteria(criteria)
 
 	tx := c.db.Limit(criteria.Size).Offset(criteria.Offset())

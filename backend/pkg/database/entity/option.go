@@ -56,9 +56,9 @@ func (o *Option) AfterFind(tx *gorm.DB) (err error) {
 }
 
 func (o *Option) encryptValue(tx *gorm.DB) (err error) {
-	if o.Encrypted && aes != nil {
+	if o.Encrypted && cipher != nil {
 		var ciphertext string
-		ciphertext, err = aes.Encrypt(o.Value)
+		ciphertext, err = cipher.Encrypt(o.Value)
 		if err != nil {
 			return
 		}
@@ -69,9 +69,9 @@ func (o *Option) encryptValue(tx *gorm.DB) (err error) {
 }
 
 func (o *Option) decryptValue(tx *gorm.DB) (err error) {
-	if o.Encrypted && aes != nil {
+	if o.Encrypted && cipher != nil {
 		var plaintext string
-		plaintext, err = aes.Decrypt(o.ValueEncrypted)
+		plaintext, err = cipher.Decrypt(o.ValueEncrypted)
 		if err != nil {
 			return
 		}

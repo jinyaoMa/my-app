@@ -1,4 +1,4 @@
-package crud
+package interfaces
 
 import "my-app/backend/pkg/database/entity"
 

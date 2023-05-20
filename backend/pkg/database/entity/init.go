@@ -1,19 +1,25 @@
 package entity
 
 import (
-	iSnowflake "my-app/backend/pkg/snowflake/interfaces"
-	iUtility "my-app/backend/pkg/utility/interfaces"
+	"my-app/backend/pkg/crypto"
+	"my-app/backend/pkg/snowflake"
 )
 
 var (
-	snowflake iSnowflake.ISnowflake
-	aes       iUtility.IAes
+	idGenerator snowflake.Interface
+	cipher      crypto.Interface
 )
 
-func SetSnowflake(snowflake_ iSnowflake.ISnowflake) {
-	snowflake = snowflake_
+func IdGenerator(abc ...snowflake.Interface) snowflake.Interface {
+	if len(abc) == 1 {
+		idGenerator = abc[0]
+	}
+	return idGenerator
 }
 
-func SetAes(aes_ iUtility.IAes) {
-	aes = aes_
+func Cipher(abc ...crypto.Interface) crypto.Interface {
+	if len(abc) == 1 {
+		cipher = abc[0]
+	}
+	return cipher
 }

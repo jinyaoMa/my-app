@@ -2,7 +2,7 @@ package options
 
 import (
 	"log"
-	"my-app/backend/pkg/logger/options"
+	"my-app/backend/pkg/logger"
 	"os"
 	"time"
 
@@ -27,7 +27,7 @@ type ODatabaseJoin struct {
 }
 
 type ODatabaseLogger struct {
-	options.OLogger
+	logger.Option
 	Config gormLogger.Config
 }
 
@@ -38,7 +38,7 @@ func DefaultODatabase() *ODatabase {
 			&gorm.Config{},
 		},
 		Logger: ODatabaseLogger{
-			OLogger: options.OLogger{
+			Option: logger.Option{
 				Writer: os.Stderr,
 				Tag:    "DBS",
 				PrefixTemplate: func(tag string) (prefix string) {

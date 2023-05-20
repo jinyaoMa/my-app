@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"my-app/backend/pkg/crypto"
 	"my-app/backend/pkg/database"
 	"my-app/backend/pkg/database/crud"
 	"my-app/backend/pkg/database/entity"
 	"my-app/backend/pkg/database/options"
-	optionsLogger "my-app/backend/pkg/logger/options"
+	"my-app/backend/pkg/logger"
 	"my-app/backend/pkg/snowflake"
 	"my-app/backend/pkg/utility"
 
@@ -14,24 +15,24 @@ import (
 )
 
 func main() {
-	util, err := utility.NewUtility()
+	util, err := utility.New()
 	if err != nil {
 		panic(err)
 	}
 
-	entity.SetAes(utility.NewAesWithSalt(util.GetExecutableFileName("option.key")))
+	entity.Cipher(crypto.NewAesWithSalt(util.GetExecutableFileName("option.key")))
 
 	idGen, err := snowflake.Default()
 	if err != nil {
 		panic(err)
 	}
 
-	entity.SetSnowflake(idGen)
+	entity.IdGenerator(idGen)
 
-	db, err := database.NewDatabase(&options.ODatabase{
+	db, err := database.New(&options.ODatabase{
 		Dialector: sqlite.Open("test.db?_pragma=foreign_keys(1)"),
 		Logger: options.ODatabaseLogger{
-			OLogger: optionsLogger.OLogger{
+			Option: logger.Option{
 				Tag: "TST",
 			},
 		},

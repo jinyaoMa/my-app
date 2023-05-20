@@ -3,22 +3,20 @@ package logger
 import (
 	"io"
 	"log"
-	"my-app/backend/pkg/logger/interfaces"
-	"my-app/backend/pkg/logger/options"
 )
 
 type Logger struct {
 	log.Logger
-	options *options.OLogger
+	options *Option
 }
 
-// Writer implements interfaces.ILogger
+// Writer implements Interface
 func (l *Logger) Writer() io.Writer {
 	return l.Logger.Writer()
 }
 
-func NewLogger(opts *options.OLogger) interfaces.ILogger {
-	opts = options.NewOLogger(opts)
+func New(opts *Option) Interface {
+	opts = NewOption(opts)
 
 	logger := log.Default()
 	logger.SetOutput(opts.Writer)

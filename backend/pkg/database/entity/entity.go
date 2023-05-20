@@ -14,8 +14,8 @@ func (e *Entity) BeforeCreate(tx *gorm.DB) (err error) {
 		return
 	}
 
-	if e != nil && e.ID == 0 && snowflake != nil {
-		e.ID = snowflake.Generate()
+	if e != nil && e.ID == 0 && idGenerator != nil {
+		e.ID = idGenerator.Generate()
 	}
 	return
 }

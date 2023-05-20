@@ -2,15 +2,15 @@ package crud
 
 import (
 	"my-app/backend/pkg/database"
+	"my-app/backend/pkg/database/crud/interfaces"
 	"my-app/backend/pkg/database/entity"
-	"my-app/backend/pkg/database/interfaces/crud"
 )
 
 type CrudNode struct {
-	crud.ICrud[*entity.Node]
+	interfaces.ICrud[*entity.Node]
 }
 
-func NewCrudNode(database *database.Database) crud.ICrudNode {
+func NewCrudNode(database *database.Database) interfaces.ICrudNode {
 	return &CrudNode{
 		ICrud: NewCrud[*entity.Node](database),
 	}

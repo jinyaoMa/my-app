@@ -2,15 +2,15 @@ package crud
 
 import (
 	"my-app/backend/pkg/database"
+	"my-app/backend/pkg/database/crud/interfaces"
 	"my-app/backend/pkg/database/entity"
-	"my-app/backend/pkg/database/interfaces/crud"
 )
 
 type CrudLog struct {
-	crud.ICrud[*entity.Log]
+	interfaces.ICrud[*entity.Log]
 }
 
-func NewCrudLog(database *database.Database) crud.ICrudLog {
+func NewCrudLog(database *database.Database) interfaces.ICrudLog {
 	return &CrudLog{
 		ICrud: NewCrud[*entity.Log](database),
 	}

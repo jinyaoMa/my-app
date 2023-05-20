@@ -1,4 +1,4 @@
-package options
+package logger
 
 import (
 	"io"
@@ -8,15 +8,15 @@ import (
 	"github.com/imdario/mergo"
 )
 
-type OLogger struct {
+type Option struct {
 	Writer         io.Writer
 	Tag            string
 	PrefixTemplate func(tag string) (prefix string)
 	Flags          int
 }
 
-func DefaultOLogger() *OLogger {
-	return &OLogger{
+func DefaultOption() *Option {
+	return &Option{
 		Writer: os.Stderr,
 		Tag:    "STD",
 		PrefixTemplate: func(tag string) (prefix string) {
@@ -26,8 +26,8 @@ func DefaultOLogger() *OLogger {
 	}
 }
 
-func NewOLogger(dst *OLogger) *OLogger {
-	src := DefaultOLogger()
+func NewOption(dst *Option) *Option {
+	src := DefaultOption()
 
 	err := mergo.Merge(dst, *src)
 	if err != nil {

@@ -13,7 +13,7 @@ type Database struct {
 	options *options.ODatabase
 }
 
-func NewDatabase(opts *options.ODatabase) (*Database, error) {
+func New(opts *options.ODatabase) (*Database, error) {
 	opts = options.NewODatabase(opts)
 
 	db, err := gorm.Open(opts.Dialector, opts.Options...)
@@ -21,7 +21,7 @@ func NewDatabase(opts *options.ODatabase) (*Database, error) {
 		return nil, err
 	}
 
-	db.Logger = gormLogger.New(logger.NewLogger(&opts.Logger.OLogger), opts.Logger.Config)
+	db.Logger = gormLogger.New(logger.New(&opts.Logger.Option), opts.Logger.Config)
 
 	err = migrate(db, opts.Migrate...)
 	if err != nil {

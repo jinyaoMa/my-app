@@ -1,6 +1,6 @@
-package interfaces
+package utility
 
-type IUtility interface {
+type Interface interface {
 	// GetExecutableName get the filename with the same name as application executable
 	// but specify a different extension
 	GetExecutableFileName(ext string) string

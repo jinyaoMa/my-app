@@ -1,4 +1,4 @@
-package utility
+package crypto
 
 import (
 	"bytes"
@@ -9,7 +9,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"io"
-	"my-app/backend/pkg/utility/interfaces"
 )
 
 const (
@@ -21,40 +20,7 @@ type AesWithSalt struct {
 	password []byte
 }
 
-func NewAesWithSalt(password string) interfaces.IAes {
-	return &AesWithSalt{
-		password: []byte(password),
-	}
-}
-
-func (aws *AesWithSalt) Encrypt(plaintext string) (string, error) {
-	// generate random salt, use same length as salt header's
-	salt := [AesSaltHeaderLength]byte{}
-	_, err := io.ReadFull(rand.Reader, salt[:])
-	if err != nil {
-		return "", err
-	}
-
-	// extract key and iv
-	key, iv := aws.extract(salt[:])
-
-	// get padded plaintext
-	padded := aws.pkcs7pad([]byte(plaintext))
-
-	// encrypt
-	cb, err := aes.NewCipher(key)
-	if err != nil {
-		return "", err
-	}
-	cipher.NewCBCEncrypter(cb, iv).
-		CryptBlocks(padded, padded)
-
-	// prefix => salt header + salt
-	prefix := append([]byte(AesSaltHeader), salt[:]...)
-
-	return hex.EncodeToString(append(prefix, padded...)), nil
-}
-
+// Decrypt implements Interface
 func (aws *AesWithSalt) Decrypt(ciphertext string) (string, error) {
 	ct, err := hex.DecodeString(ciphertext)
 	if err != nil {
@@ -96,6 +62,35 @@ func (aws *AesWithSalt) Decrypt(ciphertext string) (string, error) {
 	}
 
 	return string(unpadded), nil
+}
+
+// Encrypt implements Interface
+func (aws *AesWithSalt) Encrypt(plaintext string) (string, error) {
+	// generate random salt, use same length as salt header's
+	salt := [AesSaltHeaderLength]byte{}
+	_, err := io.ReadFull(rand.Reader, salt[:])
+	if err != nil {
+		return "", err
+	}
+
+	// extract key and iv
+	key, iv := aws.extract(salt[:])
+
+	// get padded plaintext
+	padded := aws.pkcs7pad([]byte(plaintext))
+
+	// encrypt
+	cb, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+	cipher.NewCBCEncrypter(cb, iv).
+		CryptBlocks(padded, padded)
+
+	// prefix => salt header + salt
+	prefix := append([]byte(AesSaltHeader), salt[:]...)
+
+	return hex.EncodeToString(append(prefix, padded...)), nil
 }
 
 // extract key and iv from given password and salt
@@ -140,4 +135,10 @@ func (aws *AesWithSalt) pkcs7unpad(data []byte) ([]byte, error) {
 		return nil, errors.New("pkcs7: invalid padding")
 	}
 	return data[:length-padLen], nil
+}
+
+func NewAesWithSalt(password string) Interface {
+	return &AesWithSalt{
+		password: []byte(password),
+	}
 }

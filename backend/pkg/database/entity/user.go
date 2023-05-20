@@ -3,7 +3,7 @@ package entity
 import (
 	"crypto/sha256"
 	"fmt"
-	"my-app/backend/pkg/utility"
+	"my-app/backend/pkg/random"
 	"time"
 
 	"gorm.io/gorm"
@@ -76,7 +76,7 @@ func (u *User) AddUserPassword(tx *gorm.DB) (err error) {
 }
 
 func (u *User) FillVerification(size int, expiredAt time.Time) *User {
-	u.Verification = utility.NewRandom().GenerateCode(size)
+	u.Verification = random.New().GenerateCode(size)
 	u.VerificationExpiredAt = expiredAt
 	return u
 }

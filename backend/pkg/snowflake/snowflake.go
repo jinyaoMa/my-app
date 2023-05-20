@@ -2,8 +2,6 @@ package snowflake
 
 import (
 	"fmt"
-	"my-app/backend/pkg/snowflake/interfaces"
-	"my-app/backend/pkg/snowflake/options"
 	"strconv"
 	"sync"
 	"time"
@@ -23,7 +21,7 @@ type Snowflake struct {
 	nodeShift uint8
 }
 
-// Generate implements interfaces.ISnowflake
+// Generate implements Interface
 func (s *Snowflake) Generate() int64 {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -53,17 +51,17 @@ func (s *Snowflake) Generate() int64 {
 }
 
 // Default return Snowflake Id generator with default options
-func Default() (interfaces.ISnowflake, error) {
-	return NewSnowflake(options.DefaultOSnowflake())
+func Default() (Interface, error) {
+	return New(DefaultOption())
 }
 
-// NewSnowflake return Snowflake Id generator with custom options
-func NewSnowflake(opts *options.OSnowflake) (interfaces.ISnowflake, error) {
-	opts = options.NewOSnowflake(opts)
+// New return Snowflake Id generator with custom options
+func New(opts *Option) (Interface, error) {
+	opts = NewOption(opts)
 
 	var shareBits uint8 = opts.NodeBits + opts.StepBits
-	if shareBits > options.TotalShareBits {
-		return nil, fmt.Errorf("remember, you have a total %d bits to share between node/step", options.TotalShareBits)
+	if shareBits > TotalShareBits {
+		return nil, fmt.Errorf("remember, you have a total %d bits to share between node/step", TotalShareBits)
 	}
 
 	var nodeMax int64 = -1 ^ (-1 << opts.NodeBits)
