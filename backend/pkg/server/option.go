@@ -3,7 +3,7 @@ package server
 import (
 	"my-app/backend/pkg/logger"
 
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 	"github.com/imdario/mergo"
 )
 
@@ -12,7 +12,7 @@ type Option struct {
 	Logger logger.Interface
 	Http   OptionHttp
 	Https  OptionHttps
-	Setup  func(engine *gin.Engine) *gin.Engine
+	Setup  func(app *fiber.App) *fiber.App
 }
 
 type OptionHttp struct {
@@ -35,8 +35,8 @@ func DefaultOption() *Option {
 			Port:     10443,
 			DirCerts: "",
 		},
-		Setup: func(engine *gin.Engine) *gin.Engine {
-			return engine
+		Setup: func(app *fiber.App) *fiber.App {
+			return app
 		},
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"net"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/acme/autocert"
 	"golang.org/x/sync/errgroup"
 )
@@ -22,7 +24,7 @@ type Server struct {
 	hasErrors bool
 	errGroup  errgroup.Group
 	http      *http.Server // redirector
-	https     *http.Server // server (tls)
+	https     *fiber.App   // server (tls)
 }
 
 // Start implements Interface
@@ -31,7 +33,7 @@ func (s *Server) Start(opts *Option) (ok bool) {
 		defer s.mu.Unlock()
 		if !s.isRunning {
 			// stopped, can start
-			s.options = opts
+			s.options = NewOption(opts)
 			return s.start()
 		}
 	}
@@ -68,36 +70,11 @@ func (s *Server) start() (ok bool) {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	engine := gin.New()
+	var ln net.Listener
+	if ln, ok = s.setup(); !ok {
+		return
+	}
 
-	engine.UseH2C = true
-	engine.Use(gin.Recovery())
-	engine.Use(gin.LoggerWithConfig(gin.LoggerConfig{
-		Formatter: func(param gin.LogFormatterParams) string {
-			var statusColor, methodColor, resetColor string
-			if param.IsOutputColor() && s.options.IsDev {
-				statusColor = param.StatusCodeColor()
-				methodColor = param.MethodColor()
-				resetColor = param.ResetColor()
-			}
-			if param.Latency > time.Minute {
-				param.Latency = param.Latency.Truncate(time.Second)
-			}
-			return fmt.Sprintf("%s %v |%s %3d %s| %13v | %15s |%s %-7s %s %#v\n%s",
-				s.options.Logger.Prefix(),
-				param.TimeStamp.Format("2006/01/02 - 15:04:05"),
-				statusColor, param.StatusCode, resetColor,
-				param.Latency,
-				param.ClientIP,
-				methodColor, param.Method, resetColor,
-				param.Path,
-				param.ErrorMessage,
-			)
-		},
-		Output: s.options.Logger.Writer(),
-	}))
-
-	s.setup(engine)
 	s.errGroup.Go(func() error {
 		err := s.http.ListenAndServe()
 		if err != nil {
@@ -106,7 +83,7 @@ func (s *Server) start() (ok bool) {
 		return err
 	})
 	s.errGroup.Go(func() error {
-		err := s.https.ListenAndServeTLS("", "")
+		err := s.https.Listener(ln)
 		if err != nil {
 			s.hasErrors = true
 		}
@@ -118,16 +95,14 @@ func (s *Server) start() (ok bool) {
 }
 
 func (s *Server) stop() (ok bool) {
-	ctxHttp, cancelHttp := context.WithTimeout(context.Background(), 5*time.Second)
+	ctxHttp, cancelHttp := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancelHttp()
 	if err := s.http.Shutdown(ctxHttp); err != nil && err != http.ErrServerClosed {
 		s.options.Logger.Printf("server (http) shutdown error: %+v\n", err)
 		s.hasErrors = true
 	}
 
-	ctxHttps, cancelHttps := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancelHttps()
-	if err := s.https.Shutdown(ctxHttps); err != nil && err != http.ErrServerClosed {
+	if err := s.https.Shutdown(); err != nil && err != http.ErrServerClosed {
 		s.options.Logger.Printf("server (http/s) shutdown error: %+v\n", err)
 		s.hasErrors = true
 	}
@@ -141,13 +116,14 @@ func (s *Server) stop() (ok bool) {
 	return true
 }
 
-func (s *Server) setup(engine *gin.Engine) {
+func (s *Server) setup() (ln net.Listener, ok bool) {
 	addrHttp := fmt.Sprintf(":%d", s.options.Http.Port)
 	addrHttps := fmt.Sprintf(":%d", s.options.Https.Port)
 
 	manager := &autocert.Manager{
-		Prompt: autocert.AcceptTOS,
-		Cache:  autocert.DirCache(s.options.Https.DirCerts),
+		Prompt:     autocert.AcceptTOS,
+		HostPolicy: autocert.HostWhitelist("example.com"),
+		Cache:      autocert.DirCache(s.options.Https.DirCerts),
 	}
 
 	s.http = &http.Server{
@@ -158,14 +134,26 @@ func (s *Server) setup(engine *gin.Engine) {
 		})),
 	}
 
-	tlsConfig := manager.TLSConfig()
-	tlsConfig.GetCertificate = s.getSelfSignedOrLetsEncryptCert(manager)
-
-	s.https = &http.Server{
-		Addr:      addrHttps,
-		Handler:   s.options.Setup(engine).Handler(),
-		TLSConfig: tlsConfig,
+	tlsConfig := &tls.Config{
+		GetCertificate: s.getSelfSignedOrLetsEncryptCert(manager),
+		// By default NextProtos contains the "h2"
+		// This has to be removed since Fasthttp does not support HTTP/2
+		// Or it will cause a flood of PRI method logs
+		// http://webconcepts.info/concepts/http-method/PRI
+		NextProtos: []string{
+			"http/1.1", "acme-tls/1",
+		},
 	}
+
+	ln, err := tls.Listen("tcp", addrHttps, tlsConfig)
+	if err != nil {
+		return nil, false
+	}
+
+	s.https = fiber.New()
+	s.options.Setup(s.https)
+
+	return ln, true
 }
 
 // getSelfSignedOrLetsEncryptCert override tlsConfig.GetCertificate to enable self-signed certs
