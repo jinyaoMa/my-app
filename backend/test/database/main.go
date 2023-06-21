@@ -33,7 +33,7 @@ func main() {
 		Dialector: sqlite.Open("test.db?_pragma=foreign_keys(1)"),
 		Logger: options.ODatabaseLogger{
 			Option: logger.Option{
-				Tag: "TST",
+				Tag: "DBS",
 			},
 		},
 	})

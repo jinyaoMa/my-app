@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"golang.org/x/crypto/acme/autocert"
 	"golang.org/x/sync/errgroup"
 )
@@ -64,11 +64,6 @@ func (s *Server) IsRunning() bool {
 
 func (s *Server) start() (ok bool) {
 	s.hasErrors = false
-	if s.options.IsDev {
-		gin.SetMode(gin.DebugMode)
-	} else {
-		gin.SetMode(gin.ReleaseMode)
-	}
 
 	var ln net.Listener
 	if ln, ok = s.setup(); !ok {
@@ -151,6 +146,13 @@ func (s *Server) setup() (ln net.Listener, ok bool) {
 	}
 
 	s.https = fiber.New()
+	s.https.Use(logger.New(logger.Config{
+		Output:        s.options.Logger.Writer(),
+		Format:        s.options.Logger.Prefix() + " ${time} | ${status} - ${latency} ${method} ${path}",
+		TimeFormat:    time.RFC3339Nano,
+		TimeZone:      "Asia/Shanghai",
+		DisableColors: !s.options.IsDev,
+	}))
 	s.options.Setup(s.https)
 
 	return ln, true
