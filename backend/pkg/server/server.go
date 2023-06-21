@@ -146,11 +146,15 @@ func (s *Server) setup() (ln net.Listener, ok bool) {
 	}
 
 	s.https = fiber.New()
+	timeFormat := time.RFC3339Nano
+	if s.options.IsDev {
+		timeFormat = "15:04:05"
+	}
 	s.https.Use(logger.New(logger.Config{
 		Output:        s.options.Logger.Writer(),
 		Format:        s.options.Logger.Prefix() + " ${time} | ${status} - ${latency} ${method} ${path}",
-		TimeFormat:    time.RFC3339Nano,
-		TimeZone:      "Asia/Shanghai",
+		TimeFormat:    timeFormat,
+		TimeZone:      "Local",
 		DisableColors: !s.options.IsDev,
 	}))
 	s.options.Setup(s.https)
