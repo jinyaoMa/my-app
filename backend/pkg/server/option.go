@@ -20,8 +20,9 @@ type OptionHttp struct {
 }
 
 type OptionHttps struct {
-	Port     uint16
-	DirCerts string
+	Port          uint16
+	HostWhitelist []string
+	DirCerts      string
 }
 
 func DefaultOption() *Option {
@@ -32,8 +33,9 @@ func DefaultOption() *Option {
 			Port: 10080,
 		},
 		Https: OptionHttps{
-			Port:     10443,
-			DirCerts: "",
+			Port:          10443,
+			HostWhitelist: []string{},
+			DirCerts:      "",
 		},
 		Setup: func(app *fiber.App) *fiber.App {
 			return app

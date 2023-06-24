@@ -20,7 +20,7 @@ type File struct {
 	IsDirectory bool      `gorm:"default:false"`
 	Path        string    `gorm:"size:4096"`
 	Name        string    `gorm:"size:1024"`
-	Size        int64     `gorm:"default:0"`
+	Size        uint64    `gorm:"default:0"`
 	ReadOnly    bool      `gorm:"default:false"`
 	Hidden      bool      `gorm:"default:false"`
 	VisitedAt   time.Time `gorm:""`

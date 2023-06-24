@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"my-app/backend/pkg/storage/usage"
 	"my-app/backend/pkg/utils"
 )
 
@@ -13,15 +14,22 @@ const (
 )
 
 type Storage struct {
-	paths     []string
-	totalSize uint64
+	paths map[string]usage.Interface
+}
+
+// TotalSize implements Interface.
+func (s *Storage) TotalSize() (size uint64) {
+	for _, u := range s.paths {
+		size += u.Size()
+	}
+	return
 }
 
 // AddPaths implements Interface
 func (s *Storage) AddPaths(paths ...string) (added int) {
 	for _, path := range paths {
 		if utils.CheckIfDirectoryExists(path) {
-			s.paths = append(s.paths, path)
+			s.paths[path] = usage.NewUsage(path)
 			added += 1
 		}
 	}
@@ -29,5 +37,7 @@ func (s *Storage) AddPaths(paths ...string) (added int) {
 }
 
 func New() Interface {
-	return &Storage{}
+	return &Storage{
+		paths: make(map[string]usage.Interface),
+	}
 }

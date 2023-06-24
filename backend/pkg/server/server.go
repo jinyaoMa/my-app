@@ -117,7 +117,7 @@ func (s *Server) setup() (ln net.Listener, ok bool) {
 
 	manager := &autocert.Manager{
 		Prompt:     autocert.AcceptTOS,
-		HostPolicy: autocert.HostWhitelist("example.com"),
+		HostPolicy: autocert.HostWhitelist(s.options.Https.HostWhitelist...),
 		Cache:      autocert.DirCache(s.options.Https.DirCerts),
 	}
 
