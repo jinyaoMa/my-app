@@ -17,6 +17,14 @@ type Storage struct {
 	paths map[string]usage.Interface
 }
 
+// TotalAvailable implements Interface.
+func (s *Storage) TotalAvailable() (size uint64) {
+	for _, u := range s.paths {
+		size += u.Available()
+	}
+	return
+}
+
 // TotalSize implements Interface.
 func (s *Storage) TotalSize() (size uint64) {
 	for _, u := range s.paths {

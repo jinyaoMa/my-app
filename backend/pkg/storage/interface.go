@@ -6,4 +6,7 @@ type Interface interface {
 
 	// TotalSize returns total size of the file system
 	TotalSize() (size uint64)
+
+	// TotalAvailable returns total available bytes on file system to an unprivileged user
+	TotalAvailable() (size uint64)
 }
