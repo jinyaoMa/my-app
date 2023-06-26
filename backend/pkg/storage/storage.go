@@ -14,22 +14,22 @@ const (
 )
 
 type Storage struct {
-	paths map[string]usage.Interface
+	paths []string
 }
 
 // TotalAvailable implements Interface.
 func (s *Storage) TotalAvailable() (size uint64) {
-	for _, u := range s.paths {
+	s.forUsage(func(u usage.Interface) {
 		size += u.Available()
-	}
+	})
 	return
 }
 
 // TotalSize implements Interface.
 func (s *Storage) TotalSize() (size uint64) {
-	for _, u := range s.paths {
+	s.forUsage(func(u usage.Interface) {
 		size += u.Size()
-	}
+	})
 	return
 }
 
@@ -37,15 +37,22 @@ func (s *Storage) TotalSize() (size uint64) {
 func (s *Storage) AddPaths(paths ...string) (added int) {
 	for _, path := range paths {
 		if utils.CheckIfDirectoryExists(path) {
-			s.paths[path] = usage.NewUsage(path)
+			s.paths = append(s.paths, path)
 			added += 1
 		}
 	}
 	return
 }
 
+func (s *Storage) forUsage(callback func(u usage.Interface)) {
+	for _, path := range s.paths {
+		u := usage.NewUsage(path)
+		callback(u)
+	}
+}
+
 func New() Interface {
 	return &Storage{
-		paths: make(map[string]usage.Interface),
+		paths: make([]string, 5),
 	}
 }
