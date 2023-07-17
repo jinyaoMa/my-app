@@ -25,13 +25,13 @@ func (s *Storage) GetMountpointUsage() (u MountpointUsage, err error) {
 
 // AddPaths implements Interface
 func (s *Storage) AddPaths(paths ...string) (added int, err error) {
-	var usage map[string]*MountpointStat
-	usage, err = NewMountpointUsage(s.paths...)
+	var u MountpointUsage
+	u, err = s.GetMountpointUsage()
 	if err != nil {
 		return
 	}
 
-	for mountpoint, mStat := range usage {
+	for mountpoint, mStat := range u {
 		for _, path := range paths {
 			if mStat.UsedPath == "" &&
 				strings.HasPrefix(path, mountpoint) &&
@@ -47,7 +47,6 @@ func (s *Storage) AddPaths(paths ...string) (added int, err error) {
 		err = errors.New("some paths cannot be added due to occupied mountpoints")
 		return
 	}
-
 	return
 }
 
