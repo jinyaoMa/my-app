@@ -8,7 +8,7 @@ import (
 
 func main() {
 	s := storage.New()
-	added, _ := s.AddPaths("C:/", "D:/")
+	added, _ := s.AddPaths("C:/", "D:/tmp")
 	u, _ := s.GetMountpointUsage()
 	println("Added:", added)
 	println("Availables:", strings.Join(u.AvailableMountPoints(), " | "))

@@ -9,16 +9,15 @@ import (
 type MountpointStat struct {
 	PartitionStat *disk.PartitionStat
 	UsageStat     *disk.UsageStat
-	UsedPath      string // storage path to use in this mountpoint
-	Cache         bool
+	StoragePath   *StoragePath // storage path to use in this mountpoint
 }
 
 type MountpointUsage map[string]*MountpointStat
 
-func (u MountpointUsage) PickAPath(needSize uint64) (path string) {
+func (u MountpointUsage) PickAPath(needSize uint64) (path *StoragePath) {
 	for _, mStat := range u {
-		if mStat.UsedPath != "" && mStat.UsageStat.Free >= needSize {
-			return mStat.UsedPath
+		if mStat.StoragePath != nil && mStat.UsageStat.Free > needSize {
+			return mStat.StoragePath
 		}
 	}
 	return
@@ -26,7 +25,7 @@ func (u MountpointUsage) PickAPath(needSize uint64) (path string) {
 
 func (u MountpointUsage) AvailableMountPoints() (mountpoints []string) {
 	for mountpoint, mStat := range u {
-		if mStat.UsedPath != "" {
+		if mStat.StoragePath != nil {
 			mountpoints = append(mountpoints, mountpoint)
 		}
 	}
@@ -35,31 +34,40 @@ func (u MountpointUsage) AvailableMountPoints() (mountpoints []string) {
 
 func (u MountpointUsage) TotalSize() (total uint64) {
 	for _, mStat := range u {
-		total += mStat.UsageStat.Total
+		if mStat.StoragePath != nil {
+			total += mStat.UsageStat.Total
+		}
 	}
 	return
 }
 
 func (u MountpointUsage) TotalFree() (free uint64) {
 	for _, mStat := range u {
-		free += mStat.UsageStat.Free
+		if mStat.StoragePath != nil {
+			free += mStat.UsageStat.Free
+		}
 	}
 	return
 }
 
 func (u MountpointUsage) TotalUsed() (used uint64) {
 	for _, mStat := range u {
-		used += mStat.UsageStat.Used
+		if mStat.StoragePath != nil {
+			used += mStat.UsageStat.Used
+		}
 	}
 	return
 }
 
 func (u MountpointUsage) TotalUsedPercent() (usedPercent float64) {
+	if u.TotalSize() == 0 {
+		return 0
+	}
 	usedPercent = float64(u.TotalUsed()) / float64(u.TotalSize()) * 100
 	return
 }
 
-func NewMountpointUsage(paths ...string) (u MountpointUsage, err error) {
+func NewMountpointUsage(paths []*StoragePath) (u MountpointUsage, err error) {
 	var pStats []disk.PartitionStat
 	pStats, err = disk.Partitions(false)
 	if err != nil {
@@ -80,8 +88,8 @@ func NewMountpointUsage(paths ...string) (u MountpointUsage, err error) {
 		}
 
 		for _, path := range paths {
-			if strings.HasPrefix(path, pStat.Mountpoint) {
-				u[pStat.Mountpoint].UsedPath = path
+			if strings.HasPrefix(path.Dir, pStat.Mountpoint) {
+				u[pStat.Mountpoint].StoragePath = path
 			}
 		}
 	}

@@ -1,8 +1,9 @@
 package storage
 
 import (
-	"errors"
 	"my-app/backend/pkg/utils"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -14,13 +15,18 @@ const (
 	TB        = 1024 * GB
 )
 
+type StoragePath struct {
+	Dir   string
+	Cache string
+}
+
 type Storage struct {
-	paths []string
+	paths []*StoragePath
 }
 
 // GetMountpointUsage implements Interface.
 func (s *Storage) GetMountpointUsage() (u MountpointUsage, err error) {
-	return NewMountpointUsage(s.paths...)
+	return NewMountpointUsage(s.paths)
 }
 
 // AddPaths implements Interface
@@ -33,25 +39,31 @@ func (s *Storage) AddPaths(paths ...string) (added int, err error) {
 
 	for mountpoint, mStat := range u {
 		for _, path := range paths {
-			if mStat.UsedPath == "" &&
+			cache := filepath.Join(path, ".cache")
+
+			if mStat.StoragePath == nil &&
 				strings.HasPrefix(path, mountpoint) &&
 				utils.CheckIfDirectoryExists(path) {
-				s.paths = append(s.paths, path)
-				mStat.UsedPath = path
+				if !utils.CheckIfDirectoryExists(cache) &&
+					os.MkdirAll(cache, os.ModeDir) != nil {
+					continue
+				}
+
+				sPath := &StoragePath{
+					Dir:   path,
+					Cache: cache,
+				}
+				s.paths = append(s.paths, sPath)
+				mStat.StoragePath = sPath
 				added += 1
 			}
 		}
-	}
-
-	if added != len(paths) {
-		err = errors.New("some paths cannot be added due to occupied mountpoints")
-		return
 	}
 	return
 }
 
 func New() Interface {
 	return &Storage{
-		paths: make([]string, 5),
+		paths: make([]*StoragePath, 0, 5),
 	}
 }

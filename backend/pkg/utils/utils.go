@@ -1,9 +1,22 @@
 package utils
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 )
+
+// CheckIfDirectoryIsEmpty check if a directory is empty
+func CheckIfDirectoryIsEmpty(path string) (isEmpty bool) {
+	f, err := os.Open(path)
+	if err != nil {
+		return false
+	}
+	defer f.Close()
+
+	_, err = f.Readdirnames(1) // Or f.Readdir(1)
+	return err == io.EOF
+}
 
 // CheckIfDirectoryExists check if a path exists, and it is a directory
 func CheckIfDirectoryExists(path string) (exists bool) {
