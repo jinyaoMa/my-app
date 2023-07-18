@@ -10,9 +10,19 @@ type MountpointStat struct {
 	PartitionStat *disk.PartitionStat
 	UsageStat     *disk.UsageStat
 	UsedPath      string // storage path to use in this mountpoint
+	Cache         bool
 }
 
 type MountpointUsage map[string]*MountpointStat
+
+func (u MountpointUsage) PickAPath(needSize uint64) (path string) {
+	for _, mStat := range u {
+		if mStat.UsedPath != "" && mStat.UsageStat.Free >= needSize {
+			return mStat.UsedPath
+		}
+	}
+	return
+}
 
 func (u MountpointUsage) AvailableMountPoints() (mountpoints []string) {
 	for mountpoint, mStat := range u {

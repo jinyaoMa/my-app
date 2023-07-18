@@ -17,4 +17,5 @@ func main() {
 	println("Total calc:", u.TotalFree()+u.TotalUsed())
 	println("Total size:", u.TotalSize())
 	fmt.Printf("Total used (%%): %.2f %%", u.TotalUsedPercent())
+	//fmt.Printf("Pick a path with %d size: %s", 409640964096, u.PickAPath(409640964096))
 }
