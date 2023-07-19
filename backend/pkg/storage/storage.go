@@ -25,8 +25,21 @@ type Storage struct {
 	paths []*StoragePath
 }
 
+// Search implements Interface.
+func (s *Storage) Search(filename string, isCache bool) (file *os.File) {
+	panic("unimplemented")
+}
+
 // Cache implements Interface.
-func (*Storage) Cache(file fs.File, rangeStart uint64, rangeEnd uint64) (err error) {
+func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEnd uint64, totalSize uint64) (err error) {
+	// var u MountpointUsage
+	// u, err = s.GetMountpointUsage()
+	// if err != nil {
+	// 	return
+	// }
+
+	// targetPath := u.PickAPath(totalSize)
+	// return
 	panic("unimplemented")
 }
 

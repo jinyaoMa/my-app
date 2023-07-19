@@ -2,6 +2,7 @@ package storage
 
 import (
 	"io/fs"
+	"os"
 )
 
 type Interface interface {
@@ -10,8 +11,10 @@ type Interface interface {
 
 	GetMountpointUsage() (u MountpointUsage, err error)
 
+	Search(filename string, isCache bool) (file *os.File)
+
 	// Upload:Cache
-	Cache(file fs.File, rangeStart uint64, rangeEnd uint64) (err error)
+	Cache(filename string, data []byte, rangeStart uint64, rangeEnd uint64, totalSize uint64) (err error)
 
 	// Upload:Cache:Clear
 	ClearCache(filename string) (err error)

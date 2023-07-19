@@ -30,7 +30,7 @@ func CheckIfDirectoryExists(path string) (exists bool) {
 // GetFilenameSameAsExecutable get the filename with the same name as
 // application executable but specify a different extension
 func GetFilenameSameAsExecutable(ext string) (filename string, err error) {
-	filename, err = executableFilenameWithoutExtension()
+	filename, err = ExecutableFilenameWithoutExtension()
 	if err != nil {
 		return
 	}
@@ -41,7 +41,7 @@ func GetFilenameSameAsExecutable(ext string) (filename string, err error) {
 
 // GetPathStartedFromExecutable get the path started from application executable's directory
 func GetPathStartedFromExecutable(elem ...string) (path string, err error) {
-	path, err = executableDirectory()
+	path, err = ExecutableDirectory()
 	if err != nil || len(elem) == 0 {
 		return
 	}
@@ -58,4 +58,24 @@ func GetFilenameWithoutExtension(path string) string {
 		}
 	}
 	return filepath.Base(path)
+}
+
+// the file name (without extension) of application executable
+func ExecutableFilenameWithoutExtension() (string, error) {
+	// get executable directory
+	exe, err := os.Executable()
+	if err != nil {
+		return "", err
+	}
+	return GetFilenameWithoutExtension(exe), nil
+}
+
+// the folder that application executable located
+func ExecutableDirectory() (string, error) {
+	// get executable directory
+	exe, err := os.Executable()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Dir(exe), nil
 }
