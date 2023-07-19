@@ -13,6 +13,8 @@ type Interface interface {
 
 	SearchFile(filename string, isCache bool) (file *os.File, err error)
 
+	GetCacheFiles(filename string) (files []*os.File, err error)
+
 	// Upload:Cache
 	Cache(filename string, data []byte, rangeStart uint64, rangeEnd uint64, size uint64, forceCache bool) (ok bool, err error)
 

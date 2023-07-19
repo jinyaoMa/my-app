@@ -24,8 +24,32 @@ type StoragePath struct {
 }
 
 type Storage struct {
-	cacheBlockSize uint64
-	paths          []*StoragePath
+	paths []*StoragePath
+}
+
+// GetCacheFiles implements Interface.
+func (s *Storage) GetCacheFiles(filename string) (files []*os.File, err error) {
+	for _, sPath := range s.paths {
+		err = filepath.WalkDir(sPath.Cache, func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+
+			if !d.IsDir() && strings.HasPrefix(filepath.Base(path), filename) {
+				var file *os.File
+				file, err = os.Open(path)
+				if err != nil {
+					return err
+				}
+				files = append(files, file)
+			}
+			return nil
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
+	return
 }
 
 // SearchFile implements Interface.
@@ -94,7 +118,7 @@ func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEn
 }
 
 // Checksum implements Interface.
-func (*Storage) Checksum(filename string, checksum string, isCache bool) (ok bool) {
+func (s *Storage) Checksum(filename string, checksum string, isCache bool) (ok bool) {
 	if isCache {
 
 	}
