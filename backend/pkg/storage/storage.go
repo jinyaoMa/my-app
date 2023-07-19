@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"errors"
 	"io/fs"
 	"my-app/backend/pkg/utils"
 	"os"
@@ -25,9 +26,22 @@ type Storage struct {
 	paths []*StoragePath
 }
 
-// Search implements Interface.
-func (s *Storage) Search(filename string, isCache bool) (file *os.File) {
-	panic("unimplemented")
+// SearchFile implements Interface.
+func (s *Storage) SearchFile(filename string, isCache bool) (file *os.File, err error) {
+	for _, sPath := range s.paths {
+		if isCache {
+			cacheFilePath := filepath.Join(sPath.Cache, filename)
+			if utils.CheckIfFileExists(cacheFilePath) {
+				return os.OpenFile(cacheFilePath, os.O_RDWR, 0666)
+			}
+		} else {
+			filePath := filepath.Join(sPath.Dir, filename)
+			if utils.CheckIfFileExists(filePath) {
+				return os.OpenFile(filePath, os.O_RDWR, 0666)
+			}
+		}
+	}
+	return nil, errors.New(filename + " not found")
 }
 
 // Cache implements Interface.

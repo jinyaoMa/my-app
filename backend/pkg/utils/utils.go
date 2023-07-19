@@ -6,6 +6,15 @@ import (
 	"path/filepath"
 )
 
+// CheckIfFileExists check if a path exists, and it is a file
+func CheckIfFileExists(path string) (exists bool) {
+	fileInfo, err := os.Stat(path)
+	if err == nil && !fileInfo.IsDir() {
+		return true
+	}
+	return false
+}
+
 // CheckIfDirectoryIsEmpty check if a directory is empty
 func CheckIfDirectoryIsEmpty(path string) (isEmpty bool) {
 	f, err := os.Open(path)

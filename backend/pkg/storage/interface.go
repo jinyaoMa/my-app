@@ -11,7 +11,7 @@ type Interface interface {
 
 	GetMountpointUsage() (u MountpointUsage, err error)
 
-	Search(filename string, isCache bool) (file *os.File)
+	SearchFile(filename string, isCache bool) (file *os.File, err error)
 
 	// Upload:Cache
 	Cache(filename string, data []byte, rangeStart uint64, rangeEnd uint64, totalSize uint64) (err error)
