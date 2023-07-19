@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"io/fs"
 	"my-app/backend/pkg/utils"
 	"os"
 	"path/filepath"
@@ -22,6 +23,31 @@ type StoragePath struct {
 
 type Storage struct {
 	paths []*StoragePath
+}
+
+// Cache implements Interface.
+func (*Storage) Cache(file fs.File, rangeStart uint64, rangeEnd uint64) (err error) {
+	panic("unimplemented")
+}
+
+// Checksum implements Interface.
+func (*Storage) Checksum(filename string, checksum string, isCache bool) (ok bool) {
+	panic("unimplemented")
+}
+
+// ClearCache implements Interface.
+func (*Storage) ClearCache(filename string) (err error) {
+	panic("unimplemented")
+}
+
+// Load implements Interface.
+func (*Storage) Load(filename string, rangeStart uint64, rangeEnd uint64) (file fs.File, err error) {
+	panic("unimplemented")
+}
+
+// Persist implements Interface.
+func (*Storage) Persist(filename string) (err error) {
+	panic("unimplemented")
 }
 
 // GetMountpointUsage implements Interface.
