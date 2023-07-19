@@ -1,12 +1,15 @@
 package storage
 
 import (
+	"crypto/md5"
+	"crypto/sha512"
 	"errors"
 	"fmt"
 	"io/fs"
 	"my-app/backend/pkg/utils"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -46,9 +49,16 @@ func (s *Storage) GetCacheFiles(filename string) (files []*os.File, err error) {
 			return nil
 		})
 		if err != nil {
+			for _, file := range files {
+				defer file.Close()
+			}
 			return nil, err
 		}
 	}
+
+	sort.Slice(files, func(i, j int) bool {
+		return files[i].Name() < files[j].Name()
+	})
 	return
 }
 
@@ -118,11 +128,64 @@ func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEn
 }
 
 // Checksum implements Interface.
-func (s *Storage) Checksum(filename string, checksum string, isCache bool) (ok bool) {
-	if isCache {
+func (s *Storage) Checksum(filename string, isCache bool) (checksum string, err error) {
+	var data []byte
+	buffer := make([]byte, 4096)
+	size := 0
 
+	if isCache {
+		var cacheFiles []*os.File
+		cacheFiles, err = s.GetCacheFiles(filename)
+		if err != nil {
+			return
+		}
+		for _, cacheFile := range cacheFiles {
+			defer cacheFile.Close()
+		}
+
+		for _, cacheFile := range cacheFiles {
+			for {
+				n, err := cacheFile.Read(buffer)
+				if err != nil {
+					break
+				}
+				data = append(data, buffer[0:n]...)
+				size += n
+			}
+		}
+	} else {
+		var file *os.File
+		file, err = s.SearchFile(filename, false)
+		if err != nil {
+			return
+		}
+		if file == nil {
+			return "", nil
+		}
+
+		for {
+			n, err := file.Read(buffer)
+			if err != nil {
+				break
+			}
+			data = append(data, buffer[0:n]...)
+			size += n
+		}
 	}
-	panic("unimplemented")
+
+	md5Sum := md5.Sum(data)
+	sha512Sum := sha512.Sum512(data)
+	return fmt.Sprintf("%x:%x:%d", md5Sum, sha512Sum, size), nil
+}
+
+// VerifyChecksum implements Interface.
+func (s *Storage) VerifyChecksum(filename string, isCache bool, checksum string) (ok bool, err error) {
+	var sum string
+	sum, err = s.Checksum(filename, isCache)
+	if err != nil {
+		return
+	}
+	return sum == checksum, nil
 }
 
 // ClearCache implements Interface.

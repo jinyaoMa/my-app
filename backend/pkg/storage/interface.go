@@ -28,5 +28,8 @@ type Interface interface {
 	Load(filename string, rangeStart uint64, rangeEnd uint64) (file fs.File, err error)
 
 	// Upload+Download:Checksum
-	Checksum(filename string, checksum string, isCache bool) (ok bool)
+	// md5:sha512:File.Size => 32 + 128 = 160 hex digits + 2[:] + 20[int64] = 182 (size)
+	Checksum(filename string, isCache bool) (checksum string, err error)
+
+	VerifyChecksum(filename string, isCache bool, checksum string) (ok bool, err error)
 }
