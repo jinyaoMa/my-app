@@ -14,7 +14,7 @@ type Interface interface {
 	SearchFile(filename string, isCache bool) (file *os.File, err error)
 
 	// Upload:Cache
-	Cache(filename string, data []byte, rangeStart uint64, rangeEnd uint64, totalSize uint64) (err error)
+	Cache(filename string, data []byte, rangeStart uint64, rangeEnd uint64, size uint64, forceCache bool) (ok bool, err error)
 
 	// Upload:Cache:Clear
 	ClearCache(filename string) (err error)

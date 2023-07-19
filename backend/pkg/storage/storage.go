@@ -2,6 +2,7 @@ package storage
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"my-app/backend/pkg/utils"
 	"os"
@@ -23,7 +24,8 @@ type StoragePath struct {
 }
 
 type Storage struct {
-	paths []*StoragePath
+	cacheBlockSize uint64
+	paths          []*StoragePath
 }
 
 // SearchFile implements Interface.
@@ -32,33 +34,70 @@ func (s *Storage) SearchFile(filename string, isCache bool) (file *os.File, err 
 		if isCache {
 			cacheFilePath := filepath.Join(sPath.Cache, filename)
 			if utils.CheckIfFileExists(cacheFilePath) {
-				return os.OpenFile(cacheFilePath, os.O_RDWR, 0666)
+				return os.OpenFile(cacheFilePath, os.O_RDWR|os.O_TRUNC, 0666)
 			}
 		} else {
 			filePath := filepath.Join(sPath.Dir, filename)
 			if utils.CheckIfFileExists(filePath) {
-				return os.OpenFile(filePath, os.O_RDWR, 0666)
+				return os.OpenFile(filePath, os.O_RDWR|os.O_TRUNC, 0666)
 			}
 		}
 	}
-	return nil, errors.New(filename + " not found")
+	return nil, nil
 }
 
 // Cache implements Interface.
-func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEnd uint64, totalSize uint64) (err error) {
-	// var u MountpointUsage
-	// u, err = s.GetMountpointUsage()
-	// if err != nil {
-	// 	return
-	// }
+func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEnd uint64, size uint64, forceCache bool) (ok bool, err error) {
+	cacheFilename := fmt.Sprintf("%s.%d.%d", filename, rangeStart, rangeEnd)
 
-	// targetPath := u.PickAPath(totalSize)
-	// return
-	panic("unimplemented")
+	var file *os.File
+	file, err = s.SearchFile(cacheFilename, true)
+	if err != nil {
+		return
+	}
+
+	if file != nil {
+		defer file.Close()
+
+		if forceCache {
+			var wSize int
+			wSize, err = file.Write(data)
+			if err != nil {
+				return
+			}
+			return uint64(wSize) == size, nil
+		}
+
+		return false, errors.New(cacheFilename + "had already existed")
+	}
+
+	var u MountpointUsage
+	u, err = s.GetMountpointUsage()
+	if err != nil {
+		return
+	}
+
+	sPath := u.PickAPath(size)
+	cacheFilePath := filepath.Join(sPath.Cache, cacheFilename)
+	file, err = os.Create(cacheFilePath)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+
+	var wSize int
+	wSize, err = file.Write(data)
+	if err != nil {
+		return
+	}
+	return uint64(wSize) == size, nil
 }
 
 // Checksum implements Interface.
 func (*Storage) Checksum(filename string, checksum string, isCache bool) (ok bool) {
+	if isCache {
+
+	}
 	panic("unimplemented")
 }
 
