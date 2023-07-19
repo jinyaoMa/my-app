@@ -21,6 +21,11 @@ const (
 	TB        = 1024 * GB
 )
 
+type StorageCacheFile struct {
+	File *os.File
+	Path string
+}
+
 type StoragePath struct {
 	Dir   string
 	Cache string
@@ -31,7 +36,7 @@ type Storage struct {
 }
 
 // GetCacheFiles implements Interface.
-func (s *Storage) GetCacheFiles(filename string) (files []*os.File, err error) {
+func (s *Storage) GetCacheFiles(filename string) (files []*StorageCacheFile, err error) {
 	for _, sPath := range s.paths {
 		err = filepath.WalkDir(sPath.Cache, func(path string, d fs.DirEntry, err error) error {
 			if err != nil {
@@ -44,48 +49,49 @@ func (s *Storage) GetCacheFiles(filename string) (files []*os.File, err error) {
 				if err != nil {
 					return err
 				}
-				files = append(files, file)
+				files = append(files, &StorageCacheFile{
+					File: file,
+					Path: path,
+				})
 			}
 			return nil
 		})
 		if err != nil {
 			for _, file := range files {
-				defer file.Close()
+				defer file.File.Close()
 			}
 			return nil, err
 		}
 	}
 
 	sort.Slice(files, func(i, j int) bool {
-		return files[i].Name() < files[j].Name()
+		return files[i].Path < files[j].Path
 	})
 	return
 }
 
 // SearchFile implements Interface.
-func (s *Storage) SearchFile(filename string, isCache bool) (file *os.File, err error) {
+func (s *Storage) SearchFile(filename string, isCache bool) (file *os.File, path string, err error) {
 	for _, sPath := range s.paths {
 		if isCache {
-			cacheFilePath := filepath.Join(sPath.Cache, filename)
-			if utils.CheckIfFileExists(cacheFilePath) {
-				return os.OpenFile(cacheFilePath, os.O_RDWR|os.O_TRUNC, 0666)
-			}
+			path = filepath.Join(sPath.Cache, filename)
 		} else {
-			filePath := filepath.Join(sPath.Dir, filename)
-			if utils.CheckIfFileExists(filePath) {
-				return os.OpenFile(filePath, os.O_RDWR|os.O_TRUNC, 0666)
-			}
+			path = filepath.Join(sPath.Dir, filename)
+		}
+		if utils.CheckIfFileExists(path) {
+			file, err = os.OpenFile(path, os.O_RDWR|os.O_TRUNC, 0666)
+			return
 		}
 	}
-	return nil, nil
+	return nil, "", nil
 }
 
 // Cache implements Interface.
-func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEnd uint64, size uint64, forceCache bool) (ok bool, err error) {
+func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEnd uint64, size uint64, forceCache bool) (ok bool, path string, err error) {
 	cacheFilename := fmt.Sprintf("%s.%d.%d", filename, rangeStart, rangeEnd)
 
 	var file *os.File
-	file, err = s.SearchFile(cacheFilename, true)
+	file, path, err = s.SearchFile(cacheFilename, true)
 	if err != nil {
 		return
 	}
@@ -99,10 +105,10 @@ func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEn
 			if err != nil {
 				return
 			}
-			return uint64(wSize) == size, nil
+			return uint64(wSize) == size, path, nil
 		}
 
-		return false, errors.New(cacheFilename + "had already existed")
+		return false, "", errors.New(cacheFilename + "had already existed")
 	}
 
 	var u MountpointUsage
@@ -124,28 +130,29 @@ func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEn
 	if err != nil {
 		return
 	}
-	return uint64(wSize) == size, nil
+	return uint64(wSize) == size, path, nil
 }
 
 // Checksum implements Interface.
-func (s *Storage) Checksum(filename string, isCache bool) (checksum string, err error) {
+func (s *Storage) Checksum(filename string, isCache bool) (checksum string, paths []string, err error) {
 	var data []byte
 	buffer := make([]byte, 4096)
 	size := 0
 
 	if isCache {
-		var cacheFiles []*os.File
+		var cacheFiles []*StorageCacheFile
 		cacheFiles, err = s.GetCacheFiles(filename)
 		if err != nil {
 			return
 		}
 		for _, cacheFile := range cacheFiles {
-			defer cacheFile.Close()
+			defer cacheFile.File.Close()
 		}
 
 		for _, cacheFile := range cacheFiles {
+			paths = append(paths, cacheFile.Path)
 			for {
-				n, err := cacheFile.Read(buffer)
+				n, err := cacheFile.File.Read(buffer)
 				if err != nil {
 					break
 				}
@@ -155,13 +162,17 @@ func (s *Storage) Checksum(filename string, isCache bool) (checksum string, err 
 		}
 	} else {
 		var file *os.File
-		file, err = s.SearchFile(filename, false)
+		var path string
+		file, path, err = s.SearchFile(filename, false)
 		if err != nil {
 			return
 		}
 		if file == nil {
-			return "", nil
+			checksum = ""
+			return
 		}
+		defer file.Close()
+		paths = append(paths, path)
 
 		for {
 			n, err := file.Read(buffer)
@@ -175,17 +186,19 @@ func (s *Storage) Checksum(filename string, isCache bool) (checksum string, err 
 
 	md5Sum := md5.Sum(data)
 	sha512Sum := sha512.Sum512(data)
-	return fmt.Sprintf("%x:%x:%d", md5Sum, sha512Sum, size), nil
+	checksum = fmt.Sprintf("%x:%x:%d", md5Sum, sha512Sum, size)
+	return
 }
 
 // VerifyChecksum implements Interface.
-func (s *Storage) VerifyChecksum(filename string, isCache bool, checksum string) (ok bool, err error) {
+func (s *Storage) VerifyChecksum(filename string, isCache bool, checksum string) (ok bool, paths []string, err error) {
 	var sum string
-	sum, err = s.Checksum(filename, isCache)
+	sum, paths, err = s.Checksum(filename, isCache)
 	if err != nil {
 		return
 	}
-	return sum == checksum, nil
+	ok = sum == checksum
+	return
 }
 
 // ClearCache implements Interface.
@@ -199,7 +212,7 @@ func (*Storage) Load(filename string, rangeStart uint64, rangeEnd uint64) (file 
 }
 
 // Persist implements Interface.
-func (*Storage) Persist(filename string) (err error) {
+func (*Storage) Persist(filepaths []string) (err error) {
 	panic("unimplemented")
 }
 
