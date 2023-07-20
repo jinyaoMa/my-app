@@ -138,6 +138,8 @@ func (s *Storage) Checksum(filename string, isCache bool) (checksum string, path
 	var data []byte
 	buffer := make([]byte, 4096)
 	size := 0
+	md5New := md5.New()
+	sha512New := sha512.New()
 
 	if isCache {
 		var cacheFiles []*StorageCacheFile
@@ -156,7 +158,17 @@ func (s *Storage) Checksum(filename string, isCache bool) (checksum string, path
 				if err != nil {
 					break
 				}
-				data = append(data, buffer[0:n]...)
+
+				temp := buffer[0:n]
+				_, err = md5New.Write(temp)
+				if err != nil {
+					break
+				}
+				_, err = sha512New.Write(temp)
+				if err != nil {
+					break
+				}
+				data = append(data, temp...)
 				size += n
 			}
 		}
@@ -179,14 +191,22 @@ func (s *Storage) Checksum(filename string, isCache bool) (checksum string, path
 			if err != nil {
 				break
 			}
-			data = append(data, buffer[0:n]...)
+
+			temp := buffer[0:n]
+			_, err = md5New.Write(temp)
+			if err != nil {
+				break
+			}
+			_, err = sha512New.Write(temp)
+			if err != nil {
+				break
+			}
+			data = append(data, temp...)
 			size += n
 		}
 	}
 
-	md5Sum := md5.Sum(data)
-	sha512Sum := sha512.Sum512(data)
-	checksum = fmt.Sprintf("%x:%x:%d", md5Sum, sha512Sum, size)
+	checksum = fmt.Sprintf("%x:%x:%d", md5New.Sum(nil), sha512New.Sum(nil), size)
 	return
 }
 
