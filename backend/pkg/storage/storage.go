@@ -5,6 +5,7 @@ import (
 	"crypto/sha512"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
 	"my-app/backend/pkg/utils"
 	"os"
@@ -222,18 +223,82 @@ func (s *Storage) VerifyChecksum(filename string, isCache bool, checksum string)
 }
 
 // ClearCache implements Interface.
-func (*Storage) ClearCache(filename string) (err error) {
-	panic("unimplemented")
+func (s *Storage) ClearCache(filename string) (err error) {
+	for _, sPath := range s.paths {
+		err = filepath.WalkDir(sPath.Cache, func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+
+			if !d.IsDir() && strings.HasPrefix(filepath.Base(path), filename) {
+				err = os.Remove(path)
+				if err != nil {
+					return err
+				}
+			}
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Load implements Interface.
-func (*Storage) Load(filename string, rangeStart uint64, rangeEnd uint64) (file fs.File, err error) {
-	panic("unimplemented")
+func (s *Storage) Load(filename string, rangeStart uint64, rangeEnd uint64) (data []byte, err error) {
+	var file *os.File
+	file, _, err = s.SearchFile(filename, false)
+	if err != nil {
+		return
+	}
+	if file == nil {
+		return
+	}
+	defer file.Close()
+
+	var n int
+	dataLength := rangeEnd - rangeStart
+	data = make([]byte, dataLength)
+	n, err = file.ReadAt(data, int64(rangeStart))
+	if n == int(dataLength) {
+		return
+	}
+	return nil, err
 }
 
 // Persist implements Interface.
-func (*Storage) Persist(filepaths []string) (err error) {
-	panic("unimplemented")
+func (s *Storage) Persist(filename string, cacheFilepaths []string, totalSize uint64) (err error) {
+	var u MountpointUsage
+	u, err = s.GetMountpointUsage()
+	if err != nil {
+		return
+	}
+
+	var targetFile *os.File
+	sPath := u.PickAPath(totalSize)
+	targetPath := filepath.Join(sPath.Dir, filename)
+	targetFile, err = os.Create(targetPath)
+	if err != nil {
+		return err
+	}
+	defer targetFile.Close()
+
+	var cacheFile *os.File
+	for _, cacheFilepath := range cacheFilepaths {
+		cacheFile, err = os.Open(cacheFilepath)
+		if err != nil {
+			return err
+		}
+
+		_, err = io.Copy(targetFile, cacheFile)
+		if err != nil {
+			cacheFile.Close()
+			return err
+		}
+		cacheFile.Close()
+	}
+	return
 }
 
 // GetMountpointUsage implements Interface.

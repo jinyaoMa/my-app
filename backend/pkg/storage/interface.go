@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"io/fs"
 	"os"
 )
 
@@ -22,10 +21,10 @@ type Interface interface {
 	ClearCache(filename string) (err error)
 
 	// Upload:Persist
-	Persist(filepaths []string) (err error)
+	Persist(filename string, cacheFilepaths []string, totalSize uint64) (err error)
 
 	// Download:Load
-	Load(filename string, rangeStart uint64, rangeEnd uint64) (file fs.File, err error)
+	Load(filename string, rangeStart uint64, rangeEnd uint64) (data []byte, err error)
 
 	// Upload+Download:Checksum
 	// md5:sha512:File.Size => 32 + 128 = 160 hex digits + 2[:] + 20[int64] = 182 (size)
