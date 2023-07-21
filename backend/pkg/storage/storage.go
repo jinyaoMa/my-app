@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -23,8 +24,10 @@ const (
 )
 
 type StorageCacheFile struct {
-	File *os.File
-	Path string
+	File       *os.File
+	Path       string
+	RangeStart uint64
+	RangeEnd   uint64
 }
 
 type StoragePath struct {
@@ -50,9 +53,20 @@ func (s *Storage) GetCacheFiles(filename string) (files []*StorageCacheFile, err
 				if err != nil {
 					return err
 				}
+
+				var rangeStart, rangeEnd uint64
+				pathSplit := strings.Split(path, ".")
+				if rangeStart, err = strconv.ParseUint(pathSplit[len(pathSplit)-2], 10, 64); err != nil {
+					return err
+				}
+				if rangeEnd, err = strconv.ParseUint(pathSplit[len(pathSplit)-1], 10, 64); err != nil {
+					return err
+				}
 				files = append(files, &StorageCacheFile{
-					File: file,
-					Path: path,
+					File:       file,
+					Path:       path,
+					RangeStart: rangeStart,
+					RangeEnd:   rangeEnd,
 				})
 			}
 			return nil
@@ -66,7 +80,7 @@ func (s *Storage) GetCacheFiles(filename string) (files []*StorageCacheFile, err
 	}
 
 	sort.Slice(files, func(i, j int) bool {
-		return files[i].Path < files[j].Path
+		return files[i].RangeStart < files[j].RangeStart
 	})
 	return
 }
@@ -122,6 +136,7 @@ func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEn
 	cacheFilePath := filepath.Join(sPath.Cache, cacheFilename)
 	file, err = os.Create(cacheFilePath)
 	if err != nil {
+		println("err (SearchFile) =", err.Error())
 		return
 	}
 	defer file.Close()
@@ -131,7 +146,7 @@ func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEn
 	if err != nil {
 		return
 	}
-	return uint64(wSize) == size, path, nil
+	return uint64(wSize) == size, cacheFilePath, nil
 }
 
 // Checksum implements Interface.
@@ -207,7 +222,7 @@ func (s *Storage) Checksum(filename string, isCache bool) (checksum string, path
 		}
 	}
 
-	checksum = fmt.Sprintf("%x:%x:%d", md5New.Sum(nil), sha512New.Sum(nil), size)
+	checksum = fmt.Sprintf("%x-%x-%d", md5New.Sum(nil), sha512New.Sum(nil), size)
 	return
 }
 

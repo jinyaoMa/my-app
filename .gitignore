@@ -4,6 +4,8 @@ backend/build/bin
 frontend/desktop/wailsjs
 *.db
 
+tmp/
+test.zip
 
 # Editor directories and files
 .vscode/*
