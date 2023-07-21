@@ -94,7 +94,7 @@ func (s *Storage) SearchFile(filename string, isCache bool) (file *os.File, path
 			path = filepath.Join(sPath.Dir, filename)
 		}
 		if utils.CheckIfFileExists(path) {
-			file, err = os.OpenFile(path, os.O_RDWR|os.O_TRUNC, 0666)
+			file, err = os.OpenFile(path, os.O_RDWR, 0666)
 			return
 		}
 	}
@@ -102,7 +102,7 @@ func (s *Storage) SearchFile(filename string, isCache bool) (file *os.File, path
 }
 
 // Cache implements Interface.
-func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEnd uint64, size uint64, forceCache bool) (ok bool, path string, err error) {
+func (s *Storage) Cache(filename string, data []byte, rangeStart int64, rangeEnd int64, size int64, forceCache bool) (ok bool, path string, err error) {
 	cacheFilename := fmt.Sprintf("%s.%d.%d", filename, rangeStart, rangeEnd)
 
 	var file *os.File
@@ -120,7 +120,7 @@ func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEn
 			if err != nil {
 				return
 			}
-			return uint64(wSize) == size, path, nil
+			return int64(wSize) == size, path, nil
 		}
 
 		return false, "", errors.New(cacheFilename + "had already existed")
@@ -132,7 +132,7 @@ func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEn
 		return
 	}
 
-	sPath := u.PickAPath(size)
+	sPath := u.PickAPath(uint64(size))
 	cacheFilePath := filepath.Join(sPath.Cache, cacheFilename)
 	file, err = os.Create(cacheFilePath)
 	if err != nil {
@@ -146,7 +146,7 @@ func (s *Storage) Cache(filename string, data []byte, rangeStart uint64, rangeEn
 	if err != nil {
 		return
 	}
-	return uint64(wSize) == size, cacheFilePath, nil
+	return int64(wSize) == size, cacheFilePath, nil
 }
 
 // Checksum implements Interface.
@@ -261,7 +261,11 @@ func (s *Storage) ClearCache(filename string) (err error) {
 }
 
 // Load implements Interface.
-func (s *Storage) Load(filename string, rangeStart uint64, rangeEnd uint64) (data []byte, err error) {
+func (s *Storage) Load(filename string, rangeStart int64, rangeEnd int64) (data []byte, err error) {
+	if rangeStart < 0 || rangeStart > rangeEnd {
+		return nil, errors.New("rangeStart should be greater than zero or less/equal to rangeEnd")
+	}
+
 	var file *os.File
 	file, _, err = s.SearchFile(filename, false)
 	if err != nil {
@@ -275,15 +279,15 @@ func (s *Storage) Load(filename string, rangeStart uint64, rangeEnd uint64) (dat
 	var n int
 	dataLength := rangeEnd - rangeStart
 	data = make([]byte, dataLength)
-	n, err = file.ReadAt(data, int64(rangeStart))
-	if n == int(dataLength) {
-		return
+	n, err = file.ReadAt(data, rangeStart)
+	if err != nil && err != io.EOF {
+		return nil, err
 	}
-	return nil, err
+	return data[0:n], nil
 }
 
 // Persist implements Interface.
-func (s *Storage) Persist(filename string, cacheFilepaths []string, totalSize uint64) (err error) {
+func (s *Storage) Persist(filename string, cacheFilepaths []string, totalSize int64) (err error) {
 	var u MountpointUsage
 	u, err = s.GetMountpointUsage()
 	if err != nil {
@@ -291,7 +295,7 @@ func (s *Storage) Persist(filename string, cacheFilepaths []string, totalSize ui
 	}
 
 	var targetFile *os.File
-	sPath := u.PickAPath(totalSize)
+	sPath := u.PickAPath(uint64(totalSize))
 	targetPath := filepath.Join(sPath.Dir, filename)
 	targetFile, err = os.Create(targetPath)
 	if err != nil {

@@ -34,7 +34,7 @@ func main() {
 
 	verifyMap := make(map[string]bool)
 
-	size := -1
+	size := 0
 	buffer = make([]byte, 4096)
 	for {
 		n, err := file.Read(buffer)
@@ -44,7 +44,7 @@ func main() {
 
 		temp := buffer[0:n]
 
-		_, path, _ := s.Cache(checksum+".zip", temp, uint64(size+1), uint64(size+n), uint64(fileInfo.Size()), true)
+		_, path, _ := s.Cache(checksum+".zip", temp, int64(size), int64(size+n), fileInfo.Size(), true)
 		verifyMap[path] = false
 
 		size += n
@@ -52,6 +52,7 @@ func main() {
 
 	ok, paths, _ := s.VerifyChecksum(checksum+".zip", true, checksum)
 	for _, p := range paths {
+		println(p)
 		verifyMap[p] = true
 	}
 	for k, v := range verifyMap {
@@ -61,10 +62,24 @@ func main() {
 	}
 
 	if ok {
-		s.Persist(checksum+".zip", paths, uint64(fileInfo.Size()))
+		s.Persist(checksum+".zip", paths, fileInfo.Size())
 		s.ClearCache(checksum + ".zip")
 
 		_, path, _ := s.SearchFile(checksum+".zip", false)
 		println(path)
+
+		size = 0
+		var persistData []byte
+		for int64(size) <= fileInfo.Size() {
+			temp, _ := s.Load(checksum+".zip", int64(size), int64(size+4096))
+			persistData = append(persistData, temp...)
+
+			size += 4096
+		}
+		persistChecksum := fmt.Sprintf("%x-%x-%d", md5.Sum(persistData), sha512.Sum512(persistData), len(persistData))
+		println("Persist Checksum =", persistChecksum)
+		if persistChecksum == checksum {
+			println("Persist file loaded successfully")
+		}
 	}
 }
