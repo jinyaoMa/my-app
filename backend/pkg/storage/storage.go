@@ -295,6 +295,15 @@ func (s *Storage) Persist(filename string, cacheFilepaths []string, totalSize in
 	}
 
 	var targetFile *os.File
+	targetFile, _, err = s.SearchFile(filename, false)
+	if err != nil {
+		return
+	}
+	if targetFile != nil {
+		defer targetFile.Close()
+		return
+	}
+
 	sPath := u.PickAPath(uint64(totalSize))
 	targetPath := filepath.Join(sPath.Dir, filename)
 	targetFile, err = os.Create(targetPath)

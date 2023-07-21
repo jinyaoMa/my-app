@@ -68,6 +68,11 @@ func main() {
 		_, path, _ := s.SearchFile(checksum+".zip", false)
 		println(path)
 
+		ok, _, _ = s.VerifyChecksum(checksum+".zip", false, checksum)
+		if ok {
+			println("Persist file checksum ok")
+		}
+
 		size = 0
 		var persistData []byte
 		for int64(size) <= fileInfo.Size() {
