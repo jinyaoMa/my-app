@@ -72,9 +72,9 @@ func (c *Crud[TEntity]) Query(criteria *options.OCriteria, condition iCrud.Query
 	for _, sort := range criteria.Sorts {
 		switch sort.Order {
 		case options.OrdAscending:
-			tx = tx.Order(sort.Column + " asc")
+			tx = tx.Order(sort.Column + " ASC")
 		case options.OrdDescending:
-			tx = tx.Order(sort.Column + " desc")
+			tx = tx.Order(sort.Column + " DESC")
 		}
 	}
 
