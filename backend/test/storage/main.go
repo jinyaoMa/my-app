@@ -44,7 +44,7 @@ func main() {
 
 		temp := buffer[0:n]
 
-		_, path, _ := s.Cache(checksum+".zip", temp, uint64(size+1), uint64(size+n), uint64(fileInfo.Size()), false)
+		_, path, _ := s.Cache(checksum+".zip", temp, uint64(size+1), uint64(size+n), uint64(fileInfo.Size()), true)
 		verifyMap[path] = false
 
 		size += n
