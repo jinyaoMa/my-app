@@ -61,8 +61,10 @@ func main() {
 	}
 
 	if ok {
-		if err := s.Persist(checksum+".zip", paths, uint64(fileInfo.Size())); err == nil {
-			println("Persisted")
-		}
+		s.Persist(checksum+".zip", paths, uint64(fileInfo.Size()))
+		s.ClearCache(checksum + ".zip")
+
+		_, path, _ := s.SearchFile(checksum+".zip", false)
+		println(path)
 	}
 }
