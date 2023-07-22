@@ -12,6 +12,8 @@ import (
 	"my-app/backend/pkg/utils"
 
 	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/plugin/dbresolver"
 )
 
 func main() {
@@ -31,6 +33,9 @@ func main() {
 
 	db, err := database.New(&options.ODatabase{
 		Dialector: sqlite.Open("test.db?_pragma=foreign_keys(1)"),
+		DBResolver: dbresolver.Register(dbresolver.Config{
+			Sources: []gorm.Dialector{sqlite.Open("test.log.db?_pragma=foreign_keys(1)")},
+		}, &entity.Log{}),
 		Logger: options.ODatabaseLogger{
 			Option: logger.Option{
 				Tag: "DBS",
