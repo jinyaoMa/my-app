@@ -33,6 +33,10 @@ func New(opts *options.ODatabase) (*Database, error) {
 		return nil, err
 	}
 
+	if opts.DBResolver != nil {
+		db.Use(opts.DBResolver)
+	}
+
 	return &Database{
 		DB:      *db,
 		options: opts,
