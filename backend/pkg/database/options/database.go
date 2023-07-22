@@ -10,14 +10,16 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	gormLogger "gorm.io/gorm/logger"
+	"gorm.io/plugin/dbresolver"
 )
 
 type ODatabase struct {
-	Dialector gorm.Dialector
-	Options   []gorm.Option
-	Migrate   []any
-	Join      []ODatabaseJoin
-	Logger    ODatabaseLogger
+	Dialector  gorm.Dialector
+	DBResolver *dbresolver.DBResolver
+	Options    []gorm.Option
+	Migrate    []any
+	Join       []ODatabaseJoin
+	Logger     ODatabaseLogger
 }
 
 type ODatabaseJoin struct {
