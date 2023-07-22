@@ -4,6 +4,7 @@ import (
 	"my-app/backend/pkg/database/entity"
 
 	"gorm.io/gorm"
+	"gorm.io/plugin/dbresolver"
 )
 
 func migrate(db *gorm.DB, dst ...any) error {
@@ -18,5 +19,6 @@ func migrate(db *gorm.DB, dst ...any) error {
 		new(entity.UserFile),
 		new(entity.UserPassword),
 	}...)
+	db.Clauses(dbresolver.Use("logs")).AutoMigrate(new(entity.Log))
 	return db.AutoMigrate(dst...)
 }

@@ -21,6 +21,10 @@ func New(opts *options.ODatabase) (*Database, error) {
 		return nil, err
 	}
 
+	if opts.DBResolver != nil {
+		db.Use(opts.DBResolver)
+	}
+
 	db.Logger = gormLogger.New(logger.New(&opts.Logger.Option), opts.Logger.Config)
 
 	err = migrate(db, opts.Migrate...)
@@ -31,10 +35,6 @@ func New(opts *options.ODatabase) (*Database, error) {
 	err = join(db, opts.Join...)
 	if err != nil {
 		return nil, err
-	}
-
-	if opts.DBResolver != nil {
-		db.Use(opts.DBResolver)
 	}
 
 	return &Database{
