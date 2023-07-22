@@ -21,11 +21,9 @@ func New(opts *options.ODatabase) (*Database, error) {
 		return nil, err
 	}
 
-	if opts.DBResolver != nil {
-		db.Use(opts.DBResolver)
-	}
-
 	db.Logger = gormLogger.New(logger.New(&opts.Logger.Option), opts.Logger.Config)
+
+	opts.OnInitialized(db)
 
 	err = migrate(db, opts.Migrate...)
 	if err != nil {

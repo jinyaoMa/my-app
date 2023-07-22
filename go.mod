@@ -5,12 +5,15 @@ go 1.20
 require (
 	github.com/gofiber/fiber/v2 v2.47.0
 	github.com/golang-jwt/jwt/v5 v5.0.0
-	github.com/mattn/go-sqlite3 v1.14.16 // indirect
-	gorm.io/driver/sqlite v1.5.0
+	github.com/mattn/go-sqlite3 v1.14.17 // indirect
+	gorm.io/driver/sqlite v1.5.2
 	gorm.io/gorm v1.25.2
 )
 
-require github.com/shirou/gopsutil/v3 v3.23.6
+require (
+	github.com/shirou/gopsutil/v3 v3.23.6
+	gorm.io/plugin/dbresolver v1.4.1
+)
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
@@ -31,7 +34,6 @@ require (
 	github.com/valyala/fasthttp v1.48.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
-	gorm.io/plugin/dbresolver v1.4.1 // indirect
 )
 
 require (
