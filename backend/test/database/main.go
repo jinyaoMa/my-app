@@ -35,10 +35,14 @@ func main() {
 		Dialector: sqlite.Open("test.db?_pragma=foreign_keys(1)"),
 		OnInitialized: func(db *gorm.DB) {
 			logs := new(entity.Log)
+			options := new(entity.Option)
 			db.Use(dbresolver.Register(dbresolver.Config{
-				Sources: []gorm.Dialector{sqlite.Open("test.log.db?_pragma=foreign_keys(1)")},
-			}, logs))
+				Sources: []gorm.Dialector{sqlite.Open("test.logs.db")},
+			}, logs).Register(dbresolver.Config{
+				Sources: []gorm.Dialector{sqlite.Open("test.options.db")},
+			}, options))
 			db.Clauses(dbresolver.Use("logs")).AutoMigrate(logs)
+			db.Clauses(dbresolver.Use("options")).AutoMigrate(options)
 		},
 		Logger: options.ODatabaseLogger{
 			Option: logger.Option{
