@@ -25,7 +25,7 @@ type File struct {
 	Hidden      bool      `gorm:"default:false"`
 	VisitedAt   time.Time `gorm:""`
 
-	// md5-sha512-File.Size => 32 + 128 = 160 hex digits + 2[:] + 20[int64] = 182 (size)
+	// md5-sha512-File.Size => 32 + 128 = 160 hex digits + 2[-] + 20[int64] = 182 (size)
 	// for file, md5 and sha512 are hashed using file's data
 	// for directory, md5 and sha512 are hashed using File.Path+File.Name
 	Checksum string `gorm:"size:182; unique; index"`
