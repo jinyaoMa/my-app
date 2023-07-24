@@ -21,7 +21,7 @@ type Interface interface {
 	ClearCache(filename string) (err error)
 
 	// Upload:Persist
-	Persist(filename string, cacheFilepaths []string, totalSize int64) (err error)
+	Persist(filename string, cacheFilepaths []string, totalSize int64) (ok bool, path string, err error)
 
 	// Download:Load
 	Load(filename string, rangeStart int64, rangeEnd int64) (data []byte, err error)

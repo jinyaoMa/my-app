@@ -287,7 +287,7 @@ func (s *Storage) Load(filename string, rangeStart int64, rangeEnd int64) (data 
 }
 
 // Persist implements Interface.
-func (s *Storage) Persist(filename string, cacheFilepaths []string, totalSize int64) (err error) {
+func (s *Storage) Persist(filename string, cacheFilepaths []string, totalSize int64) (ok bool, path string, err error) {
 	var u MountpointUsage
 	u, err = s.GetMountpointUsage()
 	if err != nil {
@@ -295,20 +295,21 @@ func (s *Storage) Persist(filename string, cacheFilepaths []string, totalSize in
 	}
 
 	var targetFile *os.File
-	targetFile, _, err = s.SearchFile(filename, false)
+	targetFile, path, err = s.SearchFile(filename, false)
 	if err != nil {
 		return
 	}
 	if targetFile != nil {
 		defer targetFile.Close()
+		ok = true
 		return
 	}
 
 	sPath := u.PickAPath(uint64(totalSize))
-	targetPath := filepath.Join(sPath.Dir, filename)
-	targetFile, err = os.Create(targetPath)
+	path = filepath.Join(sPath.Dir, filename)
+	targetFile, err = os.Create(path)
 	if err != nil {
-		return err
+		return
 	}
 	defer targetFile.Close()
 
@@ -316,16 +317,18 @@ func (s *Storage) Persist(filename string, cacheFilepaths []string, totalSize in
 	for _, cacheFilepath := range cacheFilepaths {
 		cacheFile, err = os.Open(cacheFilepath)
 		if err != nil {
-			return err
+			return
 		}
 
 		_, err = io.Copy(targetFile, cacheFile)
 		if err != nil {
 			cacheFile.Close()
-			return err
+			return
 		}
 		cacheFile.Close()
 	}
+
+	ok = true
 	return
 }
 

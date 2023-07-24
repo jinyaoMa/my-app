@@ -62,11 +62,10 @@ func main() {
 	}
 
 	if ok {
-		s.Persist(checksum+".zip", paths, fileInfo.Size())
-		s.ClearCache(checksum + ".zip")
+		ok, path, _ := s.Persist(checksum+".zip", paths, fileInfo.Size())
+		println(ok, path)
 
-		_, path, _ := s.SearchFile(checksum+".zip", false)
-		println(path)
+		s.ClearCache(checksum + ".zip")
 
 		ok, _, _ = s.VerifyChecksum(checksum+".zip", false, checksum)
 		if ok {
