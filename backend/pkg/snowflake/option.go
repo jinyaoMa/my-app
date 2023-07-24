@@ -3,7 +3,7 @@ package snowflake
 import (
 	"time"
 
-	"github.com/imdario/mergo"
+	"dario.cat/mergo"
 )
 
 const (

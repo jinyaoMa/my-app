@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/imdario/mergo"
+	"dario.cat/mergo"
 )
 
 type Option struct {

@@ -3,8 +3,8 @@ package server
 import (
 	"my-app/backend/pkg/logger"
 
+	"dario.cat/mergo"
 	"github.com/gofiber/fiber/v2"
-	"github.com/imdario/mergo"
 )
 
 type Option struct {

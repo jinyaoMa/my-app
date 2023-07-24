@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/imdario/mergo"
+	"dario.cat/mergo"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	gormLogger "gorm.io/gorm/logger"
