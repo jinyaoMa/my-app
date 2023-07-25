@@ -30,6 +30,7 @@ require (
 	github.com/valyala/fasthttp v1.48.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
+	gopkg.in/ini.v1 v1.67.0 // indirect
 )
 
 require (
