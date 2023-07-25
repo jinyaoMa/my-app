@@ -8,5 +8,4 @@ type Node struct {
 	UUID string `gorm:""`
 
 	/* relational fields */
-	UserID int64 `gorm:""`
 }
