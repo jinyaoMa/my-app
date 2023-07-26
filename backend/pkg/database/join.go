@@ -2,13 +2,12 @@ package database
 
 import (
 	"my-app/backend/pkg/database/entity"
-	"my-app/backend/pkg/database/options"
 
 	"gorm.io/gorm"
 )
 
-func join(db *gorm.DB, joins ...options.ODatabaseJoin) error {
-	joins = append(joins, []options.ODatabaseJoin{
+func join(db *gorm.DB, joins ...OptionJoin) error {
+	joins = append(joins, []OptionJoin{
 		{
 			Model:     new(entity.User),
 			Field:     "AccessableFiles",

@@ -1,7 +1,6 @@
 package database
 
 import (
-	"my-app/backend/pkg/database/options"
 	"my-app/backend/pkg/logger"
 
 	"gorm.io/gorm"
@@ -10,11 +9,11 @@ import (
 
 type Database struct {
 	gorm.DB
-	options *options.ODatabase
+	options *Option
 }
 
-func New(opts *options.ODatabase) (*Database, error) {
-	opts = options.NewODatabase(opts)
+func New(opts *Option) (*Database, error) {
+	opts = NewOption(opts)
 
 	db, err := gorm.Open(opts.Dialector, opts.Options...)
 	if err != nil {

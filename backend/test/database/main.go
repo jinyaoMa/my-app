@@ -6,7 +6,7 @@ import (
 	"my-app/backend/pkg/database"
 	"my-app/backend/pkg/database/crud"
 	"my-app/backend/pkg/database/entity"
-	"my-app/backend/pkg/database/options"
+	"my-app/backend/pkg/database/vmodel"
 	"my-app/backend/pkg/logger"
 	"my-app/backend/pkg/snowflake"
 	"my-app/backend/pkg/utils"
@@ -31,7 +31,7 @@ func main() {
 
 	entity.IdGenerator(idGen)
 
-	db, err := database.New(&options.ODatabase{
+	db, err := database.New(&database.Option{
 		Dialector: sqlite.Open("test.db?_pragma=foreign_keys(1)"),
 		OnInitialized: func(db *gorm.DB) {
 			logs := new(entity.Log)
@@ -44,7 +44,7 @@ func main() {
 			db.Clauses(dbresolver.Use("logs")).AutoMigrate(logs)
 			db.Clauses(dbresolver.Use("options")).AutoMigrate(options)
 		},
-		Logger: options.ODatabaseLogger{
+		Logger: database.OptionLogger{
 			Option: logger.Option{
 				Tag: "DBS",
 			},
@@ -93,17 +93,17 @@ func main() {
 	println("Inserted", tx.RowsAffected, "users")
 
 	crudUser := crud.NewCrud[*entity.User](db)
-	queryUsers, err := crudUser.Query(options.NewOCriteria(&options.OCriteria{
+	queryUsers, err := crudUser.Query(vmodel.NewCriteria(&vmodel.Criteria{
 		Page: 1,
 		Size: 3,
-		Sorts: []options.OCriteriaSort{
+		Sorts: []vmodel.CriteriaSort{
 			{
 				Column: "updated_at",
-				Order:  options.OrdDescending,
+				Order:  vmodel.OrdDescending,
 			},
 			{
 				Column: "account",
-				Order:  options.OrdDescending,
+				Order:  vmodel.OrdDescending,
 			},
 		},
 	}), func(where func(query any, args ...any)) {

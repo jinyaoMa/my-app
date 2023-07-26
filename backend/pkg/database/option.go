@@ -1,4 +1,4 @@
-package options
+package database
 
 import (
 	"log"
@@ -12,33 +12,33 @@ import (
 	gormLogger "gorm.io/gorm/logger"
 )
 
-type ODatabase struct {
+type Option struct {
 	Dialector     gorm.Dialector
 	OnInitialized func(db *gorm.DB)
 	Options       []gorm.Option
 	Migrate       []any
-	Join          []ODatabaseJoin
-	Logger        ODatabaseLogger
+	Join          []OptionJoin
+	Logger        OptionLogger
 }
 
-type ODatabaseJoin struct {
+type OptionJoin struct {
 	Model     any
 	Field     string
 	JoinTable any
 }
 
-type ODatabaseLogger struct {
+type OptionLogger struct {
 	logger.Option
 	Config gormLogger.Config
 }
 
-func DefaultODatabase() *ODatabase {
-	return &ODatabase{
+func DefaultOption() *Option {
+	return &Option{
 		Dialector: sqlite.Open("./sqlite.db"),
 		Options: []gorm.Option{
 			&gorm.Config{},
 		},
-		Logger: ODatabaseLogger{
+		Logger: OptionLogger{
 			Option: logger.Option{
 				Writer: os.Stderr,
 				Tag:    "DBS",
@@ -58,8 +58,8 @@ func DefaultODatabase() *ODatabase {
 	}
 }
 
-func NewODatabase(dst *ODatabase) *ODatabase {
-	src := DefaultODatabase()
+func NewOption(dst *Option) *Option {
+	src := DefaultOption()
 
 	err := mergo.Merge(dst, *src)
 	if err != nil {
