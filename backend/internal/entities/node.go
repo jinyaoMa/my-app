@@ -1,7 +1,9 @@
 package entity
 
+import "my-app/backend/pkg/database/entity"
+
 type Node struct {
-	Entity
+	entity.Entity
 
 	/* internal fields */
 	Name string `gorm:"size:64; default:''"`
