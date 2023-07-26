@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	ientity "my-app/backend/internal/entity"
+	"my-app/backend/internal/service"
 	"my-app/backend/pkg/crypto"
 	"my-app/backend/pkg/database"
-	"my-app/backend/pkg/database/crud"
 	"my-app/backend/pkg/database/entity"
 	"my-app/backend/pkg/database/vmodel"
 	"my-app/backend/pkg/helper"
@@ -43,6 +44,9 @@ func main() {
 			}, options))
 			db.Clauses(dbresolver.Use("logs")).AutoMigrate(logs)
 			db.Clauses(dbresolver.Use("options")).AutoMigrate(options)
+		},
+		Migrate: []interface{}{
+			new(ientity.Node),
 		},
 		Logger: database.OptionLogger{
 			Option: logger.Option{
@@ -92,7 +96,7 @@ func main() {
 
 	println("Inserted", tx.RowsAffected, "users")
 
-	crudUser := crud.NewCrud[*entity.User](db)
+	crudUser := database.NewCrudService[*entity.User](db)
 	queryUsers, err := crudUser.Query(vmodel.NewCriteria(&vmodel.Criteria{
 		Page: 1,
 		Size: 3,
@@ -156,7 +160,7 @@ func main() {
 	}
 	println(affected)
 
-	crudOption := crud.NewCrudOption(db)
+	crudOption := service.NewOptionService(db)
 	option1, err := crudOption.GetById(option.ID)
 	if err != nil {
 		panic(err)

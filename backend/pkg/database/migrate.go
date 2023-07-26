@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func migrate(db *gorm.DB, dst ...any) error {
+func migrate(db *gorm.DB, dst ...interface{}) error {
 	dst = append(dst, []interface{}{
 		new(entity.File),
 		new(entity.FileCategory),

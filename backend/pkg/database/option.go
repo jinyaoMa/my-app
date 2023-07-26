@@ -16,7 +16,7 @@ type Option struct {
 	Dialector     gorm.Dialector
 	OnInitialized func(db *gorm.DB)
 	Options       []gorm.Option
-	Migrate       []any
+	Migrate       []interface{}
 	Join          []OptionJoin
 	Logger        OptionLogger
 }

@@ -5,6 +5,6 @@ import (
 	"my-app/backend/pkg/database/interfaces"
 )
 
-type IUserService interface {
-	interfaces.ICrudService[*entity.User]
+type IUserPasswordService interface {
+	interfaces.ICrudService[*entity.UserPassword]
 }

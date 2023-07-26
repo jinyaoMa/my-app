@@ -5,6 +5,6 @@ import (
 	"my-app/backend/pkg/database/interfaces"
 )
 
-type IUserService interface {
-	interfaces.ICrudService[*entity.User]
+type IFileExtensionService interface {
+	interfaces.ICrudService[*entity.FileExtension]
 }

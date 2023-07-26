@@ -1,11 +1,10 @@
 package interfaces
 
 import (
-	"my-app/backend/pkg/database/entity/interfaces"
 	"my-app/backend/pkg/database/vmodel"
 )
 
-type ICrud[TEntity interfaces.IEntity] interface {
+type ICrudService[TEntity IEntity] interface {
 	Query(criteria *vmodel.Criteria, condition vmodel.QueryCondition, includes ...string) (entities []TEntity, err error)
 	GetById(id int64) (entity TEntity, err error)
 	All() (entities []TEntity, err error)
