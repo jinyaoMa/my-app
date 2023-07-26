@@ -7,9 +7,9 @@ import (
 	"my-app/backend/pkg/database/crud"
 	"my-app/backend/pkg/database/entity"
 	"my-app/backend/pkg/database/vmodel"
+	"my-app/backend/pkg/helper"
 	"my-app/backend/pkg/logger"
 	"my-app/backend/pkg/snowflake"
-	"my-app/backend/pkg/utils"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -17,7 +17,7 @@ import (
 )
 
 func main() {
-	key, err := utils.GetFilenameSameAsExecutable("option.key")
+	key, err := helper.GetFilenameSameAsExecutable("option.key")
 	if err != nil {
 		panic(err)
 	}
