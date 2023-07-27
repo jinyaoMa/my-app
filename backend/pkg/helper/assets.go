@@ -6,16 +6,16 @@ import (
 	"os"
 )
 
+type IAssets interface {
+	fs.FS
+	GetBytes(path string) (data []byte)
+}
+
 type Assets struct {
 	fs.FS
 }
 
-func NewAssets(dir string) *Assets {
-	return &Assets{
-		FS: os.DirFS(dir),
-	}
-}
-
+// GetBytes implements IAssets.
 func (a *Assets) GetBytes(path string) (data []byte) {
 	if file, err := a.Open(path); err == nil {
 		defer file.Close()
@@ -24,4 +24,10 @@ func (a *Assets) GetBytes(path string) (data []byte) {
 		}
 	}
 	return
+}
+
+func NewAssets(dir string) IAssets {
+	return &Assets{
+		FS: os.DirFS(dir),
+	}
 }
