@@ -14,7 +14,7 @@ type Assetio[TI18n any] struct {
 }
 
 // LoadI18n implements Interface.
-func (*Assetio[TI18n]) LoadI18n(v TI18n, paths ...string) (availLangs []*assetio[TI18n].Lang, translationMap map[string]TI18n) {
+func (*Assetio[TI18n]) LoadI18n(v TI18n, paths ...string) (availLangs []*Lang, translationMap map[string]TI18n) {
 	panic("unimplemented")
 }
 
