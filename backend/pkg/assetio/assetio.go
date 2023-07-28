@@ -34,6 +34,17 @@ func (a *Assetio) LoadJSON(v interface{}, paths ...string) (ok bool) {
 	return err == nil
 }
 
+// WalkDir implements Interface.
+func (a *Assetio) WalkDir(callback func(path string, isDir bool, entry fs.DirEntry) (err error), paths ...string) (err error) {
+	err = fs.WalkDir(a, filepath.Join(paths...), func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		return callback(path, d.IsDir(), d)
+	})
+	return
+}
+
 func (a *Assetio) Root() string {
 	return a.root
 }
