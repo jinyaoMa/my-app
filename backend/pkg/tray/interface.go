@@ -1,8 +1,12 @@
 package tray
 
+import "github.com/getlantern/systray"
+
 type Interface interface {
+	// identify menuitems, used when initialized, error if changed after initialized
 	Key() string
 
+	// append separator to systray root menu only
 	Separator() bool
 
 	Icon() []byte
@@ -11,13 +15,14 @@ type Interface interface {
 
 	Tooltip() string
 
-	Visible() bool
+	Visible(visible ...bool) bool
 
-	Enabled() bool
+	Enabled(enable ...bool) bool
 
-	Checked() bool
+	Checked(checked ...bool) bool
 
-	OnClick()
+	OnClick(self Interface, menuItem *systray.MenuItem) (quit bool)
 
+	// submenu
 	Items() []Interface
 }
