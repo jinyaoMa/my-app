@@ -8,13 +8,18 @@ import (
 	"path/filepath"
 )
 
-type Assetio struct {
+type Assetio[TI18n any] struct {
 	fs.FS
 	root string
 }
 
+// LoadI18n implements Interface.
+func (*Assetio[TI18n]) LoadI18n(v TI18n, paths ...string) (availLangs []*assetio[TI18n].Lang, translationMap map[string]TI18n) {
+	panic("unimplemented")
+}
+
 // GetBytes implements Interface.
-func (a *Assetio) GetBytes(paths ...string) (data []byte) {
+func (a *Assetio[TI18n]) GetBytes(paths ...string) (data []byte) {
 	if file, err := a.Open(filepath.Join(paths...)); err == nil {
 		defer file.Close()
 		if data, err = io.ReadAll(file); err != nil {
@@ -25,7 +30,7 @@ func (a *Assetio) GetBytes(paths ...string) (data []byte) {
 }
 
 // LoadJSON implements Interface.
-func (a *Assetio) LoadJSON(v interface{}, paths ...string) (ok bool) {
+func (a *Assetio[TI18n]) LoadJSON(v interface{}, paths ...string) (ok bool) {
 	data := a.GetBytes(paths...)
 	if data == nil {
 		return false
@@ -35,7 +40,7 @@ func (a *Assetio) LoadJSON(v interface{}, paths ...string) (ok bool) {
 }
 
 // WalkDir implements Interface.
-func (a *Assetio) WalkDir(callback func(path string, isDir bool, entry fs.DirEntry) (err error), paths ...string) (err error) {
+func (a *Assetio[TI18n]) WalkDir(callback func(path string, isDir bool, entry fs.DirEntry) (err error), paths ...string) (err error) {
 	err = fs.WalkDir(a, filepath.Join(paths...), func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -45,12 +50,12 @@ func (a *Assetio) WalkDir(callback func(path string, isDir bool, entry fs.DirEnt
 	return
 }
 
-func (a *Assetio) Root() string {
+func (a *Assetio[TI18n]) Root() string {
 	return a.root
 }
 
-func NewAssetio(root string) (a Interface, err error) {
-	return &Assetio{
+func NewAssetio[TI18n any](root string) (a Interface[TI18n], err error) {
+	return &Assetio[TI18n]{
 		FS:   os.DirFS(root),
 		root: root,
 	}, nil
