@@ -10,24 +10,22 @@ import (
 
 var (
 	once          sync.Once
-	tray          Interface
-	flatTrays     []Interface
+	menus         []Interface
 	cases         []reflect.SelectCase
 	menuItemCache map[string]*systray.MenuItem
 )
 
-func Register(t Interface) {
+func Register(tray Interface) {
 	once.Do(func() {
-		tray = t
-		systray.Register(onReady, nil)
+		systray.Register(onReady(tray), nil)
 	})
 }
 
-func Run(t Interface) {
-	tray = t
-	systray.Run(onReady, nil)
+func Run(tray Interface) {
+	systray.Run(onReady(tray), nil)
 }
 
+// update systray ui based on state loaded from tray interface
 func Update(tray Interface, initialized bool, menuItems ...*systray.MenuItem) error {
 	key := tray.Key()
 	icon := tray.Icon()
@@ -45,7 +43,7 @@ func Update(tray Interface, initialized bool, menuItems ...*systray.MenuItem) er
 					Dir:  reflect.SelectRecv,
 					Chan: reflect.ValueOf(menuItem.ClickedCh),
 				})
-				flatTrays = append(flatTrays, tray)
+				menus = append(menus, tray)
 			}
 
 			if len(icon) > 0 {
@@ -123,17 +121,16 @@ func Quit() {
 	systray.Quit()
 }
 
-func onReady() {
-	Update(tray, true)
-	go func() {
-		for {
-			chosen, _, _ := reflect.Select(cases)
-			t := flatTrays[chosen]
-			if m, ok := menuItemCache[t.Key()]; ok {
-				if t.OnClick(t, m) {
+func onReady(tray Interface) func() {
+	return func() {
+		Update(tray, true)
+		go func() {
+			for {
+				chosen, _, _ := reflect.Select(cases)
+				if menus[chosen].OnClick() {
 					break
 				}
 			}
-		}
-	}()
+		}()
+	}
 }

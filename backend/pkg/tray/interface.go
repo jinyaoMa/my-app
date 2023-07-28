@@ -1,7 +1,5 @@
 package tray
 
-import "github.com/getlantern/systray"
-
 type Interface interface {
 	// identify menuitems, used when initialized, error if changed after initialized
 	Key() string
@@ -15,13 +13,13 @@ type Interface interface {
 
 	Tooltip() string
 
-	Visible(visible ...bool) bool
+	Visible() bool
 
-	Enabled(enable ...bool) bool
+	Enabled() bool
 
-	Checked(checked ...bool) bool
+	Checked() bool
 
-	OnClick(self Interface, menuItem *systray.MenuItem) (quit bool)
+	OnClick() (quit bool)
 
 	// submenu
 	Items() []Interface
