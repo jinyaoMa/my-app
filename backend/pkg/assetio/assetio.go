@@ -8,14 +8,22 @@ import (
 	"path/filepath"
 )
 
-type Assetio[TI18n any] struct {
+type Assetio[TI18n I18n] struct {
 	fs.FS
 	root string
 }
 
 // LoadI18n implements Interface.
-func (*Assetio[TI18n]) LoadI18n(v TI18n, paths ...string) (availLangs []*Lang, translationMap map[string]TI18n) {
-	panic("unimplemented")
+func (a *Assetio[TI18n]) LoadI18n(v TI18n, paths ...string) (availLangs []*Lang, translationMap map[string]TI18n) {
+	a.WalkDir(func(path string, isDir bool, entry fs.DirEntry) (err error) {
+		if filepath.Ext(path) == ".json" && a.LoadJSON(v, path) {
+			lang := v.Lang()
+			availLangs = append(availLangs, lang)
+			translationMap[lang.Code] = v
+		}
+		return nil
+	}, paths...)
+	return
 }
 
 // GetBytes implements Interface.
@@ -54,7 +62,7 @@ func (a *Assetio[TI18n]) Root() string {
 	return a.root
 }
 
-func NewAssetio[TI18n any](root string) (a Interface[TI18n], err error) {
+func NewAssetio[TI18n I18n](root string) (a Interface[TI18n], err error) {
 	return &Assetio[TI18n]{
 		FS:   os.DirFS(root),
 		root: root,
