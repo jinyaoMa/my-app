@@ -4,7 +4,6 @@ import (
 	"my-app/backend/configs"
 	"my-app/backend/pkg/assetsio"
 	"my-app/backend/pkg/database"
-	"my-app/backend/pkg/helper"
 	"my-app/backend/pkg/logger"
 	"my-app/backend/pkg/server"
 )
@@ -21,13 +20,7 @@ var (
 func init() {
 	var err error
 
-	var iniPath string
-	iniPath, err = helper.GetFilenameSameAsExecutable("config.ini")
-	if err != nil {
-		panic(err)
-	}
-
-	cfg, err = configs.NewConfigs(iniPath)
+	cfg, err = initCfg()
 	if err != nil {
 		panic(err)
 	}

@@ -68,9 +68,5 @@ func initDB(cfg *configs.Configs) (db *database.Database, err error) {
 			},
 		},
 	})
-	if err != nil {
-		return
-	}
-
 	return
 }
