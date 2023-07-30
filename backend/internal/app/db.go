@@ -28,21 +28,21 @@ func initDB(cfg *configs.Configs) (db *database.Database, err error) {
 	var mainDbFilename, logDbFilename, optionDbFilename string
 	mainDbFilename, err = helper.GetFilenameSameAsExecutable("db")
 	if err != nil {
-		panic(err)
+		return
 	}
 	logDbFilename, err = helper.GetFilenameSameAsExecutable("logs.db")
 	if err != nil {
-		panic(err)
+		return
 	}
 	optionDbFilename, err = helper.GetFilenameSameAsExecutable("options.db")
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	var logFile *os.File
 	logFile, err = os.OpenFile(cfg.Database.LogFile, os.O_APPEND|os.O_CREATE, os.ModeAppend)
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	db, err = database.New(&database.Option{
@@ -69,7 +69,7 @@ func initDB(cfg *configs.Configs) (db *database.Database, err error) {
 		},
 	})
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	return

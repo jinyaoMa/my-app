@@ -8,17 +8,21 @@ import (
 )
 
 var (
-	db  *database.Database
-	log logger.Interface
+	iniPath string
+	cfg     *configs.Configs
+	db      *database.Database
+	log     logger.Interface
 )
 
 func init() {
-	iniPath, err := helper.GetFilenameSameAsExecutable("config.ini")
+	var err error
+
+	iniPath, err = helper.GetFilenameSameAsExecutable("config.ini")
 	if err != nil {
 		panic(err)
 	}
 
-	cfg, err := configs.NewConfigs(iniPath)
+	cfg, err = configs.NewConfigs(iniPath)
 	if err != nil {
 		panic(err)
 	}
@@ -32,6 +36,10 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func Cfg() *configs.Configs {
+	return cfg
 }
 
 func DB() *database.Database {
