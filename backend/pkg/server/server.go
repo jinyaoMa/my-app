@@ -41,15 +41,13 @@ func (s *Server) Start(opts *Option) (ok bool) {
 }
 
 // Stop implements Interface
-func (s *Server) Stop(stopping func(), stopped func(hasError bool)) (ok bool) {
+func (s *Server) Stop(before func()) (ok bool) {
 	if s.mu.TryLock() {
 		defer s.mu.Unlock()
 		if s.isRunning {
 			// running, can stop
-			stopping()
-			ok = s.stop()
-			stopped(s.hasErrors)
-			return
+			before()
+			return s.stop()
 		}
 	}
 	return false

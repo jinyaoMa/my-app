@@ -19,12 +19,7 @@ func main() {
 	<-c // This blocks the main thread until an interrupt is received
 
 	if s.Stop(func() {
-		println("stopping...")
-	}, func(hasError bool) {
-		println("stopped...")
-		if hasError {
-			println("error")
-		}
+		println("try to stop...")
 	}) {
 		println("exit")
 	}

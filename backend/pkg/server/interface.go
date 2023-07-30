@@ -10,6 +10,6 @@ type Interface interface {
 	// Start start the server with options
 	Start(opts *Option) (ok bool)
 
-	// Start stop the server from running
-	Stop(stopping func(), stopped func(hasError bool)) (ok bool)
+	// Stop stop the server from running, before() callback before stopping
+	Stop(before func()) (ok bool)
 }
