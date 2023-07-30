@@ -6,8 +6,13 @@ import (
 )
 
 type Logger struct {
-	log.Logger
+	*log.Logger
 	options *Option
+}
+
+// Tag implements Interface.
+func (l *Logger) Tag() string {
+	return l.options.Tag
 }
 
 // Writer implements Interface
@@ -24,7 +29,7 @@ func New(opts *Option) Interface {
 	logger.SetFlags(opts.Flags)
 
 	return &Logger{
-		Logger:  *logger,
+		Logger:  logger,
 		options: opts,
 	}
 }

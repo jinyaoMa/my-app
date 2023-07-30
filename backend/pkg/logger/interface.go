@@ -4,6 +4,7 @@ import "io"
 
 type Interface interface {
 	Writer() io.Writer
+	Tag() string
 	Prefix() string
 	Fatal(v ...any)
 	Fatalf(format string, v ...any)

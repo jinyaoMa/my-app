@@ -49,7 +49,7 @@ func (a *Assetio) Root() string {
 	return a.root
 }
 
-func NewAssetio(root string) Interface {
+func New(root string) Interface {
 	return &Assetio{
 		FS:   os.DirFS(root),
 		root: root,

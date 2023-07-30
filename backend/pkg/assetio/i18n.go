@@ -29,6 +29,6 @@ func (a *I18n[TTranslation]) LoadI18n(v TTranslation, paths ...string) (availLan
 
 func NewI18n[TTranslation ITranslation](root string) II18n[TTranslation] {
 	return &I18n[TTranslation]{
-		Interface: NewAssetio(root),
+		Interface: New(root),
 	}
 }

@@ -70,7 +70,6 @@ func main() {
 
 	log := &entity.Log{
 		Tag:     "TEST",
-		Code:    1,
 		Message: "test test test ...",
 	}
 	tx = db.Create(log)
