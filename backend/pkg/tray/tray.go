@@ -117,10 +117,6 @@ func Update(tray Interface, initialized bool, menuItems ...*systray.MenuItem) er
 	return nil
 }
 
-func Quit() {
-	systray.Quit()
-}
-
 func onReady(tray Interface) func() {
 	return func() {
 		Update(tray, true)
@@ -131,6 +127,7 @@ func onReady(tray Interface) func() {
 					break
 				}
 			}
+			systray.Quit()
 		}()
 	}
 }

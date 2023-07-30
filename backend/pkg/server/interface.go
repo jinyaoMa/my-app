@@ -11,5 +11,5 @@ type Interface interface {
 	Start(opts *Option) (ok bool)
 
 	// Start stop the server from running
-	Stop() (ok bool)
+	Stop(stopping func(), stopped func(hasError bool)) (ok bool)
 }

@@ -16,9 +16,16 @@ func main() {
 	c := make(chan os.Signal, 1)                    // Create channel to signify a signal being sent
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM) // When an interrupt or termination signal is sent, notify the channel
 
-	_ = <-c // This blocks the main thread until an interrupt is received
+	<-c // This blocks the main thread until an interrupt is received
 
-	if s.Stop() {
+	if s.Stop(func() {
+		println("stopping...")
+	}, func(hasError bool) {
+		println("stopped...")
+		if hasError {
+			println("error")
+		}
+	}) {
 		println("exit")
 	}
 }
