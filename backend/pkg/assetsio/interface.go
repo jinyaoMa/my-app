@@ -14,7 +14,7 @@ type Interface interface {
 
 type II18n[TTranslation ITranslation] interface {
 	Interface
-	LoadI18n(v TTranslation, paths ...string) (availLangs []*Lang, translationMap map[string]TTranslation)
+	LoadI18n() (availLangs []*Lang, translationMap map[string]TTranslation)
 }
 
 type ITranslation interface {
