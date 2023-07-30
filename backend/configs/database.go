@@ -5,6 +5,7 @@ import (
 )
 
 type Database struct {
+	LogFile   string
 	CipherKey string
 	Snowflake *snowflake.Option
 }

@@ -94,7 +94,7 @@ func (s *Storage) SearchFile(filename string, isCache bool) (file *os.File, path
 			path = filepath.Join(sPath.Dir, filename)
 		}
 		if helper.CheckIfFileExists(path) {
-			file, err = os.OpenFile(path, os.O_RDWR, 0666)
+			file, err = os.OpenFile(path, os.O_RDWR, os.ModePerm)
 			return
 		}
 	}
