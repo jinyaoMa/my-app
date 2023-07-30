@@ -1,4 +1,4 @@
-package assetio
+package assetsio
 
 import (
 	"encoding/json"

@@ -3,7 +3,9 @@ package configs
 import "gopkg.in/ini.v1"
 
 type Configs struct {
-	Database *Database
+	AssetsPath    string
+	LanguagesPath string
+	Database      *Database
 }
 
 func NewConfigs(path string) (cfg *Configs, err error) {

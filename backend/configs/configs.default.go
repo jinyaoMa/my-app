@@ -6,6 +6,16 @@ import (
 )
 
 func Default() (cfg *Configs, err error) {
+	var assetsPath string
+	assetsPath, err = helper.GetPathStartedFromExecutable("Assets")
+	if err != nil {
+		return
+	}
+	var languagesPath string
+	languagesPath, err = helper.GetPathStartedFromExecutable("Languages")
+	if err != nil {
+		return
+	}
 	var key string
 	key, err = helper.GetFilenameSameAsExecutable("option.key")
 	if err != nil {
@@ -18,6 +28,8 @@ func Default() (cfg *Configs, err error) {
 	}
 
 	return &Configs{
+		AssetsPath:    assetsPath,
+		LanguagesPath: languagesPath,
 		Database: &Database{
 			LogFile:   logFile,
 			CipherKey: key,
