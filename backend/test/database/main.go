@@ -69,8 +69,7 @@ func main() {
 	}
 
 	log := &entity.Log{
-		Tag:     "TEST",
-		Message: "test test test ...",
+		Message: "[TEST] test test test ...",
 	}
 	tx = db.Create(log)
 	if tx.Error != nil {

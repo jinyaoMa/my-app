@@ -13,7 +13,7 @@ import (
 func initLog(cfg *configs.Configs, db *database.Database) (log logger.Interface, err error) {
 	tag := "APP"
 	log = logger.New(&logger.Option{
-		Writer: newDbLogWriter(db, tag),
+		Writer: newDbLogWriter(db),
 		Tag:    tag,
 	})
 	return
@@ -27,15 +27,13 @@ type DbLogWriter struct {
 // Write implements io.Writer.
 func (w *DbLogWriter) Write(p []byte) (n int, err error) {
 	_, err = w.logService.Save(&entity.Log{
-		Tag:     w.tag,
 		Message: string(p),
 	})
 	return len(p), err
 }
 
-func newDbLogWriter(db *database.Database, tag string) io.Writer {
+func newDbLogWriter(db *database.Database) io.Writer {
 	return &DbLogWriter{
 		logService: service.NewLogService(db),
-		tag:        tag,
 	}
 }
