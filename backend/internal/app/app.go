@@ -91,7 +91,7 @@ func I18n() assetsio.II18n[*Translation] {
 	return i18n
 }
 
-func CurrentLanguage(langs ...string) string {
+func Lang(langs ...string) string {
 	if len(langs) > 0 {
 		var ok bool
 		if currentTranslation, ok = i18n.LoadTranslation(langs[0]); !ok {
@@ -102,7 +102,7 @@ func CurrentLanguage(langs ...string) string {
 	return currentLanguage
 }
 
-func CurrentTranslation() (t *Translation) {
+func T() (t *Translation) {
 	return currentTranslation
 }
 
