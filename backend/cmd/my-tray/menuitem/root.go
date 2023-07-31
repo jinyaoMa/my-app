@@ -5,12 +5,10 @@ import (
 	"my-app/backend/pkg/tray"
 )
 
-type Root struct {
-	tray.Interface
-}
+type root struct{}
 
 // Icon implements tray.Interface.
-func (*Root) Icon() []byte {
+func (*root) Icon() []byte {
 	if app.Web().IsStopping() {
 		return app.Assets().GetBytes("tray.orange.ico")
 	}
@@ -21,20 +19,24 @@ func (*Root) Icon() []byte {
 }
 
 // Items implements tray.Interface.
-func (*Root) Items() []tray.Interface {
-	panic("unimplemented")
+func (*root) Items() []tray.IMenuItem {
+	return []tray.IMenuItem{
+		newOpenWindow(),
+		newSeparator(),
+		newQuit(),
+	}
 }
 
 // Title implements tray.Interface.
-func (*Root) Title() string {
-	return ""
+func (*root) Title() string {
+	return app.T().AppName
 }
 
 // Tooltip implements tray.Interface.
-func (*Root) Tooltip() string {
-	panic("unimplemented")
+func (*root) Tooltip() string {
+	return app.T().AppName
 }
 
-func NewRoot() tray.Interface {
-	return &Root{}
+func newRoot() tray.Interface {
+	return &root{}
 }

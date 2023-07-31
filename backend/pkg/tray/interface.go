@@ -1,6 +1,15 @@
 package tray
 
 type Interface interface {
+	Icon() []byte
+	Title() string
+	Tooltip() string
+
+	// submenu
+	Items() []IMenuItem
+}
+
+type IMenuItem interface {
 	// identify menuitems, used when initialized, error if changed after initialized
 	Key() string
 
@@ -17,10 +26,11 @@ type Interface interface {
 
 	Enabled() bool
 
+	CanCheck() bool // for linux to use checkbox menuitem
 	Checked() bool
 
 	OnClick() (quit bool)
 
 	// submenu
-	Items() []Interface
+	Items() []IMenuItem
 }

@@ -19,5 +19,5 @@ type II18n[TTranslation ITranslation] interface {
 }
 
 type ITranslation interface {
-	Lang() *Lang
+	Metadata() *Lang
 }

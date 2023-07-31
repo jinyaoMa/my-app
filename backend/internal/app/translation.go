@@ -3,20 +3,26 @@ package app
 import "my-app/backend/pkg/assetsio"
 
 type Translation struct {
-	lang *assetsio.Lang
+	Lang       *assetsio.Lang `json:"lang"`
+	AppName    string         `json:"app_name"`
+	OpenWindow string         `json:"open_window"`
+	Quit       string         `json:"quit"`
 }
 
-// Lang implements assetsio.ITranslation.
-func (t *Translation) Lang() *assetsio.Lang {
-	return t.lang
+// Metadata implements assetsio.ITranslation.
+func (t *Translation) Metadata() *assetsio.Lang {
+	return t.Lang
 }
 
 func DefaultTranslation() *Translation {
 	return &Translation{
-		lang: &assetsio.Lang{
-			Code: "",
-			Text: "",
+		Lang: &assetsio.Lang{
+			Code: "[LangCode]",
+			Text: "[LangText]",
 		},
+		AppName:    "[AppName]",
+		OpenWindow: "[OpenWindow]",
+		Quit:       "[Quit]",
 	}
 }
 

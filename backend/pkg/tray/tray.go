@@ -10,7 +10,7 @@ import (
 
 var (
 	once          sync.Once
-	menus         []Interface
+	menus         []IMenuItem
 	cases         []reflect.SelectCase
 	menuItemCache map[string]*systray.MenuItem
 )
@@ -26,93 +26,107 @@ func Run(tray Interface) {
 }
 
 // update systray ui based on state loaded from tray interface
-func Update(tray Interface, initialized bool, menuItems ...*systray.MenuItem) error {
-	key := tray.Key()
+func Update(tray Interface, initialized bool) error {
 	icon := tray.Icon()
 	title := tray.Title()
 	tooltip := tray.Tooltip()
 
-	if key != "" {
-		if len(menuItems) > 0 && initialized {
-			menuItemCache[key] = menuItems[0]
+	if len(icon) > 0 {
+		systray.SetTemplateIcon(icon, icon)
+	}
+	if title != "" {
+		systray.SetTitle(title)
+	}
+	if tooltip != "" {
+		systray.SetTooltip(tooltip)
+	}
+	for _, item := range tray.Items() {
+		if initialized {
+			if item.Separator() {
+				systray.AddSeparator()
+			} else {
+				var mi *systray.MenuItem
+				if item.CanCheck() {
+					mi = systray.AddMenuItemCheckbox("", "", item.Checked())
+				} else {
+					mi = systray.AddMenuItem("", "")
+				}
+				if err := update(item, initialized, mi); err != nil {
+					return err
+				}
+			}
+		} else if !item.Separator() {
+			if err := update(item, initialized); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func update(item IMenuItem, initialized bool, menuItems ...*systray.MenuItem) error {
+	key := item.Key()
+	icon := item.Icon()
+	title := item.Title()
+	tooltip := item.Tooltip()
+
+	if len(menuItems) > 0 && initialized {
+		menuItemCache[key] = menuItems[0]
+	}
+
+	if menuItem, ok := menuItemCache[key]; ok {
+		if initialized {
+			cases = append(cases, reflect.SelectCase{
+				Dir:  reflect.SelectRecv,
+				Chan: reflect.ValueOf(menuItem.ClickedCh),
+			})
+			menus = append(menus, item)
 		}
 
-		if menuItem, ok := menuItemCache[key]; ok {
-			if initialized {
-				cases = append(cases, reflect.SelectCase{
-					Dir:  reflect.SelectRecv,
-					Chan: reflect.ValueOf(menuItem.ClickedCh),
-				})
-				menus = append(menus, tray)
-			}
-
-			if len(icon) > 0 {
-				menuItem.SetTemplateIcon(icon, icon)
-			}
-			if title != "" {
-				menuItem.SetTitle(title)
-			}
-			if tooltip != "" {
-				menuItem.SetTooltip(tooltip)
-			}
-			if tray.Visible() {
-				menuItem.Show()
-			} else {
-				menuItem.Hide()
-			}
-			if tray.Enabled() {
+		if len(icon) > 0 {
+			menuItem.SetTemplateIcon(icon, icon)
+		}
+		if title != "" {
+			menuItem.SetTitle(title)
+		}
+		if tooltip != "" {
+			menuItem.SetTooltip(tooltip)
+		}
+		if item.Visible() {
+			menuItem.Show()
+			if item.Enabled() {
 				menuItem.Enable()
 			} else {
 				menuItem.Disable()
 			}
-			if tray.Checked() {
+			if item.Checked() {
 				menuItem.Check()
 			} else {
 				menuItem.Uncheck()
 			}
-			for _, item := range tray.Items() {
-				if initialized {
-					var mi *systray.MenuItem
-					if tray.Checked() {
-						mi = menuItem.AddSubMenuItemCheckbox("", "", tray.Checked())
-					} else {
-						mi = menuItem.AddSubMenuItem("", "")
-					}
-					Update(item, initialized, mi)
-				} else {
-					Update(item, initialized)
-				}
-			}
 		} else {
-			return errors.New("tray menu key changed after initialized")
+			menuItem.Hide()
 		}
-	} else {
-		if len(icon) > 0 {
-			systray.SetTemplateIcon(icon, icon)
-		}
-		if title != "" {
-			systray.SetTitle(title)
-		}
-		if tooltip != "" {
-			systray.SetTooltip(tooltip)
-		}
-		for _, item := range tray.Items() {
+		for _, item := range item.Items() {
 			if initialized {
-				if item.Separator() {
-					systray.AddSeparator()
+				var mi *systray.MenuItem
+				if item.CanCheck() {
+					mi = menuItem.AddSubMenuItemCheckbox("", "", item.Checked())
 				} else {
-					var mi *systray.MenuItem
-					if tray.Checked() {
-						mi = systray.AddMenuItemCheckbox("", "", tray.Checked())
-					} else {
-						mi = systray.AddMenuItem("", "")
-					}
-					Update(item, initialized, mi)
+					mi = menuItem.AddSubMenuItem("", "")
+				}
+				if err := update(item, initialized, mi); err != nil {
+					return err
 				}
 			} else {
-				Update(item, initialized)
+				if err := update(item, initialized); err != nil {
+					return err
+				}
 			}
 		}
+	} else {
+		return errors.New("tray menu key changed after initialized")
 	}
 	return nil
 }
