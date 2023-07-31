@@ -6,7 +6,7 @@ import (
 )
 
 type Lang struct {
-	Code string `json:"code"`
+	Code string `json:"code"` // language code must be the same as the json source filename without extension
 	Text string `json:"text"`
 }
 

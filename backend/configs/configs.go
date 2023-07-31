@@ -5,6 +5,7 @@ import "gopkg.in/ini.v1"
 type Configs struct {
 	AssetsPath    string
 	LanguagesPath string
+	Language      string
 	Database      *Database
 }
 

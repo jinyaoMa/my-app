@@ -19,7 +19,7 @@ var (
 	i18n   assetsio.II18n[*Translation]
 	web    server.Interface
 
-	lang string
+	currentLanguage string
 )
 
 func init() {
@@ -43,18 +43,23 @@ func init() {
 	assets = assetsio.New(cfg.AssetsPath)
 
 	i18n = assetsio.NewI18n[*Translation](cfg.LanguagesPath)
+	availLangs, _ := i18n.LoadI18n()
+	if helper.Any(availLangs, func(e *assetsio.Lang) bool {
+		return e.Code == cfg.Language
+	}) {
+		currentLanguage = cfg.Language
+	} else if len(availLangs) > 0 {
+		currentLanguage = availLangs[0].Code
+	}
 
 	optionService := service.NewOptionService(db)
-	lang, err = optionService.GetByOptionName(vmodel.OptionNameDisplayLanguage)
-	if err == nil {
-		availLangs, _ := i18n.LoadI18n()
-		if len(availLangs) > 0 && !helper.Any(availLangs, func(e *assetsio.Lang) bool {
-			return e.Code == lang
-		}) {
-			lang = availLangs[0].Code
-		}
-	} else {
 
+	var displayLanguage string
+	displayLanguage, err = optionService.GetByOptionName(vmodel.OptionNameDisplayLanguage)
+	if err == nil && helper.Any(availLangs, func(e *assetsio.Lang) bool {
+		return e.Code == displayLanguage
+	}) {
+		currentLanguage = displayLanguage
 	}
 
 	web = server.New()
@@ -78,6 +83,20 @@ func Assets() assetsio.Interface {
 
 func I18n() assetsio.II18n[*Translation] {
 	return i18n
+}
+
+func CurrentLanguage(langs ...string) string {
+	if len(langs) > 0 && i18n.LoadJSON(&Translation{}, langs[0]+".json") {
+		currentLanguage = langs[0]
+	}
+	return currentLanguage
+}
+
+func CurrentTranslation() (t *Translation) {
+	if i18n.LoadJSON(t, currentLanguage+".json") {
+		return
+	}
+	return DefaultTranslation()
 }
 
 func Web() server.Interface {

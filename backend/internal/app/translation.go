@@ -11,6 +11,15 @@ func (t *Translation) Lang() *assetsio.Lang {
 	return t.lang
 }
 
+func DefaultTranslation() *Translation {
+	return &Translation{
+		lang: &assetsio.Lang{
+			Code: "",
+			Text: "",
+		},
+	}
+}
+
 func NewTranslation() assetsio.ITranslation {
 	return &Translation{}
 }
