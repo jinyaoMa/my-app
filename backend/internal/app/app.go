@@ -19,7 +19,8 @@ var (
 	i18n   assetsio.II18n[*Translation]
 	web    server.Interface
 
-	currentLanguage string
+	currentLanguage    string
+	currentTranslation *Translation
 )
 
 func init() {
@@ -43,7 +44,7 @@ func init() {
 	assets = assetsio.New(cfg.AssetsPath)
 
 	i18n = assetsio.NewI18n[*Translation](cfg.LanguagesPath)
-	availLangs, _ := i18n.LoadI18n()
+	availLangs, translationMap := i18n.LoadI18n()
 	if helper.Any(availLangs, func(e *assetsio.Lang) bool {
 		return e.Code == cfg.Language
 	}) {
@@ -60,6 +61,11 @@ func init() {
 		return e.Code == displayLanguage
 	}) {
 		currentLanguage = displayLanguage
+	}
+
+	var ok bool
+	if currentTranslation, ok = translationMap[currentLanguage]; !ok {
+		currentTranslation = DefaultTranslation()
 	}
 
 	web = server.New()
@@ -86,17 +92,18 @@ func I18n() assetsio.II18n[*Translation] {
 }
 
 func CurrentLanguage(langs ...string) string {
-	if len(langs) > 0 && i18n.LoadJSON(&Translation{}, langs[0]+".json") {
+	if len(langs) > 0 {
+		var ok bool
+		if currentTranslation, ok = i18n.LoadTranslation(langs[0]); !ok {
+			currentTranslation = DefaultTranslation()
+		}
 		currentLanguage = langs[0]
 	}
 	return currentLanguage
 }
 
 func CurrentTranslation() (t *Translation) {
-	if i18n.LoadJSON(t, currentLanguage+".json") {
-		return
-	}
-	return DefaultTranslation()
+	return currentTranslation
 }
 
 func Web() server.Interface {

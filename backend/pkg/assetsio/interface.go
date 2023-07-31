@@ -14,6 +14,7 @@ type Interface interface {
 
 type II18n[TTranslation ITranslation] interface {
 	Interface
+	LoadTranslation(lang string) (t TTranslation, ok bool)
 	LoadI18n() (availLangs []*Lang, translationMap map[string]TTranslation)
 }
 
