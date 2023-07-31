@@ -11,8 +11,10 @@ require (
 )
 
 require (
+	github.com/getlantern/systray v1.2.2
 	github.com/shirou/gopsutil/v3 v3.23.6
-	gorm.io/plugin/dbresolver v1.4.1
+	gopkg.in/ini.v1 v1.67.0
+	gorm.io/plugin/dbresolver v1.4.2
 )
 
 require (
@@ -23,7 +25,6 @@ require (
 	github.com/getlantern/hex v0.0.0-20220104173244-ad7e4b9194dc // indirect
 	github.com/getlantern/hidden v0.0.0-20220104173330-f221c5a24770 // indirect
 	github.com/getlantern/ops v0.0.0-20230519221840-1283e026181c // indirect
-	github.com/getlantern/systray v1.2.2 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
@@ -47,7 +48,6 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.24.0 // indirect
-	gopkg.in/ini.v1 v1.67.0 // indirect
 )
 
 require (
