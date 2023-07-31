@@ -4,6 +4,9 @@ type Interface interface {
 	// IsRunning check if the server is running
 	IsRunning() bool
 
+	// IsStopping check if the server is stopping
+	IsStopping() bool
+
 	// HasErrors check if the server has errors
 	HasErrors() bool
 

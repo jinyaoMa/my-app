@@ -18,13 +18,14 @@ import (
 )
 
 type Server struct {
-	options   *Option
-	mu        sync.Mutex
-	isRunning bool
-	hasErrors bool
-	errGroup  errgroup.Group
-	http      *http.Server // redirector
-	https     *fiber.App   // server (tls)
+	options    *Option
+	mu         sync.Mutex
+	isRunning  bool
+	isStopping bool
+	hasErrors  bool
+	errGroup   errgroup.Group
+	http       *http.Server // redirector
+	https      *fiber.App   // server (tls)
 }
 
 // Start implements Interface
@@ -46,8 +47,11 @@ func (s *Server) Stop(before func()) (ok bool) {
 		defer s.mu.Unlock()
 		if s.isRunning {
 			// running, can stop
+			s.isStopping = true
 			before()
-			return s.stop()
+			ok = s.stop()
+			s.isStopping = false
+			return
 		}
 	}
 	return false
@@ -61,6 +65,11 @@ func (s *Server) HasErrors() bool {
 // IsRunning implements Interface
 func (s *Server) IsRunning() bool {
 	return s.isRunning
+}
+
+// IsStopping implements Interface
+func (s *Server) IsStopping() bool {
+	return s.isStopping
 }
 
 func (s *Server) start() (ok bool) {
