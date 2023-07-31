@@ -7,4 +7,6 @@ import (
 
 type IOptionService interface {
 	interfaces.ICrudService[*entity.Option]
+
+	GetByOptionName(name string) (value string, err error)
 }

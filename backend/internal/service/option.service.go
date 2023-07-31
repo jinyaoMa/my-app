@@ -1,17 +1,34 @@
 package service
 
 import (
-	"my-app/backend/internal/interfaces"
+	i "my-app/backend/internal/interfaces"
 	"my-app/backend/pkg/database"
 	"my-app/backend/pkg/database/entity"
+	"my-app/backend/pkg/database/interfaces"
 )
 
 type OptionService struct {
-	interfaces.IOptionService
+	interfaces.ICrudService[*entity.Option]
+	db *database.Database
 }
 
-func NewOptionService(db *database.Database) interfaces.IOptionService {
+// GetByOptionName implements interfaces.IOptionService.
+func (s *OptionService) GetByOptionName(name string) (value string, err error) {
+	var opt *entity.Option
+	opt, err = s.FindOne(func(where func(query any, args ...any)) {
+		where(&entity.Option{
+			Key: name,
+		})
+	})
+	if err != nil {
+		return
+	}
+	return opt.Value, nil
+}
+
+func NewOptionService(db *database.Database) i.IOptionService {
 	return &OptionService{
-		IOptionService: database.NewCrudService[*entity.Option](db),
+		ICrudService: database.NewCrudService[*entity.Option](db),
+		db:           db,
 	}
 }
