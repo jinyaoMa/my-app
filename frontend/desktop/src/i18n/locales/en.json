@@ -1,0 +1,79 @@
+{
+  "lang": {
+    "en": "English",
+    "zh": "简体中文"
+  },
+  "theme": {
+    "system": "System Default",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "appname": "My Application",
+  "by": "By jinyaoMa",
+  "menu": {
+    "main": {
+      "title": "Main",
+      "home": "Home",
+      "settings": "Settings",
+      "about": "About"
+    },
+    "application": {
+      "title": "Application",
+      "keyring": "Keyring"
+    },
+    "test": {
+      "title": "Test",
+      "test": "Test"
+    }
+  },
+  "footer": {
+    "openVitePress": "Open VitePress Docs",
+    "openSwagger": "Open Swagger Docs"
+  },
+  "settings": {
+    "general": {
+      "legend": "General",
+      "displayLanguage": "Display Language",
+      "colorTheme": "Color Theme",
+      "LogFile": "Log Path"
+    },
+    "webService": {
+      "legend": "Web Service",
+      "autoStart": "Auto Start",
+      "portHttp": "HTTP Port",
+      "portHttps": "HTTPS Port",
+      "dirCerts": "TLS Certificate Path",
+      "dirCertsPlaceholder": "Built-in certificates are used currently"
+    },
+    "otherPaths": {
+      "legend": "Other Paths",
+      "dirLanguages": "Languages Path",
+      "dirAssets": "Assets Path",
+      "dirUserData": "UserData Path",
+      "dirDocs": "Docs Path"
+    },
+    "changeSuperUserPassword": {
+      "legend": "Change Super User ({account}) Password",
+      "oldPassword": "Old Password",
+      "newPassword": "New Password",
+      "change": "Confirm and Change",
+      "clear": "Clear"
+    },
+    "choosePath": "Choose Path",
+    "ChooseLogFile": "Choose your log file path",
+    "chooseDirCerts": "Choose your TLS certificate path",
+    "chooseDirLanguages": "Choose your Langauges path",
+    "chooseDirAssets": "Choose your Assets path",
+    "chooseDirUserData": "Choose your UserData path",
+    "chooseDirDocs": "Choose your Docs path",
+    "save": "Save",
+    "footnote": "* Most of the settings need restarting the application to take effect."
+  },
+  "keyring": {
+    "auth": {
+      "password": "Please enter super user ({account}) password",
+      "confirm": "Confirm"
+    },
+    "search": "Search"
+  }
+}

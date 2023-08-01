@@ -1,0 +1,111 @@
+@import "./mixin.scss";
+
+:root {
+  /* dimensions */
+  // font size
+  --my-font-size-xs: 12px; // supplementary text
+  --my-font-size-sm: 13px; // body (small)
+  --my-font-size: 14px; // body
+  --my-font-size-md: 16px; // small title
+  --my-font-size-lg: 18px; // title
+  --my-font-size-xl: 20px; // main title
+  // line height
+  --my-line-height-none: 1; // no line height
+  --my-line-height-sm: 1.3; // compact
+  --my-line-height: 1.5; // regular
+  --my-line-height-lg: 1.7; // loose
+  // space
+  --my-space-sm: 8px; // small size spacing
+  --my-space: 12px; // default size spacing
+  --my-space-lg: 16px; // large size spacing
+  // border width
+  --my-border-width-sm: 1px;
+  --my-border-width: 2px;
+  --my-border-width-lg: 3px;
+  // border radius
+  --my-border-radius-sm: 4px;
+  --my-border-radius: 6px;
+  --my-border-radius-lg: 8px;
+}
+
+/* colors */
+@mixin light-colors {
+  color-scheme: light;
+  @include main-colors(
+    $colorsMap: (
+      // brand color
+      $TypePrimary: #409eff 11.5%,
+      // functional color
+      $TypeSuccess: #67c23a 15.5%,
+      $TypeWarning: #e6a23c 12.5%,
+      $TypeDanger: #f56c6c 9.5%,
+      $TypeInfo: #909399 12.5%,
+    )
+  );
+  // font color
+  --my-color-text-primary: #303133;
+  --my-color-text-regular: #606266;
+  --my-color-text-secondary: #909399;
+  --my-color-text-placeholder: #c0c4cc;
+  // border color
+  --my-color-border-base: #dcdfe6;
+  --my-color-border-light: #e4e7ed;
+  --my-color-border-lighter: #ebeef5;
+  --my-color-border-extra-light: #f2f6fc;
+  // background color
+  --my-color-white: #ffffff;
+  --my-color-black: #000000;
+  --my-color-background-base: #ffffff;
+  --my-color-background-transparent: #ffffffcc;
+}
+@mixin dark-colors {
+  color-scheme: dark;
+  @include main-colors(
+    $colorsMap: (
+      // brand color
+      $TypePrimary: #409eff 17.5%,
+      // functional color
+      $TypeSuccess: #67c23a 13.5%,
+      $TypeWarning: #e6a23c 15.5%,
+      $TypeDanger: hsl(0, 100%, 38%) 10.5%,
+      $TypeInfo: #a2a4a9 16.5%,
+    ),
+    $dark: true
+  );
+  // font color
+  --my-color-text-primary: #e7e8e9;
+  --my-color-text-regular: #b3b4b7;
+  --my-color-text-secondary: #808389;
+  --my-color-text-placeholder: #5d6574;
+  // border color
+  --my-color-border-base: #333333;
+  --my-color-border-light: #2b2b2b;
+  --my-color-border-lighter: #222222;
+  --my-color-border-extra-light: #1a1a1a;
+  // background color
+  --my-color-white: #000000;
+  --my-color-black: #ffffff;
+  --my-color-background-base: #000000;
+  --my-color-background-transparent: #000000cc;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    @include light-colors();
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    @include dark-colors();
+  }
+}
+
+:root {
+  &.my-theme-light {
+    @include light-colors();
+  }
+  &.my-theme-dark {
+    @include dark-colors();
+  }
+}

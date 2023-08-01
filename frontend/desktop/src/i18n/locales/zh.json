@@ -1,0 +1,79 @@
+{
+  "lang": {
+    "en": "English",
+    "zh": "简体中文"
+  },
+  "theme": {
+    "system": "跟随系统",
+    "light": "浅色",
+    "dark": "深色"
+  },
+  "appname": "我的应用程序",
+  "by": "由 jinyaoMa 开发",
+  "menu": {
+    "main": {
+      "title": "主菜单",
+      "home": "首页",
+      "settings": "设置",
+      "about": "关于"
+    },
+    "application": {
+      "title": "应用菜单",
+      "keyring": "钥匙扣"
+    },
+    "test": {
+      "title": "测试菜单",
+      "test": "测试页面"
+    }
+  },
+  "footer": {
+    "openVitePress": "打开 VitePress 文档",
+    "openSwagger": "打开 Swagger 文档"
+  },
+  "settings": {
+    "general": {
+      "legend": "通用",
+      "displayLanguage": "显示语言",
+      "colorTheme": "颜色主题",
+      "LogFile": "日志保存路径"
+    },
+    "webService": {
+      "legend": "Web 服务",
+      "autoStart": "随应用启动",
+      "portHttp": "HTTP 端口",
+      "portHttps": "HTTPS 端口",
+      "dirCerts": "TLS 证书路径",
+      "dirCertsPlaceholder": "当前正在使用内置证书"
+    },
+    "otherPaths": {
+      "legend": "其他路径",
+      "dirLanguages": "Languages 路径",
+      "dirAssets": "Assets 路径",
+      "dirUserData": "UserData 路径",
+      "dirDocs": "Docs 路径"
+    },
+    "changeSuperUserPassword": {
+      "legend": "更改超级用户（{account}）密码",
+      "oldPassword": "旧密码",
+      "newPassword": "新密码",
+      "change": "确认并更改",
+      "clear": "重新输入"
+    },
+    "choosePath": "选择路径",
+    "ChooseLogFile": "选择日志保存路径",
+    "chooseDirCerts": "选择 TLS 证书路径",
+    "chooseDirLanguages": "选择 Languages 路径",
+    "chooseDirAssets": "选择 Assets 路径",
+    "chooseDirUserData": "选择 UserData 路径",
+    "chooseDirDocs": "选择 Docs 路径",
+    "save": "保存",
+    "footnote": "* 大部分设置需重启应用程序后生效。"
+  },
+  "keyring": {
+    "auth": {
+      "password": "请输入超级用户（{account}）密码",
+      "confirm": "确认"
+    },
+    "search": "搜索"
+  }
+}
