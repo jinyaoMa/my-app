@@ -8,6 +8,7 @@
   "frontend:build": "pnpm --filter @jinyaoma/my-app-desktop exec vite build",
   "frontend:dev:watcher": "pnpm --filter @jinyaoma/my-app-desktop exec vite",
   "frontend:dev:serverUrl": "auto",
+  "wailsjsdir": "../../../frontend/desktop/",
   "debounceMS": 1000,
   "devServer": "localhost:34115",
   "author": {
