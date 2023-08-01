@@ -4,6 +4,24 @@
   "author": "jinyaoMa",
   "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  }
+    "icons:build": "pnpm --filter @jinyaoma/my-app-icons exec node build.js",
+    "design:build": "pnpm --filter @jinyaoma/my-app-design exec vue-tsc --noEmit && pnpm --filter @jinyaoma/my-app-design exec vite build",
+    "install:assets": "mkdirp frontend/desktop/dist && echo \"\" > frontend/desktop/dist/index.html",
+    "install:frontend": "pnpm icons:build && pnpm design:build"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.9",
+    "cross-env": "^7.0.3",
+    "mkdirp": "^1.0.4",
+    "vitepress": "1.0.0-alpha.27",
+    "vue": "^3.2.41"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jinyaoMa/my-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jinyaoMa/my-app/issues"
+  },
+  "homepage": "https://github.com/jinyaoMa/my-app#readme"
 }
