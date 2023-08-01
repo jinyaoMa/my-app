@@ -8,6 +8,6 @@ import (
 type IOptionService interface {
 	interfaces.ICrudService[*entity.Option]
 
-	GetByOptionName(name string) (value string, err error)
-	GetUint16ByOptionName(name string) (value uint16, err error)
+	GetByOptionName(name string) (opt *entity.Option, err error)
+	GetUint16ByOptionName(name string) (value uint16, opt *entity.Option, err error)
 }

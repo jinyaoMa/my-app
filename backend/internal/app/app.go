@@ -2,10 +2,12 @@ package app
 
 import (
 	"my-app/backend/configs"
+	"my-app/backend/internal/interfaces"
 	"my-app/backend/internal/service"
 	"my-app/backend/internal/vmodel"
 	"my-app/backend/pkg/assetsio"
 	"my-app/backend/pkg/database"
+	"my-app/backend/pkg/database/entity"
 	"my-app/backend/pkg/helper"
 	"my-app/backend/pkg/logger"
 	"my-app/backend/pkg/server"
@@ -19,7 +21,8 @@ var (
 	i18n   assetsio.II18n[*Translation]
 	web    server.Interface
 
-	currentLanguage    string
+	optionService      interfaces.IOptionService
+	currentLanguage    *entity.Option
 	currentTranslation *Translation
 )
 
@@ -45,26 +48,28 @@ func init() {
 
 	i18n = assetsio.NewI18n[*Translation](cfg.LanguagesPath)
 	availLangs, translationMap := i18n.LoadI18n()
-	if helper.Any(availLangs, func(e *assetsio.Lang) bool {
-		return e.Code == cfg.Language
-	}) {
-		currentLanguage = cfg.Language
-	} else if len(availLangs) > 0 {
-		currentLanguage = availLangs[0].Code
-	}
 
-	optionService := service.NewOptionService(db)
+	optionService = service.NewOptionService(db)
 
-	var displayLanguage string
-	displayLanguage, err = optionService.GetByOptionName(vmodel.OptionNameDisplayLanguage)
-	if err == nil && helper.Any(availLangs, func(e *assetsio.Lang) bool {
-		return e.Code == displayLanguage
+	currentLanguage, err = optionService.GetByOptionName(vmodel.OptionNameDisplayLanguage)
+	if err != nil || !helper.Any(availLangs, func(e *assetsio.Lang) bool {
+		return e.Code == currentLanguage.Value
 	}) {
-		currentLanguage = displayLanguage
+		currentLanguage = &entity.Option{
+			Key:   vmodel.OptionNameDisplayLanguage,
+			Value: "",
+		}
+		if helper.Any(availLangs, func(e *assetsio.Lang) bool {
+			return e.Code == cfg.Language
+		}) {
+			currentLanguage.Value = cfg.Language
+		} else if len(availLangs) > 0 {
+			currentLanguage.Value = availLangs[0].Code
+		}
 	}
 
 	var ok bool
-	if currentTranslation, ok = translationMap[currentLanguage]; !ok {
+	if currentTranslation, ok = translationMap[currentLanguage.Value]; !ok {
 		currentTranslation = DefaultTranslation()
 	}
 
@@ -94,12 +99,12 @@ func I18n() assetsio.II18n[*Translation] {
 func Lang(langs ...string) string {
 	if len(langs) > 0 {
 		var ok bool
-		if currentTranslation, ok = i18n.LoadTranslation(langs[0]); !ok {
-			currentTranslation = DefaultTranslation()
+		if currentTranslation, ok = i18n.LoadTranslation(langs[0]); ok {
+			currentLanguage.Value = langs[0]
+			optionService.Save(currentLanguage)
 		}
-		currentLanguage = langs[0]
 	}
-	return currentLanguage
+	return currentLanguage.Value
 }
 
 func T() (t *Translation) {

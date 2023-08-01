@@ -14,34 +14,28 @@ type OptionService struct {
 }
 
 // GetUint16ByOptionName implements interfaces.IOptionService.
-func (s *OptionService) GetUint16ByOptionName(name string) (value uint16, err error) {
-	var v string
-	v, err = s.GetByOptionName(name)
+func (s *OptionService) GetUint16ByOptionName(name string) (value uint16, opt *entity.Option, err error) {
+	opt, err = s.GetByOptionName(name)
 	if err != nil {
 		return
 	}
 
 	var tmp uint64
-	tmp, err = strconv.ParseUint(v, 10, 16)
+	tmp, err = strconv.ParseUint(opt.Value, 10, 16)
 	if err != nil {
 		return
 	}
 
-	return uint16(tmp), nil
+	return uint16(tmp), opt, nil
 }
 
 // GetByOptionName implements interfaces.IOptionService.
-func (s *OptionService) GetByOptionName(name string) (value string, err error) {
-	var opt *entity.Option
-	opt, err = s.FindOne(func(where func(query any, args ...any)) {
+func (s *OptionService) GetByOptionName(name string) (opt *entity.Option, err error) {
+	return s.FindOne(func(where func(query any, args ...any)) {
 		where(&entity.Option{
 			Key: name,
 		})
 	})
-	if err != nil {
-		return
-	}
-	return opt.Value, nil
 }
 
 func NewOptionService(db *database.Database) i.IOptionService {
