@@ -2,26 +2,26 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"my-app/backend/internal/app"
+	"my-app/backend/internal/interfaces"
+	"my-app/backend/internal/service"
 )
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx           context.Context
+	optionService interfaces.IOptionService
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
-	return &App{}
+	return &App{
+		optionService: service.NewOptionService(app.Db()),
+	}
 }
 
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-}
-
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
 }
