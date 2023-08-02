@@ -7,7 +7,8 @@
     "icons:build": "pnpm --filter @jinyaoma/my-app-icons exec node build.js",
     "design:build": "pnpm --filter @jinyaoma/my-app-design exec vue-tsc --noEmit && pnpm --filter @jinyaoma/my-app-design exec vite build",
     "install:assets": "mkdirp frontend/desktop/dist && echo \"\" > frontend/desktop/dist/index.html",
-    "install:frontend": "pnpm icons:build && pnpm design:build"
+    "install:frontend": "pnpm icons:build && pnpm design:build",
+    "install": "pnpm install:assets && pnpm install:frontend"
   },
   "devDependencies": {
     "@types/node": "^20.4.5",

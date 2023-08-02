@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import { resolve } from "path";
 import vue from "@vitejs/plugin-vue";
 import vueSetupExtend from "vite-plugin-vue-setup-extend";
-import vueI18n from "@intlify/vite-plugin-vue-i18n";
+import vueI18n from "@intlify/unplugin-vue-i18n/vite";
 import Markdown from "vite-plugin-md"; // https://github.com/antfu/vite-plugin-md
 import MarkdownItPrism from "markdown-it-prism";
 import MarkdownItLinkAttributes from "markdown-it-link-attributes";
