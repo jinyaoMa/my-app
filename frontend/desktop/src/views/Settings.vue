@@ -3,22 +3,22 @@ import { reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useLoading } from "../store/loading";
 import { useColorTheme } from "../store/color-theme";
-import {
-  GetOptions,
-  ChooseLogFile,
-  ChooseDirectory,
-  SavePortHttp,
-  SavePortHttps,
-  SaveAutoStart,
-  GetSuperUserAccount,
-  UpdateSuperUserPassword,
-} from "../../wailsjs/go/local/service";
-import {
-  ChangeDisplayLanguage,
-  ChangeColorTheme,
-  ChangeWebServiceState,
-} from "../../wailsjs/go/tray/tray";
-import { ResponseState } from "../../packages/components/types";
+// import {
+//   GetOptions,
+//   ChooseLogFile,
+//   ChooseDirectory,
+//   SavePortHttp,
+//   SavePortHttps,
+//   SaveAutoStart,
+//   GetSuperUserAccount,
+//   UpdateSuperUserPassword,
+// } from "../../wailsjs/go/local/service";
+// import {
+//   ChangeDisplayLanguage,
+//   ChangeColorTheme,
+//   ChangeWebServiceState,
+// } from "../../wailsjs/go/tray/tray";
+import { ResponseState } from "../../../components/types";
 
 const { startLoading, endLoading } = useLoading();
 
@@ -38,153 +38,153 @@ const options = reactive({
   SuperUserOldPassword: "",
   SuperUserNewPassword: "",
 });
-GetOptions().then((config) => {
-  options.LogFile = config.LogFile;
-  options.DirLanguages = config.DirLanguages;
-  options.DirAssets = config.DirAssets;
-  options.DirUserData = config.DirUserData;
-  options.DirDocs = config.DirDocs;
-  options.WebAutoStart = config.WebAutoStart == "true";
-  options.WebPortHttp = parseInt(config.WebPortHttp.substring(1));
-  options.WebPortHttps = parseInt(config.WebPortHttps.substring(1));
-  options.WebDirCerts = config.WebDirCerts;
-});
+// GetOptions().then((config) => {
+//   options.LogFile = config.LogFile;
+//   options.DirLanguages = config.DirLanguages;
+//   options.DirAssets = config.DirAssets;
+//   options.DirUserData = config.DirUserData;
+//   options.DirDocs = config.DirDocs;
+//   options.WebAutoStart = config.WebAutoStart == "true";
+//   options.WebPortHttp = parseInt(config.WebPortHttp.substring(1));
+//   options.WebPortHttps = parseInt(config.WebPortHttps.substring(1));
+//   options.WebDirCerts = config.WebDirCerts;
+// });
 
 const superUserAccount = ref("");
-GetSuperUserAccount().then((account: string) => {
-  superUserAccount.value = account;
-});
+// GetSuperUserAccount().then((account: string) => {
+//   superUserAccount.value = account;
+// });
 
 const changeDisplayLanguage = async (newLang: string) => {
   startLoading();
-  await ChangeDisplayLanguage(newLang);
+  // await ChangeDisplayLanguage(newLang);
 };
 const changeColorTheme = async (newTheme: string) => {
   startLoading();
-  await ChangeColorTheme(newTheme);
+  // await ChangeColorTheme(newTheme);
 };
 
 const changeLogFile = async (res: (state: ResponseState) => void) => {
   startLoading();
-  const newLogFile = await ChooseLogFile(
-    options.LogFile,
-    t("settings.ChooseLogFile")
-  );
-  if (newLogFile) {
-    options.LogFile = newLogFile;
-    res("success");
-  } else {
-    res("warning");
-  }
+  // const newLogFile = await ChooseLogFile(
+  //   options.LogFile,
+  //   t("settings.ChooseLogFile")
+  // );
+  // if (newLogFile) {
+  //   options.LogFile = newLogFile;
+  //   res("success");
+  // } else {
+  //   res("warning");
+  // }
   endLoading();
 };
 const changeDirCerts = async (res: (state: ResponseState) => void) => {
   startLoading();
-  const newDir = await ChooseDirectory(
-    "certs",
-    options.WebDirCerts,
-    t("settings.chooseDirCerts")
-  );
-  if (newDir) {
-    options.WebDirCerts = newDir;
-    res("success");
-  } else {
-    res("warning");
-  }
+  // const newDir = await ChooseDirectory(
+  //   "certs",
+  //   options.WebDirCerts,
+  //   t("settings.chooseDirCerts")
+  // );
+  // if (newDir) {
+  //   options.WebDirCerts = newDir;
+  //   res("success");
+  // } else {
+  //   res("warning");
+  // }
   endLoading();
 };
 const changeDirLanguages = async (res: (state: ResponseState) => void) => {
   startLoading();
-  const newDir = await ChooseDirectory(
-    "languages",
-    options.DirLanguages,
-    t("settings.chooseDirLanguages")
-  );
-  if (newDir) {
-    options.DirLanguages = newDir;
-    res("success");
-  } else {
-    res("warning");
-  }
+  // const newDir = await ChooseDirectory(
+  //   "languages",
+  //   options.DirLanguages,
+  //   t("settings.chooseDirLanguages")
+  // );
+  // if (newDir) {
+  //   options.DirLanguages = newDir;
+  //   res("success");
+  // } else {
+  //   res("warning");
+  // }
   endLoading();
 };
 const changeDirAssets = async (res: (state: ResponseState) => void) => {
   startLoading();
-  const newDir = await ChooseDirectory(
-    "assets",
-    options.DirAssets,
-    t("settings.chooseDirAssets")
-  );
-  if (newDir) {
-    options.DirAssets = newDir;
-    res("success");
-  } else {
-    res("warning");
-  }
+  // const newDir = await ChooseDirectory(
+  //   "assets",
+  //   options.DirAssets,
+  //   t("settings.chooseDirAssets")
+  // );
+  // if (newDir) {
+  //   options.DirAssets = newDir;
+  //   res("success");
+  // } else {
+  //   res("warning");
+  // }
   endLoading();
 };
 const changeDirUserData = async (res: (state: ResponseState) => void) => {
   startLoading();
-  const newDir = await ChooseDirectory(
-    "userdata",
-    options.DirUserData,
-    t("settings.chooseDirUserData")
-  );
-  if (newDir) {
-    options.DirUserData = newDir;
-    res("success");
-  } else {
-    res("warning");
-  }
+  // const newDir = await ChooseDirectory(
+  //   "userdata",
+  //   options.DirUserData,
+  //   t("settings.chooseDirUserData")
+  // );
+  // if (newDir) {
+  //   options.DirUserData = newDir;
+  //   res("success");
+  // } else {
+  //   res("warning");
+  // }
   endLoading();
 };
 const changeDirDocs = async (res: (state: ResponseState) => void) => {
   startLoading();
-  const newDir = await ChooseDirectory(
-    "docs",
-    options.DirDocs,
-    t("settings.chooseDirDocs")
-  );
-  if (newDir) {
-    options.DirDocs = newDir;
-    res("success");
-  } else {
-    res("warning");
-  }
+  // const newDir = await ChooseDirectory(
+  //   "docs",
+  //   options.DirDocs,
+  //   t("settings.chooseDirDocs")
+  // );
+  // if (newDir) {
+  //   options.DirDocs = newDir;
+  //   res("success");
+  // } else {
+  //   res("warning");
+  // }
   endLoading();
 };
 const changePortHttp = async (res: (state: ResponseState) => void) => {
   if (options.WebPortHttp) {
     startLoading();
-    const success = await SavePortHttp(options.WebPortHttp);
-    if (success) {
-      res("success");
-    } else {
-      res("error");
-    }
+    // const success = await SavePortHttp(options.WebPortHttp);
+    // if (success) {
+    //   res("success");
+    // } else {
+    //   res("error");
+    // }
     endLoading();
   }
 };
 const changePortHttps = async (res: (state: ResponseState) => void) => {
   if (options.WebPortHttps) {
     startLoading();
-    const success = await SavePortHttps(options.WebPortHttps);
-    if (success) {
-      res("success");
-    } else {
-      res("error");
-    }
+    // const success = await SavePortHttps(options.WebPortHttps);
+    // if (success) {
+    //   res("success");
+    // } else {
+    //   res("error");
+    // }
     endLoading();
   }
 };
 const changeAutoStart = async () => {
   startLoading();
-  const success = await SaveAutoStart(options.WebAutoStart);
-  if (success) {
-    ChangeWebServiceState(true);
-  } else {
-    options.WebAutoStart = !options.WebAutoStart;
-  }
+  // const success = await SaveAutoStart(options.WebAutoStart);
+  // if (success) {
+  //   ChangeWebServiceState(true);
+  // } else {
+  //   options.WebAutoStart = !options.WebAutoStart;
+  // }
   endLoading();
 };
 const clearSuperUserPassword = () => {
@@ -193,15 +193,15 @@ const clearSuperUserPassword = () => {
 };
 const changeSuperUserPassword = async (res: (state: ResponseState) => void) => {
   startLoading();
-  const success = await UpdateSuperUserPassword(
-    options.SuperUserOldPassword,
-    options.SuperUserNewPassword
-  );
-  if (success) {
-    res("success");
-  } else {
-    res("error");
-  }
+  // const success = await UpdateSuperUserPassword(
+  //   options.SuperUserOldPassword,
+  //   options.SuperUserNewPassword
+  // );
+  // if (success) {
+  //   res("success");
+  // } else {
+  //   res("error");
+  // }
   endLoading();
 };
 </script>

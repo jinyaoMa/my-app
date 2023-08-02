@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 import { useLoading } from "./store/loading";
 import { useColorTheme } from "./store/color-theme";
 import { EventsOn } from "../wailsjs/runtime";
-import { GetOptions } from "../wailsjs/go/local/service";
+// import { GetOptions } from "../wailsjs/go/local/service";
 import Sidebar from "./components/Sidebar.vue";
 
 const storeLoading = useLoading();
@@ -12,11 +12,11 @@ const loading = computed(() => storeLoading.loading);
 
 const { locale } = useI18n();
 const { changeTheme } = useColorTheme();
-GetOptions().then((config) => {
-  locale.value = config.DisplayLanguage || locale.value;
-  changeTheme(config.ColorTheme);
-  storeLoading.endLoading();
-});
+// GetOptions().then((config) => {
+//   locale.value = config.DisplayLanguage || locale.value;
+//   changeTheme(config.ColorTheme);
+//   storeLoading.endLoading();
+// });
 EventsOn("OnDisplayLanguageChanged", (lang: string) => {
   locale.value = lang;
   storeLoading.endLoading();

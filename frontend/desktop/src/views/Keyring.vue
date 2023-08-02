@@ -2,20 +2,20 @@
 import { reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useLoading } from "../store/loading";
-import {
-  GetSuperUserAccount,
-  CheckSuperUserPassword,
-} from "../../wailsjs/go/local/service";
-import { ResponseState } from "../../packages/components/types";
+// import {
+//   GetSuperUserAccount,
+//   CheckSuperUserPassword,
+// } from "../../wailsjs/go/local/service";
+import { ResponseState } from "../../../components/types";
 
 const { startLoading, endLoading } = useLoading();
 
 const { t } = useI18n();
 
 const superUserAccount = ref("");
-GetSuperUserAccount().then((account: string) => {
-  superUserAccount.value = account;
-});
+// GetSuperUserAccount().then((account: string) => {
+//   superUserAccount.value = account;
+// });
 
 const auth = reactive({
   isAuth: false,
@@ -24,14 +24,14 @@ const auth = reactive({
 });
 const checkPassword = async (res: (state: ResponseState) => void) => {
   startLoading();
-  const success = await CheckSuperUserPassword(auth.enteredPassword);
-  if (success) {
-    auth.isAuth = true;
-    auth.usedPassword = auth.enteredPassword;
-    res("success");
-  } else {
-    res("error");
-  }
+  // const success = await CheckSuperUserPassword(auth.enteredPassword);
+  // if (success) {
+  //   auth.isAuth = true;
+  //   auth.usedPassword = auth.enteredPassword;
+  //   res("success");
+  // } else {
+  //   res("error");
+  // }
   endLoading();
 };
 

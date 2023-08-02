@@ -10,11 +10,11 @@
     "install:frontend": "pnpm icons:build && pnpm design:build"
   },
   "devDependencies": {
-    "@types/node": "^18.11.9",
+    "@types/node": "^20.4.5",
     "cross-env": "^7.0.3",
-    "mkdirp": "^1.0.4",
-    "vitepress": "1.0.0-alpha.27",
-    "vue": "^3.2.41"
+    "mkdirp": "^3.0.1",
+    "vitepress": "1.0.0-beta.7",
+    "vue": "^3.3.4"
   },
   "repository": {
     "type": "git",
