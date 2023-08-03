@@ -13,6 +13,7 @@ import (
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	gormLogger "gorm.io/gorm/logger"
 	"gorm.io/plugin/dbresolver"
 )
 
@@ -65,6 +66,13 @@ func initDB(cfg *configs.Configs) (db *database.Database, err error) {
 			Option: logger.Option{
 				Writer: logFile,
 				Tag:    "DBS",
+			},
+			Config: gormLogger.Config{
+				SlowThreshold:             0,
+				Colorful:                  false,
+				IgnoreRecordNotFoundError: true,
+				ParameterizedQueries:      false,
+				LogLevel:                  gormLogger.Error,
 			},
 		},
 	})
