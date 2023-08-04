@@ -1,11 +1,19 @@
 package menuitem
 
 import (
+	"context"
 	"my-app/backend/internal/app"
 	"my-app/backend/pkg/tray"
 )
 
-type quit struct{}
+type quit struct {
+	ctx context.Context
+}
+
+// SetContext implements tray.IMenuItem.
+func (q *quit) SetContext(ctx context.Context) {
+	q.ctx = ctx
+}
 
 // CanCheck implements tray.IMenuItem.
 func (*quit) CanCheck() bool {
@@ -62,6 +70,8 @@ func (*quit) Visible() bool {
 	return true
 }
 
-func newQuit() tray.IMenuItem {
-	return &quit{}
+func newQuit(ctx context.Context) tray.IMenuItem {
+	return &quit{
+		ctx: ctx,
+	}
 }

@@ -1,5 +1,7 @@
 package tray
 
+import "context"
+
 type Interface interface {
 	Icon() []byte
 	Title() string
@@ -7,6 +9,8 @@ type Interface interface {
 
 	// submenu
 	Items() []IMenuItem
+
+	SetContext(ctx context.Context)
 }
 
 type IMenuItem interface {
@@ -33,4 +37,6 @@ type IMenuItem interface {
 
 	// submenu
 	Items() []IMenuItem
+
+	SetContext(ctx context.Context)
 }

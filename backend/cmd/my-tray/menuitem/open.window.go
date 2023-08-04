@@ -1,11 +1,21 @@
 package menuitem
 
 import (
+	"context"
 	"my-app/backend/internal/app"
 	"my-app/backend/pkg/tray"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-type openWindow struct{}
+type openWindow struct {
+	ctx context.Context
+}
+
+// SetContext implements tray.IMenuItem.
+func (w *openWindow) SetContext(ctx context.Context) {
+	w.ctx = ctx
+}
 
 // CanCheck implements tray.IMenuItem.
 func (*openWindow) CanCheck() bool {
@@ -38,7 +48,8 @@ func (*openWindow) Key() string {
 }
 
 // OnClick implements tray.IMenuItem.
-func (*openWindow) OnClick() (quit bool) {
+func (w *openWindow) OnClick() (quit bool) {
+	runtime.WindowShow(w.ctx)
 	return false
 }
 
@@ -62,6 +73,8 @@ func (*openWindow) Visible() bool {
 	return true
 }
 
-func newOpenWindow() tray.IMenuItem {
-	return &openWindow{}
+func newOpenWindow(ctx context.Context) tray.IMenuItem {
+	return &openWindow{
+		ctx: ctx,
+	}
 }

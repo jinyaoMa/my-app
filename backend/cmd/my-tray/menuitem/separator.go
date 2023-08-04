@@ -1,9 +1,13 @@
 package menuitem
 
-import "my-app/backend/pkg/tray"
+import (
+	"context"
+	"my-app/backend/pkg/tray"
+)
 
 type separator struct {
 	tray.IMenuItem
+	ctx context.Context
 }
 
 // Separator implements tray.IMenuItem.
@@ -11,6 +15,13 @@ func (*separator) Separator() bool {
 	return true
 }
 
-func newSeparator() tray.IMenuItem {
-	return &separator{}
+// SetContext implements tray.Interface.
+func (s *separator) SetContext(ctx context.Context) {
+	s.ctx = ctx
+}
+
+func newSeparator(ctx context.Context) tray.IMenuItem {
+	return &separator{
+		ctx: ctx,
+	}
 }

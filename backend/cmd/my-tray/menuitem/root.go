@@ -1,11 +1,19 @@
 package menuitem
 
 import (
+	"context"
 	"my-app/backend/internal/app"
 	"my-app/backend/pkg/tray"
 )
 
-type root struct{}
+type root struct {
+	ctx context.Context
+}
+
+// SetContext implements tray.Interface.
+func (r *root) SetContext(ctx context.Context) {
+	r.ctx = ctx
+}
 
 // Icon implements tray.Interface.
 func (*root) Icon() []byte {
@@ -19,11 +27,11 @@ func (*root) Icon() []byte {
 }
 
 // Items implements tray.Interface.
-func (*root) Items() []tray.IMenuItem {
+func (r *root) Items() []tray.IMenuItem {
 	return []tray.IMenuItem{
-		newOpenWindow(),
-		newSeparator(),
-		newQuit(),
+		newOpenWindow(r.ctx),
+		newSeparator(r.ctx),
+		newQuit(r.ctx),
 	}
 }
 
@@ -37,6 +45,8 @@ func (*root) Tooltip() string {
 	return app.T().AppName
 }
 
-func newRoot() tray.Interface {
-	return &root{}
+func newRoot(ctx context.Context) tray.Interface {
+	return &root{
+		ctx: ctx,
+	}
 }

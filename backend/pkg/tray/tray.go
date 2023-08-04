@@ -15,6 +15,10 @@ var (
 	menuItemCache map[string]*systray.MenuItem
 )
 
+func init() {
+	menuItemCache = make(map[string]*systray.MenuItem)
+}
+
 func Register(tray Interface) {
 	once.Do(func() {
 		systray.Register(onReady(tray), nil)
