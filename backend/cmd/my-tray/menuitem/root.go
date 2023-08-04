@@ -17,13 +17,13 @@ func (r *root) SetContext(ctx context.Context) {
 
 // Icon implements tray.Interface.
 func (*root) Icon() []byte {
-	if app.App().Web().IsStopping() {
-		return app.App().Assets().GetBytes("tray.orange.ico")
+	if app.Web().IsStopping() {
+		return app.Assets().GetBytes("tray.orange.ico")
 	}
-	if app.App().Web().IsRunning() {
-		return app.App().Assets().GetBytes("tray.green.ico")
+	if app.Web().IsRunning() {
+		return app.Assets().GetBytes("tray.green.ico")
 	}
-	return app.App().Assets().GetBytes("tray.blue.ico")
+	return app.Assets().GetBytes("tray.blue.ico")
 }
 
 // Items implements tray.Interface.
@@ -37,12 +37,12 @@ func (r *root) Items() []tray.IMenuItem {
 
 // Title implements tray.Interface.
 func (*root) Title() string {
-	return app.App().T().AppName
+	return app.T().AppName
 }
 
 // Tooltip implements tray.Interface.
 func (*root) Tooltip() string {
-	return app.App().T().AppName
+	return app.T().AppName
 }
 
 func newRoot(ctx context.Context) tray.Interface {

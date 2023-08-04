@@ -57,12 +57,12 @@ func (*quit) Separator() bool {
 
 // Title implements tray.IMenuItem.
 func (*quit) Title() string {
-	return app.App().T().Quit
+	return app.T().Quit
 }
 
 // Tooltip implements tray.IMenuItem.
 func (*quit) Tooltip() string {
-	return app.App().T().Quit
+	return app.T().Quit
 }
 
 // Visible implements tray.IMenuItem.

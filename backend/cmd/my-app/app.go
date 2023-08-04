@@ -25,6 +25,6 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-	menuitem.BindContext(ctx)
-	a.optionService = service.NewOptionService(app.App().Db())
+	menuitem.Root().SetContext(ctx)
+	a.optionService = service.NewOptionService(app.Db())
 }

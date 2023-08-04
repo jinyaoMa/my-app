@@ -41,7 +41,7 @@ func initDB(cfg *configs.Configs) (db *database.Database, err error) {
 	}
 
 	var logFile *os.File
-	logFile, err = os.OpenFile(cfg.Database.LogFile, os.O_APPEND|os.O_CREATE, os.ModeAppend)
+	logFile, err = os.OpenFile(cfg.Database.LogFile, os.O_APPEND|os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		return
 	}
