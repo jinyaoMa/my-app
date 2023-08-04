@@ -34,7 +34,7 @@ func (*openWindow) Enabled() bool {
 
 // Icon implements tray.IMenuItem.
 func (*openWindow) Icon() []byte {
-	return app.Assets().GetBytes("tray.ico")
+	return app.App().Assets().GetBytes("tray.ico")
 }
 
 // Items implements tray.IMenuItem.
@@ -60,12 +60,12 @@ func (*openWindow) Separator() bool {
 
 // Title implements tray.IMenuItem.
 func (*openWindow) Title() string {
-	return app.T().OpenWindow
+	return app.App().T().OpenWindow
 }
 
 // Tooltip implements tray.IMenuItem.
 func (*openWindow) Tooltip() string {
-	return app.T().OpenWindow
+	return app.App().T().OpenWindow
 }
 
 // Visible implements tray.IMenuItem.

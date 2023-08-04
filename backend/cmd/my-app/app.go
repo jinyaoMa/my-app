@@ -26,5 +26,5 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 	menuitem.BindContext(ctx)
-	a.optionService = service.NewOptionService(app.Db())
+	a.optionService = service.NewOptionService(app.App().Db())
 }

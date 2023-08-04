@@ -13,14 +13,14 @@ import (
 )
 
 func main() {
-	optionService := service.NewOptionService(app.Db())
+	optionService := service.NewOptionService(app.App().Db())
 	portHttp, _, _ := optionService.GetUint16ByOptionName(vmodel.OptionNameWebPortHttp)
 	portHttps, _, _ := optionService.GetUint16ByOptionName(vmodel.OptionNameWebPortHttps)
 
-	s := app.Web()
+	s := app.App().Web()
 	if s.Start(&server.Option{
 		IsDev:  true,
-		Logger: app.Log(),
+		Logger: app.App().Log(),
 		Http: server.OptionHttp{
 			Port: portHttp,
 		},
