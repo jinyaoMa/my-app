@@ -9,37 +9,12 @@ import (
 )
 
 type openWindow struct {
-	ctx context.Context
-}
-
-// SetContext implements tray.IMenuItem.
-func (w *openWindow) SetContext(ctx context.Context) {
-	w.ctx = ctx
-}
-
-// CanCheck implements tray.IMenuItem.
-func (*openWindow) CanCheck() bool {
-	return false
-}
-
-// Checked implements tray.IMenuItem.
-func (*openWindow) Checked() bool {
-	return false
-}
-
-// Enabled implements tray.IMenuItem.
-func (*openWindow) Enabled() bool {
-	return true
+	*tray.MenuItem
 }
 
 // Icon implements tray.IMenuItem.
 func (*openWindow) Icon() []byte {
 	return app.Assets().GetBytes("tray.ico")
-}
-
-// Items implements tray.IMenuItem.
-func (*openWindow) Items() []tray.IMenuItem {
-	return nil
 }
 
 // Key implements tray.IMenuItem.
@@ -49,12 +24,7 @@ func (*openWindow) Key() string {
 
 // OnClick implements tray.IMenuItem.
 func (w *openWindow) OnClick() (quit bool) {
-	runtime.WindowShow(w.ctx)
-	return false
-}
-
-// Separator implements tray.IMenuItem.
-func (*openWindow) Separator() bool {
+	runtime.WindowShow(w.Ctx)
 	return false
 }
 
@@ -68,13 +38,12 @@ func (*openWindow) Tooltip() string {
 	return app.T().OpenWindow
 }
 
-// Visible implements tray.IMenuItem.
-func (*openWindow) Visible() bool {
-	return true
-}
-
 func newOpenWindow(ctx context.Context) tray.IMenuItem {
 	return &openWindow{
-		ctx: ctx,
+		MenuItem: &tray.MenuItem{
+			MenuItemBase: &tray.MenuItemBase{
+				Ctx: ctx,
+			},
+		},
 	}
 }

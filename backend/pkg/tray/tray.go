@@ -19,18 +19,18 @@ func init() {
 	menuItemCache = make(map[string]*systray.MenuItem)
 }
 
-func Register(tray Interface) {
+func Register(tray IMenuItemBase) {
 	once.Do(func() {
 		systray.Register(onReady(tray), nil)
 	})
 }
 
-func Run(tray Interface) {
+func Run(tray IMenuItemBase) {
 	systray.Run(onReady(tray), nil)
 }
 
 // update systray ui based on state loaded from tray interface
-func Update(tray Interface, initialized bool) error {
+func Update(tray IMenuItemBase, initialized bool) error {
 	icon := tray.Icon()
 	title := tray.Title()
 	tooltip := tray.Tooltip()
@@ -80,7 +80,7 @@ func update(item IMenuItem, initialized bool, menuItems ...*systray.MenuItem) er
 	}
 
 	if menuItem, ok := menuItemCache[key]; ok {
-		if initialized {
+		if initialized && key != "" {
 			cases = append(cases, reflect.SelectCase{
 				Dir:  reflect.SelectRecv,
 				Chan: reflect.ValueOf(menuItem.ClickedCh),
@@ -135,7 +135,7 @@ func update(item IMenuItem, initialized bool, menuItems ...*systray.MenuItem) er
 	return nil
 }
 
-func onReady(tray Interface) func() {
+func onReady(tray IMenuItemBase) func() {
 	return func() {
 		Update(tray, true)
 		go func() {

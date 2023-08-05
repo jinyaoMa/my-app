@@ -2,7 +2,7 @@ package tray
 
 import "context"
 
-type Interface interface {
+type IMenuItemBase interface {
 	Icon() []byte
 	Title() string
 	Tooltip() string
@@ -14,17 +14,14 @@ type Interface interface {
 }
 
 type IMenuItem interface {
+	IMenuItemBase
+
 	// identify menuitems, used when initialized, error if changed after initialized
+	// if key is empty, do not listen on clicks
 	Key() string
 
 	// append separator to systray root menu only
 	Separator() bool
-
-	Icon() []byte
-
-	Title() string
-
-	Tooltip() string
 
 	Visible() bool
 
@@ -34,9 +31,4 @@ type IMenuItem interface {
 	Checked() bool
 
 	OnClick() (quit bool)
-
-	// submenu
-	Items() []IMenuItem
-
-	SetContext(ctx context.Context)
 }

@@ -52,14 +52,14 @@ func init() {
 	optionService = service.NewOptionService(db)
 
 	currentLanguage, err = optionService.GetByOptionName(vmodel.OptionNameDisplayLanguage)
-	if err != nil || !helper.Any(availLangs, func(e *assetsio.Lang) bool {
+	if err != nil || !helper.Any(availLangs, func(e assetsio.Lang) bool {
 		return e.Code == currentLanguage.Value
 	}) {
 		currentLanguage = &entity.Option{
 			Key:   vmodel.OptionNameDisplayLanguage,
 			Value: "",
 		}
-		if helper.Any(availLangs, func(e *assetsio.Lang) bool {
+		if helper.Any(availLangs, func(e assetsio.Lang) bool {
 			return e.Code == cfg.Language
 		}) {
 			currentLanguage.Value = cfg.Language

@@ -5,12 +5,12 @@ import (
 	"my-app/backend/pkg/tray"
 )
 
-var _root tray.Interface
+var _root tray.IMenuItemBase
 
 func init() {
 	_root = newRoot(context.Background())
 }
 
-func Root() tray.Interface {
+func Root() tray.IMenuItemBase {
 	return _root
 }
