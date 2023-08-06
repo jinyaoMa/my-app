@@ -3,11 +3,12 @@ package app
 import "my-app/backend/pkg/assetsio"
 
 type Translation struct {
-	Lang       assetsio.Lang         `json:"lang"`
-	AppName    string                `json:"app_name"`
-	OpenWindow string                `json:"open_window"`
-	ColorTheme TranslationColorTheme `json:"color_theme"`
-	Quit       string                `json:"quit"`
+	Lang            assetsio.Lang              `json:"lang"`
+	AppName         string                     `json:"app_name"`
+	OpenWindow      string                     `json:"open_window"`
+	DisplayLanguage TranslationDisplayLanguage `json:"display_language"`
+	ColorTheme      TranslationColorTheme      `json:"color_theme"`
+	Quit            string                     `json:"quit"`
 }
 
 type TranslationColorTheme struct {
@@ -16,6 +17,11 @@ type TranslationColorTheme struct {
 	System string `json:"system"`
 	Light  string `json:"light"`
 	Dark   string `json:"dark"`
+}
+
+type TranslationDisplayLanguage struct {
+	Label string `json:"label"`
+	Title string `json:"title"`
 }
 
 // Metadata implements assetsio.ITranslation.
