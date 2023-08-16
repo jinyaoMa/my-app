@@ -6,4 +6,6 @@ type IChainWriter interface {
 	io.Writer
 
 	Children() []IChainWriter
+
+	Add(child IChainWriter)
 }

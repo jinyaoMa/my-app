@@ -4,6 +4,11 @@ type LogWriter struct {
 	children []IChainWriter // write next until nil
 }
 
+// Add implements IChainWriter.
+func (w *LogWriter) Add(child IChainWriter) {
+	w.children = append(w.children, child)
+}
+
 // Next implements IChainWriter.
 func (w *LogWriter) Children() []IChainWriter {
 	return w.children
