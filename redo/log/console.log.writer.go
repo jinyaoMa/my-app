@@ -13,12 +13,12 @@ func (w *ConsoleLogWriter) Write(p []byte) (n int, err error) {
 	return w.LogWriter.Write(p)
 }
 
-func NewConsoleLogWriter(children ...IChainWriter) *ConsoleLogWriter {
+func NewConsoleLogWriter(children ...ITreeWriter) *ConsoleLogWriter {
 	return &ConsoleLogWriter{
 		LogWriter: NewLogWriter(children...),
 	}
 }
 
-func NewIConsoleLogWriter(children ...IChainWriter) IChainWriter {
+func NewIConsoleLogWriter(children ...ITreeWriter) ITreeWriter {
 	return NewConsoleLogWriter(children...)
 }

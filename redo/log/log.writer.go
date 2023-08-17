@@ -1,16 +1,16 @@
 package log
 
 type LogWriter struct {
-	children []IChainWriter // write next until nil
+	children []ITreeWriter // write next until nil
 }
 
 // Add implements IChainWriter.
-func (w *LogWriter) Add(child IChainWriter) {
+func (w *LogWriter) Add(child ITreeWriter) {
 	w.children = append(w.children, child)
 }
 
 // Next implements IChainWriter.
-func (w *LogWriter) Children() []IChainWriter {
+func (w *LogWriter) Children() []ITreeWriter {
 	return w.children
 }
 
@@ -27,12 +27,12 @@ func (w *LogWriter) Write(p []byte) (n int, err error) {
 	return
 }
 
-func NewLogWriter(children ...IChainWriter) *LogWriter {
+func NewLogWriter(children ...ITreeWriter) *LogWriter {
 	return &LogWriter{
 		children: children,
 	}
 }
 
-func NewILogWriter(children ...IChainWriter) IChainWriter {
+func NewILogWriter(children ...ITreeWriter) ITreeWriter {
 	return NewLogWriter(children...)
 }

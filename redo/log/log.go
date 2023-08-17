@@ -18,11 +18,11 @@ type Log struct {
 	*log.Logger
 }
 
-func (l *Log) SetOutput(out IChainWriter) {
+func (l *Log) SetOutput(out ITreeWriter) {
 	l.Logger.SetOutput(out)
 }
 
-func New(out IChainWriter, prefix string, flag int) *Log {
+func New(out ITreeWriter, prefix string, flag int) *Log {
 	return &Log{
 		Logger: log.New(out, prefix, flag),
 	}

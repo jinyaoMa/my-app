@@ -2,10 +2,10 @@ package log
 
 import "io"
 
-type IChainWriter interface {
+type ITreeWriter interface {
 	io.Writer
 
-	Children() []IChainWriter
+	Children() []ITreeWriter
 
-	Add(child IChainWriter)
+	Add(child ITreeWriter)
 }

@@ -14,7 +14,7 @@ func (w *FileLogWriter) Write(p []byte) (n int, err error) {
 	return w.LogWriter.Write(p)
 }
 
-func NewFileLogWriter(filename string, children ...IChainWriter) (w *FileLogWriter, err error) {
+func NewFileLogWriter(filename string, children ...ITreeWriter) (w *FileLogWriter, err error) {
 	var logFile *os.File
 	logFile, err = os.OpenFile(filename, os.O_APPEND|os.O_RDWR|os.O_CREATE, os.ModeAppend)
 	if err != nil {
@@ -27,6 +27,6 @@ func NewFileLogWriter(filename string, children ...IChainWriter) (w *FileLogWrit
 	return
 }
 
-func NewIFileLogWriter(filename string, children ...IChainWriter) (w IChainWriter, err error) {
+func NewIFileLogWriter(filename string, children ...ITreeWriter) (w ITreeWriter, err error) {
 	return NewFileLogWriter(filename, children...)
 }
