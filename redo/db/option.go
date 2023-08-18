@@ -14,12 +14,12 @@ type Option struct {
 	OnInitialized func(db *gorm.DB)
 	Options       []gorm.Option
 	Migrate       []interface{}
-	Join          []OptionJoin
+	Join          []OptionJoin // build up many-to-many connection
 	Logger        OptionLogger
 }
 
 type OptionJoin struct {
-	Model     any
+	Entity    any
 	Field     string
 	JoinTable any
 }
