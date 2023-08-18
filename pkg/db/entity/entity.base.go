@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"my-app/backend/pkg/database/interfaces"
+	"my-app/pkg/db/interfaces"
 	"time"
 
 	"gorm.io/gorm"

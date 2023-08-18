@@ -1,7 +1,7 @@
 package interfaces
 
 import (
-	"my-app/backend/pkg/database/vmodel"
+	"my-app/pkg/db/vmodel"
 )
 
 type ICrudService[TEntity IEntity] interface {

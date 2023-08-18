@@ -1,7 +1,7 @@
 package db
 
 import (
-	"my-app/redo/log"
+	"my-app/pkg/log"
 	"time"
 
 	"dario.cat/mergo"

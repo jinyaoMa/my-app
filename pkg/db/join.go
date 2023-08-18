@@ -1,7 +1,7 @@
 package db
 
 import (
-	"my-app/backend/pkg/database/entity"
+	"my-app/pkg/db/entity"
 
 	"gorm.io/gorm"
 )
