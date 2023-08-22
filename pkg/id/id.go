@@ -21,7 +21,7 @@ type ID struct {
 	nodeShift uint8
 }
 
-// Generate implements Interface
+// Generate implements IID
 func (s *ID) Generate() int64 {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -50,32 +50,36 @@ func (s *ID) Generate() int64 {
 	return r
 }
 
-// Default return Snowflake Id generator with default options
-func Default() (Interface, error) {
-	return New(DefaultOption())
-}
-
 // New return Snowflake Id generator with custom options
-func New(opts *Option) (Interface, error) {
-	opts = NewOption(opts)
+func New(cfg *Config) (*ID, error) {
+	cfg = NewConfig(cfg)
 
-	var shareBits uint8 = opts.NodeBits + opts.StepBits
+	var shareBits uint8 = cfg.NodeBits + cfg.StepBits
 	if shareBits > TotalShareBits {
 		return nil, fmt.Errorf("remember, you have a total %d bits to share between node/step", TotalShareBits)
 	}
 
-	var nodeMax int64 = -1 ^ (-1 << opts.NodeBits)
-	if opts.NodeNumber < 0 || opts.NodeNumber > nodeMax {
+	var nodeMax int64 = -1 ^ (-1 << cfg.NodeBits)
+	if cfg.NodeNumber < 0 || cfg.NodeNumber > nodeMax {
 		return nil, fmt.Errorf("node number must be between 0 and %s", strconv.FormatInt(nodeMax, 10))
 	}
 
 	return &ID{
-		epoch:     opts.Epoch,
-		node:      opts.NodeNumber,
+		epoch:     cfg.Epoch,
+		node:      cfg.NodeNumber,
 		nodeMax:   nodeMax,
-		nodeMask:  nodeMax << opts.StepBits,
-		stepMask:  -1 ^ (-1 << opts.StepBits),
+		nodeMask:  nodeMax << cfg.StepBits,
+		stepMask:  -1 ^ (-1 << cfg.StepBits),
 		timeShift: shareBits,
-		nodeShift: opts.StepBits,
+		nodeShift: cfg.StepBits,
 	}, nil
+}
+
+func NewIID(cfg *Config) (IID, error) {
+	return New(cfg)
+}
+
+// Default return Snowflake Id generator with default options
+func Default() (*ID, error) {
+	return New(DefaultConfig())
 }

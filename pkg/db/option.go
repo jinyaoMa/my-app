@@ -24,7 +24,7 @@ func DefaultOption() *Option {
 		Options: []gorm.Option{
 			&gorm.Config{},
 		},
-		Logger: log.New(&log.Option{
+		Logger: log.New(&log.Config{
 			Out:    log.NewConsoleLogWriter(),
 			Prefix: "[DBS] ",
 			Flag:   log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile,

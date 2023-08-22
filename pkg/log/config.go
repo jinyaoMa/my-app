@@ -2,22 +2,22 @@ package log
 
 import "dario.cat/mergo"
 
-type Option struct {
+type Config struct {
 	Out    ITreeWriter
 	Prefix string
 	Flag   int
 }
 
-func DefaultOption() *Option {
-	return &Option{
+func DefaultConfig() *Config {
+	return &Config{
 		Out:    NewConsoleLogWriter(),
 		Prefix: "[LOG] ",
 		Flag:   Ldate | Ltime | Lmicroseconds | Lshortfile,
 	}
 }
 
-func NewOption(dst *Option) *Option {
-	src := DefaultOption()
+func NewConfig(dst *Config) *Config {
+	src := DefaultConfig()
 
 	err := mergo.Merge(dst, *src)
 	if err != nil {

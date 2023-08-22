@@ -1,6 +1,6 @@
 package id
 
-type Interface interface {
+type IID interface {
 	// Generate creates and returns a unique snowflake ID
 	// To help guarantee uniqueness
 	// - Make sure your system is keeping accurate system time

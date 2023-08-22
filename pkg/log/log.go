@@ -17,7 +17,7 @@ const (
 )
 
 type Log struct {
-	*Option
+	*Config
 	*log.Logger
 }
 
@@ -25,14 +25,14 @@ func (l *Log) SetOutput(out ITreeWriter) {
 	l.Logger.SetOutput(out)
 }
 
-func New(opt *Option) *Log {
-	opt = NewOption(opt)
+func New(cfg *Config) *Log {
+	cfg = NewConfig(cfg)
 	return &Log{
-		Option: opt,
-		Logger: log.New(opt.Out, opt.Prefix, opt.Flag),
+		Config: cfg,
+		Logger: log.New(cfg.Out, cfg.Prefix, cfg.Flag),
 	}
 }
 
 func Default() *Log {
-	return New(DefaultOption())
+	return New(DefaultConfig())
 }
