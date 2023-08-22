@@ -7,7 +7,7 @@ import (
 )
 
 type DB struct {
-	gorm.DB
+	*gorm.DB
 	options *Option
 }
 
@@ -34,7 +34,7 @@ func New(opts *Option) (*DB, error) {
 	}
 
 	return &DB{
-		DB:      *db,
+		DB:      db,
 		options: opts,
 	}, nil
 }

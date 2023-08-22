@@ -49,13 +49,15 @@ func (l *Log) SetOutput(out ITreeWriter) {
 	l.Logger.SetOutput(out)
 }
 
-func New(opt Option) *Log {
+func New(opt *Option) *Log {
+	opt = NewOption(opt)
 	return &Log{
 		Logger: log.New(opt.Out, opt.Prefix, opt.Flag),
 	}
 }
 
-func Gorm(opt Option, config GormConfig) gormLogger.Interface {
+func Gorm(opt *Option, config GormConfig) gormLogger.Interface {
+	opt = NewOption(opt)
 	return gormLogger.New(New(opt), gormLogger.Config{
 		SlowThreshold:             config.SlowThreshold,
 		Colorful:                  config.Colorful,

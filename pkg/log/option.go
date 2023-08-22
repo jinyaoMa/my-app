@@ -8,21 +8,21 @@ type Option struct {
 	Flag   int
 }
 
-func DefaultOption() Option {
-	return Option{
+func DefaultOption() *Option {
+	return &Option{
 		Out:    NewConsoleLogWriter(),
 		Prefix: "[LOG] ",
 		Flag:   Ldate | Ltime | Lmicroseconds | Lshortfile,
 	}
 }
 
-func NewOption(dst *Option) Option {
+func NewOption(dst *Option) *Option {
 	src := DefaultOption()
 
-	err := mergo.Merge(dst, src)
+	err := mergo.Merge(dst, *src)
 	if err != nil {
 		return src
 	}
 
-	return *dst
+	return dst
 }

@@ -25,7 +25,7 @@ type OptionJoin struct {
 }
 
 type OptionLogger struct {
-	log.Option
+	*log.Option
 	Config log.GormConfig
 }
 
@@ -36,11 +36,11 @@ func DefaultOption() *Option {
 			&gorm.Config{},
 		},
 		Logger: OptionLogger{
-			Option: log.Option{
+			Option: log.NewOption(&log.Option{
 				Out:    log.NewConsoleLogWriter(),
 				Prefix: "[DBS] ",
 				Flag:   log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile,
-			},
+			}),
 			Config: log.GormConfig{
 				SlowThreshold:             time.Second,
 				Colorful:                  true,
