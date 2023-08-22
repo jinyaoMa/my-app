@@ -9,7 +9,8 @@ import (
 
 type Entity struct {
 	EntityBase
-	ID int64 `gorm:"primaryKey; autoIncrement"`
+	idGenerator snowflake.Interface
+	ID          int64 `gorm:"primaryKey; autoIncrement"`
 }
 
 var (

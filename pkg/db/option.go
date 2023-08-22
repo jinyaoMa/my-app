@@ -7,26 +7,15 @@ import (
 	"dario.cat/mergo"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type Option struct {
 	Dialector     gorm.Dialector
-	OnInitialized func(db *gorm.DB)
 	Options       []gorm.Option
-	Migrate       []interface{}
-	Join          []OptionJoin // build up many-to-many connection
-	Logger        OptionLogger
-}
-
-type OptionJoin struct {
-	Entity    any
-	Field     string
-	JoinTable any
-}
-
-type OptionLogger struct {
-	*log.Option
-	Config log.GormConfig
+	OnInitialized func(db *DB) (err error)
+	Logger        *log.Log
+	LoggerConfig  logger.Config
 }
 
 func DefaultOption() *Option {
@@ -35,19 +24,17 @@ func DefaultOption() *Option {
 		Options: []gorm.Option{
 			&gorm.Config{},
 		},
-		Logger: OptionLogger{
-			Option: log.NewOption(&log.Option{
-				Out:    log.NewConsoleLogWriter(),
-				Prefix: "[DBS] ",
-				Flag:   log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile,
-			}),
-			Config: log.GormConfig{
-				SlowThreshold:             time.Second,
-				Colorful:                  true,
-				IgnoreRecordNotFoundError: false,
-				ParameterizedQueries:      false,
-				LogLevel:                  log.Info,
-			},
+		Logger: log.New(&log.Option{
+			Out:    log.NewConsoleLogWriter(),
+			Prefix: "[DBS] ",
+			Flag:   log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile,
+		}),
+		LoggerConfig: logger.Config{
+			SlowThreshold:             time.Second,
+			Colorful:                  true,
+			IgnoreRecordNotFoundError: false,
+			ParameterizedQueries:      false,
+			LogLevel:                  logger.Info,
 		},
 	}
 }

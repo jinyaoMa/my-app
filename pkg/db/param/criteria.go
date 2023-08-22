@@ -1,4 +1,4 @@
-package vmodel
+package param
 
 import (
 	"dario.cat/mergo"

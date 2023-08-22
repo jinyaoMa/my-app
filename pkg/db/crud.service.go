@@ -1,21 +1,21 @@
 package db
 
 import (
-	"my-app/backend/pkg/database/interfaces"
 	"my-app/backend/pkg/database/vmodel"
+	"my-app/pkg/db/interfaces"
 )
 
 type CrudService[TEntity interfaces.IEntity] struct {
 	db *DB
 }
 
-func NewCrudService[TEntity interfaces.IEntity](database *DB) interfaces.ICrudService[TEntity] {
+func NewCrudService[TEntity interfaces.IEntity](database *DB) interfaces.ICRUD[TEntity] {
 	return &CrudService[TEntity]{
 		db: database,
 	}
 }
 
-// Save implements interfaces.ICrudService
+// Save implements interfaces.ICRUD
 func (c *CrudService[TEntity]) Delete(id int64) (affected int64, err error) {
 	result := c.db.Delete(new(TEntity), id)
 	affected = result.RowsAffected
@@ -23,7 +23,7 @@ func (c *CrudService[TEntity]) Delete(id int64) (affected int64, err error) {
 	return
 }
 
-// Save implements interfaces.ICrudService
+// Save implements interfaces.ICRUD
 func (c *CrudService[TEntity]) Save(entity TEntity) (affected int64, err error) {
 	result := c.db.Save(&entity)
 	affected = result.RowsAffected
@@ -31,7 +31,7 @@ func (c *CrudService[TEntity]) Save(entity TEntity) (affected int64, err error) 
 	return
 }
 
-// SaveAll implements interfaces.ICrudService
+// SaveAll implements interfaces.ICRUD
 func (c *CrudService[TEntity]) SaveAll(entities []TEntity) (affected int64, err error) {
 	result := c.db.Save(&entities)
 	affected = result.RowsAffected
@@ -39,7 +39,7 @@ func (c *CrudService[TEntity]) SaveAll(entities []TEntity) (affected int64, err 
 	return
 }
 
-// FindOne implements interfaces.ICrudService
+// FindOne implements interfaces.ICRUD
 func (c *CrudService[TEntity]) FindOne(condition vmodel.QueryCondition) (entity TEntity, err error) {
 	tx := c.db.Limit(1)
 	condition(func(query any, args ...any) {
@@ -49,19 +49,19 @@ func (c *CrudService[TEntity]) FindOne(condition vmodel.QueryCondition) (entity 
 	return
 }
 
-// All implements interfaces.ICrudService
+// All implements interfaces.ICRUD
 func (c *CrudService[TEntity]) All() (entities []TEntity, err error) {
 	err = c.db.Find(&entities).Error
 	return
 }
 
-// GetById implements interfaces.ICrudService
+// GetById implements interfaces.ICRUD
 func (c *CrudService[TEntity]) GetById(id int64) (entity TEntity, err error) {
 	err = c.db.First(&entity, id).Error
 	return
 }
 
-// Query implements interfaces.ICrudService
+// Query implements interfaces.ICRUD
 func (c *CrudService[TEntity]) Query(criteria *vmodel.Criteria, condition vmodel.QueryCondition, includes ...string) (entities []TEntity, err error) {
 	criteria = vmodel.NewCriteria(criteria)
 

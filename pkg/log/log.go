@@ -2,9 +2,6 @@ package log
 
 import (
 	"log"
-	"time"
-
-	gormLogger "gorm.io/gorm/logger"
 )
 
 // copy from standard library "log"
@@ -19,29 +16,8 @@ const (
 	LstdFlags     = Ldate | Ltime // initial values for the standard logger
 )
 
-// copy from "gorm.io/gorm/logger"
-const (
-	// Silent silent log level
-	Silent LogLevel = iota + 1
-	// Error error log level
-	Error
-	// Warn warn log level
-	Warn
-	// Info info log level
-	Info
-)
-
-type LogLevel int
-
-type GormConfig struct {
-	SlowThreshold             time.Duration
-	Colorful                  bool
-	IgnoreRecordNotFoundError bool
-	ParameterizedQueries      bool
-	LogLevel                  LogLevel
-}
-
 type Log struct {
+	*Option
 	*log.Logger
 }
 
@@ -52,19 +28,9 @@ func (l *Log) SetOutput(out ITreeWriter) {
 func New(opt *Option) *Log {
 	opt = NewOption(opt)
 	return &Log{
+		Option: opt,
 		Logger: log.New(opt.Out, opt.Prefix, opt.Flag),
 	}
-}
-
-func Gorm(opt *Option, config GormConfig) gormLogger.Interface {
-	opt = NewOption(opt)
-	return gormLogger.New(New(opt), gormLogger.Config{
-		SlowThreshold:             config.SlowThreshold,
-		Colorful:                  config.Colorful,
-		IgnoreRecordNotFoundError: config.IgnoreRecordNotFoundError,
-		ParameterizedQueries:      config.ParameterizedQueries,
-		LogLevel:                  gormLogger.LogLevel(config.LogLevel),
-	})
 }
 
 func Default() *Log {
