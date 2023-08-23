@@ -1,6 +1,8 @@
 package db
 
 import (
+	"my-app/pkg/crypto"
+	"my-app/pkg/id"
 	"my-app/pkg/log"
 	"time"
 
@@ -16,6 +18,8 @@ type Config struct {
 	OnInitialized func(db *DB) (err error)
 	Logger        *log.Log
 	LoggerConfig  logger.Config
+	IdGenerator   id.IID
+	DataCipher    crypto.ICipher
 }
 
 func DefaultConfig() *Config {
