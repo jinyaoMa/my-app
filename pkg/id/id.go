@@ -24,29 +24,29 @@ type ID struct {
 }
 
 // Generate implements IID
-func (s *ID) Generate() int64 {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+func (id *ID) Generate() int64 {
+	id.mu.Lock()
+	defer id.mu.Unlock()
 
-	now := time.Since(s.epoch).Milliseconds()
+	now := time.Since(id.epoch).Milliseconds()
 
-	if now == s.time {
-		s.step = (s.step + 1) & s.stepMask
+	if now == id.time {
+		id.step = (id.step + 1) & id.stepMask
 
-		if s.step == 0 { // step bits go over, move to next timestamp
-			for now <= s.time {
-				now = time.Since(s.epoch).Milliseconds()
+		if id.step == 0 { // step bits go over, move to next timestamp
+			for now <= id.time {
+				now = time.Since(id.epoch).Milliseconds()
 			}
 		}
 	} else {
-		s.step = 0
+		id.step = 0
 	}
 
-	s.time = now
+	id.time = now
 
-	r := int64((now)<<s.timeShift |
-		(s.node << s.nodeShift) |
-		(s.step),
+	r := int64((now)<<id.timeShift |
+		(id.node << id.nodeShift) |
+		(id.step),
 	)
 
 	return r
