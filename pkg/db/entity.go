@@ -1,7 +1,7 @@
 package db
 
 import (
-	"my-app/pkg/crypto"
+	"my-app/pkg/enc"
 	"my-app/pkg/id"
 	"time"
 
@@ -11,12 +11,12 @@ import (
 type Entity struct {
 	EntityBase
 	idGenerator id.IID
-	dataCipher  crypto.ICipher
+	dataCipher  enc.ICipher
 	ID          int64 `gorm:"primaryKey; autoIncrement"`
 }
 
 // SetDataCipher implements IEntity.
-func (e *Entity) SetDataCipher(dataCipher crypto.ICipher) {
+func (e *Entity) SetDataCipher(dataCipher enc.ICipher) {
 	e.dataCipher = dataCipher
 }
 

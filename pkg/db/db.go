@@ -1,8 +1,8 @@
 package db
 
 import (
-	"my-app/pkg/crypto"
 	"my-app/pkg/db/param"
+	"my-app/pkg/enc"
 	"my-app/pkg/id"
 
 	"gorm.io/gorm"
@@ -47,7 +47,7 @@ func New(cfg *Config) (db *DB, err error) {
 	}
 
 	if db.config.DataCipher == nil {
-		db.config.DataCipher = crypto.NewAesWithSalt("")
+		db.config.DataCipher = enc.NewAesWithSalt("")
 	}
 
 	return

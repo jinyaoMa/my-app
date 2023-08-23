@@ -1,8 +1,8 @@
 package db
 
 import (
-	"my-app/pkg/crypto"
 	"my-app/pkg/db/param"
+	"my-app/pkg/enc"
 	"my-app/pkg/id"
 
 	"gorm.io/gorm"
@@ -12,7 +12,7 @@ type IEntity interface {
 	IEntityBase
 
 	SetIdGenerator(idGenerator id.IID)
-	SetDataCipher(dataCipher crypto.ICipher)
+	SetDataCipher(dataCipher enc.ICipher)
 }
 
 type IEntityBase interface {

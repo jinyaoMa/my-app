@@ -1,4 +1,4 @@
-package crypto
+package enc
 
 type ICipher interface {
 	// Encrypt encrypt plaintext to hexadecimal encoded ciphertext

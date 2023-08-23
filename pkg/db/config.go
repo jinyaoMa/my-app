@@ -1,7 +1,7 @@
 package db
 
 import (
-	"my-app/pkg/crypto"
+	"my-app/pkg/enc"
 	"my-app/pkg/id"
 	"my-app/pkg/log"
 	"time"
@@ -19,7 +19,7 @@ type Config struct {
 	Logger        *log.Log
 	LoggerConfig  logger.Config
 	IdGenerator   id.IID
-	DataCipher    crypto.ICipher
+	DataCipher    enc.ICipher
 }
 
 func DefaultConfig() *Config {
