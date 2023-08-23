@@ -370,8 +370,12 @@ func (s *Store) AddPaths(paths ...string) (added int, err error) {
 	return
 }
 
-func New() IStore {
+func New() *Store {
 	return &Store{
 		paths: make([]*StorePath, 0, 5),
 	}
+}
+
+func NewIStore() IStore {
+	return New()
 }
