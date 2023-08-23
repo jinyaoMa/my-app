@@ -17,7 +17,7 @@ const (
 )
 
 type Log struct {
-	*Config
+	config *Config
 	*log.Logger
 }
 
@@ -28,7 +28,7 @@ func (l *Log) SetOutput(out ITreeWriter) {
 func New(cfg *Config) *Log {
 	cfg = NewConfig(cfg)
 	return &Log{
-		Config: cfg,
+		config: cfg,
 		Logger: log.New(cfg.Out, cfg.Prefix, cfg.Flag),
 	}
 }

@@ -34,11 +34,9 @@ func DefaultConfig() *Config {
 // NewConfig override the default Config of ID generator
 func NewConfig(dst *Config) *Config {
 	src := DefaultConfig()
-
 	err := mergo.Merge(dst, *src)
 	if err != nil {
 		return src
 	}
-
 	return dst
 }

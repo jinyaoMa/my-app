@@ -8,6 +8,8 @@ import (
 )
 
 type ID struct {
+	config *Config
+
 	mu    sync.Mutex
 	epoch time.Time
 	time  int64
@@ -65,6 +67,7 @@ func New(cfg *Config) (*ID, error) {
 	}
 
 	return &ID{
+		config:    cfg,
 		epoch:     cfg.Epoch,
 		node:      cfg.NodeNumber,
 		nodeMax:   nodeMax,
@@ -75,11 +78,11 @@ func New(cfg *Config) (*ID, error) {
 	}, nil
 }
 
-func NewIID(cfg *Config) (IID, error) {
-	return New(cfg)
-}
-
 // Default return Snowflake Id generator with default options
 func Default() (*ID, error) {
 	return New(DefaultConfig())
+}
+
+func NewIID(cfg *Config) (IID, error) {
+	return New(cfg)
 }

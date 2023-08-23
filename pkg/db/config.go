@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-type Option struct {
+type Config struct {
 	Dialector     gorm.Dialector
 	Options       []gorm.Option
 	OnInitialized func(db *DB) (err error)
@@ -18,8 +18,8 @@ type Option struct {
 	LoggerConfig  logger.Config
 }
 
-func DefaultOption() *Option {
-	return &Option{
+func DefaultConfig() *Config {
+	return &Config{
 		Dialector: sqlite.Open("./sqlite.db"),
 		Options: []gorm.Option{
 			&gorm.Config{},
@@ -39,13 +39,11 @@ func DefaultOption() *Option {
 	}
 }
 
-func NewOption(dst *Option) *Option {
-	src := DefaultOption()
-
+func NewConfig(dst *Config) *Config {
+	src := DefaultConfig()
 	err := mergo.Merge(dst, *src)
 	if err != nil {
 		return src
 	}
-
 	return dst
 }

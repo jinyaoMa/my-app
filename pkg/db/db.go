@@ -8,8 +8,8 @@ import (
 )
 
 type DB struct {
+	config *Config
 	*gorm.DB
-	options *Option
 }
 
 func (db *DB) SetupJoinTables(joinTables ...param.JoinTable) (err error) {
@@ -21,19 +21,19 @@ func (db *DB) SetupJoinTables(joinTables ...param.JoinTable) (err error) {
 	return
 }
 
-func New(opts *Option) (db *DB, err error) {
+func New(cfg *Config) (db *DB, err error) {
 	db = &DB{
-		options: NewOption(opts),
+		config: NewConfig(cfg),
 	}
 
-	db.DB, err = gorm.Open(db.options.Dialector, db.options.Options...)
+	db.DB, err = gorm.Open(db.config.Dialector, db.config.Options...)
 	if err != nil {
 		return
 	}
 
-	db.Logger = logger.New(db.options.Logger, db.options.LoggerConfig)
+	db.Logger = logger.New(db.config.Logger, db.config.LoggerConfig)
 
-	err = opts.OnInitialized(db)
+	err = db.config.OnInitialized(db)
 	if err != nil {
 		return
 	}

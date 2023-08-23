@@ -18,11 +18,9 @@ func DefaultConfig() *Config {
 
 func NewConfig(dst *Config) *Config {
 	src := DefaultConfig()
-
 	err := mergo.Merge(dst, *src)
 	if err != nil {
 		return src
 	}
-
 	return dst
 }
