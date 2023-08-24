@@ -5,13 +5,13 @@ import (
 )
 
 type CRUD[TEntity IEntity] struct {
-	db *DB
+	DB *DB
 }
 
 func (c *CRUD[TEntity]) mergeEntity(entity TEntity) TEntity {
-	entity.SetIdGenerator(c.db.config.IdGenerator)
-	entity.SetCodeGenerator(c.db.config.CodeGenerator)
-	entity.SetDataCipher(c.db.config.DataCipher)
+	entity.SetIdGenerator(c.DB.config.IdGenerator)
+	entity.SetCodeGenerator(c.DB.config.CodeGenerator)
+	entity.SetDataCipher(c.DB.config.DataCipher)
 	return entity
 }
 
@@ -24,7 +24,7 @@ func (c *CRUD[TEntity]) mergeEntities(entities []TEntity) []TEntity {
 
 // Save implements ICRUD
 func (c *CRUD[TEntity]) Delete(id int64) (affected int64, err error) {
-	result := c.db.Delete(new(TEntity), id)
+	result := c.DB.Delete(new(TEntity), id)
 	affected = result.RowsAffected
 	err = result.Error
 	return
@@ -33,7 +33,7 @@ func (c *CRUD[TEntity]) Delete(id int64) (affected int64, err error) {
 // Save implements ICRUD
 func (c *CRUD[TEntity]) Save(entity TEntity) (affected int64, err error) {
 	c.mergeEntity(entity)
-	result := c.db.Save(&entity)
+	result := c.DB.Save(&entity)
 	affected = result.RowsAffected
 	err = result.Error
 	return
@@ -42,7 +42,7 @@ func (c *CRUD[TEntity]) Save(entity TEntity) (affected int64, err error) {
 // SaveAll implements ICRUD
 func (c *CRUD[TEntity]) SaveAll(entities []TEntity) (affected int64, err error) {
 	c.mergeEntities(entities)
-	result := c.db.Save(&entities)
+	result := c.DB.Save(&entities)
 	affected = result.RowsAffected
 	err = result.Error
 	return
@@ -50,7 +50,7 @@ func (c *CRUD[TEntity]) SaveAll(entities []TEntity) (affected int64, err error) 
 
 // FindOne implements ICRUD
 func (c *CRUD[TEntity]) FindOne(condition param.QueryCondition) (entity TEntity, err error) {
-	tx := c.db.Limit(1)
+	tx := c.DB.Limit(1)
 	condition(func(query any, args ...any) {
 		tx = tx.Where(query, args...)
 	})
@@ -63,7 +63,7 @@ func (c *CRUD[TEntity]) FindOne(condition param.QueryCondition) (entity TEntity,
 
 // All implements ICRUD
 func (c *CRUD[TEntity]) All() (entities []TEntity, err error) {
-	err = c.db.Find(&entities).Error
+	err = c.DB.Find(&entities).Error
 	if err != nil {
 		c.mergeEntities(entities)
 	}
@@ -72,7 +72,7 @@ func (c *CRUD[TEntity]) All() (entities []TEntity, err error) {
 
 // GetById implements ICRUD
 func (c *CRUD[TEntity]) GetById(id int64) (entity TEntity, err error) {
-	err = c.db.First(&entity, id).Error
+	err = c.DB.First(&entity, id).Error
 	if err != nil {
 		c.mergeEntity(entity)
 	}
@@ -83,7 +83,7 @@ func (c *CRUD[TEntity]) GetById(id int64) (entity TEntity, err error) {
 func (c *CRUD[TEntity]) Query(criteria *param.Criteria, condition param.QueryCondition, includes ...string) (entities []TEntity, err error) {
 	criteria = param.NewCriteria(criteria)
 
-	tx := c.db.Limit(criteria.Size).Offset(criteria.Offset())
+	tx := c.DB.Limit(criteria.Size).Offset(criteria.Offset())
 
 	for _, include := range includes {
 		tx = tx.Preload(include)
@@ -115,7 +115,7 @@ func (c *CRUD[TEntity]) Query(criteria *param.Criteria, condition param.QueryCon
 
 func NewCRUD[TEntity IEntity](db *DB) *CRUD[TEntity] {
 	return &CRUD[TEntity]{
-		db: db,
+		DB: db,
 	}
 }
 

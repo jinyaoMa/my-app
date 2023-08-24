@@ -2,8 +2,8 @@ package app
 
 import (
 	"my-app/backend/configs"
+	"my-app/backend/internal/crud"
 	"my-app/backend/internal/interfaces"
-	"my-app/backend/internal/service"
 	"my-app/backend/internal/vmodel"
 	"my-app/backend/pkg/assetsio"
 	"my-app/backend/pkg/database"
@@ -49,7 +49,7 @@ func init() {
 	i18n = assetsio.NewI18n[*Translation](cfg.LanguagesPath)
 	availLangs, translationMap := i18n.LoadI18n()
 
-	optionService = service.NewOptionService(db)
+	optionService = crud.NewOptionService(db)
 
 	currentLanguage, err = optionService.GetByOptionName(vmodel.OptionNameDisplayLanguage)
 	if err != nil || !helper.Any(availLangs, func(e assetsio.Lang) bool {

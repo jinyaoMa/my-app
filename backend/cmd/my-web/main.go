@@ -2,7 +2,7 @@ package main
 
 import (
 	"my-app/backend/internal/app"
-	"my-app/backend/internal/service"
+	"my-app/backend/internal/crud"
 	"my-app/backend/internal/vmodel"
 	"my-app/backend/pkg/server"
 	"os"
@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	optionService := service.NewOptionService(app.Db())
+	optionService := crud.NewOptionService(app.Db())
 	portHttp, _, _ := optionService.GetUint16ByOptionName(vmodel.OptionNameWebPortHttp)
 	portHttps, _, _ := optionService.GetUint16ByOptionName(vmodel.OptionNameWebPortHttps)
 

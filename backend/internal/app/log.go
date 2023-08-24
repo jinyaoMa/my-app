@@ -3,8 +3,8 @@ package app
 import (
 	"io"
 	"my-app/backend/configs"
+	"my-app/backend/internal/crud"
 	"my-app/backend/internal/interfaces"
-	"my-app/backend/internal/service"
 	"my-app/backend/pkg/database"
 	"my-app/backend/pkg/database/entity"
 	"my-app/backend/pkg/logger"
@@ -34,6 +34,6 @@ func (w *DbLogWriter) Write(p []byte) (n int, err error) {
 
 func newDbLogWriter(db *database.Database) io.Writer {
 	return &DbLogWriter{
-		logService: service.NewLogService(db),
+		logService: crud.NewLogService(db),
 	}
 }
