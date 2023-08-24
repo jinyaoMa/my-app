@@ -1,7 +1,7 @@
 package api
 
 import (
-	"my-app/pkg/log"
+	"my-app/backend/pkg/log"
 
 	"dario.cat/mergo"
 	"github.com/gofiber/fiber/v2"

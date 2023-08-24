@@ -43,11 +43,59 @@ func (*MenuItem) Visible() bool {
 	return true
 }
 
-func NewMenuItem(ctx context.Context, menuitems ...IMenuItem) IMenuItem {
+func NewMenuItem(ctx context.Context, menuitems ...IMenuItem) *MenuItem {
 	return &MenuItem{
 		MenuItemBase: &MenuItemBase{
 			Ctx:       ctx,
 			MenuItems: menuitems,
 		},
 	}
+}
+
+func NewIMenuItem(ctx context.Context, menuitems ...IMenuItem) IMenuItem {
+	return NewMenuItem(ctx, menuitems...)
+}
+
+type MenuItemBase struct {
+	Ctx       context.Context
+	MenuItems []IMenuItem
+}
+
+// Icon implements Interface.
+func (*MenuItemBase) Icon() []byte {
+	return nil
+}
+
+// Items implements Interface.
+func (b *MenuItemBase) Items() []IMenuItem {
+	return b.MenuItems
+}
+
+// SetContext implements Interface.
+func (b *MenuItemBase) SetContext(ctx context.Context) {
+	b.Ctx = ctx
+	for _, item := range b.MenuItems {
+		item.SetContext(ctx)
+	}
+}
+
+// Title implements Interface.
+func (*MenuItemBase) Title() string {
+	return "[Title]"
+}
+
+// Tooltip implements Interface.
+func (*MenuItemBase) Tooltip() string {
+	return "[Tooltip]"
+}
+
+func NewMenuItemBase(ctx context.Context, menuitems ...IMenuItem) *MenuItemBase {
+	return &MenuItemBase{
+		Ctx:       ctx,
+		MenuItems: menuitems,
+	}
+}
+
+func NewIMenuItemBase(ctx context.Context, menuitems ...IMenuItem) IMenuItemBase {
+	return NewMenuItemBase(ctx, menuitems...)
 }

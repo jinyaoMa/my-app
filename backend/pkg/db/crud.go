@@ -1,7 +1,7 @@
 package db
 
 import (
-	"my-app/pkg/db/param"
+	"my-app/backend/pkg/db/param"
 )
 
 type CRUD[TEntity IEntity] struct {

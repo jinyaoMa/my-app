@@ -1,8 +1,8 @@
 package db
 
 import (
-	"my-app/pkg/enc"
-	"my-app/pkg/id"
+	"my-app/backend/pkg/enc"
+	"my-app/backend/pkg/id"
 	"time"
 
 	"gorm.io/gorm"

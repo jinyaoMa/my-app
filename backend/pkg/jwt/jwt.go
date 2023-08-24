@@ -7,20 +7,20 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type Jwt[TClaims jwt.Claims] struct {
+type JWT[TClaims jwt.Claims] struct {
 	claims TClaims
 	key    string
 }
 
-// GetToken implements Interface
-func (j *Jwt[TClaims]) GetToken() (token string, err error) {
+// GetToken implements IJWT
+func (j *JWT[TClaims]) GetToken() (token string, err error) {
 	ready := jwt.NewWithClaims(jwt.SigningMethodHS512, j.claims)
 	token, err = ready.SignedString([]byte(j.key))
 	return
 }
 
-// ParseToken implements Interface
-func (j *Jwt[TClaims]) ParseToken(token string) (claims TClaims, err error) {
+// ParseToken implements IJWT
+func (j *JWT[TClaims]) ParseToken(token string) (claims TClaims, err error) {
 	ready, err := jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(j.key), nil
 	})
@@ -43,9 +43,13 @@ func (j *Jwt[TClaims]) ParseToken(token string) (claims TClaims, err error) {
 	return
 }
 
-func New[TClaims jwt.Claims](claims TClaims, key string) Interface[TClaims] {
-	return &Jwt[TClaims]{
+func NewJWT[TClaims jwt.Claims](claims TClaims, key string) *JWT[TClaims] {
+	return &JWT[TClaims]{
 		claims: claims,
 		key:    key,
 	}
+}
+
+func NewIJWT[TClaims jwt.Claims](claims TClaims, key string) IJWT[TClaims] {
+	return NewJWT[TClaims](claims, key)
 }

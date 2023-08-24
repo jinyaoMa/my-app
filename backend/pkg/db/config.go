@@ -1,9 +1,9 @@
 package db
 
 import (
-	"my-app/pkg/enc"
-	"my-app/pkg/id"
-	"my-app/pkg/log"
+	"my-app/backend/pkg/enc"
+	"my-app/backend/pkg/id"
+	"my-app/backend/pkg/log"
 	"time"
 
 	"dario.cat/mergo"

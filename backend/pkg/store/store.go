@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"my-app/backend/pkg/helper"
+	"my-app/backend/pkg/funcs"
 	"os"
 	"path/filepath"
 	"sort"
@@ -93,7 +93,7 @@ func (s *Store) SearchFile(filename string, isCache bool) (file *os.File, path s
 		} else {
 			path = filepath.Join(sPath.Dir, filename)
 		}
-		if helper.CheckIfFileExists(path) {
+		if funcs.CheckIfFileExists(path) {
 			file, err = os.OpenFile(path, os.O_RDWR, os.ModePerm)
 			return
 		}
@@ -351,8 +351,8 @@ func (s *Store) AddPaths(paths ...string) (added int, err error) {
 
 			if mStat.StorePath == nil &&
 				strings.HasPrefix(path, mountpoint) &&
-				helper.CheckIfDirectoryExists(path) {
-				if !helper.CheckIfDirectoryExists(cache) &&
+				funcs.CheckIfDirectoryExists(path) {
+				if !funcs.CheckIfDirectoryExists(cache) &&
 					os.MkdirAll(cache, os.ModeDir) != nil {
 					continue
 				}
