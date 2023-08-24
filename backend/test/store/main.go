@@ -4,14 +4,14 @@ import (
 	"crypto/md5"
 	"crypto/sha512"
 	"fmt"
-	"my-app/backend/pkg/storage"
+	"my-app/backend/pkg/store"
 	"os"
 	"strings"
 )
 
 func main() {
-	s := storage.New()
-	added, _ := s.AddPaths("C:\\Users\\jinya\\Desktop\\my-app\\backend\\test\\storage\\tmp")
+	s := store.New()
+	added, _ := s.AddPaths("C:\\Users\\jinya\\Desktop\\my-app\\backend\\test\\store\\tmp")
 	u, _ := s.GetMountpointUsage()
 	println("Added:", added)
 	println("Availables:", strings.Join(u.AvailableMountPoints(), " | "))
@@ -22,7 +22,7 @@ func main() {
 	fmt.Printf("Total used (%%): %.2f %%\n", u.TotalUsedPercent())
 	//fmt.Printf("Pick a path with %d size: %s", 409640964096, u.PickAPath(409640964096))
 
-	file, _ := os.Open("C:\\Users\\jinya\\Desktop\\my-app\\backend\\test\\storage\\test.zip")
+	file, _ := os.Open("C:\\Users\\jinya\\Desktop\\my-app\\backend\\test\\store\\test.zip")
 	fileInfo, _ := file.Stat()
 
 	buffer := make([]byte, fileInfo.Size())
