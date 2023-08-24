@@ -1,6 +1,7 @@
 package db
 
 import (
+	"my-app/backend/pkg/code"
 	"my-app/backend/pkg/enc"
 	"my-app/backend/pkg/id"
 	"my-app/backend/pkg/log"
@@ -19,6 +20,7 @@ type Config struct {
 	Logger        *log.Log
 	LoggerConfig  logger.Config
 	IdGenerator   id.IID
+	CodeGenerator code.ICode
 	DataCipher    enc.ICipher
 }
 

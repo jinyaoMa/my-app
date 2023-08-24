@@ -2,12 +2,11 @@ package entity
 
 import "my-app/backend/pkg/db"
 
-type Node struct {
+type Log struct {
 	db.Entity
 
 	/* internal fields */
-	Name string `gorm:"size:64; default:''"`
-	UUID string `gorm:""`
+	Message string `gorm:"size:4096; default:''"`
 
 	/* relational fields */
 }

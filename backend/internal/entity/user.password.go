@@ -2,12 +2,12 @@ package entity
 
 import "my-app/backend/pkg/db"
 
-type Node struct {
+type UserPassword struct {
 	db.Entity
 
 	/* internal fields */
-	Name string `gorm:"size:64; default:''"`
-	UUID string `gorm:""`
+	PasswordHash string `gorm:"size:64; notnull; <-:create"`
 
 	/* relational fields */
+	UserID int64 `gorm:""`
 }

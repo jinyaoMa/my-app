@@ -2,12 +2,12 @@ package entity
 
 import "my-app/backend/pkg/db"
 
-type Node struct {
+type FileCategory struct {
 	db.Entity
 
 	/* internal fields */
-	Name string `gorm:"size:64; default:''"`
-	UUID string `gorm:""`
+	Name string `gorm:"size:512"`
 
 	/* relational fields */
+	FileExtensions []*FileExtension `gorm:""`
 }

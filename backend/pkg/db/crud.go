@@ -10,6 +10,7 @@ type CRUD[TEntity IEntity] struct {
 
 func (c *CRUD[TEntity]) mergeEntity(entity TEntity) TEntity {
 	entity.SetIdGenerator(c.db.config.IdGenerator)
+	entity.SetCodeGenerator(c.db.config.CodeGenerator)
 	entity.SetDataCipher(c.db.config.DataCipher)
 	return entity
 }
