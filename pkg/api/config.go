@@ -1,18 +1,18 @@
 package api
 
 import (
-	"my-app/backend/pkg/logger"
+	"my-app/pkg/log"
 
 	"dario.cat/mergo"
 	"github.com/gofiber/fiber/v2"
 )
 
 type Config struct {
-	IsDev  bool
-	Logger logger.Interface
-	Http   ConfigHttp
-	Https  ConfigHttps
-	Setup  func(app *fiber.App) *fiber.App
+	IsDev bool
+	Log   *log.Log
+	Http  ConfigHttp
+	Https ConfigHttps
+	Setup func(app *fiber.App) *fiber.App
 }
 
 type ConfigHttp struct {
@@ -27,8 +27,8 @@ type ConfigHttps struct {
 
 func DefaultConfig() *Config {
 	return &Config{
-		IsDev:  false,
-		Logger: logger.New(logger.DefaultOption()),
+		IsDev: false,
+		Log:   log.Default(),
 		Http: ConfigHttp{
 			Port: 10080,
 		},

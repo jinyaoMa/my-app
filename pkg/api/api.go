@@ -29,12 +29,12 @@ type API struct {
 }
 
 // Start implements IAPI
-func (a *API) Start(opts *Config) (ok bool) {
+func (a *API) Start(cfg *Config) (ok bool) {
 	if a.mu.TryLock() {
 		defer a.mu.Unlock()
 		if !a.isRunning {
 			// stopped, can start
-			a.config = NewConfig(opts)
+			a.config = NewConfig(cfg)
 			return a.start()
 		}
 	}
@@ -103,17 +103,17 @@ func (a *API) stop() (ok bool) {
 	ctxHttp, cancelHttp := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancelHttp()
 	if err := a.http.Shutdown(ctxHttp); err != nil && err != http.ErrServerClosed {
-		a.config.Logger.Printf("server (http) shutdown error: %+v\n", err)
+		a.config.Log.Printf("server (http) shutdown error: %+v\n", err)
 		a.hasErrors = true
 	}
 
 	if err := a.https.Shutdown(); err != nil && err != http.ErrServerClosed {
-		a.config.Logger.Printf("server (http/s) shutdown error: %+v\n", err)
+		a.config.Log.Printf("server (http/s) shutdown error: %+v\n", err)
 		a.hasErrors = true
 	}
 
 	if err := a.errGroup.Wait(); err != nil && err != http.ErrServerClosed {
-		a.config.Logger.Printf("server running error: %+v\n", err)
+		a.config.Log.Printf("server running error: %+v\n", err)
 		a.hasErrors = true
 	}
 
@@ -161,8 +161,8 @@ func (a *API) setup() (ln net.Listener, ok bool) {
 		timeFormat = "15:04:05"
 	}
 	a.https.Use(logger.New(logger.Config{
-		Output:        a.config.Logger.Writer(),
-		Format:        a.config.Logger.Prefix() + " ${time} | ${status} - ${latency} ${method} ${path}",
+		Output:        a.config.Log.Writer(),
+		Format:        a.config.Log.Prefix() + " ${time} | ${status} - ${latency} ${method} ${path}",
 		TimeFormat:    timeFormat,
 		TimeZone:      "Local",
 		DisableColors: !a.config.IsDev,
