@@ -11,7 +11,7 @@ type IAPI interface {
 	HasErrors() bool
 
 	// Start start the server with options
-	Start(opts *Config) (ok bool)
+	Start(cfg *Config) (ok bool)
 
 	// Stop stop the server from running, before() callback before stopping
 	Stop(before func()) (ok bool)
