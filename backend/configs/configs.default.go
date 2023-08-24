@@ -1,28 +1,28 @@
 package configs
 
 import (
-	"my-app/backend/pkg/helper"
-	"my-app/backend/pkg/snowflake"
+	"my-app/backend/pkg/funcs"
+	"my-app/backend/pkg/id"
 )
 
 func Default() (cfg *Configs, err error) {
 	var assetsPath string
-	assetsPath, err = helper.GetPathStartedFromExecutable("Assets")
+	assetsPath, err = funcs.GetPathStartedFromExecutable("Assets")
 	if err != nil {
 		return
 	}
 	var languagesPath string
-	languagesPath, err = helper.GetPathStartedFromExecutable("Languages")
+	languagesPath, err = funcs.GetPathStartedFromExecutable("Languages")
 	if err != nil {
 		return
 	}
 	var key string
-	key, err = helper.GetFilenameSameAsExecutable("option.key")
+	key, err = funcs.GetFilenameSameAsExecutable("option.key")
 	if err != nil {
 		return
 	}
 	var logFile string
-	logFile, err = helper.GetFilenameSameAsExecutable("db.log")
+	logFile, err = funcs.GetFilenameSameAsExecutable("db.log")
 	if err != nil {
 		return
 	}
@@ -33,7 +33,7 @@ func Default() (cfg *Configs, err error) {
 		Database: &Database{
 			LogFile:   logFile,
 			CipherKey: key,
-			Snowflake: snowflake.DefaultOption(),
+			Snowflake: id.DefaultConfig(),
 		},
 	}, nil
 }

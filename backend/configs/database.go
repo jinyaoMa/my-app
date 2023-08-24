@@ -1,11 +1,11 @@
 package configs
 
 import (
-	"my-app/backend/pkg/snowflake"
+	"my-app/backend/pkg/id"
 )
 
 type Database struct {
 	LogFile   string
 	CipherKey string
-	Snowflake *snowflake.Option
+	Snowflake *id.Config
 }
