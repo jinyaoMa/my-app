@@ -1,9 +1,9 @@
 package app
 
-import "my-app/backend/pkg/assetsio"
+import "my-app/backend/pkg/aio"
 
 type Translation struct {
-	Lang            assetsio.Lang              `json:"lang"`
+	Lang            aio.Lang                   `json:"lang"`
 	AppName         string                     `json:"app_name"`
 	OpenWindow      string                     `json:"open_window"`
 	DisplayLanguage TranslationDisplayLanguage `json:"display_language"`
@@ -24,14 +24,14 @@ type TranslationDisplayLanguage struct {
 	Title string `json:"title"`
 }
 
-// Metadata implements assetsio.ITranslation.
-func (t *Translation) Metadata() assetsio.Lang {
+// Metadata implements aio.ITranslation.
+func (t *Translation) Metadata() aio.Lang {
 	return t.Lang
 }
 
 func DefaultTranslation() *Translation {
 	return &Translation{
-		Lang: assetsio.Lang{
+		Lang: aio.Lang{
 			Code: "[LangCode]",
 			Text: "[LangText]",
 		},
@@ -48,6 +48,10 @@ func DefaultTranslation() *Translation {
 	}
 }
 
-func NewTranslation() assetsio.ITranslation {
+func NewTranslation() *Translation {
 	return &Translation{}
+}
+
+func NewITranslation() aio.ITranslation {
+	return NewTranslation()
 }

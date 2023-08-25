@@ -1,39 +1,39 @@
 package app
 
 import (
-	"io"
 	"my-app/backend/configs"
-	"my-app/backend/internal/crud"
+	"my-app/backend/internal/entity"
+	"my-app/backend/internal/implements/crud"
 	"my-app/backend/internal/interfaces"
-	"my-app/backend/pkg/database"
-	"my-app/backend/pkg/database/entity"
-	"my-app/backend/pkg/logger"
+	"my-app/backend/pkg/db"
+	"my-app/backend/pkg/log"
 )
 
-func initLog(cfg *configs.Configs, db *database.Database) (log logger.Interface, err error) {
-	tag := "APP"
-	log = logger.New(&logger.Option{
-		Writer: newDbLogWriter(db),
-		Tag:    tag,
+func initLog(cfg *configs.Configs, dbs *db.DB) (l *log.Log, err error) {
+	l = log.New(&log.Config{
+		Out:    newDbLogWriter(dbs, log.NewConsoleLogWriter()),
+		Prefix: "[APP] ",
+		Flag:   log.DefaultFlag,
 	})
 	return
 }
 
 type DbLogWriter struct {
-	logService interfaces.ILogService
-	tag        string
+	*log.LogWriter
+	crudLog interfaces.ICRUDLog
 }
 
 // Write implements io.Writer.
 func (w *DbLogWriter) Write(p []byte) (n int, err error) {
-	_, err = w.logService.Save(&entity.Log{
-		Message: string(p),
+	_, err = w.crudLog.Save(&entity.Log{
+		Message: string(p[:4096]),
 	})
 	return len(p), err
 }
 
-func newDbLogWriter(db *database.Database) io.Writer {
+func newDbLogWriter(dbs *db.DB, children ...log.ITreeWriter) log.ITreeWriter {
 	return &DbLogWriter{
-		logService: crud.NewLogService(db),
+		LogWriter: log.NewLogWriter(children...),
+		crudLog:   crud.NewCRUDLog(dbs),
 	}
 }

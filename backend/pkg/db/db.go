@@ -14,6 +14,13 @@ type DB struct {
 	*gorm.DB
 }
 
+func (db *DB) Session(cfg *gorm.Session) *DB {
+	return &DB{
+		config: db.config,
+		DB:     db.DB.Session(cfg),
+	}
+}
+
 func (db *DB) SetupJoinTables(joinTables ...param.JoinTable) (err error) {
 	for _, joinTable := range joinTables {
 		if err = db.SetupJoinTable(joinTable.From, joinTable.Field, joinTable.To); err != nil {

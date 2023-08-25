@@ -2,12 +2,12 @@ package app
 
 import (
 	"my-app/backend/configs"
-	"my-app/backend/pkg/helper"
+	"my-app/backend/pkg/funcs"
 )
 
 func initCfg() (cfg *configs.Configs, err error) {
 	var iniPath string
-	iniPath, err = helper.GetFilenameSameAsExecutable("config.ini")
+	iniPath, err = funcs.GetFilenameSameAsExecutable("config.ini")
 	if err != nil {
 		return
 	}

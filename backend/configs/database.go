@@ -5,7 +5,7 @@ import (
 )
 
 type Database struct {
-	LogFile   string
-	CipherKey string
-	Snowflake *id.Config
+	LogFile     string
+	CipherKey   string
+	IdGenerator *id.Config
 }

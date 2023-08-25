@@ -2,14 +2,13 @@ package app
 
 import (
 	"my-app/backend/configs"
-	ientity "my-app/backend/internal/entity"
-	"my-app/backend/pkg/crypto"
-	"my-app/backend/pkg/database"
-	"my-app/backend/pkg/database/entity"
-	"my-app/backend/pkg/helper"
-	"my-app/backend/pkg/logger"
-	"my-app/backend/pkg/snowflake"
-	"os"
+	"my-app/backend/internal/entity"
+	"my-app/backend/pkg/db"
+	"my-app/backend/pkg/db/param"
+	"my-app/backend/pkg/enc"
+	"my-app/backend/pkg/funcs"
+	"my-app/backend/pkg/id"
+	"my-app/backend/pkg/log"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -17,64 +16,111 @@ import (
 	"gorm.io/plugin/dbresolver"
 )
 
-func initDB(cfg *configs.Configs) (db *database.Database, err error) {
-	entity.Cipher(crypto.NewAesWithSalt(cfg.Database.CipherKey))
-
-	idGen, err := snowflake.New(cfg.Database.Snowflake)
-	if err != nil {
-		return
-	}
-	entity.IdGenerator(idGen)
-
-	var mainDbFilename, logDbFilename, optionDbFilename string
-	mainDbFilename, err = helper.GetFilenameSameAsExecutable("db")
-	if err != nil {
-		return
-	}
-	logDbFilename, err = helper.GetFilenameSameAsExecutable("logs.db")
-	if err != nil {
-		return
-	}
-	optionDbFilename, err = helper.GetFilenameSameAsExecutable("options.db")
+func initDB(cfg *configs.Configs) (dbs *db.DB, err error) {
+	var mainDbFilename string
+	mainDbFilename, err = funcs.GetFilenameSameAsExecutable("db")
 	if err != nil {
 		return
 	}
 
-	var logFile *os.File
-	logFile, err = os.OpenFile(cfg.Database.LogFile, os.O_APPEND|os.O_RDWR|os.O_CREATE, os.ModePerm)
+	var out log.ITreeWriter
+	out, err = log.NewFileLogWriter(cfg.Database.LogFile, log.NewConsoleLogWriter())
 	if err != nil {
 		return
 	}
 
-	db, err = database.New(&database.Option{
+	idGenerator, err := id.NewIID(cfg.Database.IdGenerator)
+	if err != nil {
+		return
+	}
+
+	dataCipher := enc.NewAesWithSalt(cfg.Database.CipherKey)
+
+	dbs, err = db.New(&db.Config{
 		Dialector: sqlite.Open(mainDbFilename + "?_pragma=foreign_keys(1)"),
-		OnInitialized: func(db *gorm.DB) {
-			logs := new(entity.Log)
-			options := new(entity.Option)
-			db.Use(dbresolver.Register(dbresolver.Config{
-				Sources: []gorm.Dialector{sqlite.Open(logDbFilename)},
-			}, logs).Register(dbresolver.Config{
-				Sources: []gorm.Dialector{sqlite.Open(optionDbFilename)},
-			}, options))
-			db.Clauses(dbresolver.Use("logs")).AutoMigrate(logs)
-			db.Clauses(dbresolver.Use("options")).AutoMigrate(options)
+		Options:   []gorm.Option{},
+		OnInitialized: func(dbs *db.DB) (err error) {
+			err = resolve(dbs)
+			if err != nil {
+				return
+			}
+			err = dbs.AutoMigrate(entities()...)
+			if err != nil {
+				return
+			}
+			err = dbs.SetupJoinTables(joinTables()...)
+			if err != nil {
+				return
+			}
+			return
 		},
-		Migrate: []interface{}{
-			new(ientity.Node),
+		Logger: log.New(&log.Config{
+			Out:    out,
+			Prefix: "[DBS] ",
+			Flag:   log.DefaultFlag,
+		}),
+		LoggerConfig: gormLogger.Config{
+			SlowThreshold:             0,
+			Colorful:                  false,
+			IgnoreRecordNotFoundError: true,
+			ParameterizedQueries:      false,
+			LogLevel:                  gormLogger.Error,
 		},
-		Logger: database.OptionLogger{
-			Option: logger.Option{
-				Writer: logFile,
-				Tag:    "DBS",
-			},
-			Config: gormLogger.Config{
-				SlowThreshold:             0,
-				Colorful:                  false,
-				IgnoreRecordNotFoundError: true,
-				ParameterizedQueries:      false,
-				LogLevel:                  gormLogger.Error,
-			},
-		},
+		IdGenerator:   idGenerator,
+		CodeGenerator: nil,
+		DataCipher:    dataCipher,
 	})
 	return
+}
+
+func resolve(dbs *db.DB) (err error) {
+	var logDbFilename, optionDbFilename string
+	logDbFilename, err = funcs.GetFilenameSameAsExecutable("logs.db")
+	if err != nil {
+		return
+	}
+	optionDbFilename, err = funcs.GetFilenameSameAsExecutable("options.db")
+	if err != nil {
+		return
+	}
+
+	logs := new(entity.Log)
+	options := new(entity.Option)
+	dbs.Use(dbresolver.Register(dbresolver.Config{
+		Sources: []gorm.Dialector{sqlite.Open(logDbFilename)},
+	}, logs).Register(dbresolver.Config{
+		Sources: []gorm.Dialector{sqlite.Open(optionDbFilename)},
+	}, options))
+	dbs.Clauses(dbresolver.Use("logs")).AutoMigrate(logs)
+	dbs.Clauses(dbresolver.Use("options")).AutoMigrate(options)
+	return
+}
+
+func entities() []any {
+	return []any{
+		&entity.User{},
+		&entity.UserPassword{},
+		&entity.UserFile{},
+		&entity.File{},
+		&entity.FileCategory{},
+		&entity.FileExtension{},
+		&entity.Option{},
+		&entity.Node{},
+	}
+}
+
+func joinTables() []param.JoinTable {
+	userFile := new(entity.UserFile)
+	return []param.JoinTable{
+		{
+			From:  &entity.User{},
+			Field: "AccessableFiles",
+			To:    userFile,
+		},
+		{
+			From:  &entity.File{},
+			Field: "AccessableUsers",
+			To:    userFile,
+		},
+	}
 }

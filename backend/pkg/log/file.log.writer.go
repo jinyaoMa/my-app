@@ -16,7 +16,7 @@ func (w *FileLogWriter) Write(p []byte) (n int, err error) {
 
 func NewFileLogWriter(filename string, children ...ITreeWriter) (w *FileLogWriter, err error) {
 	var logFile *os.File
-	logFile, err = os.OpenFile(filename, os.O_APPEND|os.O_RDWR|os.O_CREATE, os.ModeAppend)
+	logFile, err = os.OpenFile(filename, os.O_APPEND|os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		return
 	}

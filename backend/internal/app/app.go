@@ -2,26 +2,28 @@ package app
 
 import (
 	"my-app/backend/configs"
-	"my-app/backend/internal/crud"
+	"my-app/backend/internal/entity"
+	"my-app/backend/internal/implements/crud"
 	"my-app/backend/internal/interfaces"
 	"my-app/backend/internal/vmodel"
-	"my-app/backend/pkg/assetsio"
-	"my-app/backend/pkg/database"
-	"my-app/backend/pkg/database/entity"
-	"my-app/backend/pkg/helper"
-	"my-app/backend/pkg/logger"
-	"my-app/backend/pkg/server"
+	"my-app/backend/pkg/aio"
+	"my-app/backend/pkg/api"
+	"my-app/backend/pkg/db"
+	"my-app/backend/pkg/funcs"
+	"my-app/backend/pkg/log"
+
+	"gorm.io/gorm"
 )
 
 var (
 	cfg    *configs.Configs
-	db     *database.Database
-	log    logger.Interface
-	assets assetsio.Interface
-	i18n   assetsio.II18n[*Translation]
-	web    server.Interface
+	dbs    *db.DB
+	logger *log.Log
+	assets aio.IAIO
+	i18n   aio.II18n[*Translation]
+	web    api.IAPI
 
-	optionService      interfaces.IOptionService
+	crudOption         interfaces.ICRUDOption
 	currentLanguage    *entity.Option
 	currentTranslation *Translation
 )
@@ -34,32 +36,32 @@ func init() {
 		panic(err)
 	}
 
-	db, err = initDB(cfg)
+	dbs, err = initDB(cfg)
 	if err != nil {
 		panic(err)
 	}
 
-	log, err = initLog(cfg, db)
+	logger, err = initLog(cfg, dbs.Session(&gorm.Session{}))
 	if err != nil {
 		panic(err)
 	}
 
-	assets = assetsio.New(cfg.AssetsPath)
+	assets = aio.New(cfg.AssetsPath)
 
-	i18n = assetsio.NewI18n[*Translation](cfg.LanguagesPath)
+	i18n = aio.NewI18n[*Translation](cfg.LanguagesPath)
 	availLangs, translationMap := i18n.LoadI18n()
 
-	optionService = crud.NewOptionService(db)
+	crudOption = crud.NewCRUDOption(dbs)
 
-	currentLanguage, err = optionService.GetByOptionName(vmodel.OptionNameDisplayLanguage)
-	if err != nil || !helper.Any(availLangs, func(e assetsio.Lang) bool {
+	currentLanguage, err = crudOption.GetByOptionName(vmodel.OptionNameDisplayLanguage)
+	if err != nil || !funcs.Any(availLangs, func(e aio.Lang) bool {
 		return e.Code == currentLanguage.Value
 	}) {
 		currentLanguage = &entity.Option{
 			Key:   vmodel.OptionNameDisplayLanguage,
 			Value: "",
 		}
-		if helper.Any(availLangs, func(e assetsio.Lang) bool {
+		if funcs.Any(availLangs, func(e aio.Lang) bool {
 			return e.Code == cfg.Language
 		}) {
 			currentLanguage.Value = cfg.Language
@@ -74,35 +76,35 @@ func init() {
 		currentTranslation = DefaultTranslation()
 	}
 
-	web = server.New()
+	web = api.New()
 }
 
-func Cfg() *configs.Configs {
+func CFG() *configs.Configs {
 	return cfg
 }
 
-func Db() *database.Database {
-	return db
+func DB() *db.DB {
+	return dbs.Session(&gorm.Session{})
 }
 
-func Log() logger.Interface {
-	return log
+func LOG() *log.Log {
+	return logger
 }
 
-func Assets() assetsio.Interface {
+func ASSETS() aio.IAIO {
 	return assets
 }
 
-func I18n() assetsio.II18n[*Translation] {
+func I18N() aio.II18n[*Translation] {
 	return i18n
 }
 
-func Lang(langs ...string) string {
+func LANG(langs ...string) string {
 	if len(langs) > 0 {
 		var ok bool
 		if currentTranslation, ok = i18n.LoadTranslation(langs[0]); ok {
 			currentLanguage.Value = langs[0]
-			optionService.Save(currentLanguage)
+			crudOption.Save(currentLanguage)
 		}
 	}
 	return currentLanguage.Value
@@ -112,6 +114,6 @@ func T() (t *Translation) {
 	return currentTranslation
 }
 
-func Web() server.Interface {
+func API() api.IAPI {
 	return web
 }

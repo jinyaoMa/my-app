@@ -2,6 +2,10 @@ package log
 
 import "dario.cat/mergo"
 
+const (
+	DefaultFlag = Ldate | Ltime | Lmicroseconds | Lshortfile
+)
+
 type Config struct {
 	Out    ITreeWriter
 	Prefix string
@@ -12,7 +16,7 @@ func DefaultConfig() *Config {
 	return &Config{
 		Out:    NewConsoleLogWriter(),
 		Prefix: "[LOG] ",
-		Flag:   Ldate | Ltime | Lmicroseconds | Lshortfile,
+		Flag:   DefaultFlag,
 	}
 }
 

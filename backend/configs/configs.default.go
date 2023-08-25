@@ -31,9 +31,9 @@ func Default() (cfg *Configs, err error) {
 		AssetsPath:    assetsPath,
 		LanguagesPath: languagesPath,
 		Database: &Database{
-			LogFile:   logFile,
-			CipherKey: key,
-			Snowflake: id.DefaultConfig(),
+			LogFile:     logFile,
+			CipherKey:   key,
+			IdGenerator: id.DefaultConfig(),
 		},
 	}, nil
 }
