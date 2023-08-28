@@ -14,7 +14,7 @@ type openWindow struct {
 
 // Icon implements tray.IMenuItem.
 func (*openWindow) Icon() []byte {
-	return app.Assets().GetBytes("tray.ico")
+	return app.ASSETS().GetBytes("tray.ico")
 }
 
 // Key implements tray.IMenuItem.

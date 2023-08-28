@@ -4,15 +4,15 @@ import (
 	"context"
 	"my-app/backend/cmd/my-tray/menuitem"
 	"my-app/backend/internal/app"
-	"my-app/backend/internal/crud"
+	"my-app/backend/internal/implements/crud"
 	"my-app/backend/internal/interfaces"
 	"my-app/backend/pkg/tray"
 )
 
 // App struct
 type App struct {
-	ctx           context.Context
-	optionService interfaces.IOptionService
+	ctx        context.Context
+	crudOption interfaces.ICRUDOption
 }
 
 // NewApp creates a new App application struct
@@ -26,5 +26,5 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 	menuitem.Root().SetContext(ctx)
-	a.optionService = crud.NewOptionService(app.Db())
+	a.crudOption = crud.NewCRUDOption(app.DB())
 }

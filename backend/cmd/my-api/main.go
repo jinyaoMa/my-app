@@ -2,9 +2,9 @@ package main
 
 import (
 	"my-app/backend/internal/app"
-	"my-app/backend/internal/crud"
+	"my-app/backend/internal/implements/crud"
 	"my-app/backend/internal/vmodel"
-	"my-app/backend/pkg/server"
+	"my-app/backend/pkg/api"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,18 +13,18 @@ import (
 )
 
 func main() {
-	optionService := crud.NewOptionService(app.Db())
-	portHttp, _, _ := optionService.GetUint16ByOptionName(vmodel.OptionNameWebPortHttp)
-	portHttps, _, _ := optionService.GetUint16ByOptionName(vmodel.OptionNameWebPortHttps)
+	crudOption := crud.NewCRUDOption(app.DB())
+	portHttp, _, _ := crudOption.GetUint16ByOptionName(vmodel.OptionNameWebPortHttp)
+	portHttps, _, _ := crudOption.GetUint16ByOptionName(vmodel.OptionNameWebPortHttps)
 
-	s := app.Web()
-	if s.Start(&server.Option{
-		IsDev:  true,
-		Logger: app.Log(),
-		Http: server.OptionHttp{
+	s := app.API()
+	if s.Start(&api.Config{
+		IsDev: true,
+		Log:   app.LOG(),
+		Http: api.ConfigHttp{
 			Port: portHttp,
 		},
-		Https: server.OptionHttps{
+		Https: api.ConfigHttps{
 			Port: portHttps,
 		},
 		Setup: func(app *fiber.App) *fiber.App {

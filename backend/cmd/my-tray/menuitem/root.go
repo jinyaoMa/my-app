@@ -12,13 +12,13 @@ type root struct {
 
 // Icon implements tray.Interface.
 func (*root) Icon() []byte {
-	if app.Web().IsStopping() {
-		return app.Assets().GetBytes("tray.orange.ico")
+	if app.API().IsStopping() {
+		return app.ASSETS().GetBytes("tray.orange.ico")
 	}
-	if app.Web().IsRunning() {
-		return app.Assets().GetBytes("tray.green.ico")
+	if app.API().IsRunning() {
+		return app.ASSETS().GetBytes("tray.green.ico")
 	}
-	return app.Assets().GetBytes("tray.blue.ico")
+	return app.ASSETS().GetBytes("tray.blue.ico")
 }
 
 // Title implements tray.Interface.
@@ -38,6 +38,7 @@ func newRoot(ctx context.Context) tray.IMenuItemBase {
 			MenuItems: []tray.IMenuItem{
 				newOpenWindow(ctx),
 				newSeparator(ctx),
+				newdisplayLanguage(ctx),
 				newColorTheme(ctx),
 				newQuit(ctx),
 			},

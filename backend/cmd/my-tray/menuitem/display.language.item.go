@@ -2,13 +2,13 @@ package menuitem
 
 import (
 	"context"
-	"my-app/backend/pkg/assetsio"
+	"my-app/backend/pkg/aio"
 	"my-app/backend/pkg/tray"
 )
 
 type displayLanguageItem struct {
 	*tray.MenuItem
-	lang assetsio.Lang
+	lang aio.Lang
 }
 
 // CanCheck implements tray.IMenuItem.
@@ -41,7 +41,7 @@ func (i *displayLanguageItem) Tooltip() string {
 	return i.lang.Text
 }
 
-func newdisplayLanguageItem(ctx context.Context, lang assetsio.Lang) tray.IMenuItem {
+func newdisplayLanguageItem(ctx context.Context, lang aio.Lang) tray.IMenuItem {
 	return &displayLanguageItem{
 		MenuItem: &tray.MenuItem{
 			MenuItemBase: &tray.MenuItemBase{
