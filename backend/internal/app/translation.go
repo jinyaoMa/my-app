@@ -37,6 +37,10 @@ func DefaultTranslation() *Translation {
 		},
 		AppName:    "[AppName]",
 		OpenWindow: "[OpenWindow]",
+		DisplayLanguage: TranslationDisplayLanguage{
+			Label: "[DisplayLanguageLabel]",
+			Title: "[DisplayLanguageTitle]",
+		},
 		ColorTheme: TranslationColorTheme{
 			Label:  "[ColorThemeLabel]",
 			Title:  "[ColorThemeTitle]",
