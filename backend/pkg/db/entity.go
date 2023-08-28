@@ -11,10 +11,10 @@ import (
 
 type Entity struct {
 	EntityBase
-	IdGenerator   id.IID
-	CodeGenerator code.ICode
-	DataCipher    enc.ICipher
-	ID            int64 `gorm:"primaryKey; autoIncrement"`
+	IdGenerator   id.IID      `gorm:"-"`
+	CodeGenerator code.ICode  `gorm:"-"`
+	DataCipher    enc.ICipher `gorm:"-"`
+	ID            int64       `gorm:"primaryKey; autoIncrement"`
 }
 
 // SetCodeGenerator implements IEntity.

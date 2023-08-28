@@ -14,7 +14,7 @@ type Config struct {
 
 func DefaultConfig() *Config {
 	return &Config{
-		Out:    NewConsoleLogWriter(),
+		//Out:    NewConsoleLogWriter(),
 		Prefix: "[LOG] ",
 		Flag:   DefaultFlag,
 	}

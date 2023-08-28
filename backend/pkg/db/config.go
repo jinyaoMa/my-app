@@ -31,7 +31,7 @@ func DefaultConfig() *Config {
 			&gorm.Config{},
 		},
 		Logger: log.New(&log.Config{
-			Out:    log.NewConsoleLogWriter(),
+			//Out:    log.NewConsoleLogWriter(),
 			Prefix: "[DBS] ",
 			Flag:   log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile,
 		}),
