@@ -1,4 +1,4 @@
-package menuitem
+package menuitems
 
 import (
 	"context"

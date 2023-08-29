@@ -1,4 +1,4 @@
-package menuitem
+package menuitems
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 var _root tray.IMenuItemBase
 
 func init() {
-	_root = newRoot(context.Background())
+	_root = newRoot(context.TODO())
 }
 
 func Root() tray.IMenuItemBase {
