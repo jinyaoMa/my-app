@@ -10,6 +10,11 @@ type colorTheme struct {
 	*tray.MenuItem
 }
 
+// Key implements tray.IMenuItem.
+func (*colorTheme) Key() string {
+	return "color.theme"
+}
+
 // Title implements tray.IMenuItem.
 func (*colorTheme) Title() string {
 	return app.T().ColorTheme.Title

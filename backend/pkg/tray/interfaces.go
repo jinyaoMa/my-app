@@ -30,5 +30,6 @@ type IMenuItem interface {
 	CanCheck() bool // for linux to use checkbox menuitem
 	Checked() bool
 
+	CanClick() bool // listen to click
 	OnClick() (quit bool)
 }

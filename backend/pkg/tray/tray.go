@@ -80,7 +80,7 @@ func update(item IMenuItem, initialized bool, menuItems ...*systray.MenuItem) er
 	}
 
 	if menuItem, ok := menuItemCache[key]; ok {
-		if initialized && key != "" {
+		if initialized && item.CanClick() {
 			cases = append(cases, reflect.SelectCase{
 				Dir:  reflect.SelectRecv,
 				Chan: reflect.ValueOf(menuItem.ClickedCh),

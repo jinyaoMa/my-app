@@ -22,6 +22,11 @@ func (*openWindow) Key() string {
 	return "open.window"
 }
 
+// CanClick implements tray.IMenuItem.
+func (*openWindow) CanClick() bool {
+	return true
+}
+
 // OnClick implements tray.IMenuItem.
 func (w *openWindow) OnClick() (quit bool) {
 	runtime.WindowShow(w.Ctx)
@@ -40,10 +45,6 @@ func (*openWindow) Tooltip() string {
 
 func newOpenWindow(ctx context.Context) tray.IMenuItem {
 	return &openWindow{
-		MenuItem: &tray.MenuItem{
-			MenuItemBase: &tray.MenuItemBase{
-				Ctx: ctx,
-			},
-		},
+		MenuItem: tray.NewMenuItem(ctx),
 	}
 }

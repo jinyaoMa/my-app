@@ -8,6 +8,11 @@ type MenuItem struct {
 	*MenuItemBase
 }
 
+// CanClick implements IMenuItem.
+func (*MenuItem) CanClick() bool {
+	return false
+}
+
 // CanCheck implements IMenuItem.
 func (*MenuItem) CanCheck() bool {
 	return false

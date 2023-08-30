@@ -15,6 +15,11 @@ func (*quit) Key() string {
 	return "quit"
 }
 
+// CanClick implements tray.IMenuItem.
+func (*quit) CanClick() bool {
+	return true
+}
+
 // OnClick implements tray.IMenuItem.
 func (q *quit) OnClick() (quit bool) {
 	//runtime.Quit(q.ctx)
@@ -33,10 +38,6 @@ func (*quit) Tooltip() string {
 
 func newQuit(ctx context.Context) tray.IMenuItem {
 	return &quit{
-		MenuItem: &tray.MenuItem{
-			MenuItemBase: &tray.MenuItemBase{
-				Ctx: ctx,
-			},
-		},
+		MenuItem: tray.NewMenuItem(ctx),
 	}
 }

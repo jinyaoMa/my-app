@@ -10,6 +10,11 @@ type displayLanguage struct {
 	*tray.MenuItem
 }
 
+// Key implements tray.IMenuItem.
+func (*displayLanguage) Key() string {
+	return "display.language"
+}
+
 // Title implements tray.IMenuItem.
 func (*displayLanguage) Title() string {
 	return app.T().DisplayLanguage.Title

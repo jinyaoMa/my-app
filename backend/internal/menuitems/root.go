@@ -33,15 +33,12 @@ func (*root) Tooltip() string {
 
 func newRoot(ctx context.Context) tray.IMenuItemBase {
 	return &root{
-		MenuItemBase: &tray.MenuItemBase{
-			Ctx: ctx,
-			MenuItems: []tray.IMenuItem{
-				newOpenWindow(ctx),
-				newSeparator(ctx),
-				newdisplayLanguage(ctx),
-				newColorTheme(ctx),
-				newQuit(ctx),
-			},
-		},
+		MenuItemBase: tray.NewMenuItemBase(ctx,
+			newOpenWindow(ctx),
+			newSeparator(ctx),
+			newdisplayLanguage(ctx),
+			newColorTheme(ctx),
+			newQuit(ctx),
+		),
 	}
 }

@@ -27,9 +27,14 @@ func (i *displayLanguageItem) Key() string {
 	return "display.language." + i.lang.Code
 }
 
+// CanClick implements tray.IMenuItem.
+func (*displayLanguageItem) CanClick() bool {
+	return true
+}
+
 // OnClick implements tray.IMenuItem.
-func (t *displayLanguageItem) OnClick() (quit bool) {
-	app.LANG(t.lang.Code)
+func (i *displayLanguageItem) OnClick() (quit bool) {
+	app.LANG(i.lang.Code)
 	tray.Update(_root, false)
 	return false
 }

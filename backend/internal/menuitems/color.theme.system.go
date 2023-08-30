@@ -25,6 +25,11 @@ func (*colorThemeSystem) Key() string {
 	return "color.theme.system"
 }
 
+// CanClick implements tray.IMenuItem.
+func (*colorThemeSystem) CanClick() bool {
+	return true
+}
+
 // OnClick implements tray.IMenuItem.
 func (t *colorThemeSystem) OnClick() (quit bool) {
 	return false

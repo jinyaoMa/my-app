@@ -22,7 +22,12 @@ func (*colorThemeDark) Checked() bool {
 
 // Key implements tray.IMenuItem.
 func (*colorThemeDark) Key() string {
-	return ""
+	return "color.theme.dark"
+}
+
+// CanClick implements tray.IMenuItem.
+func (*colorThemeDark) CanClick() bool {
+	return true
 }
 
 // OnClick implements tray.IMenuItem.
