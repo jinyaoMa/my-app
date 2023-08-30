@@ -11,8 +11,7 @@ type Lang struct {
 }
 
 type I18n[TTranslation ITranslation] struct {
-	IAIO
-	root string
+	*AIO
 }
 
 // CheckLang implements II18n.
@@ -30,7 +29,10 @@ func (a *I18n[TTranslation]) LoadTranslation(lang string) (t TTranslation, ok bo
 // LoadI18n implements II18n.
 func (a *I18n[TTranslation]) LoadI18n() (availLangs []Lang, translationMap map[string]TTranslation) {
 	var v TTranslation
-	a.WalkDir(func(path string, isDir bool, entry fs.DirEntry) (err error) {
+	err := a.WalkDir(func(path string, isDir bool, entry fs.DirEntry) (err error) {
+		println("=========================LoadI18n")
+		println(isDir)
+		println(filepath.Ext(path))
 		if !isDir && filepath.Ext(path) == ".json" && a.LoadJSON(&v, path) {
 			lang := v.Metadata()
 			availLangs = append(availLangs, lang)
@@ -38,12 +40,16 @@ func (a *I18n[TTranslation]) LoadI18n() (availLangs []Lang, translationMap map[s
 		}
 		return nil
 	})
+	println(err)
 	return
 }
 
-func NewI18n[TTranslation ITranslation](root string) II18n[TTranslation] {
+func NewI18n[TTranslation ITranslation](root string) *I18n[TTranslation] {
 	return &I18n[TTranslation]{
-		IAIO: New(root),
-		root: root,
+		AIO: New(root),
 	}
+}
+
+func NewII18n[TTranslation ITranslation](root string) II18n[TTranslation] {
+	return NewI18n[TTranslation](root)
 }

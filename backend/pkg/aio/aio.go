@@ -26,6 +26,7 @@ func (a *AIO) GetBytes(paths ...string) (data []byte) {
 
 // LoadJSON implements IAIO.
 func (a *AIO) LoadJSON(v interface{}, paths ...string) (ok bool) {
+	println(paths)
 	data := a.GetBytes(paths...)
 	if data == nil {
 		return false
