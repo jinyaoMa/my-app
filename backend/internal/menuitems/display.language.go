@@ -21,8 +21,8 @@ func (*displayLanguage) Tooltip() string {
 }
 
 func newdisplayLanguage(ctx context.Context) tray.IMenuItem {
+	var menuitems []tray.IMenuItem
 	availLangs, _ := app.I18N().LoadI18n()
-	menuitems := make([]tray.IMenuItem, 0)
 	for _, lang := range availLangs {
 		menuitems = append(menuitems, newdisplayLanguageItem(ctx, lang))
 	}
