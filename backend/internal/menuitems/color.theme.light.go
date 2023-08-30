@@ -42,10 +42,6 @@ func (*colorThemeLight) Tooltip() string {
 
 func newColorThemeLight(ctx context.Context) tray.IMenuItem {
 	return &colorThemeLight{
-		MenuItem: &tray.MenuItem{
-			MenuItemBase: &tray.MenuItemBase{
-				Ctx: ctx,
-			},
-		},
+		MenuItem: tray.NewMenuItem(ctx),
 	}
 }

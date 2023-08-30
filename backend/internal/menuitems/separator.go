@@ -16,10 +16,6 @@ func (*separator) Separator() bool {
 
 func newSeparator(ctx context.Context) tray.IMenuItem {
 	return &separator{
-		MenuItem: &tray.MenuItem{
-			MenuItemBase: &tray.MenuItemBase{
-				Ctx: ctx,
-			},
-		},
+		MenuItem: tray.NewMenuItem(ctx),
 	}
 }

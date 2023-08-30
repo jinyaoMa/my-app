@@ -2,6 +2,7 @@ package menuitems
 
 import (
 	"context"
+	"my-app/backend/internal/app"
 	"my-app/backend/pkg/aio"
 	"my-app/backend/pkg/tray"
 )
@@ -28,6 +29,8 @@ func (i *displayLanguageItem) Key() string {
 
 // OnClick implements tray.IMenuItem.
 func (t *displayLanguageItem) OnClick() (quit bool) {
+	app.LANG(t.lang.Code)
+	tray.Update(_root, false)
 	return false
 }
 
@@ -43,11 +46,7 @@ func (i *displayLanguageItem) Tooltip() string {
 
 func newdisplayLanguageItem(ctx context.Context, lang aio.Lang) tray.IMenuItem {
 	return &displayLanguageItem{
-		MenuItem: &tray.MenuItem{
-			MenuItemBase: &tray.MenuItemBase{
-				Ctx: ctx,
-			},
-		},
-		lang: lang,
+		MenuItem: tray.NewMenuItem(ctx),
+		lang:     lang,
 	}
 }

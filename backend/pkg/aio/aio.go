@@ -37,8 +37,12 @@ func (a *AIO) LoadJSON(v interface{}, paths ...string) (ok bool) {
 
 // WalkDir implements IAIO.
 func (a *AIO) WalkDir(callback func(path string, isDir bool, entry fs.DirEntry) (err error), paths ...string) (err error) {
-	err = fs.WalkDir(a, filepath.Join(paths...), func(path string, d fs.DirEntry, err error) error {
+	if len(paths) == 0 {
+		paths = append(paths, ".")
+	}
+	err = fs.WalkDir(a.FS, filepath.Join(paths...), func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
+			println(err.Error())
 			return err
 		}
 		return callback(path, d.IsDir(), d)

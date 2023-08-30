@@ -28,11 +28,6 @@ func newdisplayLanguage(ctx context.Context) tray.IMenuItem {
 	}
 
 	return &displayLanguage{
-		MenuItem: &tray.MenuItem{
-			MenuItemBase: &tray.MenuItemBase{
-				Ctx:       ctx,
-				MenuItems: menuitems,
-			},
-		},
+		MenuItem: tray.NewMenuItem(ctx, menuitems...),
 	}
 }
