@@ -1,0 +1,20 @@
+{
+  "lang": {
+    "code": "en",
+    "text": "English"
+  },
+  "app_name": "My Application",
+  "open_window": "Open My Application",
+  "display_language": {
+    "label": "Lang: ",
+    "title": "Display Language"
+  },
+  "color_theme": {
+    "label": "Theme: ",
+    "title": "Color Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "quit": "Quit"
+}
