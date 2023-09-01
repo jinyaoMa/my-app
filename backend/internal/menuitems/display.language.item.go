@@ -18,8 +18,8 @@ func (*displayLanguageItem) CanCheck() bool {
 }
 
 // Checked implements tray.IMenuItem.
-func (*displayLanguageItem) Checked() bool {
-	return false
+func (i *displayLanguageItem) Checked() bool {
+	return app.LANG() == i.lang.Code
 }
 
 // Key implements tray.IMenuItem.
