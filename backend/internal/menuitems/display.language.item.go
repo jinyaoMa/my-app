@@ -19,6 +19,7 @@ func (*displayLanguageItem) CanCheck() bool {
 
 // Checked implements tray.IMenuItem.
 func (i *displayLanguageItem) Checked() bool {
+	println(app.LANG(), i.lang.Code)
 	return app.LANG() == i.lang.Code
 }
 
@@ -35,7 +36,7 @@ func (*displayLanguageItem) CanClick() bool {
 // OnClick implements tray.IMenuItem.
 func (i *displayLanguageItem) OnClick() (quit bool) {
 	app.LANG(i.lang.Code)
-	tray.Update(_root, false)
+	tray.Update(_root)
 	return false
 }
 

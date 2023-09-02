@@ -42,7 +42,6 @@ func (a *AIO) WalkDir(callback func(path string, isDir bool, entry fs.DirEntry) 
 	}
 	err = fs.WalkDir(a.FS, filepath.Join(paths...), func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
-			println(err.Error())
 			return err
 		}
 		return callback(path, d.IsDir(), d)

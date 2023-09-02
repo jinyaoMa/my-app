@@ -30,7 +30,11 @@ func Run(tray IMenuItemBase) {
 }
 
 // update systray ui based on state loaded from tray interface
-func Update(tray IMenuItemBase, initialized bool) error {
+func Update(tray IMenuItemBase, initialized ...bool) error {
+	if len(initialized) == 0 {
+		initialized = append(initialized, false)
+	}
+
 	icon := tray.Icon()
 	title := tray.Title()
 	tooltip := tray.Tooltip()
@@ -45,7 +49,7 @@ func Update(tray IMenuItemBase, initialized bool) error {
 		systray.SetTooltip(tooltip)
 	}
 	for _, item := range tray.Items() {
-		if initialized {
+		if initialized[0] {
 			if item.Separator() {
 				systray.AddSeparator()
 			} else {
@@ -55,12 +59,12 @@ func Update(tray IMenuItemBase, initialized bool) error {
 				} else {
 					mi = systray.AddMenuItem("", "")
 				}
-				if err := update(item, initialized, mi); err != nil {
+				if err := update(item, initialized[0], mi); err != nil {
 					return err
 				}
 			}
 		} else if !item.Separator() {
-			if err := update(item, initialized); err != nil {
+			if err := update(item, initialized[0]); err != nil {
 				return err
 			}
 		}
@@ -116,6 +120,7 @@ func update(item IMenuItem, initialized bool, menuItems ...*systray.MenuItem) er
 			if initialized {
 				var mi *systray.MenuItem
 				if item.CanCheck() {
+					println("initChecked:", item.Checked())
 					mi = menuItem.AddSubMenuItemCheckbox("", "", item.Checked())
 				} else {
 					mi = menuItem.AddSubMenuItem("", "")

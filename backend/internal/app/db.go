@@ -104,7 +104,6 @@ func entities() []any {
 		&entity.File{},
 		&entity.FileCategory{},
 		&entity.FileExtension{},
-		&entity.Option{},
 		&entity.Node{},
 	}
 }
