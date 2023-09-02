@@ -120,7 +120,6 @@ func update(item IMenuItem, initialized bool, menuItems ...*systray.MenuItem) er
 			if initialized {
 				var mi *systray.MenuItem
 				if item.CanCheck() {
-					println("initChecked:", item.Checked())
 					mi = menuItem.AddSubMenuItemCheckbox("", "", item.Checked())
 				} else {
 					mi = menuItem.AddSubMenuItem("", "")

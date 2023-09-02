@@ -28,9 +28,9 @@ func (a *I18n[TTranslation]) LoadTranslation(lang string) (t TTranslation, ok bo
 
 // LoadI18n implements II18n.
 func (a *I18n[TTranslation]) LoadI18n() (availLangs []Lang, translationMap map[string]TTranslation) {
-	var v TTranslation
 	translationMap = make(map[string]TTranslation, 0)
 	a.WalkDir(func(path string, isDir bool, entry fs.DirEntry) (err error) {
+		var v TTranslation
 		if !isDir && filepath.Ext(path) == ".json" && a.LoadJSON(&v, path) {
 			lang := v.Metadata()
 			availLangs = append(availLangs, lang)
