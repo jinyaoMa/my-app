@@ -12,6 +12,7 @@ import (
 	"my-app/backend/pkg/funcs"
 	"my-app/backend/pkg/log"
 
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
 	"gorm.io/gorm"
 )
 
@@ -26,6 +27,8 @@ var (
 	crudOption         interfaces.ICRUDOption
 	currentLanguage    *entity.Option
 	currentTranslation *Translation
+
+	currentColorTheme *entity.Option
 )
 
 func init() {
@@ -76,6 +79,8 @@ func init() {
 		currentTranslation = DefaultTranslation()
 	}
 
+	currentColorTheme, _ = crudOption.GetByOptionName(vmodel.OptionNameColorTheme)
+
 	web = api.New()
 }
 
@@ -99,11 +104,11 @@ func I18N() aio.II18n[*Translation] {
 	return i18n
 }
 
-func LANG(langs ...string) string {
-	if len(langs) > 0 {
+func LANG(l ...string) string {
+	if len(l) > 0 {
 		var ok bool
-		if currentTranslation, ok = i18n.LoadTranslation(langs[0]); ok {
-			currentLanguage.Value = langs[0]
+		if currentTranslation, ok = i18n.LoadTranslation(l[0]); ok {
+			currentLanguage.Value = l[0]
 			crudOption.Save(currentLanguage)
 		}
 	}
@@ -112,6 +117,14 @@ func LANG(langs ...string) string {
 
 func T() (t *Translation) {
 	return currentTranslation
+}
+
+func THEME(t ...windows.Theme) windows.Theme {
+	if len(t) > 0 {
+		currentColorTheme.Value = vmodel.ColorThemeString(t[0])
+		crudOption.Save(currentColorTheme)
+	}
+	return vmodel.ColorTheme(currentColorTheme.Value)
 }
 
 func API() api.IAPI {

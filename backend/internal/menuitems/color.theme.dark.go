@@ -4,6 +4,9 @@ import (
 	"context"
 	"my-app/backend/internal/app"
 	"my-app/backend/pkg/tray"
+
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type colorThemeDark struct {
@@ -32,6 +35,8 @@ func (*colorThemeDark) CanClick() bool {
 
 // OnClick implements tray.IMenuItem.
 func (t *colorThemeDark) OnClick() (quit bool) {
+	app.THEME(windows.Dark)
+	runtime.WindowSetDarkTheme(t.Ctx)
 	return false
 }
 

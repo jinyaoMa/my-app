@@ -10,3 +10,10 @@ const (
 	OptionNameWebPortHttps = "WebPortHttps"
 	OptionNameWebDirCerts  = "WebDirCerts"
 )
+
+// option values
+const (
+	OptionValueColorThemeSystem = "system"
+	OptionValueColorThemeLight  = "light"
+	OptionValueColorThemeDark   = "dark"
+)
