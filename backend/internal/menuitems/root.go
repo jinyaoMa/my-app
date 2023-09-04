@@ -40,7 +40,6 @@ func newRoot(ctx context.Context) tray.IMenuItemBase {
 			newSeparator(ctx),
 			newdisplayLanguage(ctx),
 			newColorTheme(ctx),
-			newQuit(ctx),
-		),
+			newQuit(ctx)),
 	}
 }

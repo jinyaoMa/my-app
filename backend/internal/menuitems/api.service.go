@@ -28,6 +28,10 @@ func (*apiService) Tooltip() string {
 func newAPIService(ctx context.Context) tray.IMenuItem {
 	return &apiService{
 		MenuItem: tray.NewMenuItem(ctx,
-			newApiServiceStart(ctx)),
+			newApiServiceStart(ctx),
+			newApiServiceStop(ctx),
+			newSeparator(ctx),
+			newApiServiceSwagger(ctx),
+			newApiServiceVitePress(ctx)),
 	}
 }
