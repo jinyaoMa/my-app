@@ -36,6 +36,8 @@ func newRoot(ctx context.Context) tray.IMenuItemBase {
 		MenuItemBase: tray.NewMenuItemBase(ctx,
 			newOpenWindow(ctx),
 			newSeparator(ctx),
+			newAPIService(ctx),
+			newSeparator(ctx),
 			newdisplayLanguage(ctx),
 			newColorTheme(ctx),
 			newQuit(ctx),
