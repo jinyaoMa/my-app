@@ -4,6 +4,8 @@ import (
 	"context"
 	"my-app/backend/internal/app"
 	"my-app/backend/pkg/tray"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type quit struct {
@@ -22,7 +24,7 @@ func (*quit) CanClick() bool {
 
 // OnClick implements tray.IMenuItem.
 func (q *quit) OnClick() (quit bool) {
-	//runtime.Quit(q.ctx)
+	runtime.Quit(q.Ctx)
 	return true
 }
 

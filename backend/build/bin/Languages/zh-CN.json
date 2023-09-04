@@ -5,6 +5,16 @@
   },
   "app_name": "我的应用程序",
   "open_window": "打开 我的应用程序",
+  "api_service": {
+    "label": "接口：",
+    "title": "API 接口服务",
+    "enabled": "已开启",
+    "disabled": "未开启",
+    "vitepress": "节点门户",
+    "swagger": "接口文档",
+    "start": "启动服务",
+    "stop": "关闭服务"
+  },
   "display_language": {
     "label": "语言：",
     "title": "显示语言"

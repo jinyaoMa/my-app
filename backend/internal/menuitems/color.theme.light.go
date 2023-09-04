@@ -20,7 +20,7 @@ func (*colorThemeLight) CanCheck() bool {
 
 // Checked implements tray.IMenuItem.
 func (*colorThemeLight) Checked() bool {
-	return false
+	return app.THEME() == windows.Light
 }
 
 // Key implements tray.IMenuItem.
@@ -35,8 +35,10 @@ func (*colorThemeLight) CanClick() bool {
 
 // OnClick implements tray.IMenuItem.
 func (t *colorThemeLight) OnClick() (quit bool) {
-	app.THEME(windows.Light)
-	runtime.WindowSetLightTheme(t.Ctx)
+	if app.THEME(windows.Light) == windows.Light {
+		runtime.WindowSetLightTheme(t.Ctx)
+		tray.Update(_root)
+	}
 	return false
 }
 

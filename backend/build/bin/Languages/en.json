@@ -5,6 +5,16 @@
   },
   "app_name": "My Application",
   "open_window": "Open My Application",
+  "api_service": {
+    "label": "API: ",
+    "title": "API Service",
+    "enabled": "On",
+    "disabled": "Off",
+    "vitepress": "Node Portal",
+    "swagger": "API Doc",
+    "start": "Start Service",
+    "stop": "Stop Service"
+  },
   "display_language": {
     "label": "Lang: ",
     "title": "Display Language"

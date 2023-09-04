@@ -6,9 +6,21 @@ type Translation struct {
 	Lang            aio.Lang                   `json:"lang"`
 	AppName         string                     `json:"app_name"`
 	OpenWindow      string                     `json:"open_window"`
+	APIService      TranslationAPIService      `json:"api_service"`
 	DisplayLanguage TranslationDisplayLanguage `json:"display_language"`
 	ColorTheme      TranslationColorTheme      `json:"color_theme"`
 	Quit            string                     `json:"quit"`
+}
+
+type TranslationAPIService struct {
+	Label     string `json:"label"`
+	Title     string `json:"title"`
+	Enabled   string `json:"enabled"`
+	Disabled  string `json:"disabled"`
+	VitePress string `json:"vitepress"`
+	Swagger   string `json:"swagger"`
+	Start     string `json:"start"`
+	Stop      string `json:"stop"`
 }
 
 type TranslationColorTheme struct {
@@ -37,6 +49,16 @@ func DefaultTranslation() *Translation {
 		},
 		AppName:    "[AppName]",
 		OpenWindow: "[OpenWindow]",
+		APIService: TranslationAPIService{
+			Label:     "[APIServiceLabel]",
+			Title:     "[APIServiceTitle]",
+			Enabled:   "[APIServiceEnabled]",
+			Disabled:  "[APIServiceDisabled]",
+			VitePress: "[APIServiceVitePress]",
+			Swagger:   "[APIServiceSwagger]",
+			Start:     "[APIServiceStart]",
+			Stop:      "[APIServiceStop]",
+		},
 		DisplayLanguage: TranslationDisplayLanguage{
 			Label: "[DisplayLanguageLabel]",
 			Title: "[DisplayLanguageTitle]",

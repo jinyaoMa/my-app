@@ -20,7 +20,7 @@ func (*colorThemeDark) CanCheck() bool {
 
 // Checked implements tray.IMenuItem.
 func (*colorThemeDark) Checked() bool {
-	return false
+	return app.THEME() == windows.Dark
 }
 
 // Key implements tray.IMenuItem.
@@ -35,8 +35,10 @@ func (*colorThemeDark) CanClick() bool {
 
 // OnClick implements tray.IMenuItem.
 func (t *colorThemeDark) OnClick() (quit bool) {
-	app.THEME(windows.Dark)
-	runtime.WindowSetDarkTheme(t.Ctx)
+	if app.THEME(windows.Dark) == windows.Dark {
+		runtime.WindowSetDarkTheme(t.Ctx)
+		tray.Update(_root)
+	}
 	return false
 }
 
