@@ -79,9 +79,26 @@ func init() {
 		currentTranslation = DefaultTranslation()
 	}
 
-	currentColorTheme, _ = crudOption.GetByOptionName(vmodel.OptionNameColorTheme)
+	currentColorTheme, err = crudOption.GetByOptionName(vmodel.OptionNameColorTheme)
+	if err != nil {
+		currentColorTheme = &entity.Option{
+			Key:   vmodel.OptionNameColorTheme,
+			Value: vmodel.OptionValueColorThemeString(windows.SystemDefault, vmodel.OptionValueColorThemeSystem),
+		}
+	}
 
+	var webAutoStart *entity.Option
 	web = api.New()
+	webAutoStart, err = crudOption.GetByOptionName(vmodel.OptionNameWebAutoStart)
+	if err != nil {
+		webAutoStart = &entity.Option{
+			Key:   vmodel.OptionNameWebAutoStart,
+			Value: vmodel.OptionValueBoolString(true),
+		}
+	}
+	if vmodel.OptionValueBool(webAutoStart.Value) {
+		StartAPI()
+	}
 }
 
 func CFG() *configs.Configs {
@@ -121,10 +138,10 @@ func T() (t *Translation) {
 
 func THEME(t ...windows.Theme) windows.Theme {
 	if len(t) > 0 {
-		currentColorTheme.Value = vmodel.ColorThemeString(t[0])
+		currentColorTheme.Value = vmodel.OptionValueColorThemeString(t[0], vmodel.OptionValueColorThemeSystem)
 		crudOption.Save(currentColorTheme)
 	}
-	return vmodel.ColorTheme(currentColorTheme.Value)
+	return vmodel.OptionValueColorTheme(currentColorTheme.Value, windows.SystemDefault)
 }
 
 func API() api.IAPI {

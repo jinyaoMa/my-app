@@ -5,15 +5,9 @@ const (
 	OptionNameDisplayLanguage = "DisplayLanguage"
 	OptionNameColorTheme      = "ColorTheme"
 
-	OptionNameWebAutoStart = "WebAutoStart"
-	OptionNameWebPortHttp  = "WebPortHttp"
-	OptionNameWebPortHttps = "WebPortHttps"
-	OptionNameWebDirCerts  = "WebDirCerts"
-)
-
-// option values
-const (
-	OptionValueColorThemeSystem = "system"
-	OptionValueColorThemeLight  = "light"
-	OptionValueColorThemeDark   = "dark"
+	OptionNameWebAutoStart     = "Web.AutoStart"
+	OptionNameWebPortHttp      = "Web.PortHttp"
+	OptionNameWebPortHttps     = "Web.PortHttps"
+	OptionNameWebDirCerts      = "Web.DirCerts"
+	OptionNameWebHostWhitelist = "Web.HostWhitelist"
 )

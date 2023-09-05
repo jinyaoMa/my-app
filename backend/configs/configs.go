@@ -3,6 +3,7 @@ package configs
 import "gopkg.in/ini.v1"
 
 type Configs struct {
+	IsDev         bool
 	AssetsPath    string
 	LanguagesPath string
 	Language      string
@@ -30,6 +31,7 @@ func NewConfigs(path string) (cfg *Configs, err error) {
 	if err != nil {
 		return nil, err
 	}
+	iniFile.SaveTo(path)
 
 	return
 }
