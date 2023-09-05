@@ -72,6 +72,7 @@ func init() {
 			currentLanguage.Value = availLangs[0].Code
 		}
 	}
+	crudOption.Save(currentLanguage)
 
 	var ok bool
 	currentTranslation, ok = translationMap[currentLanguage.Value]
@@ -86,6 +87,7 @@ func init() {
 			Value: vmodel.OptionValueColorThemeString(windows.SystemDefault, vmodel.OptionValueColorThemeSystem),
 		}
 	}
+	crudOption.Save(currentColorTheme)
 
 	web = api.New()
 
@@ -97,6 +99,7 @@ func init() {
 			Value: vmodel.OptionValueBoolString(true),
 		}
 	}
+	crudOption.Save(webAutoStart)
 	if vmodel.OptionValueBool(webAutoStart.Value) {
 		StartAPI()
 	}

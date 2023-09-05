@@ -54,7 +54,7 @@ func (c *CRUD[TEntity]) FindOne(condition param.QueryCondition) (entity TEntity,
 	condition(func(query any, args ...any) {
 		tx = tx.Where(query, args...)
 	})
-	err = tx.Find(&entity).Error
+	err = tx.First(&entity).Error
 	if err != nil {
 		c.mergeEntity(entity)
 	}
