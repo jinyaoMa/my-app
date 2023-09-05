@@ -10,10 +10,16 @@ const (
 )
 
 type Criteria struct {
-	Page   int
-	Size   int
-	Fields []string
-	Sorts  []CriteriaSort
+	Page    int
+	Size    int
+	Fields  []string
+	Sorts   []CriteriaSort
+	Filters []CriteriaFilter
+}
+
+type CriteriaFilter struct {
+	Condition string
+	Params    []any
 }
 
 type CriteriaSort struct {
@@ -29,10 +35,11 @@ func (c *Criteria) Offset() int {
 
 func DefaultCriteria() *Criteria {
 	return &Criteria{
-		Page:   1,
-		Size:   10,
-		Fields: []string{},
-		Sorts:  []CriteriaSort{},
+		Page:    1,
+		Size:    10,
+		Fields:  []string{},
+		Sorts:   []CriteriaSort{},
+		Filters: []CriteriaFilter{},
 	}
 }
 

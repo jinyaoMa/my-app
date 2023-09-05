@@ -102,6 +102,10 @@ func (c *CRUD[TEntity]) Query(criteria *param.Criteria, condition param.QueryCon
 		}
 	}
 
+	for _, filter := range criteria.Filters {
+		tx = tx.Where(filter.Condition, filter.Params...)
+	}
+
 	condition(func(query any, args ...any) {
 		tx = tx.Where(query, args...)
 	})
