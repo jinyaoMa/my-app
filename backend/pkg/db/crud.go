@@ -55,7 +55,7 @@ func (c *CRUD[TEntity]) FindOne(condition param.QueryCondition) (entity TEntity,
 		tx = tx.Where(query, args...)
 	})
 	err = tx.First(&entity).Error
-	if err != nil {
+	if err == nil {
 		c.mergeEntity(entity)
 	}
 	return
@@ -64,7 +64,7 @@ func (c *CRUD[TEntity]) FindOne(condition param.QueryCondition) (entity TEntity,
 // All implements ICRUD
 func (c *CRUD[TEntity]) All() (entities []TEntity, err error) {
 	err = c.DB.Find(&entities).Error
-	if err != nil {
+	if err == nil {
 		c.mergeEntities(entities)
 	}
 	return
@@ -73,7 +73,7 @@ func (c *CRUD[TEntity]) All() (entities []TEntity, err error) {
 // GetById implements ICRUD
 func (c *CRUD[TEntity]) GetById(id int64) (entity TEntity, err error) {
 	err = c.DB.First(&entity, id).Error
-	if err != nil {
+	if err == nil {
 		c.mergeEntity(entity)
 	}
 	return
@@ -107,7 +107,7 @@ func (c *CRUD[TEntity]) Query(criteria *param.Criteria, condition param.QueryCon
 	})
 
 	err = tx.Find(&entities).Error
-	if err != nil {
+	if err == nil {
 		c.mergeEntities(entities)
 	}
 	return
