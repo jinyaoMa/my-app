@@ -87,8 +87,9 @@ func init() {
 		}
 	}
 
-	var webAutoStart *entity.Option
 	web = api.New()
+
+	var webAutoStart *entity.Option
 	webAutoStart, err = crudOption.GetByOptionName(vmodel.OptionNameWebAutoStart)
 	if err != nil {
 		webAutoStart = &entity.Option{
