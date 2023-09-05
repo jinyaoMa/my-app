@@ -7,7 +7,7 @@ import (
 
 func initCfg() (cfg *configs.Configs, err error) {
 	var iniPath string
-	iniPath, err = funcs.GetFilenameSameAsExecutable("config.ini")
+	iniPath, err = funcs.GetFilenameSameAsExecutable("ini")
 	if err != nil {
 		return
 	}

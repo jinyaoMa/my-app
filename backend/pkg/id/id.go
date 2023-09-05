@@ -19,8 +19,8 @@ type ID struct {
 	nodeMax   int64
 	nodeMask  int64
 	stepMask  int64
-	timeShift uint8
-	nodeShift uint8
+	timeShift uint
+	nodeShift uint
 }
 
 // Generate implements IID
@@ -56,7 +56,7 @@ func (id *ID) Generate() int64 {
 func New(cfg *Config) (*ID, error) {
 	cfg = NewConfig(cfg)
 
-	var shareBits uint8 = cfg.NodeBits + cfg.StepBits
+	var shareBits uint = cfg.NodeBits + cfg.StepBits
 	if shareBits > TotalShareBits {
 		return nil, fmt.Errorf("remember, you have a total %d bits to share between node/step", TotalShareBits)
 	}
