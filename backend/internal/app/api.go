@@ -21,31 +21,39 @@ func StartAPI() bool {
 	webPortHttp, err = crudOption.GetByOptionName(vmodel.OptionNameWebPortHttp)
 	if err != nil {
 		webPortHttp = &entity.Option{
-			Key:   vmodel.OptionNameWebPortHttp,
-			Value: vmodel.OptionValueWebPortString(DefaultPortHttp),
+			Key:       vmodel.OptionNameWebPortHttp,
+			Value:     vmodel.OptionValueWebPortString(DefaultPortHttp),
+			Encrypted: true,
 		}
+		crudOption.Save(webPortHttp)
 	}
 	webPortHttps, err = crudOption.GetByOptionName(vmodel.OptionNameWebPortHttps)
 	if err != nil {
 		webPortHttps = &entity.Option{
-			Key:   vmodel.OptionNameWebPortHttps,
-			Value: vmodel.OptionValueWebPortString(DefaultPortHttps),
+			Key:       vmodel.OptionNameWebPortHttps,
+			Value:     vmodel.OptionValueWebPortString(DefaultPortHttps),
+			Encrypted: true,
 		}
+		crudOption.Save(webPortHttps)
 	}
 	webDirCerts, err = crudOption.GetByOptionName(vmodel.OptionNameWebDirCerts)
 	if err != nil {
 		dirCerts, _ := funcs.GetPathStartedFromExecutable("Certs")
 		webDirCerts = &entity.Option{
-			Key:   vmodel.OptionNameWebDirCerts,
-			Value: dirCerts,
+			Key:       vmodel.OptionNameWebDirCerts,
+			Value:     dirCerts,
+			Encrypted: true,
 		}
+		crudOption.Save(webDirCerts)
 	}
 	webHostWhitelist, err = crudOption.GetByOptionName(vmodel.OptionNameWebHostWhitelist)
 	if err != nil {
 		webHostWhitelist = &entity.Option{
-			Key:   vmodel.OptionNameWebHostWhitelist,
-			Value: "",
+			Key:       vmodel.OptionNameWebHostWhitelist,
+			Value:     "",
+			Encrypted: true,
 		}
+		crudOption.Save(webHostWhitelist)
 	}
 
 	return web.Start(api.NewConfig(&api.Config{

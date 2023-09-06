@@ -5,6 +5,7 @@ import (
 	"my-app/backend/internal/service"
 	"my-app/frontend"
 
+	"github.com/devfeel/mapper"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
@@ -14,7 +15,7 @@ func main() {
 	// Create an instance of the app structure
 	wailsapp := NewApp()
 
-	optionService := service.NewOption(app.DB())
+	optionService := service.NewOption(app.DB(), mapper.NewMapper())
 
 	// Create application with options
 	err := wails.Run(&options.App{

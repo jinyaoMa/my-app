@@ -66,6 +66,8 @@ func (o *Option) encryptValue(tx *gorm.DB) (err error) {
 		}
 		o.ValueEncrypted = ciphertext
 		tx.Statement.Omit("Value")
+	} else {
+		tx.Statement.Omit("ValueEncrypted")
 	}
 	return
 }

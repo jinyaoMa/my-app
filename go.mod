@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/devfeel/mapper v0.7.13
 	github.com/getlantern/systray v1.2.2
 	github.com/shirou/gopsutil/v3 v3.23.6
 	gopkg.in/ini.v1 v1.67.0
