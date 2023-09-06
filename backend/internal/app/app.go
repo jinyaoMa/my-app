@@ -2,8 +2,8 @@ package app
 
 import (
 	"my-app/backend/configs"
+	"my-app/backend/internal/crud"
 	"my-app/backend/internal/entity"
-	"my-app/backend/internal/implements/crud"
 	"my-app/backend/internal/interfaces"
 	"my-app/backend/internal/vmodel"
 	"my-app/backend/pkg/aio"
@@ -54,7 +54,7 @@ func init() {
 	i18n = aio.NewI18n[*Translation](cfg.LanguagesPath)
 	availLangs, translationMap := i18n.LoadI18n()
 
-	crudOption = crud.NewCRUDOption(dbs)
+	crudOption = crud.NewOption(dbs)
 
 	currentLanguage, err = crudOption.GetByOptionName(vmodel.OptionNameDisplayLanguage)
 	if err != nil || !funcs.Any(availLangs, func(e aio.Lang) bool {

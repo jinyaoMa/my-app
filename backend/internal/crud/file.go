@@ -6,12 +6,16 @@ import (
 	"my-app/backend/pkg/db"
 )
 
-type CRUDFile struct {
+type File struct {
 	*db.CRUD[*entity.File]
 }
 
-func NewCRUDFile(dbs *db.DB) interfaces.ICRUDFile {
-	return &CRUDFile{
+func NewFile(dbs *db.DB) *File {
+	return &File{
 		CRUD: db.NewCRUD[*entity.File](dbs),
 	}
+}
+
+func NewIFile(dbs *db.DB) interfaces.ICRUDFile {
+	return NewFile(dbs)
 }

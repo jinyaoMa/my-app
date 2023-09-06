@@ -2,7 +2,7 @@ package main
 
 import (
 	"my-app/backend/internal/app"
-	"my-app/backend/internal/implements/crud"
+	"my-app/backend/internal/crud"
 	"my-app/backend/internal/vmodel"
 	"my-app/backend/pkg/api"
 	"os"
@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	crudOption := crud.NewCRUDOption(app.DB())
+	crudOption := crud.NewOption(app.DB())
 	portHttp, _, _ := crudOption.GetUint16ByOptionName(vmodel.OptionNameWebPortHttp)
 	portHttps, _, _ := crudOption.GetUint16ByOptionName(vmodel.OptionNameWebPortHttps)
 

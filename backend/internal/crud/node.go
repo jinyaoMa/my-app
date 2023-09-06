@@ -6,12 +6,16 @@ import (
 	"my-app/backend/pkg/db"
 )
 
-type CRUDNode struct {
+type Node struct {
 	*db.CRUD[*entity.Node]
 }
 
-func NewCRUDNode(dbs *db.DB) interfaces.ICRUDNode {
-	return &CRUDNode{
+func NewNode(dbs *db.DB) *Node {
+	return &Node{
 		CRUD: db.NewCRUD[*entity.Node](dbs),
 	}
+}
+
+func NewINode(dbs *db.DB) interfaces.ICRUDNode {
+	return NewNode(dbs)
 }

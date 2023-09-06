@@ -2,6 +2,7 @@ package main
 
 import (
 	"my-app/backend/internal/app"
+	"my-app/backend/internal/service"
 	"my-app/frontend"
 
 	"github.com/wailsapp/wails/v2"
@@ -13,17 +14,20 @@ func main() {
 	// Create an instance of the app structure
 	wailsapp := NewApp()
 
+	optionService := service.NewOption(app.DB())
+
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:             "customlayout",
 		Width:             1024,
-		Height:            600,
+		Height:            720,
 		Assets:            frontend.Assets,
 		HideWindowOnClose: true,
 		BackgroundColour:  &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup:         wailsapp.startup,
 		Bind: []interface{}{
 			wailsapp,
+			optionService,
 		},
 		Windows: &windows.Options{
 			Theme: app.THEME(),

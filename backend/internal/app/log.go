@@ -2,8 +2,8 @@ package app
 
 import (
 	"my-app/backend/configs"
+	"my-app/backend/internal/crud"
 	"my-app/backend/internal/entity"
-	"my-app/backend/internal/implements/crud"
 	"my-app/backend/internal/interfaces"
 	"my-app/backend/pkg/db"
 	"my-app/backend/pkg/log"
@@ -34,6 +34,6 @@ func (w *DbLogWriter) Write(p []byte) (n int, err error) {
 func newDbLogWriter(dbs *db.DB, children ...log.ITreeWriter) log.ITreeWriter {
 	return &DbLogWriter{
 		LogWriter: log.NewLogWriter(children...),
-		crudLog:   crud.NewCRUDLog(dbs),
+		crudLog:   crud.NewLog(dbs),
 	}
 }

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"my-app/backend/internal/menuitems"
+	"my-app/backend/cmd/my-tray/menuitems"
 	"my-app/backend/pkg/tray"
 )
 

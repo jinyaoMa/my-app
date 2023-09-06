@@ -6,12 +6,16 @@ import (
 	"my-app/backend/pkg/db"
 )
 
-type CRUDUserPassword struct {
+type UserPassword struct {
 	*db.CRUD[*entity.UserPassword]
 }
 
-func NewCRUDUserPassword(dbs *db.DB) interfaces.ICRUDUserPassword {
-	return &CRUDUserPassword{
+func NewUserPassword(dbs *db.DB) *UserPassword {
+	return &UserPassword{
 		CRUD: db.NewCRUD[*entity.UserPassword](dbs),
 	}
+}
+
+func NewIUserPassword(dbs *db.DB) interfaces.ICRUDUserPassword {
+	return NewUserPassword(dbs)
 }

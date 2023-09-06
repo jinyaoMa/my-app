@@ -6,12 +6,16 @@ import (
 	"my-app/backend/pkg/db"
 )
 
-type CRUDLog struct {
+type Log struct {
 	*db.CRUD[*entity.Log]
 }
 
-func NewCRUDLog(dbs *db.DB) interfaces.ICRUDLog {
-	return &CRUDLog{
+func NewLog(dbs *db.DB) *Log {
+	return &Log{
 		CRUD: db.NewCRUD[*entity.Log](dbs),
 	}
+}
+
+func NewILog(dbs *db.DB) interfaces.ICRUDLog {
+	return NewLog(dbs)
 }

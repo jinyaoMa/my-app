@@ -6,12 +6,16 @@ import (
 	"my-app/backend/pkg/db"
 )
 
-type CRUDFileExtension struct {
+type FileExtension struct {
 	*db.CRUD[*entity.FileExtension]
 }
 
-func NewCRUDFileExtension(dbs *db.DB) interfaces.ICRUDFileExtension {
-	return &CRUDFileExtension{
+func NewFileExtension(dbs *db.DB) *FileExtension {
+	return &FileExtension{
 		CRUD: db.NewCRUD[*entity.FileExtension](dbs),
 	}
+}
+
+func NewIFileExtension(dbs *db.DB) interfaces.ICRUDFileExtension {
+	return NewFileExtension(dbs)
 }

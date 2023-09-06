@@ -7,12 +7,12 @@ import (
 	"strconv"
 )
 
-type CRUDOption struct {
+type Option struct {
 	*db.CRUD[*entity.Option]
 }
 
 // GetUint16ByOptionName implements interfaces.ICRUDOption.
-func (s *CRUDOption) GetUint16ByOptionName(name string) (value uint16, opt *entity.Option, err error) {
+func (s *Option) GetUint16ByOptionName(name string) (value uint16, opt *entity.Option, err error) {
 	opt, err = s.GetByOptionName(name)
 	if err != nil {
 		return
@@ -28,7 +28,7 @@ func (s *CRUDOption) GetUint16ByOptionName(name string) (value uint16, opt *enti
 }
 
 // GetByOptionName implements interfaces.ICRUDOption.
-func (s *CRUDOption) GetByOptionName(name string) (opt *entity.Option, err error) {
+func (s *Option) GetByOptionName(name string) (opt *entity.Option, err error) {
 	return s.FindOne(func(where func(query any, args ...any)) {
 		where(&entity.Option{
 			Key: name,
@@ -36,8 +36,12 @@ func (s *CRUDOption) GetByOptionName(name string) (opt *entity.Option, err error
 	})
 }
 
-func NewCRUDOption(dbs *db.DB) interfaces.ICRUDOption {
-	return &CRUDOption{
+func NewOption(dbs *db.DB) *Option {
+	return &Option{
 		CRUD: db.NewCRUD[*entity.Option](dbs),
 	}
+}
+
+func NewIOption(dbs *db.DB) interfaces.ICRUDOption {
+	return NewOption(dbs)
 }

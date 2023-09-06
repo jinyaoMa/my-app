@@ -6,12 +6,16 @@ import (
 	"my-app/backend/pkg/db"
 )
 
-type CRUDUser struct {
+type User struct {
 	*db.CRUD[*entity.User]
 }
 
-func NewCRUDUser(dbs *db.DB) interfaces.ICRUDUser {
-	return &CRUDUser{
+func NewUser(dbs *db.DB) *User {
+	return &User{
 		CRUD: db.NewCRUD[*entity.User](dbs),
 	}
+}
+
+func NewIUser(dbs *db.DB) interfaces.ICRUDUser {
+	return NewUser(dbs)
 }

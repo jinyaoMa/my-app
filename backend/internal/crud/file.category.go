@@ -6,12 +6,16 @@ import (
 	"my-app/backend/pkg/db"
 )
 
-type CRUDFileCategory struct {
+type FileCategory struct {
 	*db.CRUD[*entity.FileCategory]
 }
 
-func NewCRUDFileCategory(dbs *db.DB) interfaces.ICRUDFileCategory {
-	return &CRUDFileCategory{
+func NewFileCategory(dbs *db.DB) *FileCategory {
+	return &FileCategory{
 		CRUD: db.NewCRUD[*entity.FileCategory](dbs),
 	}
+}
+
+func NewIFileCategory(dbs *db.DB) interfaces.ICRUDFileCategory {
+	return NewFileCategory(dbs)
 }
