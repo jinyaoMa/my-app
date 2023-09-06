@@ -81,6 +81,15 @@ func (c *CRUD[TEntity]) GetById(id int64) (entity TEntity, err error) {
 
 // Query implements ICRUD
 func (c *CRUD[TEntity]) Query(criteria *param.Criteria, condition param.QueryCondition, includes ...string) (entities []TEntity, err error) {
+	err = c.BuildQuery(criteria, condition, includes...).Find(&entities).Error
+	if err == nil {
+		c.mergeEntities(entities)
+	}
+	return
+}
+
+// BuildQuery implements ICRUD
+func (c *CRUD[TEntity]) BuildQuery(criteria *param.Criteria, condition param.QueryCondition, includes ...string) (db *DB) {
 	criteria = param.NewCriteria(criteria)
 
 	tx := c.DB.Limit(criteria.Size).Offset(criteria.Offset())
@@ -110,11 +119,10 @@ func (c *CRUD[TEntity]) Query(criteria *param.Criteria, condition param.QueryCon
 		tx = tx.Where(query, args...)
 	})
 
-	err = tx.Find(&entities).Error
-	if err == nil {
-		c.mergeEntities(entities)
+	return &DB{
+		config: c.DB.config,
+		DB:     tx,
 	}
-	return
 }
 
 func NewCRUD[TEntity IEntity](db *DB) *CRUD[TEntity] {

@@ -30,6 +30,7 @@ type IEntityBase interface {
 }
 
 type ICRUD[TEntity IEntity] interface {
+	BuildQuery(criteria *param.Criteria, condition param.QueryCondition, includes ...string) (db *DB)
 	Query(criteria *param.Criteria, condition param.QueryCondition, includes ...string) (entities []TEntity, err error)
 	GetById(id int64) (entity TEntity, err error)
 	All() (entities []TEntity, err error)
