@@ -10,10 +10,10 @@ type Option struct {
 	db.Entity
 
 	/* internal fields */
-	Key            string `gorm:"size:128; unique; index; not null"`
-	Value          string `gorm:"size:2048; default:''"`
-	ValueEncrypted string `gorm:"size:2048; default:''"`
-	Encrypted      bool   `gorm:"default:false"`
+	Key            string `gorm:"size:128; unique; index; not null" json:"key"`
+	Value          string `gorm:"size:2048; default:''" json:"value"`
+	ValueEncrypted string `gorm:"size:2048; default:''" json:"valueEncrypted"`
+	Encrypted      bool   `gorm:"default:false" json:"encrypted"`
 
 	/* relational fields */
 }

@@ -14,7 +14,7 @@ type Entity struct {
 	IdGenerator   id.IID      `gorm:"-"`
 	CodeGenerator code.ICode  `gorm:"-"`
 	DataCipher    enc.ICipher `gorm:"-"`
-	ID            int64       `gorm:"primaryKey; autoIncrement"`
+	ID            int64       `gorm:"primaryKey; autoIncrement" json:"id"`
 }
 
 // SetCodeGenerator implements IEntity.
@@ -48,10 +48,10 @@ func NewIEntity(entity *Entity) IEntity {
 }
 
 type EntityBase struct {
-	CreatedAt time.Time      `gorm:"autoCreateTime"`
-	UpdatedAt time.Time      `gorm:"autoUpdateTime"`
-	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Version   int64          `gorm:"default:1; <-:update"`
+	CreatedAt time.Time      `gorm:"autoCreateTime" json:"createdAt"`
+	UpdatedAt time.Time      `gorm:"autoUpdateTime" json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt"`
+	Version   int64          `gorm:"default:1; <-:update" json:"version"`
 }
 
 // AfterCreate implements IEntity
