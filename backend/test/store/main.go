@@ -2,8 +2,9 @@ package main
 
 import (
 	"crypto/md5"
-	"crypto/sha512"
+	"crypto/sha256"
 	"fmt"
+	"hash/crc32"
 	"my-app/backend/pkg/store"
 	"os"
 	"strings"
@@ -27,7 +28,7 @@ func main() {
 
 	buffer := make([]byte, fileInfo.Size())
 	n, _ := file.Read(buffer)
-	checksum := fmt.Sprintf("%x-%x-%d", md5.Sum(buffer), sha512.Sum512(buffer), n)
+	checksum := fmt.Sprintf("%x+%x+%x+%x", md5.Sum(buffer), sha256.Sum256(buffer), crc32.ChecksumIEEE(buffer), n)
 	println("test.zip checksum =", checksum)
 
 	file.Seek(0, 0)
@@ -80,7 +81,7 @@ func main() {
 
 			size += 4096
 		}
-		persistChecksum := fmt.Sprintf("%x-%x-%d", md5.Sum(persistData), sha512.Sum512(persistData), len(persistData))
+		persistChecksum := fmt.Sprintf("%x+%x+%x+%x", md5.Sum(persistData), sha256.Sum256(persistData), crc32.ChecksumIEEE(buffer), len(persistData))
 		println("Persist Checksum =", persistChecksum)
 		if persistChecksum == checksum {
 			println("Persist file loaded successfully")

@@ -11,7 +11,8 @@ import (
 )
 
 var (
-	regexpChecksum = regexp.MustCompile(`^[0-9a-f]{32}\-[0-9a-f]{128}\-\d$`)
+	//md5+sha256+crc32+size =>(hex encoded) 128bit/4+256bit/4+32bit/4+64bit/4=32+64+8+16=123bytes
+	regexpChecksum = regexp.MustCompile(`^[0-9a-f]{32}\+[0-9a-f]{64}\+[0-9a-f]{8}\+[0-9a-f]{1,16}$`)
 )
 
 type File struct {
@@ -26,10 +27,9 @@ type File struct {
 	Hidden      bool      `gorm:"default:false"`
 	VisitedAt   time.Time `gorm:""`
 
-	// md5-sha512-File.Size => 32 + 128 = 160 hex digits + 2[-] + 20[int64] = 182 (size)
-	// for file, md5 and sha512 are hashed using file's data
-	// for directory, md5 and sha512 are hashed using File.Path+File.Name
-	Checksum string `gorm:"size:182; unique; index"`
+	// md5+sha256+crc32+size =>(hex encoded) 128bit/4+256bit/4+32bit/4+64bit/4=32+64+8+16=123bytes
+	// for file, md5, sha256 and crc32 are hashed using file's data
+	Checksum string `gorm:"size:123; unique; index"`
 
 	/* relational fields */
 	UserID          int64   `gorm:""`
@@ -116,7 +116,7 @@ func (f *File) validateChecksum(tx *gorm.DB) (err error) {
 	f.Checksum = strings.TrimSpace(f.Checksum)
 	f.Checksum = strings.ToLower(f.Checksum)
 	if len(f.Checksum) < 182 && regexpChecksum.MatchString(f.Checksum) {
-		err = errors.New("File.Checksum format should be `md5-sha512-File.Size`")
+		err = errors.New("File.Checksum format should be `md5+sha256+crc32+size` hex encoded")
 	}
 	return
 }

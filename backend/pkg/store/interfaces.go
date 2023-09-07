@@ -27,7 +27,7 @@ type IStore interface {
 	Load(filename string, rangeStart int64, rangeEnd int64) (data []byte, err error)
 
 	// Upload+Download:Checksum
-	// md5-sha512-File.Size => 32 + 128 = 160 hex digits + 2[-] + 20[int64] = 182 (size)
+	// md5+sha256+crc32+size =>(hex encoded) 128bit/4+256bit/4+32bit/4+64bit/4=32+64+8+16=123bytes
 	Checksum(filename string, isCache bool) (checksum string, paths []string, err error)
 
 	VerifyChecksum(filename string, isCache bool, checksum string) (ok bool, paths []string, err error)

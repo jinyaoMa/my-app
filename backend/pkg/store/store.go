@@ -2,9 +2,10 @@ package store
 
 import (
 	"crypto/md5"
-	"crypto/sha512"
+	"crypto/sha256"
 	"errors"
 	"fmt"
+	"hash/crc32"
 	"io"
 	"io/fs"
 	"my-app/backend/pkg/funcs"
@@ -155,7 +156,8 @@ func (s *Store) Checksum(filename string, isCache bool) (checksum string, paths 
 	buffer := make([]byte, 4096)
 	size := 0
 	md5New := md5.New()
-	sha512New := sha512.New()
+	sha256New := sha256.New()
+	crc32New := crc32.NewIEEE()
 
 	if isCache {
 		var cacheFiles []*StoreCacheFile
@@ -180,7 +182,11 @@ func (s *Store) Checksum(filename string, isCache bool) (checksum string, paths 
 				if err != nil {
 					break
 				}
-				_, err = sha512New.Write(temp)
+				_, err = sha256New.Write(temp)
+				if err != nil {
+					break
+				}
+				_, err = crc32New.Write(temp)
 				if err != nil {
 					break
 				}
@@ -213,7 +219,11 @@ func (s *Store) Checksum(filename string, isCache bool) (checksum string, paths 
 			if err != nil {
 				break
 			}
-			_, err = sha512New.Write(temp)
+			_, err = sha256New.Write(temp)
+			if err != nil {
+				break
+			}
+			_, err = crc32New.Write(temp)
 			if err != nil {
 				break
 			}
@@ -222,7 +232,7 @@ func (s *Store) Checksum(filename string, isCache bool) (checksum string, paths 
 		}
 	}
 
-	checksum = fmt.Sprintf("%x-%x-%d", md5New.Sum(nil), sha512New.Sum(nil), size)
+	checksum = fmt.Sprintf("%x+%x+%x+%x", md5New.Sum(nil), sha256New.Sum(nil), crc32New.Sum(nil), size)
 	return
 }
 
