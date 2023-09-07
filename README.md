@@ -9,7 +9,7 @@
 
 上传+本地扫描 储存 md5:sha512:size
 
-发送 md5:sha512:size
+发送 md5:sha512:size =================> md5+sha256+crc32+size
 -> 如果文件系统仓库没有文件
 创建临时占位文件 md5:sha512:size.tmp
 -> 如果有文件，直接创建文件记录
