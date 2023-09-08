@@ -14,10 +14,7 @@
       "ESNext",
       "DOM"
     ],
-    "skipLibCheck": true,
-    "types": [
-      "@intlify/vite-plugin-vue-i18n/client"
-    ]
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*.ts",
