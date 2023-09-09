@@ -5,11 +5,9 @@ import (
 	"my-app/backend/internal/crud"
 	"my-app/backend/internal/entity"
 	"my-app/backend/internal/interfaces"
-	"my-app/backend/internal/vmodel"
 	"my-app/backend/pkg/aio"
 	"my-app/backend/pkg/api"
 	"my-app/backend/pkg/db"
-	"my-app/backend/pkg/funcs"
 	"my-app/backend/pkg/log"
 
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
@@ -28,7 +26,8 @@ var (
 	currentLanguage    *entity.Option
 	currentTranslation *Translation
 
-	currentColorTheme *entity.Option
+	currentColorTheme  *entity.Option
+	currentColorTheme_ windows.Theme
 )
 
 func init() {
@@ -56,23 +55,10 @@ func init() {
 
 	crudOption = crud.NewOption(dbs)
 
-	currentLanguage, err = crudOption.GetByOptionName(vmodel.OptionNameDisplayLanguage)
-	if err != nil || !funcs.Any(availLangs, func(e aio.Lang) bool {
-		return e.Code == currentLanguage.Value
-	}) {
-		currentLanguage = &entity.Option{
-			Key:   vmodel.OptionNameDisplayLanguage,
-			Value: "",
-		}
-		if funcs.Any(availLangs, func(e aio.Lang) bool {
-			return e.Code == cfg.Language
-		}) {
-			currentLanguage.Value = cfg.Language
-		} else if len(availLangs) > 0 {
-			currentLanguage.Value = availLangs[0].Code
-		}
+	_, currentLanguage, err = crudOption.GetOrCreateDisplayLanguageByOptionName(crud.OptionNameDisplayLanguage, availLangs, cfg.Language)
+	if err != nil {
+		panic(err)
 	}
-	crudOption.Save(currentLanguage)
 
 	var ok bool
 	currentTranslation, ok = translationMap[currentLanguage.Value]
@@ -80,45 +66,17 @@ func init() {
 		currentTranslation = DefaultTranslation()
 	}
 
-	currentColorTheme, err = crudOption.GetByOptionName(vmodel.OptionNameColorTheme)
+	currentColorTheme_, currentColorTheme, err = crudOption.GetOrCreateColorThemeByOptionName(crud.OptionNameColorTheme, windows.SystemDefault)
 	if err != nil {
-		currentColorTheme = &entity.Option{
-			Key:   vmodel.OptionNameColorTheme,
-			Value: vmodel.OptionValueColorThemeString(windows.SystemDefault, vmodel.OptionValueColorThemeSystem),
-		}
+		panic(err)
 	}
-	crudOption.Save(currentColorTheme)
 
 	web = api.New()
-
-	var webAutoStart, webSwagger, webVitePress *entity.Option
-	webAutoStart, err = crudOption.GetByOptionName(vmodel.OptionNameWebAutoStart)
+	webAutoStart, _, err := crudOption.GetOrCreateBoolByOptionName(crud.OptionNameWebAutoStart, true)
 	if err != nil {
-		webAutoStart = &entity.Option{
-			Key:   vmodel.OptionNameWebAutoStart,
-			Value: vmodel.OptionValueBoolString(true),
-		}
+		panic(err)
 	}
-	webSwagger, err = crudOption.GetByOptionName(vmodel.OptionNameWebSwagger)
-	if err != nil {
-		webSwagger = &entity.Option{
-			Key:   vmodel.OptionNameWebSwagger,
-			Value: "https://localhost:10443/swagger/index.html",
-		}
-	}
-	webVitePress, err = crudOption.GetByOptionName(vmodel.OptionNameWebVitePress)
-	if err != nil {
-		webVitePress = &entity.Option{
-			Key:   vmodel.OptionNameWebVitePress,
-			Value: "https://localhost:10443/doc/index.html",
-		}
-	}
-	crudOption.SaveAll([]*entity.Option{
-		webAutoStart,
-		webSwagger,
-		webVitePress,
-	})
-	if vmodel.OptionValueBool(webAutoStart.Value) {
+	if webAutoStart {
 		StartAPI()
 	}
 }
@@ -160,20 +118,15 @@ func T() (t *Translation) {
 
 func THEME(t ...windows.Theme) windows.Theme {
 	if len(t) > 0 {
-		currentColorTheme.Value = vmodel.OptionValueColorThemeString(t[0], vmodel.OptionValueColorThemeSystem)
-		crudOption.Save(currentColorTheme)
+		currentColorTheme_, currentColorTheme, _ = crudOption.SaveColorThemeByOptionName(currentColorTheme.Name, windows.SystemDefault)
 	}
-	return vmodel.OptionValueColorTheme(currentColorTheme.Value, windows.SystemDefault)
+	return currentColorTheme_
 }
 
 func API() api.IAPI {
 	return web
 }
 
-func OPTION(key string, def string) string {
-	opt, err := crudOption.GetByOptionName(key)
-	if err != nil {
-		return def
-	}
-	return opt.Value
+func OPTION() interfaces.ICRUDOption {
+	return crudOption
 }

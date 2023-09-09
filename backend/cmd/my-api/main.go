@@ -3,7 +3,6 @@ package main
 import (
 	"my-app/backend/internal/app"
 	"my-app/backend/internal/crud"
-	"my-app/backend/internal/vmodel"
 	"my-app/backend/pkg/api"
 	"os"
 	"os/signal"
@@ -14,8 +13,8 @@ import (
 
 func main() {
 	crudOption := crud.NewOption(app.DB())
-	portHttp, _, _ := crudOption.GetUint16ByOptionName(vmodel.OptionNameWebPortHttp)
-	portHttps, _, _ := crudOption.GetUint16ByOptionName(vmodel.OptionNameWebPortHttps)
+	portHttp, _, _ := crudOption.GetOrCreateUint16ByOptionName(crud.OptionNameWebPortHttp, 10080)
+	portHttps, _, _ := crudOption.GetOrCreateUint16ByOptionName(crud.OptionNameWebPortHttps, 10443)
 
 	s := app.API()
 	if s.Start(&api.Config{

@@ -1,8 +1,7 @@
 package app
 
 import (
-	"my-app/backend/internal/entity"
-	"my-app/backend/internal/vmodel"
+	"my-app/backend/internal/crud"
 	"my-app/backend/pkg/api"
 	"my-app/backend/pkg/funcs"
 
@@ -15,55 +14,38 @@ const (
 )
 
 func StartAPI() bool {
-	var err error
-	var webPortHttp, webPortHttps, webDirCerts, webHostWhitelist *entity.Option
+	dirCerts, err := funcs.GetPathStartedFromExecutable("Certs")
+	if err != nil {
+		panic(err)
+	}
 
-	webPortHttp, err = crudOption.GetByOptionName(vmodel.OptionNameWebPortHttp)
+	webPortHttp, _, err := crudOption.GetOrCreateUint16ByOptionName(crud.OptionNameWebPortHttp, DefaultPortHttp)
 	if err != nil {
-		webPortHttp = &entity.Option{
-			Key:   vmodel.OptionNameWebPortHttp,
-			Value: vmodel.OptionValueWebPortString(DefaultPortHttp),
-		}
-		crudOption.Save(webPortHttp)
+		panic(err)
 	}
-	webPortHttps, err = crudOption.GetByOptionName(vmodel.OptionNameWebPortHttps)
+	webPortHttps, _, err := crudOption.GetOrCreateUint16ByOptionName(crud.OptionNameWebPortHttps, DefaultPortHttps)
 	if err != nil {
-		webPortHttps = &entity.Option{
-			Key:   vmodel.OptionNameWebPortHttps,
-			Value: vmodel.OptionValueWebPortString(DefaultPortHttps),
-		}
-		crudOption.Save(webPortHttps)
+		panic(err)
 	}
-	webDirCerts, err = crudOption.GetByOptionName(vmodel.OptionNameWebDirCerts)
+	webDirCerts, _, err := crudOption.GetOrCreateByOptionName(crud.OptionNameWebDirCerts, dirCerts, true)
 	if err != nil {
-		dirCerts, _ := funcs.GetPathStartedFromExecutable("Certs")
-		webDirCerts = &entity.Option{
-			Key:       vmodel.OptionNameWebDirCerts,
-			Value:     dirCerts,
-			Encrypted: true,
-		}
-		crudOption.Save(webDirCerts)
+		panic(err)
 	}
-	webHostWhitelist, err = crudOption.GetByOptionName(vmodel.OptionNameWebHostWhitelist)
+	webHostWhitelist, _, err := crudOption.GetOrCreateStringsByOptionName(crud.OptionNameWebHostWhitelist, []string{})
 	if err != nil {
-		webHostWhitelist = &entity.Option{
-			Key:       vmodel.OptionNameWebHostWhitelist,
-			Value:     "",
-			Encrypted: true,
-		}
-		crudOption.Save(webHostWhitelist)
+		panic(err)
 	}
 
 	return web.Start(api.NewConfig(&api.Config{
 		IsDev: cfg.IsDev,
 		Log:   logger,
 		Http: api.ConfigHttp{
-			Port: vmodel.OptionValueWebPort(webPortHttp.Value, DefaultPortHttp),
+			Port: webPortHttp,
 		},
 		Https: api.ConfigHttps{
-			Port:          vmodel.OptionValueWebPort(webPortHttps.Value, DefaultPortHttps),
-			HostWhitelist: vmodel.OptionValueCommaList(webHostWhitelist.Value),
-			DirCerts:      webDirCerts.Value,
+			Port:          webPortHttps,
+			HostWhitelist: webHostWhitelist,
+			DirCerts:      webDirCerts,
 		},
 		Setup: func(app *fiber.App) *fiber.App {
 			return app
