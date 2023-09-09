@@ -21,18 +21,16 @@ func StartAPI() bool {
 	webPortHttp, err = crudOption.GetByOptionName(vmodel.OptionNameWebPortHttp)
 	if err != nil {
 		webPortHttp = &entity.Option{
-			Key:       vmodel.OptionNameWebPortHttp,
-			Value:     vmodel.OptionValueWebPortString(DefaultPortHttp),
-			Encrypted: true,
+			Key:   vmodel.OptionNameWebPortHttp,
+			Value: vmodel.OptionValueWebPortString(DefaultPortHttp),
 		}
 		crudOption.Save(webPortHttp)
 	}
 	webPortHttps, err = crudOption.GetByOptionName(vmodel.OptionNameWebPortHttps)
 	if err != nil {
 		webPortHttps = &entity.Option{
-			Key:       vmodel.OptionNameWebPortHttps,
-			Value:     vmodel.OptionValueWebPortString(DefaultPortHttps),
-			Encrypted: true,
+			Key:   vmodel.OptionNameWebPortHttps,
+			Value: vmodel.OptionValueWebPortString(DefaultPortHttps),
 		}
 		crudOption.Save(webPortHttps)
 	}

@@ -3,7 +3,10 @@ package menuitems
 import (
 	"context"
 	"my-app/backend/internal/app"
+	"my-app/backend/internal/vmodel"
 	"my-app/backend/pkg/tray"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type apiServiceSwagger struct {
@@ -27,6 +30,10 @@ func (*apiServiceSwagger) CanClick() bool {
 
 // OnClick implements tray.IMenuItem.
 func (s *apiServiceSwagger) OnClick() (quit bool) {
+	runtime.BrowserOpenURL(
+		s.Ctx,
+		app.OPTION(vmodel.OptionNameWebSwagger, "https://localhost:10443/swagger/index.html"),
+	)
 	return false
 }
 

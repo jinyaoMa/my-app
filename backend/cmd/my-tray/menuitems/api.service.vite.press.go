@@ -3,7 +3,10 @@ package menuitems
 import (
 	"context"
 	"my-app/backend/internal/app"
+	"my-app/backend/internal/vmodel"
 	"my-app/backend/pkg/tray"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type apiServiceVitePress struct {
@@ -27,6 +30,10 @@ func (*apiServiceVitePress) CanClick() bool {
 
 // OnClick implements tray.IMenuItem.
 func (s *apiServiceVitePress) OnClick() (quit bool) {
+	runtime.BrowserOpenURL(
+		s.Ctx,
+		app.OPTION(vmodel.OptionNameWebVitePress, "https://localhost:10443/doc/index.html"),
+	)
 	return false
 }
 

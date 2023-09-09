@@ -91,7 +91,7 @@ func init() {
 
 	web = api.New()
 
-	var webAutoStart *entity.Option
+	var webAutoStart, webSwagger, webVitePress *entity.Option
 	webAutoStart, err = crudOption.GetByOptionName(vmodel.OptionNameWebAutoStart)
 	if err != nil {
 		webAutoStart = &entity.Option{
@@ -99,7 +99,25 @@ func init() {
 			Value: vmodel.OptionValueBoolString(true),
 		}
 	}
-	crudOption.Save(webAutoStart)
+	webSwagger, err = crudOption.GetByOptionName(vmodel.OptionNameWebSwagger)
+	if err != nil {
+		webSwagger = &entity.Option{
+			Key:   vmodel.OptionNameWebSwagger,
+			Value: "https://localhost:10443/swagger/index.html",
+		}
+	}
+	webVitePress, err = crudOption.GetByOptionName(vmodel.OptionNameWebVitePress)
+	if err != nil {
+		webVitePress = &entity.Option{
+			Key:   vmodel.OptionNameWebVitePress,
+			Value: "https://localhost:10443/doc/index.html",
+		}
+	}
+	crudOption.SaveAll([]*entity.Option{
+		webAutoStart,
+		webSwagger,
+		webVitePress,
+	})
 	if vmodel.OptionValueBool(webAutoStart.Value) {
 		StartAPI()
 	}
@@ -150,4 +168,12 @@ func THEME(t ...windows.Theme) windows.Theme {
 
 func API() api.IAPI {
 	return web
+}
+
+func OPTION(key string, def string) string {
+	opt, err := crudOption.GetByOptionName(key)
+	if err != nil {
+		return def
+	}
+	return opt.Value
 }

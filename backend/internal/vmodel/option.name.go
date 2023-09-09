@@ -10,4 +10,6 @@ const (
 	OptionNameWebPortHttps     = "Web.PortHttps"
 	OptionNameWebDirCerts      = "Web.DirCerts"
 	OptionNameWebHostWhitelist = "Web.HostWhitelist"
+	OptionNameWebSwagger       = "Web.Swagger"
+	OptionNameWebVitePress     = "Web.VitePress"
 )
