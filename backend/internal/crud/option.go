@@ -1,6 +1,7 @@
 package crud
 
 import (
+	"errors"
 	"my-app/backend/internal/entity"
 	"my-app/backend/internal/interfaces"
 	"my-app/backend/pkg/aio"
@@ -34,78 +35,83 @@ const (
 	OptionValueColorThemeDark   = "dark"
 )
 
+var (
+	ErrOptionValueColorThemeInvalid = errors.New("option.value[color theme] invalid")
+)
+
 type Option struct {
 	*db.CRUD[*entity.Option]
 }
 
-// GetOrCreateDisplayLanguageByOptionName implements interfaces.ICRUDOption.
-func (o *Option) GetOrCreateDisplayLanguageByOptionName(name string, availLangs []aio.Lang, def string, encrypted ...bool) (value *aio.Lang, opt *entity.Option, err error) {
-	value, opt, err = o.GetDisplayLanguageByOptionName(name, availLangs)
-	if err == gorm.ErrRecordNotFound {
-		return o.SaveDisplayLanguageByOptionName(name, availLangs, def, encrypted...)
+// GetDisplayLanguageUsingAvailLangs implements interfaces.ICRUDOption.
+func (*Option) GetDisplayLanguageUsingAvailLangs(availLangs []aio.Lang, lang string) (value aio.Lang) {
+	var found bool
+	if value, found = funcs.First(availLangs, func(e aio.Lang) bool {
+		return e.Code == lang
+	}); !found && len(availLangs) > 0 {
+		value = availLangs[0]
 	}
 	return
 }
 
-// SaveDisplayLanguageByOptionName implements interfaces.ICRUDOption.
-func (o *Option) SaveDisplayLanguageByOptionName(name string, availLangs []aio.Lang, lang string, encrypted ...bool) (value *aio.Lang, opt *entity.Option, err error) {
-	if value = funcs.First(availLangs, func(e aio.Lang) bool {
-		return e.Code == lang
-	}); value == nil && len(availLangs) > 0 {
-		value = &availLangs[0]
+// GetOrCreateDisplayLanguageByOptionName implements interfaces.ICRUDOption.
+func (o *Option) GetOrCreateDisplayLanguageByOptionName(name string, availLangs []aio.Lang, def string, encrypted ...bool) (value aio.Lang, opt *entity.Option, err error) {
+	value, opt, err = o.GetDisplayLanguageByOptionName(name, availLangs)
+	if err == gorm.ErrRecordNotFound {
+		value = o.GetDisplayLanguageUsingAvailLangs(availLangs, def)
+		opt = &entity.Option{
+			Name:      name,
+			Value:     value.Code,
+			Encrypted: len(encrypted) > 0 && encrypted[0],
+		}
+		_, err = o.Save(opt)
+		return
 	}
-	opt = &entity.Option{
-		Name:      name,
-		Value:     value.Code,
-		Encrypted: len(encrypted) > 0 && encrypted[0],
-	}
-	_, err = o.Save(opt)
 	return
 }
 
 // GetDisplayLanguageByOptionName implements interfaces.ICRUDOption.
-func (o *Option) GetDisplayLanguageByOptionName(name string, availLangs []aio.Lang) (value *aio.Lang, opt *entity.Option, err error) {
+func (o *Option) GetDisplayLanguageByOptionName(name string, availLangs []aio.Lang) (value aio.Lang, opt *entity.Option, err error) {
 	_, opt, err = o.GetByOptionName(name)
 	if err != nil {
 		return
 	}
-	value = funcs.First(availLangs, func(e aio.Lang) bool {
+	value, _ = funcs.First(availLangs, func(e aio.Lang) bool {
 		return e.Code == opt.Value
 	})
+	return
+}
+
+// GetColorThemeUsingWindowsTheme implements interfaces.ICRUDOption.
+func (*Option) GetColorThemeUsingWindowsTheme(theme windows.Theme) (value string) {
+	switch theme {
+	case windows.Light:
+		value = OptionValueColorThemeLight
+	case windows.Dark:
+		value = OptionValueColorThemeDark
+	// case windows.SystemDefault:
+	default:
+		value = OptionValueColorThemeSystem
+	}
 	return
 }
 
 // GetOrCreateColorThemeByOptionName implements interfaces.ICRUDOption.
 func (o *Option) GetOrCreateColorThemeByOptionName(name string, def windows.Theme, encrypted ...bool) (value windows.Theme, opt *entity.Option, err error) {
 	value, opt, err = o.GetColorThemeByOptionName(name)
-	if err == gorm.ErrRecordNotFound {
-		return o.SaveColorThemeByOptionName(name, def, encrypted...)
-	}
-	return
-}
-
-// SaveColorThemeByOptionName implements interfaces.ICRUDOption.
-func (o *Option) SaveColorThemeByOptionName(name string, def windows.Theme, encrypted ...bool) (value windows.Theme, opt *entity.Option, err error) {
-	var tmp string
-	switch def {
-	// case windows.SystemDefault:
-	default:
-		tmp = OptionValueColorThemeSystem
-	case windows.Light:
-		tmp = OptionValueColorThemeLight
-	case windows.Dark:
-		tmp = OptionValueColorThemeDark
-	}
-	opt = &entity.Option{
-		Name:  name,
-		Value: tmp,
-	}
-	if len(encrypted) > 0 && encrypted[0] {
-		opt.Encrypted = true
-	}
-	_, err = o.Save(opt)
-	if err == nil {
-		value = def
+	if err == gorm.ErrRecordNotFound || err == ErrOptionValueColorThemeInvalid {
+		opt = &entity.Option{
+			Name:  name,
+			Value: o.GetColorThemeUsingWindowsTheme(def),
+		}
+		if len(encrypted) > 0 && encrypted[0] {
+			opt.Encrypted = true
+		}
+		_, err = o.Save(opt)
+		if err == nil {
+			value = def
+		}
+		return
 	}
 	return
 }
@@ -117,13 +123,14 @@ func (o *Option) GetColorThemeByOptionName(name string) (value windows.Theme, op
 		return
 	}
 	switch opt.Value {
-	// case OptionValueColorThemeSystem:
-	default:
-		value = windows.SystemDefault
 	case OptionValueColorThemeLight:
 		value = windows.Light
 	case OptionValueColorThemeDark:
 		value = windows.Dark
+	case OptionValueColorThemeSystem:
+		value = windows.SystemDefault
+	default:
+		err = ErrOptionValueColorThemeInvalid
 	}
 	return
 }

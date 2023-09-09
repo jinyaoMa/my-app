@@ -26,8 +26,8 @@ var (
 	currentLanguage    *entity.Option
 	currentTranslation *Translation
 
-	currentColorTheme  *entity.Option
 	currentColorTheme_ windows.Theme
+	currentColorTheme  *entity.Option
 )
 
 func init() {
@@ -118,7 +118,9 @@ func T() (t *Translation) {
 
 func THEME(t ...windows.Theme) windows.Theme {
 	if len(t) > 0 {
-		currentColorTheme_, currentColorTheme, _ = crudOption.SaveColorThemeByOptionName(currentColorTheme.Name, windows.SystemDefault)
+		currentColorTheme_ = t[0]
+		currentColorTheme.Value = crudOption.GetColorThemeUsingWindowsTheme(currentColorTheme_)
+		crudOption.Save(currentColorTheme)
 	}
 	return currentColorTheme_
 }

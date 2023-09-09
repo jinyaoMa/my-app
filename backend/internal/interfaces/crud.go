@@ -44,12 +44,12 @@ type ICRUDOption interface {
 	GetOrCreateStringsByOptionName(name string, def []string, encrypted ...bool) (value []string, opt *entity.Option, err error)
 
 	GetColorThemeByOptionName(name string) (value windows.Theme, opt *entity.Option, err error)
-	SaveColorThemeByOptionName(name string, def windows.Theme, encrypted ...bool) (value windows.Theme, opt *entity.Option, err error)
 	GetOrCreateColorThemeByOptionName(name string, def windows.Theme, encrypted ...bool) (value windows.Theme, opt *entity.Option, err error)
+	GetColorThemeUsingWindowsTheme(theme windows.Theme) (value string)
 
-	GetDisplayLanguageByOptionName(name string, availLangs []aio.Lang) (value *aio.Lang, opt *entity.Option, err error)
-	SaveDisplayLanguageByOptionName(name string, availLangs []aio.Lang, lang string, encrypted ...bool) (value *aio.Lang, opt *entity.Option, err error)
-	GetOrCreateDisplayLanguageByOptionName(name string, availLangs []aio.Lang, def string, encrypted ...bool) (value *aio.Lang, opt *entity.Option, err error)
+	GetDisplayLanguageByOptionName(name string, availLangs []aio.Lang) (value aio.Lang, opt *entity.Option, err error)
+	GetOrCreateDisplayLanguageByOptionName(name string, availLangs []aio.Lang, def string, encrypted ...bool) (value aio.Lang, opt *entity.Option, err error)
+	GetDisplayLanguageUsingAvailLangs(availLangs []aio.Lang, lang string) (value aio.Lang)
 }
 
 type ICRUDUserPassword interface {

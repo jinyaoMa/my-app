@@ -54,7 +54,6 @@ require (
 	github.com/valyala/fasthttp v1.48.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	github.com/wailsapp/go-webview2 v1.0.1 // indirect
 	github.com/wailsapp/mimetype v1.4.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	go.opentelemetry.io/otel v1.16.0 // indirect
@@ -69,7 +68,7 @@ require (
 require (
 	dario.cat/mergo v1.0.0
 	github.com/mattn/go-isatty v0.0.19 // indirect
-	github.com/wailsapp/wails/v2 v2.6.0
+	github.com/wailsapp/wails/v2 v2.5.1
 	golang.org/x/crypto v0.11.0
 	golang.org/x/net v0.12.0 // indirect
 	golang.org/x/sync v0.3.0
