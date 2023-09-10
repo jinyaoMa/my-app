@@ -104,10 +104,13 @@ func I18N() aio.II18n[*Translation] {
 
 func LANG(l ...string) string {
 	if len(l) > 0 {
-		var ok bool
-		if currentTranslation, ok = i18n.LoadTranslation(l[0]); ok {
-			currentLanguage.Value = l[0]
-			crudOption.Save(currentLanguage)
+		if o, err := crudOption.GetById(currentLanguage.ID); err == nil {
+			currentLanguage = o
+			if t, ok := i18n.LoadTranslation(l[0]); ok {
+				currentTranslation = t
+				currentLanguage.Value = l[0]
+				crudOption.Save(currentLanguage)
+			}
 		}
 	}
 	return currentLanguage.Value
@@ -119,9 +122,12 @@ func T() (t *Translation) {
 
 func THEME(t ...windows.Theme) windows.Theme {
 	if len(t) > 0 {
-		currentColorTheme_ = t[0]
-		currentColorTheme.Value = strconv.FormatInt(int64(currentColorTheme_), 10)
-		crudOption.Save(currentColorTheme)
+		if o, err := crudOption.GetById(currentColorTheme.ID); err == nil {
+			currentColorTheme_ = t[0]
+			currentColorTheme = o
+			currentColorTheme.Value = strconv.FormatInt(int64(currentColorTheme_), 10)
+			crudOption.Save(currentColorTheme)
+		}
 	}
 	return currentColorTheme_
 }
