@@ -54,10 +54,11 @@ func (*Option) GetDisplayLanguageUsingAvailLangs(availLangs []aio.Lang, lang str
 func (o *Option) GetOrSaveDisplayLanguageByOptionName(name string, availLangs []aio.Lang, def string, encrypted ...bool) (value aio.Lang, opt *entity.Option, err error) {
 	value, opt, err = o.GetDisplayLanguageByOptionName(name, availLangs)
 	v := o.GetDisplayLanguageUsingAvailLangs(availLangs, def)
-	if err = o.trySave(err, opt, name, func() string {
+	if o.trySave(err, opt, name, func() string {
 		return v.Code
-	}, encrypted...); err == nil {
+	}, encrypted...) {
 		value = v
+		err = nil
 	}
 	return
 }
@@ -81,10 +82,11 @@ func (o *Option) GetDisplayLanguageByOptionName(name string, availLangs []aio.La
 // GetOrSaveColorThemeByOptionName implements interfaces.ICRUDOption.
 func (o *Option) GetOrSaveColorThemeByOptionName(name string, def windows.Theme, encrypted ...bool) (value windows.Theme, opt *entity.Option, err error) {
 	value, opt, err = o.GetColorThemeByOptionName(name)
-	if err = o.trySave(err, opt, name, func() string {
+	if o.trySave(err, opt, name, func() string {
 		return strconv.FormatInt(int64(def), 10)
-	}, encrypted...); err == nil {
+	}, encrypted...) {
 		value = def
+		err = nil
 	}
 	return
 }
@@ -96,12 +98,12 @@ func (o *Option) GetColorThemeByOptionName(name string) (value windows.Theme, op
 		return
 	}
 	var tmp int64
-	tmp, err = strconv.ParseInt(opt.Value, 10, 64)
+	tmp, err = strconv.ParseInt(opt.Value, 10, 32)
 	if err != nil {
 		err = ErrOptionValueInvalid
 		return
 	}
-	value = windows.Theme(int(tmp))
+	value = windows.Theme(tmp)
 	switch value {
 	case windows.Light:
 	case windows.Dark:
@@ -115,10 +117,11 @@ func (o *Option) GetColorThemeByOptionName(name string) (value windows.Theme, op
 // GetOrSaveStringsByOptionName implements interfaces.ICRUDOption.
 func (o *Option) GetOrSaveStringsByOptionName(name string, def []string, encrypted ...bool) (value []string, opt *entity.Option, err error) {
 	value, opt, err = o.GetStringsByOptionName(name)
-	if err = o.trySave(err, opt, name, func() string {
+	if o.trySave(err, opt, name, func() string {
 		return strings.Join(def, OptionValueStringsSeparater)
-	}, encrypted...); err == nil {
+	}, encrypted...) {
 		value = def
+		err = nil
 	}
 	return
 }
@@ -136,10 +139,11 @@ func (o *Option) GetStringsByOptionName(name string) (value []string, opt *entit
 // GetOrSaveUint16ByOptionName implements interfaces.ICRUDOption.
 func (o *Option) GetOrSaveUint16ByOptionName(name string, def uint16, encrypted ...bool) (value uint16, opt *entity.Option, err error) {
 	value, opt, err = o.GetUint16ByOptionName(name)
-	if err = o.trySave(err, opt, name, func() string {
+	if o.trySave(err, opt, name, func() string {
 		return strconv.FormatUint(uint64(def), 10)
-	}, encrypted...); err == nil {
+	}, encrypted...) {
 		value = def
+		err = nil
 	}
 	return
 }
@@ -162,10 +166,11 @@ func (o *Option) GetUint16ByOptionName(name string) (value uint16, opt *entity.O
 // GetOrSaveBoolByOptionName implements interfaces.ICRUDOption.
 func (o *Option) GetOrSaveBoolByOptionName(name string, def bool, encrypted ...bool) (value bool, opt *entity.Option, err error) {
 	value, opt, err = o.GetBoolByOptionName(name)
-	if err = o.trySave(err, opt, name, func() string {
+	if o.trySave(err, opt, name, func() string {
 		return strconv.FormatBool(def)
-	}, encrypted...); err == nil {
+	}, encrypted...) {
 		value = def
+		err = nil
 	}
 	return
 }
@@ -186,10 +191,11 @@ func (o *Option) GetBoolByOptionName(name string) (value bool, opt *entity.Optio
 // GetOrSaveByOptionName implements interfaces.ICRUDOption.
 func (o *Option) GetOrSaveByOptionName(name string, def string, encrypted ...bool) (value string, opt *entity.Option, err error) {
 	value, opt, err = o.GetByOptionName(name)
-	if err = o.trySave(err, opt, name, func() string {
+	if o.trySave(err, opt, name, func() string {
 		return def
-	}, encrypted...); err == nil {
+	}, encrypted...) {
 		value = def
+		err = nil
 	}
 	return
 }
@@ -206,7 +212,7 @@ func (o *Option) GetByOptionName(name string) (value string, opt *entity.Option,
 }
 
 // try to save when option not found or its value invalid
-func (o *Option) trySave(err error, opt *entity.Option, name string, makeValue func() string, encrypted ...bool) error {
+func (o *Option) trySave(err error, opt *entity.Option, name string, makeValue func() string, encrypted ...bool) (saved bool) {
 	if err == gorm.ErrRecordNotFound {
 		*opt = entity.Option{
 			Name:  name,
@@ -216,14 +222,16 @@ func (o *Option) trySave(err error, opt *entity.Option, name string, makeValue f
 			}),
 		}
 		_, err = o.Save(opt)
+		return err == nil
 	} else if err == ErrOptionValueInvalid {
 		opt.Value = makeValue()
 		opt.Encrypted = funcs.Any[bool](encrypted, func(e bool) bool {
 			return e
 		})
 		_, err = o.Save(opt)
+		return err == nil
 	}
-	return err
+	return
 }
 
 func NewOption(dbs *db.DB) *Option {

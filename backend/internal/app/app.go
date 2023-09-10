@@ -120,7 +120,7 @@ func T() (t *Translation) {
 func THEME(t ...windows.Theme) windows.Theme {
 	if len(t) > 0 {
 		currentColorTheme_ = t[0]
-		currentColorTheme.Value = strconv.FormatInt(int64(t[0]), 10)
+		currentColorTheme.Value = strconv.FormatInt(int64(currentColorTheme_), 10)
 		crudOption.Save(currentColorTheme)
 	}
 	return currentColorTheme_
