@@ -19,19 +19,19 @@ func StartAPI() bool {
 		panic(err)
 	}
 
-	webPortHttp, _, err := crudOption.GetOrCreateUint16ByOptionName(crud.OptionNameWebPortHttp, DefaultPortHttp)
+	webPortHttp, _, err := crudOption.GetOrSaveUint16ByOptionName(crud.OptionNameWebPortHttp, DefaultPortHttp)
 	if err != nil {
 		panic(err)
 	}
-	webPortHttps, _, err := crudOption.GetOrCreateUint16ByOptionName(crud.OptionNameWebPortHttps, DefaultPortHttps)
+	webPortHttps, _, err := crudOption.GetOrSaveUint16ByOptionName(crud.OptionNameWebPortHttps, DefaultPortHttps)
 	if err != nil {
 		panic(err)
 	}
-	webDirCerts, _, err := crudOption.GetOrCreateByOptionName(crud.OptionNameWebDirCerts, dirCerts, true)
+	webDirCerts, _, err := crudOption.GetOrSaveByOptionName(crud.OptionNameWebDirCerts, dirCerts, true)
 	if err != nil {
 		panic(err)
 	}
-	webHostWhitelist, _, err := crudOption.GetOrCreateStringsByOptionName(crud.OptionNameWebHostWhitelist, []string{})
+	webHostWhitelist, _, err := crudOption.GetOrSaveStringsByOptionName(crud.OptionNameWebHostWhitelist, []string{})
 	if err != nil {
 		panic(err)
 	}

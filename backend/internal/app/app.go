@@ -9,6 +9,7 @@ import (
 	"my-app/backend/pkg/api"
 	"my-app/backend/pkg/db"
 	"my-app/backend/pkg/log"
+	"strconv"
 
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 	"gorm.io/gorm"
@@ -55,7 +56,7 @@ func init() {
 
 	crudOption = crud.NewOption(dbs)
 
-	_, currentLanguage, err = crudOption.GetOrCreateDisplayLanguageByOptionName(crud.OptionNameDisplayLanguage, availLangs, cfg.Language)
+	_, currentLanguage, err = crudOption.GetOrSaveDisplayLanguageByOptionName(crud.OptionNameDisplayLanguage, availLangs, cfg.Language)
 	if err != nil {
 		panic(err)
 	}
@@ -66,13 +67,13 @@ func init() {
 		currentTranslation = DefaultTranslation()
 	}
 
-	currentColorTheme_, currentColorTheme, err = crudOption.GetOrCreateColorThemeByOptionName(crud.OptionNameColorTheme, windows.SystemDefault)
+	currentColorTheme_, currentColorTheme, err = crudOption.GetOrSaveColorThemeByOptionName(crud.OptionNameColorTheme, windows.SystemDefault)
 	if err != nil {
 		panic(err)
 	}
 
 	web = api.New()
-	webAutoStart, _, err := crudOption.GetOrCreateBoolByOptionName(crud.OptionNameWebAutoStart, true)
+	webAutoStart, _, err := crudOption.GetOrSaveBoolByOptionName(crud.OptionNameWebAutoStart, true)
 	if err != nil {
 		panic(err)
 	}
@@ -119,7 +120,7 @@ func T() (t *Translation) {
 func THEME(t ...windows.Theme) windows.Theme {
 	if len(t) > 0 {
 		currentColorTheme_ = t[0]
-		currentColorTheme.Value = crudOption.GetColorThemeUsingWindowsTheme(currentColorTheme_)
+		currentColorTheme.Value = strconv.FormatInt(int64(t[0]), 10)
 		crudOption.Save(currentColorTheme)
 	}
 	return currentColorTheme_

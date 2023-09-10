@@ -13,8 +13,8 @@ import (
 
 func main() {
 	crudOption := crud.NewOption(app.DB())
-	portHttp, _, _ := crudOption.GetOrCreateUint16ByOptionName(crud.OptionNameWebPortHttp, 10080)
-	portHttps, _, _ := crudOption.GetOrCreateUint16ByOptionName(crud.OptionNameWebPortHttps, 10443)
+	portHttp, _, _ := crudOption.GetOrSaveUint16ByOptionName(crud.OptionNameWebPortHttp, 10080)
+	portHttps, _, _ := crudOption.GetOrSaveUint16ByOptionName(crud.OptionNameWebPortHttps, 10443)
 
 	s := app.API()
 	if s.Start(&api.Config{

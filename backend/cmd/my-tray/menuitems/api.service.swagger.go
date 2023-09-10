@@ -30,7 +30,7 @@ func (*apiServiceSwagger) CanClick() bool {
 
 // OnClick implements tray.IMenuItem.
 func (s *apiServiceSwagger) OnClick() (quit bool) {
-	url, _, _ := app.OPTION().GetOrCreateByOptionName(crud.OptionNameWebSwagger, "https://localhost:10443/swagger/index.html")
+	url, _, _ := app.OPTION().GetOrSaveByOptionName(crud.OptionNameWebSwagger, "https://localhost:10443/swagger/index.html")
 	runtime.BrowserOpenURL(s.Ctx, url)
 	return false
 }
