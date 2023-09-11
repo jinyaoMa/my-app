@@ -1,0 +1,29 @@
+{
+  "name": "@jinyaoma/my-app-icons",
+  "version": "0.1.0",
+  "exports": {
+    "./dist/my-icon.css": {
+      "import": "./dist/my-icon.css",
+      "require": "./dist/my-icon.css"
+    },
+    "./dist/my-icon.less": {
+      "import": "./dist/my-icon.less",
+      "require": "./dist/my-icon.less"
+    },
+    "./dist/my-icon.module.less": {
+      "import": "./dist/my-icon.module.less",
+      "require": "./dist/my-icon.module.less"
+    },
+    "./dist/my-icon.scss": {
+      "import": "./dist/my-icon.scss",
+      "require": "./dist/my-icon.scss"
+    },
+    "./dist/my-icon.styl": {
+      "import": "./dist/my-icon.styl",
+      "require": "./dist/my-icon.styl"
+    }
+  },
+  "devDependencies": {
+    "svgtofont": "^3.25.4"
+  }
+}
