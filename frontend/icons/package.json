@@ -1,6 +1,6 @@
 {
   "name": "@jinyaoma/my-app-icons",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "exports": {
     "./dist/my-icon.css": {
       "import": "./dist/my-icon.css",
@@ -24,6 +24,6 @@
     }
   },
   "devDependencies": {
-    "svgtofont": "^3.25.4"
+    "svgtofont": "^4.0.0"
   }
 }
