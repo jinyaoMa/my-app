@@ -1,6 +1,6 @@
 {
   "name": "@jinyaoma/my-app-icons",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "exports": {
     "./dist/my-icon.css": {
       "import": "./dist/my-icon.css",
