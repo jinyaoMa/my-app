@@ -5,6 +5,8 @@ import (
 	"my-app/backend/internal/app"
 	"my-app/backend/pkg/aio"
 	"my-app/backend/pkg/tray"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type displayLanguageItem struct {
@@ -36,6 +38,7 @@ func (*displayLanguageItem) CanClick() bool {
 func (i *displayLanguageItem) OnClick() (quit bool) {
 	app.LANG(i.lang.Code)
 	tray.Update(_root)
+	runtime.WindowSetTitle(i.Ctx, app.T().AppName)
 	return false
 }
 

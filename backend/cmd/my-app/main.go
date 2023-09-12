@@ -19,7 +19,7 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:             "customlayout",
+		Title:             app.T().AppName,
 		Width:             1024,
 		Height:            720,
 		Assets:            frontend.Assets,
