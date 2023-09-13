@@ -26,7 +26,7 @@ func main() {
 	err := wails.Run(&options.App{
 		Title:         app.T().AppName,
 		Width:         1024,
-		Height:        720,
+		Height:        640,
 		DisableResize: false,
 		// Fullscreen:         false,
 		WindowStartState:  options.Normal,

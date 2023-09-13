@@ -54,7 +54,7 @@ require (
 	github.com/valyala/fasthttp v1.49.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	github.com/wailsapp/go-webview2 v1.0.5 // indirect
+	github.com/wailsapp/go-webview2 v1.0.1 // indirect
 	github.com/wailsapp/mimetype v1.4.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	go.opentelemetry.io/otel v1.18.0 // indirect
