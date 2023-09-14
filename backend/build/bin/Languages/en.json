@@ -8,15 +8,15 @@
   "api_service": {
     "label": "API: ",
     "title": "API Service",
-    "enabled": "On",
-    "disabled": "Off",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
     "vitepress": "Node Portal",
     "swagger": "API Doc",
     "start": "Start Service",
     "stop": "Stop Service"
   },
   "display_language": {
-    "label": "Lang: ",
+    "label": "Locale: ",
     "title": "Display Language"
   },
   "color_theme": {

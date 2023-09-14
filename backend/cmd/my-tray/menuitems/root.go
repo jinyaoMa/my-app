@@ -49,7 +49,7 @@ func (*root) Tooltip() string {
 	}
 
 	return fmt.Sprintf(
-		"%s\n%s\n%s\n%s",
+		"%s\n\n%s\n%s\n%s",
 		T.AppName,
 		T.APIService.Label+webServiceState,
 		T.DisplayLanguage.Label+displayLanguageText,

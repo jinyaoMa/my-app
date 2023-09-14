@@ -6,7 +6,7 @@
   "app_name": "我的应用程序",
   "open_window": "打开 我的应用程序",
   "api_service": {
-    "label": "接口：",
+    "label": "接口服务：",
     "title": "API 接口服务",
     "enabled": "已开启",
     "disabled": "未开启",
