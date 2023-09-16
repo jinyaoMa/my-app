@@ -1,6 +1,9 @@
 {
   "name": "@jinyaoma/my-app-icons",
   "version": "0.0.0",
+  "scripts": {
+    "build": "node index.js"
+  },
   "exports": {
     "./dist/my-icon.css": {
       "import": "./dist/my-icon.css",
@@ -24,6 +27,7 @@
     }
   },
   "devDependencies": {
+    "pkg": "^5.8.1",
     "svgtofont": "^4.0.0"
   }
 }

@@ -4,7 +4,7 @@
   "author": "jinyaoMa",
   "license": "MIT",
   "scripts": {
-    "icons:build": "pnpm --filter @jinyaoma/my-app-icons exec node build.js",
+    "icons:build": "pnpm --filter @jinyaoma/my-app-icons run build",
     "design:build": "pnpm --filter @jinyaoma/my-app-design exec vue-tsc --noEmit && pnpm --filter @jinyaoma/my-app-design exec vite build",
     "install:assets": "mkdirp frontend/desktop/dist && echo \"\" > frontend/desktop/dist/index.html",
     "install:frontend": "pnpm icons:build && pnpm design:build",
