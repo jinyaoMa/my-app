@@ -1,4 +1,5 @@
-@font-face {font-family: "{{fontname}}";
+@font-face {
+  font-family: "{{fontname}}";
   src: url('{{cssPath}}{{fontname}}.eot?t={{timestamp}}'); /* IE9*/
   src: url('{{cssPath}}{{fontname}}.eot?t={{timestamp}}#iefix') format('embedded-opentype'), /* IE6-IE8 */
   url("{{cssPath}}{{fontname}}.woff2?t={{timestamp}}") format("woff2"),
@@ -8,8 +9,13 @@
 }
 
 .{{prefix}} {
-  font-family: '{{fontname}}' !important;{{fontSize}}
-  font-style:normal;
+  font-family: '{{fontname}}' !important;
+  /* font-size: {{fontSize}}; */
+  font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+:global {
+{{cssString}}
 }
