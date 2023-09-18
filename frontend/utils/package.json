@@ -1,0 +1,9 @@
+{
+  "name": "@jinyaoma/my-app-utils",
+  "private": true,
+  "license": "MIT",
+  "main": "index.ts",
+  "peerDependencies": {
+    "vue": "^3.3.4"
+  }
+}

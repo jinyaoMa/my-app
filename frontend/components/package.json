@@ -4,6 +4,7 @@
   "type": "module",
   "main": "index.ts",
   "dependencies": {
+    "@jinyaoma/my-app-utils": "workspace:*",
     "@jinyaoma/my-app-icons": "workspace:*"
   },
   "peerDependencies": {
