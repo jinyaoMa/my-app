@@ -6,7 +6,6 @@
 </template>
 
 <script setup lang="ts">
-import "@jinyaoma/my-app-icons/dist/my-icon.scss";
 import { withDefaults } from "vue";
 
 defineOptions({
@@ -27,6 +26,8 @@ const props = withDefaults(
 </script>
 
 <style lang="scss">
+@import "@jinyaoma/my-app-icons/dist/my-icon.scss";
+
 .my-icon {
   &.fixWidth {
     width: 1.3em;
