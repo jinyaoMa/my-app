@@ -1,8 +1,8 @@
 {
   "name": "@jinyaoma/my-app-components",
   "version": "0.0.0",
-  "type": "module",
   "main": "index.ts",
+  "module": "index.ts",
   "dependencies": {
     "@jinyaoma/my-app-utils": "workspace:*",
     "@jinyaoma/my-app-icons": "workspace:*"

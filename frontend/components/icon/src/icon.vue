@@ -1,10 +1,8 @@
 <template>
-  <i
-    :class="{
-      [`my-icon-${props.name}`]: true,
-      fixWidth: props.fixWidth,
-    }"
-  ></i>
+  <i class="my-icon" :class="{
+    [`my-icon-${props.name}`]: true,
+    fixWidth: props.fixWidth,
+  }"></i>
 </template>
 
 <script setup lang="ts">
@@ -29,8 +27,7 @@ const props = withDefaults(
 </script>
 
 <style lang="scss">
-[class*="my-icon-"] {
-  display: inline-block;
+.my-icon {
   &.fixWidth {
     width: 1.3em;
     text-align: center;
