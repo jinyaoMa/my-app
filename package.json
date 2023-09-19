@@ -5,13 +5,13 @@
   "license": "MIT",
   "scripts": {
     "icons:build": "pnpm --filter @jinyaoma/my-app-icons run build",
-    "design:build": "pnpm --filter @jinyaoma/my-app-design exec vue-tsc --noEmit && pnpm --filter @jinyaoma/my-app-design exec vite build",
+    "design:build": "pnpm --filter @jinyaoma/my-app-design run build",
     "install:assets": "mkdirp frontend/desktop/dist && echo \"\" > frontend/desktop/dist/index.html",
     "install:frontend": "pnpm icons:build && pnpm design:build",
     "install": "pnpm install:assets && pnpm install:frontend"
   },
   "devDependencies": {
-    "@types/node": "^20.4.5",
+    "@types/node": "^20.6.2",
     "cross-env": "^7.0.3",
     "mkdirp": "^3.0.1",
     "vitepress": "1.0.0-rc.12",
