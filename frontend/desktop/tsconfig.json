@@ -9,20 +9,11 @@
     }
   ],
   "compilerOptions": {
-    "module": "system",
+    //"module": "system",
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "outFile": "../../built/local/tsc.js",
     "allowJs": true
-  },
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ],
-  "include": [
-    "src/**/*",
-    "wailsjs/**/*.ts"
-  ]
+  }
 }
