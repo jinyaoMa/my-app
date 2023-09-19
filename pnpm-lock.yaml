@@ -40,6 +40,7 @@ importers:
       vue:
         specifier: ^3.3.4
         version: registry.npmmirror.com/vue@3.3.4
+    devDependencies:
       vue-router:
         specifier: ^4.2.4
         version: registry.npmmirror.com/vue-router@4.2.4(vue@3.3.4)
@@ -52,13 +53,13 @@ importers:
       vue:
         specifier: ^3.3.4
         version: registry.npmmirror.com/vue@3.3.4
-      vue-router:
-        specifier: ^4.2.4
-        version: registry.npmmirror.com/vue-router@4.2.4(vue@3.3.4)
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^4.3.1
         version: registry.npmmirror.com/@vitejs/plugin-vue@4.3.4(vite@4.4.9)(vue@3.3.4)
+      pkg:
+        specifier: ^5.8.1
+        version: registry.npmmirror.com/pkg@5.8.1
       sass:
         specifier: ^1.66.1
         version: registry.npmmirror.com/sass@1.66.1
@@ -71,6 +72,9 @@ importers:
       vite:
         specifier: ^4.4.9
         version: registry.npmmirror.com/vite@4.4.9(sass@1.66.1)
+      vue-router:
+        specifier: ^4.2.4
+        version: registry.npmmirror.com/vue-router@4.2.4(vue@3.3.4)
       vue-tsc:
         specifier: ^1.8.8
         version: registry.npmmirror.com/vue-tsc@1.8.8(typescript@5.1.6)
@@ -1255,7 +1259,7 @@ packages:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: registry.npmmirror.com/vite@4.4.9(sass@1.66.1)
+      vite: registry.npmmirror.com/vite@4.4.9(@types/node@18.17.15)
       vue: registry.npmmirror.com/vue@3.3.4
     dev: true
 
@@ -7612,7 +7616,6 @@ packages:
     dependencies:
       '@vue/devtools-api': registry.npmmirror.com/@vue/devtools-api@6.5.0
       vue: registry.npmmirror.com/vue@3.3.4
-    dev: false
 
   registry.npmmirror.com/vue-template-compiler@2.7.14:
     resolution: {integrity: sha512-zyA5Y3ArvVG0NacJDkkzJuPQDF8RFeRlzV2vLeSnhSpieO6LK2OVbdLPi5MPPs09Ii+gMO8nY4S3iKQxBxDmWQ==, registry: https://registry.npmjs.org/, tarball: https://registry.npmmirror.com/vue-template-compiler/-/vue-template-compiler-2.7.14.tgz}

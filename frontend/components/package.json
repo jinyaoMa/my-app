@@ -7,11 +7,13 @@
     "@jinyaoma/my-app-utils": "workspace:*",
     "@jinyaoma/my-app-icons": "workspace:*"
   },
+  "devDependencies": {
+    "vue-router": "^4.2.4"
+  },
   "peerDependencies": {
     "sass": "^1.66.1",
     "typescript": "^5.1.6",
     "unplugin-vue-macros": "^2.5.1",
-    "vue": "^3.3.4",
-    "vue-router": "^4.2.4"
+    "vue": "^3.3.4"
   }
 }
