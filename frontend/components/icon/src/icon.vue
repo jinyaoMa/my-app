@@ -29,6 +29,8 @@ const props = withDefaults(
 @import "@jinyaoma/my-app-icons/dist/my-icon.scss";
 
 .my-icon {
+  display: inline-block;
+
   &.fixWidth {
     width: 1.3em;
     text-align: center;
