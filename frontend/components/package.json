@@ -4,8 +4,8 @@
   "main": "index.ts",
   "module": "index.ts",
   "dependencies": {
-    "@jinyaoma/my-app-utils": "workspace:*",
-    "@jinyaoma/my-app-icons": "workspace:*"
+    "@jinyaoma/my-app-icons": "workspace:*",
+    "@jinyaoma/my-app-utils": "workspace:*"
   },
   "devDependencies": {
     "vue-router": "^4.2.4"

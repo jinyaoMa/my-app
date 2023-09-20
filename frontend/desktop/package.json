@@ -12,6 +12,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@jinyaoma/my-app-components": "workspace:*",
     "@jinyaoma/my-app-design": "workspace:*",
     "pinia": "^2.1.6",
     "vue": "^3.3.4",
