@@ -4,10 +4,12 @@
   "author": "jinyaoMa",
   "license": "MIT",
   "scripts": {
-    "icons:build": "pnpm --filter @jinyaoma/my-app-icons run build",
-    "design:build": "pnpm --filter @jinyaoma/my-app-design run build",
+    "frontend:dev:desktop": "pnpm --filter @jinyaoma/my-app-desktop run dev",
+    "frontend:build:desktop": "pnpm --filter @jinyaoma/my-app-desktop run build",
+    "frontend:build:design": "pnpm --filter @jinyaoma/my-app-design run build",
+    "frontend:build:icons": "pnpm --filter @jinyaoma/my-app-icons run build",
+    "install:frontend": "pnpm frontend:build:icons && pnpm frontend:build:design",
     "install:assets": "mkdirp frontend/desktop/dist && echo \"\" > frontend/desktop/dist/index.html",
-    "install:frontend": "pnpm icons:build && pnpm design:build",
     "install": "pnpm install:assets && pnpm install:frontend"
   },
   "devDependencies": {
