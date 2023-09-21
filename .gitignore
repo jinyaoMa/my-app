@@ -1,8 +1,9 @@
 # Wails
 node_modules
 backend/build/bin/*.*
+backend/build/air
 frontend/desktop/wailsjs
-*.db
+.devtools
 
 tmp/
 test.zip
