@@ -8,6 +8,8 @@ frontend/desktop/wailsjs
 tmp/
 test.zip
 
+*.db
+
 # From the vue template of vite
 #
 # Logs
