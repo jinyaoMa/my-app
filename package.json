@@ -8,9 +8,15 @@
     "frontend:build:desktop": "pnpm --filter @jinyaoma/my-app-desktop run build",
     "frontend:build:design": "pnpm --filter @jinyaoma/my-app-design run build",
     "frontend:build:icons": "pnpm --filter @jinyaoma/my-app-icons run build",
-    "install:frontend": "pnpm frontend:build:icons && pnpm frontend:build:design",
-    "install:assets": "mkdirp frontend/desktop/dist && echo \"\" > frontend/desktop/dist/index.html",
-    "install": "pnpm install:assets && pnpm install:frontend"
+    "install:projects:frontend": "pnpm frontend:build:icons && pnpm frontend:build:design",
+    "install:projects:assets": "mkdirp frontend/desktop/dist && echo \"\" > frontend/desktop/dist/index.html",
+    "install:projects": "pnpm install:project:assets && pnpm install:project:frontend",
+    "install:devtools:air": "cross-env GOBIN='%cd%/.devtools' go install github.com/cosmtrek/air@latest",
+    "install:devtools:swag": "cross-env GOBIN='%cd%/.devtools' go install github.com/swaggo/swag/cmd/swag@latest",
+    "install:devtools:upx": "curl -L -k https://github.com/upx/upx/releases/download/v4.1.0/upx-4.1.0-win64.zip > upx.zip && unzip -p upx.zip '*/upx.exe' > .devtools/upx.exe && rm upx.zip",
+    "install:devtools:wails": "cross-env GOBIN='%cd%/.devtools' go install github.com/wailsapp/wails/v2/cmd/wails@latest",
+    "install:devtools": "pnpm install:devtools:wails && pnpm install:devtools:upx && pnpm install:devtools:swag && pnpm install:devtools:air",
+    "install": "pnpm install:devtools && pnpm install:projects"
   },
   "devDependencies": {
     "@types/node": "^20.6.2",
