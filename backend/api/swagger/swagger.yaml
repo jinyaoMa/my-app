@@ -1,0 +1,22 @@
+basePath: /api
+info:
+  contact:
+    name: GitHub Discussions
+    url: https://github.com/jinyaoMa/my-app/discussions
+  description: '"My App is a continuously updated personal service collection."'
+  license:
+    name: MIT
+    url: https://github.com/jinyaoMa/my-app/blob/main/LICENSE
+  title: My App (backend/api)
+  version: 0.0.0
+paths: {}
+schemes:
+- https
+securityDefinitions:
+  BearerToken:
+    description: Authorization Header should contain value started with "Bearer "
+      and followed by a JSON Web Token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
