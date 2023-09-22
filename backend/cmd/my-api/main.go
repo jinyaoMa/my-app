@@ -3,7 +3,7 @@ package main
 import (
 	"my-app/backend/internal/app"
 	"my-app/backend/internal/crud"
-	"my-app/backend/pkg/api"
+	"my-app/backend/pkg/web"
 	"os"
 	"os/signal"
 	"syscall"
@@ -16,14 +16,14 @@ func main() {
 	portHttp, _, _ := crudOption.GetOrSaveUint16ByOptionName(crud.OptionNameWebPortHttp, 10080)
 	portHttps, _, _ := crudOption.GetOrSaveUint16ByOptionName(crud.OptionNameWebPortHttps, 10443)
 
-	s := app.API()
-	if s.Start(&api.Config{
+	s := app.SERVER()
+	if s.Start(&web.Config{
 		IsDev: true,
 		Log:   app.LOG(),
-		Http: api.ConfigHttp{
+		Http: web.ConfigHttp{
 			Port: portHttp,
 		},
-		Https: api.ConfigHttps{
+		Https: web.ConfigHttps{
 			Port: portHttps,
 		},
 		Setup: func(app *fiber.App) *fiber.App {

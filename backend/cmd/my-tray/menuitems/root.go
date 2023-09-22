@@ -15,10 +15,10 @@ type root struct {
 
 // Icon implements tray.Interface.
 func (*root) Icon() []byte {
-	if app.API().IsStopping() {
+	if app.SERVER().IsStopping() {
 		return app.ASSETS().GetBytes("tray.orange.ico")
 	}
-	if app.API().IsRunning() {
+	if app.SERVER().IsRunning() {
 		return app.ASSETS().GetBytes("tray.green.ico")
 	}
 	return app.ASSETS().GetBytes("tray.blue.ico")
@@ -34,7 +34,7 @@ func (*root) Tooltip() string {
 	T := app.T()
 
 	webServiceState := T.APIService.Disabled
-	if app.API().IsRunning() {
+	if app.SERVER().IsRunning() {
 		webServiceState = T.APIService.Enabled
 	}
 

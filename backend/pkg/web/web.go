@@ -1,4 +1,4 @@
-package api
+package web
 
 import (
 	"context"
@@ -17,7 +17,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-type API struct {
+type Web struct {
 	config     *Config
 	mu         sync.Mutex
 	isRunning  bool
@@ -28,8 +28,8 @@ type API struct {
 	https      *fiber.App   // server (tls)
 }
 
-// Start implements IAPI
-func (a *API) Start(cfg *Config) (ok bool) {
+// Start implements IWeb
+func (a *Web) Start(cfg *Config) (ok bool) {
 	if a.mu.TryLock() {
 		defer a.mu.Unlock()
 		if !a.isRunning {
@@ -41,8 +41,8 @@ func (a *API) Start(cfg *Config) (ok bool) {
 	return false
 }
 
-// Stop implements IAPI
-func (a *API) Stop(before func()) (ok bool) {
+// Stop implements IWeb
+func (a *Web) Stop(before func()) (ok bool) {
 	if a.mu.TryLock() {
 		defer a.mu.Unlock()
 		if a.isRunning {
@@ -57,22 +57,22 @@ func (a *API) Stop(before func()) (ok bool) {
 	return false
 }
 
-// HasErrors implements IAPI
-func (a *API) HasErrors() bool {
+// HasErrors implements IWeb
+func (a *Web) HasErrors() bool {
 	return a.hasErrors
 }
 
-// IsRunning implements IAPI
-func (a *API) IsRunning() bool {
+// IsRunning implements IWeb
+func (a *Web) IsRunning() bool {
 	return a.isRunning
 }
 
-// IsStopping implements IAPI
-func (a *API) IsStopping() bool {
+// IsStopping implements IWeb
+func (a *Web) IsStopping() bool {
 	return a.isStopping
 }
 
-func (a *API) start() (ok bool) {
+func (a *Web) start() (ok bool) {
 	a.hasErrors = false
 
 	var ln net.Listener
@@ -99,7 +99,7 @@ func (a *API) start() (ok bool) {
 	return true
 }
 
-func (a *API) stop() (ok bool) {
+func (a *Web) stop() (ok bool) {
 	ctxHttp, cancelHttp := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancelHttp()
 	if err := a.http.Shutdown(ctxHttp); err != nil && err != http.ErrServerClosed {
@@ -121,7 +121,7 @@ func (a *API) stop() (ok bool) {
 	return true
 }
 
-func (a *API) setup() (ln net.Listener, ok bool) {
+func (a *Web) setup() (ln net.Listener, ok bool) {
 	addrHttp := fmt.Sprintf(":%d", a.config.Http.Port)
 	addrHttps := fmt.Sprintf(":%d", a.config.Https.Port)
 
@@ -173,7 +173,7 @@ func (a *API) setup() (ln net.Listener, ok bool) {
 }
 
 // getSelfSignedOrLetsEncryptCert override tlsConfig.GetCertificate to enable self-signed certs
-func (a *API) getSelfSignedOrLetsEncryptCert(certManager *autocert.Manager) func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
+func (a *Web) getSelfSignedOrLetsEncryptCert(certManager *autocert.Manager) func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 	return func(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {
 		keyFile := filepath.Join(a.config.Https.DirCerts, hello.ServerName+".key")
 		crtFile := filepath.Join(a.config.Https.DirCerts, hello.ServerName+".crt")
@@ -186,10 +186,10 @@ func (a *API) getSelfSignedOrLetsEncryptCert(certManager *autocert.Manager) func
 	}
 }
 
-func New() *API {
-	return &API{}
+func New() *Web {
+	return &Web{}
 }
 
-func NewIAPI() IAPI {
-	return &API{}
+func NewIWeb() IWeb {
+	return &Web{}
 }

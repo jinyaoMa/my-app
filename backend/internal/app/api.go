@@ -1,10 +1,10 @@
 package app
 
 import (
-	app "my-app/backend/api"
+	"my-app/backend/api"
 	"my-app/backend/internal/crud"
-	"my-app/backend/pkg/api"
 	"my-app/backend/pkg/funcs"
+	"my-app/backend/pkg/web"
 )
 
 const (
@@ -35,17 +35,17 @@ func StartAPI() bool {
 		panic(err)
 	}
 
-	return web.Start(api.NewConfig(&api.Config{
+	return server.Start(web.NewConfig(&web.Config{
 		IsDev: cfg.IsDev,
 		Log:   logger,
-		Http: api.ConfigHttp{
+		Http: web.ConfigHttp{
 			Port: webPortHttp,
 		},
-		Https: api.ConfigHttps{
+		Https: web.ConfigHttps{
 			Port:          webPortHttps,
 			HostWhitelist: webHostWhitelist,
 			DirCerts:      webDirCerts,
 		},
-		Setup: app.SETUP(),
+		Setup: api.SETUP(),
 	}))
 }

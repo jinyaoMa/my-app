@@ -6,9 +6,9 @@ import (
 	"my-app/backend/internal/entity"
 	"my-app/backend/internal/interfaces"
 	"my-app/backend/pkg/aio"
-	"my-app/backend/pkg/api"
 	"my-app/backend/pkg/db"
 	"my-app/backend/pkg/log"
+	"my-app/backend/pkg/web"
 	"strconv"
 
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
@@ -21,7 +21,7 @@ var (
 	logger *log.Log
 	assets aio.IAIO
 	i18n   aio.II18n[*Translation]
-	web    api.IAPI
+	server web.IWeb
 
 	crudOption         interfaces.ICRUDOption
 	currentLanguage    *entity.Option
@@ -72,7 +72,7 @@ func init() {
 		panic(err)
 	}
 
-	web = api.New()
+	server = web.New()
 	webAutoStart, _, err := crudOption.GetOrSaveBoolByOptionName(crud.OptionNameWebAutoStart, true)
 	if err != nil {
 		panic(err)
@@ -132,8 +132,8 @@ func THEME(t ...windows.Theme) windows.Theme {
 	return currentColorTheme_
 }
 
-func API() api.IAPI {
-	return web
+func SERVER() web.IWeb {
+	return server
 }
 
 func OPTION() interfaces.ICRUDOption {

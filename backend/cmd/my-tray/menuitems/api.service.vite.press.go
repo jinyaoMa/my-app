@@ -15,7 +15,7 @@ type apiServiceVitePress struct {
 
 // Visible implements IMenuItem.
 func (*apiServiceVitePress) Visible() bool {
-	return app.API().IsRunning()
+	return app.SERVER().IsRunning()
 }
 
 // Key implements tray.IMenuItem.

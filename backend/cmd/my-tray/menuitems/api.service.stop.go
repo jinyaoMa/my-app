@@ -12,7 +12,7 @@ type apiServiceStop struct {
 
 // Visible implements IMenuItem.
 func (*apiServiceStop) Visible() bool {
-	return app.API().IsRunning()
+	return app.SERVER().IsRunning()
 }
 
 // Key implements tray.IMenuItem.
@@ -27,7 +27,7 @@ func (*apiServiceStop) CanClick() bool {
 
 // OnClick implements tray.IMenuItem.
 func (s *apiServiceStop) OnClick() (quit bool) {
-	if app.API().Stop(func() {
+	if app.SERVER().Stop(func() {
 		println("try to stop...")
 	}) {
 		tray.Update(_root)

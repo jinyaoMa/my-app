@@ -1,4 +1,4 @@
-package api
+package web
 
 import (
 	"my-app/backend/pkg/log"

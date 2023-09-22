@@ -15,7 +15,7 @@ type apiServiceSwagger struct {
 
 // Visible implements IMenuItem.
 func (*apiServiceSwagger) Visible() bool {
-	return app.API().IsRunning()
+	return app.SERVER().IsRunning()
 }
 
 // Key implements tray.IMenuItem.

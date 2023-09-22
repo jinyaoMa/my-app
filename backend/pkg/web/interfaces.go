@@ -1,6 +1,6 @@
-package api
+package web
 
-type IAPI interface {
+type IWeb interface {
 	// IsRunning check if the server is running
 	IsRunning() bool
 

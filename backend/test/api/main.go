@@ -1,15 +1,15 @@
 package main
 
 import (
-	"my-app/backend/pkg/api"
+	"my-app/backend/pkg/web"
 	"os"
 	"os/signal"
 	"syscall"
 )
 
 func main() {
-	s := api.New()
-	if s.Start(&api.Config{}) {
+	s := web.New()
+	if s.Start(&web.Config{}) {
 		println("start")
 	}
 
