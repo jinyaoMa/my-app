@@ -29,6 +29,10 @@ func Run(tray IMenuItemBase) {
 	systray.Run(onReady(tray), nil)
 }
 
+func UpdateTrayIcon(templateIconBytes []byte, regularIconBytes []byte) {
+	systray.SetTemplateIcon(templateIconBytes, regularIconBytes)
+}
+
 // update systray ui based on state loaded from tray interface
 func Update(tray IMenuItemBase, initialized ...bool) error {
 	if len(initialized) == 0 {

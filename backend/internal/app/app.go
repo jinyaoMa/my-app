@@ -73,7 +73,7 @@ func init() {
 	}
 
 	server = web.New()
-	webAutoStart, _, err := crudOption.GetOrSaveBoolByOptionName(crud.OptionNameWebAutoStart, true)
+	webAutoStart, _, err := crudOption.GetOrSaveBoolByOptionName(crud.OptionNameWebAutoStart, false)
 	if err != nil {
 		panic(err)
 	}

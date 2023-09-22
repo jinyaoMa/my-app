@@ -25,8 +25,12 @@ type DbLogWriter struct {
 
 // Write implements io.Writer.
 func (w *DbLogWriter) Write(p []byte) (n int, err error) {
+	bound := len(p)
+	if bound > 4096 {
+		bound = 4096
+	}
 	_, err = w.crudLog.Save(&entity.Log{
-		Message: string(p[:4096]),
+		Message: string(p[:bound]),
 	})
 	return len(p), err
 }
