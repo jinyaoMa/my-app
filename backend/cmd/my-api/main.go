@@ -1,20 +1,21 @@
 package main
 
 import (
+	"my-app/backend/api"
 	"my-app/backend/internal/app"
 	"my-app/backend/internal/crud"
+	"my-app/backend/pkg/funcs"
 	"my-app/backend/pkg/web"
 	"os"
 	"os/signal"
 	"syscall"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
 	crudOption := crud.NewOption(app.DB())
 	portHttp, _, _ := crudOption.GetOrSaveUint16ByOptionName(crud.OptionNameWebPortHttp, 10080)
 	portHttps, _, _ := crudOption.GetOrSaveUint16ByOptionName(crud.OptionNameWebPortHttps, 10443)
+	dirCerts, _ := funcs.GetPathStartedFromExecutable("Certs")
 
 	s := app.SERVER()
 	if s.Start(&web.Config{
@@ -24,11 +25,10 @@ func main() {
 			Port: portHttp,
 		},
 		Https: web.ConfigHttps{
-			Port: portHttps,
+			Port:     portHttps,
+			DirCerts: dirCerts,
 		},
-		Setup: func(app *fiber.App) *fiber.App {
-			return app
-		},
+		Setup: api.SETUP(),
 	}) {
 		println("start")
 	}
