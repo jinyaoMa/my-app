@@ -1,11 +1,10 @@
 package app
 
 import (
+	app "my-app/backend/api"
 	"my-app/backend/internal/crud"
 	"my-app/backend/pkg/api"
 	"my-app/backend/pkg/funcs"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 const (
@@ -47,8 +46,6 @@ func StartAPI() bool {
 			HostWhitelist: webHostWhitelist,
 			DirCerts:      webDirCerts,
 		},
-		Setup: func(app *fiber.App) *fiber.App {
-			return app
-		},
+		Setup: app.SETUP(),
 	}))
 }
