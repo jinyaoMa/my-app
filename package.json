@@ -14,11 +14,11 @@
     "frontend:build:design": "pnpm --filter @jinyaoma/my-app-design run build",
     "frontend:build:icons": "pnpm --filter @jinyaoma/my-app-icons run build",
     "docs:dev:vitepress": "vitepress dev docs",
-    "docs:build:swagger": ".devtools\\swag init -g backend/api/api.go -o backend/api/swagger",
     "docs:build:vitepress": "vitepress build docs",
+    "docs:build:swagger": ".devtools\\swag init -g backend/api/api.go -o backend/api/swagger",
     "install:projects:backend": "pnpm backend:build:my-app && pnpm backend:compress:my-app",
     "install:projects:frontend": "pnpm frontend:build:icons && pnpm frontend:build:design && pnpm frontend:build:desktop",
-    "install:projects:docs": "pnpm docs:build:vitepress && pnpm docs:build:swagger",
+    "install:projects:docs": "pnpm docs:build:swagger && pnpm docs:build:vitepress",
     "install:projects": "pnpm install:projects:docs && pnpm install:projects:frontend && pnpm install:projects:backend",
     "install:chores:certs:bin": "mkdirp backend/build/bin/Certs && openssl req -x509 -nodes -days 36524 -newkey rsa:2048 -keyout backend/build/bin/Certs/localhost.key -out backend/build/bin/Certs/localhost.crt -subj \"//SKIP=skip/CN=localhost\"",
     "install:chores:certs:air": "mkdirp backend/build/air/Certs && openssl req -x509 -nodes -days 36524 -newkey rsa:2048 -keyout backend/build/air/Certs/localhost.key -out backend/build/air/Certs/localhost.crt -subj \"//SKIP=skip/CN=localhost\"",
@@ -35,15 +35,14 @@
     "@types/node": "^20.6.2",
     "cross-env": "^7.0.3",
     "mkdirp": "^3.0.1",
-    "vitepress": "1.0.0-rc.12",
+    "vitepress": "1.0.0-rc.15"
+  },
+  "peerDependencies": {
     "vue": "^3.3.4"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jinyaoMa/my-app.git"
-  },
-  "bugs": {
-    "url": "https://github.com/jinyaoMa/my-app/issues"
   },
   "homepage": "https://github.com/jinyaoMa/my-app#readme"
 }
