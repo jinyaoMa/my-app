@@ -3,6 +3,7 @@ node_modules
 backend/build/bin/*.*
 backend/build/air/*.*
 frontend/desktop/wailsjs
+docs/.vitepress/cache
 .devtools
 
 tmp/
