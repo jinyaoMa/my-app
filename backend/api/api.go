@@ -1,6 +1,7 @@
 package api
 
 import (
+	"my-app/backend/api/option"
 	_ "my-app/backend/api/swagger"
 
 	"github.com/gofiber/fiber/v2"
@@ -27,19 +28,23 @@ import (
 
 func SETUP() func(app *fiber.App) *fiber.App {
 	return func(app *fiber.App) *fiber.App {
-		app.Get("/swagger/*", swagger.New(swagger.Config{
-			// URL: "http://example.com/doc.json",
-			// DeepLinking: false,
-			// // Expand ("list") or Collapse ("none") tag groups by default
-			// DocExpansion: "none",
-			// // Prefill OAuth ClientId on Authorize popup
-			// OAuth: &swagger.OAuthConfig{
-			// 	AppName:  "OAuth Provider",
-			// 	ClientId: "21bb4edc-05a7-4afc-86f1-2e151e4ba6e2",
-			// },
-			// // Ability to change OAuth2 redirect uri location
-			// OAuth2RedirectUrl: "http://localhost:8080/swagger/oauth2-redirect.html",
-		}))
+		api := app.Group("/api")
+		{
+			api.Get("/swagger/*", swagger.New(swagger.Config{
+				// URL: "http://example.com/doc.json",
+				// DeepLinking: false,
+				// // Expand ("list") or Collapse ("none") tag groups by default
+				// DocExpansion: "none",
+				// // Prefill OAuth ClientId on Authorize popup
+				// OAuth: &swagger.OAuthConfig{
+				// 	AppName:  "OAuth Provider",
+				// 	ClientId: "21bb4edc-05a7-4afc-86f1-2e151e4ba6e2",
+				// },
+				// // Ability to change OAuth2 redirect uri location
+				// OAuth2RedirectUrl: "http://localhost:8080/swagger/oauth2-redirect.html",
+			}))
+			option.Apply(api)
+		}
 		return app
 	}
 }

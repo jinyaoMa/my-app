@@ -98,7 +98,7 @@ func (o *Option) GetColorThemeByOptionName(name string) (value windows.Theme, op
 		return
 	}
 	var tmp int64
-	tmp, err = strconv.ParseInt(opt.Value, 10, 32)
+	tmp, err = strconv.ParseInt(opt.Value, 10, 64)
 	if err != nil {
 		err = ErrOptionValueInvalid
 		return
