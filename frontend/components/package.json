@@ -8,7 +8,7 @@
     "@jinyaoma/my-app-utils": "workspace:*"
   },
   "devDependencies": {
-    "vue-router": "^4.2.4"
+    "vue-router": "^4.2.5"
   },
   "peerDependencies": {
     "sass": "^1.66.1",

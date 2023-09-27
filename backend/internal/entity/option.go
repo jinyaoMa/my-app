@@ -73,13 +73,17 @@ func (o *Option) encryptValue(tx *gorm.DB) (err error) {
 }
 
 func (o *Option) decryptValue(tx *gorm.DB) (err error) {
+	println("=", o.Name, o.Encrypted, o.DataCipher == nil)
 	if o.Encrypted && o.DataCipher != nil {
+		println("====d_", o.Name)
 		var plaintext string
 		plaintext, err = o.DataCipher.Decrypt(o.ValueEncrypted)
 		if err != nil {
+			println("====d_err", err.Error())
 			return
 		}
 		o.Value = plaintext
+		println("====d_", o.Value)
 	}
 	return
 }

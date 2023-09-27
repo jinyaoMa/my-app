@@ -46,6 +46,6 @@ func StartAPI() bool {
 			HostWhitelist: webHostWhitelist,
 			DirCerts:      webDirCerts,
 		},
-		Setup: api.SETUP(),
+		Setup: api.Setup(),
 	}))
 }

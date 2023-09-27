@@ -30,7 +30,7 @@ func (*apiServiceVitePress) CanClick() bool {
 
 // OnClick implements tray.IMenuItem.
 func (s *apiServiceVitePress) OnClick() (quit bool) {
-	url, _, _ := app.OPTION().GetOrSaveByOptionName(crud.OptionNameWebVitePress, "https://localhost:10443/doc/index.html")
+	url, _, _ := app.OPTION().GetOrSaveByOptionName(crud.OptionNameWebVitePress, "https://localhost:10443/docs/index.html")
 	runtime.BrowserOpenURL(s.Ctx, url)
 	return false
 }

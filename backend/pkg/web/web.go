@@ -33,6 +33,7 @@ func (a *Web) Start(cfg *Config) (ok bool) {
 	if a.mu.TryLock() {
 		defer a.mu.Unlock()
 		if !a.isRunning {
+			println("====================", cfg.Https.DirCerts)
 			// stopped, can start
 			a.config = NewConfig(cfg)
 			return a.start()

@@ -28,7 +28,7 @@ func main() {
 			Port:     portHttps,
 			DirCerts: dirCerts,
 		},
-		Setup: api.SETUP(),
+		Setup: api.Setup(),
 	}) {
 		println("start")
 	}
