@@ -75,7 +75,7 @@ func (u *User) AddUserPassword(tx *gorm.DB) (err error) {
 }
 
 func (u *User) FillVerification(size int, expiredAt time.Time) *User {
-	u.Verification = u.CodeGenerator.Generate(size)
+	u.Verification = db.CodeGenerator().Generate(size)
 	u.VerificationExpiredAt = expiredAt
 	return u
 }

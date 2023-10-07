@@ -33,8 +33,10 @@ func initDB(cfg *configs.Configs) (dbs *db.DB, err error) {
 	if err != nil {
 		return
 	}
+	db.SetIdGenerator(idGenerator)
 
 	dataCipher := enc.NewAesWithSalt(cfg.Database.CipherKey)
+	db.SetDataCipher(dataCipher)
 
 	dbs, err = db.New(&db.Config{
 		Dialector: sqlite.Open(mainDbFilename + "?_pragma=foreign_keys(1)"),
@@ -66,9 +68,6 @@ func initDB(cfg *configs.Configs) (dbs *db.DB, err error) {
 			ParameterizedQueries:      false,
 			LogLevel:                  gormLogger.Error,
 		},
-		IdGenerator:   idGenerator,
-		CodeGenerator: nil,
-		DataCipher:    dataCipher,
 	})
 	return
 }

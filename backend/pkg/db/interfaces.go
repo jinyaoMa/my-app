@@ -1,20 +1,13 @@
 package db
 
 import (
-	"my-app/backend/pkg/code"
 	"my-app/backend/pkg/db/param"
-	"my-app/backend/pkg/enc"
-	"my-app/backend/pkg/id"
 
 	"gorm.io/gorm"
 )
 
 type IEntity interface {
 	IEntityBase
-
-	SetIdGenerator(idGenerator id.IID)
-	SetCodeGenerator(codeGenerator code.ICode)
-	SetDataCipher(dataCipher enc.ICipher)
 }
 
 type IEntityBase interface {

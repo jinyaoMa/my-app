@@ -1,9 +1,6 @@
 package db
 
 import (
-	"my-app/backend/pkg/code"
-	"my-app/backend/pkg/enc"
-	"my-app/backend/pkg/id"
 	"time"
 
 	"gorm.io/gorm"
@@ -11,25 +8,7 @@ import (
 
 type Entity struct {
 	EntityBase
-	IdGenerator   id.IID      `gorm:"-"`
-	CodeGenerator code.ICode  `gorm:"-"`
-	DataCipher    enc.ICipher `gorm:"-"`
-	ID            int64       `gorm:"primaryKey; autoIncrement" json:"id"`
-}
-
-// SetCodeGenerator implements IEntity.
-func (e *Entity) SetCodeGenerator(codeGenerator code.ICode) {
-	e.CodeGenerator = codeGenerator
-}
-
-// SetDataCipher implements IEntity.
-func (e *Entity) SetDataCipher(dataCipher enc.ICipher) {
-	e.DataCipher = dataCipher
-}
-
-// SetIdGenerator implements IEntity.
-func (e *Entity) SetIdGenerator(idGenerator id.IID) {
-	e.IdGenerator = idGenerator
+	ID int64 `gorm:"primaryKey; autoIncrement" json:"id"`
 }
 
 func (e *Entity) BeforeCreate(tx *gorm.DB) (err error) {
@@ -37,8 +16,8 @@ func (e *Entity) BeforeCreate(tx *gorm.DB) (err error) {
 		return
 	}
 
-	if e != nil && e.ID == 0 && e.IdGenerator != nil {
-		e.ID = e.IdGenerator.Generate()
+	if e != nil && e.ID == 0 && idGenerator != nil {
+		e.ID = idGenerator.Generate()
 	}
 	return
 }

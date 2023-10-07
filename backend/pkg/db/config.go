@@ -1,9 +1,6 @@
 package db
 
 import (
-	"my-app/backend/pkg/code"
-	"my-app/backend/pkg/enc"
-	"my-app/backend/pkg/id"
 	"my-app/backend/pkg/log"
 	"time"
 
@@ -19,9 +16,6 @@ type Config struct {
 	OnInitialized func(db *DB) (err error)
 	Logger        *log.Log
 	LoggerConfig  logger.Config
-	IdGenerator   id.IID
-	CodeGenerator code.ICode
-	DataCipher    enc.ICipher
 }
 
 func DefaultConfig() *Config {

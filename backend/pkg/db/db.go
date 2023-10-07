@@ -2,8 +2,6 @@ package db
 
 import (
 	"my-app/backend/pkg/db/param"
-	"my-app/backend/pkg/enc"
-	"my-app/backend/pkg/id"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -45,16 +43,6 @@ func New(cfg *Config) (db *DB, err error) {
 	err = db.config.OnInitialized(db)
 	if err != nil {
 		return
-	}
-
-	if db.config.IdGenerator == nil {
-		if db.config.IdGenerator, err = id.Default(); err != nil {
-			return
-		}
-	}
-
-	if db.config.DataCipher == nil {
-		db.config.DataCipher = enc.NewAesWithSalt("")
 	}
 
 	return
