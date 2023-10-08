@@ -11,10 +11,10 @@ const (
 )
 
 type Config struct {
-	Epoch      time.Time // started timestamp, store into 41 bits
-	NodeBits   uint      // bits to store nodes ids
-	StepBits   uint      // bits to store increment ids within a millisecond
-	NodeNumber int64     // current node id/number
+	Epoch      time.Time `comment:"started timestamp, store into 41 bits"`
+	NodeBits   uint      `comment:"bits to store nodes ids, e.g. 10 => max 1024 nodes"`
+	StepBits   uint      `comment:"bits to store increment ids within a millisecond, StepBits equals to TotalShareBits (total 22 bits to share between node/step) minus NodeBits, e.g. 22 - 10 = 12 => max 4096 ids/ms"`
+	NodeNumber int64     `comment:"current node id/number, e.g. if max 4096 ids/ms, then min node id is 0 and max node id is 4095"`
 }
 
 // DefaultConfig return default Config with node id 0
