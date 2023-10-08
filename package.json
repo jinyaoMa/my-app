@@ -32,7 +32,7 @@
     "install": "pnpm install:devtools && pnpm install:chores && pnpm install:projects"
   },
   "devDependencies": {
-    "@types/node": "^20.7.0",
+    "@types/node": "^20.8.3",
     "cross-env": "^7.0.3",
     "mkdirp": "^3.0.1",
     "vitepress": "1.0.0-rc.20"
