@@ -1,0 +1,10 @@
+{
+  "name": "@jinyaoma/my-app-theme-default",
+  "version": "0.0.0",
+  "exports": {
+    "./style.scss": {
+      "import": "./style.scss",
+      "require": "./style.scss"
+    }
+  }
+}

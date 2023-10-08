@@ -1,7 +1,7 @@
 <template>
   <i class="my-icon" :class="{
     [`my-icon-${props.name}`]: true,
-    fixWidth: props.fixWidth,
+    [`my-icon__fw`]: props.fixWidth,
   }"></i>
 </template>
 
@@ -26,12 +26,12 @@ const props = withDefaults(
 </script>
 
 <style lang="scss">
-@import "@jinyaoma/my-app-icons/dist/my-icon.scss";
+@use "@jinyaoma/my-app-icons/dist/my-icon.scss";
 
 .my-icon {
   display: inline-block;
 
-  &.fixWidth {
+  &.my-icon__fw { // fix width
     width: 1.3em;
     text-align: center;
   }

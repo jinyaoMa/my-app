@@ -1,3 +1,4 @@
+import '@jinyaoma/my-app-theme-default/style.scss'
 import './assets/main.css'
 
 import { createApp } from 'vue'
