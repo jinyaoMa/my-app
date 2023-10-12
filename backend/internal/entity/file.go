@@ -20,7 +20,7 @@ type File struct {
 
 	/* internal fields */
 	IsDirectory bool      `gorm:"default:false"`
-	Path        string    `gorm:"size:4096"`
+	Path        string    `gorm:"size:4096; index"`
 	Name        string    `gorm:"size:1024"`
 	Size        uint64    `gorm:"default:0"`
 	ReadOnly    bool      `gorm:"default:false"`
@@ -62,10 +62,10 @@ func (f *File) BeforeUpdate(tx *gorm.DB) (err error) {
 		if !tx.Statement.Changed("ReadOnly") && f.ReadOnly {
 			return errors.New("File is set to ReadOnly")
 		}
-		if err = f.validateIfExist(tx); err != nil {
-			return
-		}
-		if tx.Statement.Changed("Name") {
+		if tx.Statement.Changed("Path") || tx.Statement.Changed("Name") {
+			if err = f.validateIfExist(tx); err != nil {
+				return
+			}
 			if err = f.validateName(tx); err != nil {
 				return
 			}
@@ -79,6 +79,24 @@ func (f *File) BeforeUpdate(tx *gorm.DB) (err error) {
 	return
 }
 
+func (f *File) BeforeDelete(tx *gorm.DB) (err error) {
+	if err = f.Entity.BeforeDelete(tx); err != nil {
+		return
+	}
+
+	if f != nil {
+		var readonly bool
+		readonly, err = f.validateIfReadOnly(tx)
+		if err != nil {
+			return
+		}
+		if readonly {
+			return errors.New("File is set to ReadOnly")
+		}
+	}
+	return
+}
+
 func (f *File) AfterFind(tx *gorm.DB) (err error) {
 	if err = f.Entity.AfterFind(tx); err != nil {
 		return
@@ -87,6 +105,16 @@ func (f *File) AfterFind(tx *gorm.DB) (err error) {
 	if f != nil {
 		tx.Statement.UpdateColumn("VisitedAt", time.Now())
 	}
+	return
+}
+
+func (f *File) validateIfReadOnly(tx *gorm.DB) (readonly bool, err error) {
+	var file *File
+	result := tx.First(file, f.ID)
+	if result.Error != nil {
+		err = errors.New("File not exists")
+	}
+	readonly = file.ReadOnly
 	return
 }
 
