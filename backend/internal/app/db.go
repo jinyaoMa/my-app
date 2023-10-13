@@ -99,7 +99,6 @@ func entities() []any {
 	return []any{
 		&entity.User{},
 		&entity.UserPassword{},
-		&entity.UserFile{},
 		&entity.File{},
 		&entity.FileCategory{},
 		&entity.FileExtension{},
@@ -108,17 +107,17 @@ func entities() []any {
 }
 
 func joinTables() []param.JoinTable {
-	userFile := new(entity.UserFile)
+	// userFile := new(entity.UserFile)
 	return []param.JoinTable{
-		{
-			From:  &entity.User{},
-			Field: "AccessableFiles",
-			To:    userFile,
-		},
-		{
-			From:  &entity.File{},
-			Field: "AccessableUsers",
-			To:    userFile,
-		},
+		// {
+		// 	From:  &entity.User{},
+		// 	Field: "AccessableFiles",
+		// 	To:    userFile,
+		// },
+		// {
+		// 	From:  &entity.File{},
+		// 	Field: "AccessableUsers",
+		// 	To:    userFile,
+		// },
 	}
 }

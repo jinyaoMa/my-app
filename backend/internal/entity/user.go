@@ -21,9 +21,8 @@ type User struct {
 	IsFrozen              bool      `gorm:"default:false"`
 
 	/* relational fields */
-	UserPasswords   []*UserPassword `gorm:""`
-	OwnedFiles      []*File         `gorm:""`
-	AccessableFiles []*File         `gorm:"many2many:users_files"`
+	UserPasswords []*UserPassword `gorm:""`
+	OwnedFiles    []*File         `gorm:""`
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {

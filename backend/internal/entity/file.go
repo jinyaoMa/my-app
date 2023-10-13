@@ -20,8 +20,8 @@ type File struct {
 
 	/* internal fields */
 	IsDirectory bool      `gorm:"default:false"`
-	Path        string    `gorm:"size:4096; index"`
-	Name        string    `gorm:"size:1024"`
+	Path        string    `gorm:"index"`
+	Name        string    `gorm:""`
 	Size        uint64    `gorm:"default:0"`
 	ReadOnly    bool      `gorm:"default:false"`
 	Hidden      bool      `gorm:"default:false"`
@@ -29,12 +29,11 @@ type File struct {
 
 	// md5+sha256+crc32+size =>(hex encoded) 128bit/4+256bit/4+32bit/4+64bit/4=32+64+8+16=123bytes
 	// for file, md5, sha256 and crc32 are hashed using file's data
-	Checksum string `gorm:"size:123; unique; index"`
+	Checksum string `gorm:"size:123; index"`
 
 	/* relational fields */
-	UserID          int64   `gorm:""`
-	AccessableUsers []*User `gorm:"many2many:users_files"`
-	FileExtensionID int64   `gorm:""`
+	UserID          *int64 `gorm:""`
+	FileExtensionID *int64 `gorm:""`
 }
 
 func (f *File) BeforeCreate(tx *gorm.DB) (err error) {
