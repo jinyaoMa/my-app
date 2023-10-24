@@ -12,6 +12,8 @@ type IStore interface {
 
 	SearchFile(filename string, isCache bool) (file *os.File, path string, err error)
 
+	Recycle(filename string) (err error)
+
 	GetCacheFiles(filename string) (files []*StoreCacheFile, err error)
 
 	// Upload:Cache

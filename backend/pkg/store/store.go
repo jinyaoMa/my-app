@@ -14,6 +14,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
@@ -100,6 +101,25 @@ func (s *Store) SearchFile(filename string, isCache bool) (file *os.File, path s
 		}
 	}
 	return nil, "", nil
+}
+
+// Recycle implements IStore.
+func (s *Store) Recycle(filename string) (err error) {
+	var file *os.File
+	var path string
+	file, path, err = s.SearchFile(filename, false)
+	if err != nil {
+		return
+	}
+	fname := file.Name()
+	file.Close()
+
+	newPath := filepath.Join(filepath.Dir(path), fname)
+	if funcs.CheckIfFileExists(newPath) {
+		newPath = fmt.Sprintf("%s.%d", newPath, time.Now().UnixMilli())
+	}
+	err = os.Rename(path, newPath)
+	return
 }
 
 // Cache implements IStore.
