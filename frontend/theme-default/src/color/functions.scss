@@ -157,5 +157,3 @@ $color-total-index: 10;
 @function hsv_value($hsv) {
   @return map.get($hsv, "V");
 }
-
-@debug generate(#cc6699, 5);

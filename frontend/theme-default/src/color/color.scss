@@ -1,0 +1,10 @@
+@use './functions.scss';
+
+$brand-color: #cc6699;
+
+:root {
+  --color-brand: #{$brand-color};
+  @for $i from 1 to 10 {
+    --color-brand-#{$i}: generate(color, $i);
+  }
+}
