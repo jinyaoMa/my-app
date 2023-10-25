@@ -107,8 +107,8 @@ $color-total-index: 10;
 @function hsv2hsl($hsv) {
   // unit convert
   // H_: 0deg to 359deg (int)
-  // S_: 0.0 to 1.0 => -100% to 100% => 0% to 100%
-  // V_: 0.0 to 1.0 => -100% to 100% => 0% to 100%
+  // S_: 0.0 to 1.0 => 0% to 100%
+  // V_: 0.0 to 1.0 => 0% to 100%
 
   $H_: hsv_hue($hsv);
   $S_: hsv_saturation($hsv);
@@ -120,24 +120,24 @@ $color-total-index: 10;
   // S = (V' - L) / min(L, 1 - L)
   $S: math.div($V_ - $L, math.min($L, 1 - $L));
 
-  @return hsl($H_, math.percentage($S) + 50%, math.percentage($L) + 50%);
+  @return hsl($H_, math.percentage($S), math.percentage($L));
 }
 
 @function hsl2hsv($color) {
   // unit convert
   // H: 0deg to 359deg (int)
-  // S: 0% to 100% => -100% to 100% => 0.0 to 1.0
-  // L: 0% to 100% => -100% to 100% => 0.0 to 1.0
+  // S: 0% to 100% => 0.0 to 1.0
+  // L: 0% to 100% => 0.0 to 1.0
 
-  $H: color.hue($color);
-  $S: math.div(color.saturation($color) - 50%, 100%);
-  $L: math.div(color.lightness($color) - 50%, 100%);
+  $H: math.round(color.hue($color));
+  $S: math.div(color.saturation($color), 100%);
+  $L: math.div(color.lightness($color), 100%);
 
-  // V' = L + S * min(L, 100% - L)
-  $V_: $L + $S * math.min($L, 100% - $L);
+  // V' = L + S * min(L, 1 - L)
+  $V_: $L + $S * math.min($L, 1 - $L);
 
-  // S' = 2 * (V' - L) / (V' + L)
-  $S_: math.div(2 * ($V_ - $L), ($V_ + $L));
+  // S' = 1 - [(V' - L) / (V' + L)]
+  $S_: 1 - math.div(($V_ - $L), ($V_ + $L));
 
   @return hsv($H, $S_, $V_);
 }
