@@ -5,6 +5,6 @@ $brand-color: #cc6699;
 :root {
   --color-brand: #{$brand-color};
   @for $i from 1 to 10 {
-    --color-brand-#{$i}: generate(color, $i);
+    --color-brand-#{$i}: #{generate($brand-color, $i)};
   }
 }
