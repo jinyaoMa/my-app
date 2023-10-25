@@ -19,7 +19,7 @@ $color-total-index: 10;
   $v: hsv_value($hsv);
 
   // define scope
-  $is-light: $index <= $color-main-index;
+  $is-light: $index < $color-main-index;
   // how many steps to walk from origin?
   $steps: $index - $color-main-index;
   @if $is-light {
