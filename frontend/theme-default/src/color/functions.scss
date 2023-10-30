@@ -114,11 +114,11 @@ $color-total-index: 10;
   $S_: hsv_saturation($hsv);
   $V_: hsv_value($hsv);
 
-  // L = (2 - S') * V' / 2
-  $L: math.div((2 - $S_) * $V_, 2);
+  // L = 0.5 * V' * (2 - S')
+  $L: 0.5 * $V_ * (2 - $S_);
 
-  // S = (V' - L) / min(L, 1 - L)
-  $S: math.div($V_ - $L, math.min($L, 1 - $L));
+  // S = V' * S' / [1 - abs(2L - 1)]
+  $S: math.div($V_ * $S_, 1 - math.abs(2 * $L - 1));
 
   @return hsl($H_, math.percentage($S), math.percentage($L));
 }
@@ -133,11 +133,11 @@ $color-total-index: 10;
   $S: math.div(color.saturation($color), 100%);
   $L: math.div(color.lightness($color), 100%);
 
-  // V' = L + S * min(L, 1 - L)
-  $V_: $L + $S * math.min($L, 1 - $L);
+  // V' = (2L + S * [1 - abs(2L - 1)]) / 2
+  $V_: math.div(2 * $L + $S * (1 - math.abs(2 * $L - 1)), 2);
 
-  // S' = 1 - [(V' - L) / (V' + L)]
-  $S_: 1 - math.div(($V_ - $L), ($V_ + $L));
+  // S' = 2 * (V' - L) / V'
+  $S_: math.div(2 * ($V_ - $L), $V_);
 
   @return hsv($H, $S_, $V_);
 }

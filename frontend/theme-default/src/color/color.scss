@@ -1,6 +1,6 @@
 @use './functions.scss';
 
-$brand-color: #cc6699;
+$brand-color: hsl(215, 100%, 54%);
 
 :root {
   --color-brand: #{$brand-color};
