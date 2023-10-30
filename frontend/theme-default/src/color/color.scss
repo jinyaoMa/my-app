@@ -1,10 +1,68 @@
+// Refer to Ant Design 4.x
+
 @use './functions.scss';
 
-$brand-color: hsl(215, 100%, 54%);
+$color-primary: hsl(215, 100%, 54%);
+$color-success: hsl(100, 77%, 44%);
+$color-warning: hsl(52, 86%, 50%);
+$color-error: hsl(357, 75%, 50%);
 
 :root {
-  --color-brand: #{$brand-color};
+  // brand color
+  --color-primary: #{$color-primary};
   @for $i from 1 through 10 {
-    --color-brand-#{$i}: #{generate($brand-color, $i)};
+    --color-primary-#{$i}: #{generate($color-primary, $i)};
   }
+
+  // functional colors
+  --color-success: #{$color-success};
+  @for $i from 1 through 10 {
+    --color-success-#{$i}: #{generate($color-success, $i)};
+  }
+  --color-warning: #{$color-warning};
+  @for $i from 1 through 10 {
+    --color-warning-#{$i}: #{generate($color-warning, $i)};
+  }
+  --color-error: #{$color-error};
+  @for $i from 1 through 10 {
+    --color-error-#{$i}: #{generate($color-error, $i)};
+  }
+
+  // gray colors
+  --color-gray-1: hsl(0, 0%, 100%);
+  --color-gray-2: hsl(0, 0%, 98%);
+  --color-gray-3: hsl(0, 0%, 96%);
+  --color-gray-4: hsl(0, 0%, 94%);
+  --color-gray-5: hsl(0, 0%, 85%);
+  --color-gray-6: hsl(0, 0%, 75%);
+  --color-gray-7: hsl(0, 0%, 55%);
+  --color-gray-8: hsl(0, 0%, 35%);
+  --color-gray-9: hsl(0, 0%, 26%);
+  --color-gray-10: hsl(0, 0%, 15%);
+  --color-gray-11: hsl(0, 0%, 12%);
+  --color-gray-12: hsl(0, 0%, 8%);
+  --color-gray-13: hsl(0, 0%, 0%);
+
+  // text colors
+  // 标题字体
+  // #000000E0
+  // #FFFFFFD9
+  // 一级文本
+  // #000000E0
+  // #FFFFFFD9
+  // 二级文本
+  // #000000A6
+  // #FFFFFFA6
+  // 禁用字体
+  // #00000040
+  // #FFFFFF40
+  // 一级边框
+  // #D9D9D9FF
+  // #424242FF
+  // 分割线
+  // #0505050F
+  // #FDFDFD1F
+  // 布局背景
+  // #F5F5F5FF
+  // #000000FF
 }

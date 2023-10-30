@@ -1,3 +1,5 @@
+// Refer to Ant Design 4.x
+
 @use "sass:map";
 @use 'sass:math';
 @use 'sass:color';
@@ -69,7 +71,7 @@ $color-total-index: 10;
     $new-saturation: $S_ + $saturation-step-back * $steps;
   } @else {
     @if $steps == $color-total-index - $color-main-index {
-      $new-saturation: $S_ - $saturation-step-back; // last small step for dark side
+      $new-saturation: $S_ + $brightness-step-forward * $steps * 0.8; // last smaller step for dark side
     } @else {
       $new-saturation: $S_ + $brightness-step-forward * $steps;
     }
