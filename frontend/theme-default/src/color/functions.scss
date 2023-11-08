@@ -1,8 +1,9 @@
 // Refer to Ant Design 4.x
 
+@use "sass:list";
 @use "sass:map";
-@use 'sass:math';
-@use 'sass:color';
+@use "sass:math";
+@use "sass:color";
 
 $hue-step: 2;
 $saturation-step-back: -0.16;
@@ -13,12 +14,20 @@ $brightness-step-forward: 0.05;
 $color-main-index: 6;
 $color-total-index: 10;
 
-@function generate($color, $index) {
+$dark-color-map: iw(7, 15%), iw(6, 25%), iw(5, 30%), iw(5, 45%), iw(5, 65%), iw(5, 85%), iw(4, 90%), iw(3, 95%),
+  iw(2, 97%), iw(1, 98%);
+
+@function generate($color, $index, $dark-theme, $bg-color: #141414) {
   // main color
   $hsv: hsl2hsv($color);
   $h: hsv_hue($hsv);
   $s: hsv_saturation($hsv);
   $v: hsv_value($hsv);
+
+  $iw: list.nth($dark-color-map, $index);
+  @if $dark-theme {
+    $index: iw_index($iw);
+  }
 
   // define scope
   $is-light: $index < $color-main-index;
@@ -36,19 +45,29 @@ $color-total-index: 10;
   }
   $new-v: generate-value($v, $steps, $is-light);
   $new-hsv: hsv($new-h, $new-s, $new-v);
-  @return hsv2hsl($new-hsv);
+  $new-hsl: hsv2hsl($new-hsv);
+
+  // generate dark color
+  @if $dark-theme {
+    $weight: iw_weight($iw);
+    $new-hsl: color.mix($bg-color, $new-hsl, $weight);
+  }
+
+  @return $new-hsl;
 }
 
 // not sure the purpose to change hue...
 @function generate-hue($H_, $steps, $is-light) {
   $new-hue: 0deg;
-  @if $H_ >= 60deg and $H_ <= 240deg { // cool color
+  @if $H_ >= 60deg and $H_ <= 240deg {
+    // cool color
     @if $is-light {
       $new-hue: $H_ - $hue-step * $steps;
     } @else {
       $new-hue: $H_ + $hue-step * $steps;
     }
-  } @else { // warm color
+  } @else {
+    // warm color
     @if $is-light {
       $new-hue: $H_ + $hue-step * $steps;
     } @else {
@@ -66,7 +85,7 @@ $color-total-index: 10;
 }
 
 @function generate-saturation($S_, $steps, $is-light) {
-  $new-saturation: 0.0;
+  $new-saturation: 0;
   @if $is-light {
     $new-saturation: $S_ + $saturation-step-back * $steps;
   } @else {
@@ -88,11 +107,11 @@ $color-total-index: 10;
   @if $is-light and $steps == $color-main-index - 1 and $new-saturation > 0.1 {
     $new-saturation: 0.1;
   }
-  @return $new-saturation
+  @return $new-saturation;
 }
 
 @function generate-value($V_, $steps, $is-light) {
-  $new-value: 0.0;
+  $new-value: 0;
   @if $is-light {
     $new-value: $V_ + $brightness-step-forward * $steps;
   } @else {
@@ -103,7 +122,7 @@ $color-total-index: 10;
   @if $new-value > 1 {
     $new-value: 1;
   }
-  @return $new-value
+  @return $new-value;
 }
 
 @function hsv2hsl($hsv) {
@@ -158,4 +177,16 @@ $color-total-index: 10;
 
 @function hsv_value($hsv) {
   @return map.get($hsv, "V");
+}
+
+@function iw($index, $weight) {
+  @return ("Index": $index, "Weight": $weight);
+}
+
+@function iw_index($iw) {
+  @return map.get($iw, "Index");
+}
+
+@function iw_weight($iw) {
+  @return map.get($iw, "Weight");
 }

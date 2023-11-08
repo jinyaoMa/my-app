@@ -44,8 +44,9 @@ $color-error: hsl(357, 75%, 50%);
   --color-gray-13: hsl(0, 0%, 0%);
 
   // text colors
+  --color-title: #000000E0;
   // 标题字体
-  // #000000E0
+  //
   // #FFFFFFD9
   // 一级文本
   // #000000E0
@@ -65,4 +66,26 @@ $color-error: hsl(357, 75%, 50%);
   // 布局背景
   // #F5F5F5FF
   // #000000FF
+}
+
+:root.dark {
+  // brand color
+  --color-primary: #{$color-primary};
+  @for $i from 1 through 10 {
+    --color-primary-#{$i}: #{generate($color-primary, $i, true)};
+  }
+
+  // functional colors
+  --color-success: #{$color-success};
+  @for $i from 1 through 10 {
+    --color-success-#{$i}: #{generate($color-success, $i, true)};
+  }
+  --color-warning: #{$color-warning};
+  @for $i from 1 through 10 {
+    --color-warning-#{$i}: #{generate($color-warning, $i, true)};
+  }
+  --color-error: #{$color-error};
+  @for $i from 1 through 10 {
+    --color-error-#{$i}: #{generate($color-error, $i, true)};
+  }
 }
