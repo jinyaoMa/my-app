@@ -2,6 +2,8 @@ package db
 
 import (
 	"my-app/backend/pkg/db/param"
+
+	"gorm.io/gorm/clause"
 )
 
 type CRUD[TEntity IEntity] struct {
@@ -75,12 +77,10 @@ func (c *CRUD[TEntity]) BuildQuery(criteria *param.Criteria, condition param.Que
 	}
 
 	for _, sort := range criteria.Sorts {
-		switch sort.Order {
-		case param.OrdAscending:
-			tx = tx.Order(sort.Column + " ASC")
-		case param.OrdDescending:
-			tx = tx.Order(sort.Column + " DESC")
-		}
+		tx = tx.Order(clause.OrderByColumn{
+			Column: clause.Column{Name: sort.Column},
+			Desc:   sort.Desc,
+		})
 	}
 
 	for _, filter := range criteria.Filters {

@@ -4,11 +4,6 @@ import (
 	"dario.cat/mergo"
 )
 
-const (
-	OrdAscending CriteriaSortOrder = iota
-	OrdDescending
-)
-
 type Criteria struct {
 	Page    int
 	Size    int
@@ -24,10 +19,8 @@ type CriteriaFilter struct {
 
 type CriteriaSort struct {
 	Column string
-	Order  CriteriaSortOrder
+	Desc   bool
 }
-
-type CriteriaSortOrder int
 
 func (c *Criteria) Offset() int {
 	return c.Size * (c.Page - 1)
