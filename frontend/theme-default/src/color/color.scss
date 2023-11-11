@@ -44,28 +44,15 @@ $color-error: hsl(357, 75%, 50%);
   --color-gray-13: hsl(0, 0%, 0%);
 
   // text colors
-  --color-title: #000000E0;
-  // 标题字体
-  //
-  // #FFFFFFD9
-  // 一级文本
-  // #000000E0
-  // #FFFFFFD9
-  // 二级文本
-  // #000000A6
-  // #FFFFFFA6
-  // 禁用字体
-  // #00000040
-  // #FFFFFF40
-  // 一级边框
-  // #D9D9D9FF
-  // #424242FF
-  // 分割线
-  // #0505050F
-  // #FDFDFD1F
-  // 布局背景
-  // #F5F5F5FF
-  // #000000FF
+  --color-text-title: #000000E0;
+  --color-text-primary: #000000E0;
+  --color-text-secondary: #000000A6;
+  --color-text-disabled: #00000040;
+
+  // layout colors
+  --color-border-primary: #D9D9D9FF;
+  --color-divider: #0505050F;
+  --color-background: #F5F5F5FF;
 }
 
 :root.dark {
@@ -88,4 +75,15 @@ $color-error: hsl(357, 75%, 50%);
   @for $i from 1 through 10 {
     --color-error-#{$i}: #{generate($color-error, $i, true)};
   }
+
+  // text colors
+  --color-text-title: #FFFFFFD9;
+  --color-text-primary: #FFFFFFD9;
+  --color-text-secondary: #FFFFFFA6;
+  --color-text-disabled: #FFFFFF40;
+
+  // layout colors
+  --color-border-primary: #424242FF;
+  --color-divider: #FDFDFD1F;
+  --color-background: #000000FF;
 }
