@@ -1,7 +1,6 @@
 package fstore
 
 import (
-	"os"
 	"strings"
 
 	"github.com/shirou/gopsutil/v3/disk"
@@ -12,38 +11,9 @@ type Mount struct {
 	usage      *Usage
 }
 
-// AssignStorage implements IMount.
-func (mount *Mount) AssignStorage(apath string) (*Partition, bool) {
-	if fi, err := os.Stat(apath); err != nil || !fi.IsDir() {
-		return nil, false
-	}
-
-	if partition := mount.FindAvailablePartition(apath); partition != nil {
-		partition.StoragePath = apath
-		return partition, true
-	}
-	return nil, false
-}
-
-// ContainsAvailablePath implements IMount.
-func (mount *Mount) ContainsAvailablePath(path string) bool {
-	return mount.FindAvailablePartition(path) != nil
-}
-
 // ContainsPath implements IMount.
 func (mount *Mount) ContainsPath(path string) bool {
 	return mount.FindPartition(path) != nil
-}
-
-// FindAvailablePartition implements IMount.
-func (mount *Mount) FindAvailablePartition(path string) *Partition {
-	count := len(mount.partitions)
-	for i := 0; i < count; i++ {
-		if mount.partitions[i].StoragePath == "" && strings.HasPrefix(path, mount.partitions[i].Mountpoint) {
-			return mount.partitions[i]
-		}
-	}
-	return nil
 }
 
 // FindPartition implements IMount.
@@ -57,33 +27,19 @@ func (mount *Mount) FindPartition(path string) *Partition {
 	return nil
 }
 
-// Usage implements IMount.
-func (mount *Mount) Usage() *Usage {
-	return mount.usage
-}
-
-// List implements IMount.
-func (mount *Mount) Partitions() []*Partition {
-	return mount.partitions
-}
-
 // Refresh implements IMount.
 func (mount *Mount) Refresh() (iMount IMount, err error) {
-	if mount.partitions != nil {
-		mount.partitions = nil
-	}
-
 	partitionStats, err := disk.Partitions(false)
 	if err != nil {
 		return mount, err
 	}
 
+	mount.partitions = make([]*Partition, 0)
 	for _, partitionStat := range partitionStats {
 		usageStat, err := disk.Usage(partitionStat.Mountpoint)
 		if err != nil {
 			return mount, err
 		}
-
 		mount.partitions = append(mount.partitions, &Partition{
 			Mountpoint: partitionStat.Mountpoint,
 			FsType:     partitionStat.Fstype,
@@ -107,6 +63,16 @@ func (mount *Mount) Refresh() (iMount IMount, err error) {
 	mount.usage.UsedPercent /= float64(len(mount.partitions))
 
 	return mount, nil
+}
+
+// Usage implements IMount.
+func (mount *Mount) Usage() *Usage {
+	return mount.usage
+}
+
+// Partitions implements IMount.
+func (mount *Mount) Partitions() []*Partition {
+	return mount.partitions
 }
 
 func NewMount() (mount *Mount, iMount IMount, err error) {

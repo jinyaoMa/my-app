@@ -5,12 +5,9 @@ type IFStore interface {
 }
 
 type IMount interface {
-	Refresh() (iMount IMount, err error)
 	Partitions() []*Partition
 	Usage() *Usage
+	Refresh() (iMount IMount, err error)
 	FindPartition(path string) *Partition
-	FindAvailablePartition(path string) *Partition
 	ContainsPath(path string) bool
-	ContainsAvailablePath(path string) bool
-	AssignStorage(apath string) (*Partition, bool)
 }

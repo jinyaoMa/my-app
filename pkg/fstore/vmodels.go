@@ -5,15 +5,15 @@ type FStoreOptions struct {
 }
 
 type Storage struct {
-	*Partition
-	CachePath string `json:"cachePath"` // the absolute cache path of storage
+	APath string `json:"apath"` // the absolute path in partition to use for storage
+	CPath string `json:"cpath"` // the absolute cache path of storage
+	Partition
 }
 
 type Partition struct {
-	Mountpoint  string   `json:"mountpoint"`
-	FsType      string   `json:"fsType"`
-	Opts        []string `json:"opts"`
-	StoragePath string   `json:"storagePath"` // the absolute path in partition to use for storage
+	Mountpoint string   `json:"mountpoint"`
+	FsType     string   `json:"fsType"`
+	Opts       []string `json:"opts"`
 	Usage
 }
 

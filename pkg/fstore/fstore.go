@@ -2,20 +2,30 @@ package fstore
 
 import (
 	"path/filepath"
+	"slices"
 )
 
 type FStore struct {
-	mount   IMount
-	options *FStoreOptions
+	mount    IMount
+	options  *FStoreOptions
+	storages []*Storage
 }
 
-// AddStorage implements IFStore.
+// CreateStorage implements IFStore.
 func (fstore *FStore) CreateStorage(apath string) (storage *Storage, ok bool) {
-	if partition, ok := fstore.mount.AssignStorage(apath); ok {
-		return &Storage{
-			Partition: partition,
-			CachePath: filepath.Join(partition.StoragePath, fstore.options.CacheFolderName),
-		}, ok
+	if _, err := fstore.mount.Refresh(); err != nil {
+		return nil, false
+	}
+	if partition := fstore.mount.FindPartition(apath); partition != nil && !slices.ContainsFunc(fstore.storages, func(s *Storage) bool {
+		return s.Mountpoint == partition.Mountpoint
+	}) {
+		storage = &Storage{
+			Partition: *partition,
+			APath:     apath,
+			CPath:     filepath.Join(apath, fstore.options.CacheFolderName),
+		}
+		fstore.storages = append(fstore.storages, storage)
+		return storage, true
 	}
 	return nil, false
 }
