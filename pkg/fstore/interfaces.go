@@ -1,14 +1,16 @@
 package fstore
 
 type IFStore interface {
-	Storages() []*Storage
-	CreateStorage(mount IMount, apath string) (storage *Storage, ok bool)
+	GetCurrentStorages() []*Storage
+	CreateStorage(apath string, replace ...bool) (storage *Storage, err error)
+	SearchFile(filename string, cache ...bool) (apath string, err error)
+	PickAStorage(size uint64) (storage *Storage, err error)
+	GetUsage() (usage *Usage, err error)
 }
 
 type IMount interface {
-	Partitions() []*Partition
-	Usage() *Usage
-	Refresh() (iMount IMount, err error)
-	FindPartition(path string) *Partition
-	ContainsPath(path string) bool
+	FindPartition(apath string) (partition *Partition, err error)
+	ContainsPath(apath string) bool
+	FindUsage(apath string) (usage *Usage, err error)
+	GetFreeSize(apath string) uint64
 }
