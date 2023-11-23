@@ -3,16 +3,51 @@ package fstore
 import (
 	"errors"
 	"fmt"
+	"hash/crc32"
 	"os"
 	"path/filepath"
 	"slices"
 	"strings"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type FStore struct {
-	mount    IMount
-	options  *Options
-	storages []*Storage
+	mount             IMount
+	options           *Options
+	storages          []*Storage
+	allowedCacheIdMap map[string]time.Time
+}
+
+// FillCache implements IFStore.
+func (fstore *FStore) FillCache(uid string, cacheId string, rangeStart uint64, rangeEnd uint64, data []byte) (err error) {
+	if _, ok := fstore.allowedCacheIdMap[cacheId]; ok {
+		cachePath := ""
+		storages := fstore.GetCurrentStorages()
+		if i := slices.IndexFunc(storages, func(s *Storage) bool {
+			return s.UID == uid
+		}); i >= 0 {
+			cachePath = storages[i].CPath
+		} else {
+			invalid := fmt.Sprintf("uid %s invalid", uid)
+			return errors.New(invalid)
+		}
+
+		cacheFilename := fstore.getCacheFilename(cacheId, rangeStart, rangeEnd)
+		f, err := os.OpenFile(filepath.Join(cachePath, cacheFilename), os.O_RDWR|os.O_TRUNC, os.ModePerm)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		_, err = f.Write(data)
+		if err != nil {
+			return err
+		}
+	}
+	invalid := fmt.Sprintf("cacheId %s invalid", cacheId)
+	return errors.New(invalid)
 }
 
 // GetUsage implements IFStore.
@@ -37,23 +72,29 @@ func (fstore *FStore) GetUsage() (usage *Usage, err error) {
 }
 
 // PickAStorage implements IFStore.
-func (fstore *FStore) PickAStorage(size uint64) (storage *Storage, err error) {
+func (fstore *FStore) PickAStorage(size uint64) (storage *Storage, cacheId string, err error) {
 	storages := fstore.GetCurrentStorages()
 	count := len(storages)
 	maxIndex := -1
 	maxSize := uint64(0)
+	requiredSize := size*2 + fstore.options.BufferSize
 	for i := 0; i < count; i++ {
 		if storages[i].Valid {
-			if s := fstore.mount.GetFreeSize(storages[i].APath); s > size && s > maxSize {
+			if s := fstore.mount.GetFreeSize(storages[i].APath); s > requiredSize && s > maxSize {
 				maxSize = s
 				maxIndex = i
 			}
 		}
 	}
 	if maxIndex >= 0 {
-		return storages[maxIndex], nil
+		cacheId = uuid.NewString()
+		if err := fstore.prepareCache(storages[maxIndex], cacheId, size); err != nil {
+			return nil, "", err
+		}
+		fstore.allowedCacheIdMap[cacheId] = time.Now()
+		return storages[maxIndex], cacheId, nil
 	}
-	return nil, errors.New("no valid storages")
+	return nil, "", errors.New("no valid storages")
 }
 
 // SearchFile implements IFStore.
@@ -80,6 +121,7 @@ func (fstore *FStore) CreateStorage(apath string, replace ...bool) (storage *Sto
 		}); i >= 0 {
 			if len(replace) > 0 && replace[0] {
 				fstore.storages[i].Partition = p
+				fstore.storages[i].UID = fmt.Sprintf("%x", crc32.ChecksumIEEE([]byte(apath)))
 				fstore.storages[i].APath = apath
 				fstore.storages[i].CPath = cachePath
 				fstore.storages[i].Valid = true
@@ -90,6 +132,7 @@ func (fstore *FStore) CreateStorage(apath string, replace ...bool) (storage *Sto
 		} else {
 			storage = &Storage{
 				Partition: p,
+				UID:       fmt.Sprintf("%x", crc32.ChecksumIEEE([]byte(apath))),
 				APath:     apath,
 				CPath:     cachePath,
 				Valid:     true,
@@ -98,7 +141,8 @@ func (fstore *FStore) CreateStorage(apath string, replace ...bool) (storage *Sto
 			return storage, nil
 		}
 	}
-	return nil, errors.New("partition not exist")
+	notExist := fmt.Sprintf("partition for %s not exist", apath)
+	return nil, errors.New(notExist)
 }
 
 // GetCurrentStorages implements IFStore.
@@ -114,9 +158,10 @@ func (fstore *FStore) GetCurrentStorages() []*Storage {
 
 func NewFStore(mount IMount, options *Options) (fstore *FStore, iFstore IFStore) {
 	fstore = &FStore{
-		mount:    mount,
-		options:  options,
-		storages: make([]*Storage, 0),
+		mount:             mount,
+		options:           options,
+		storages:          make([]*Storage, 0),
+		allowedCacheIdMap: make(map[string]time.Time),
 	}
 	return fstore, fstore
 }

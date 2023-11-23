@@ -4,14 +4,20 @@
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="2" value="" style="rounded=1;whiteSpace=wrap;html=1;arcSize=4;fillOpacity=100;" vertex="1" parent="1">
+                <mxCell id="2" value="" style="rounded=1;whiteSpace=wrap;html=1;arcSize=4;fillOpacity=100;" parent="1" vertex="1">
                     <mxGeometry x="40" y="120" width="720" height="400" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="" style="endArrow=none;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="2" target="2">
+                <mxCell id="3" value="" style="endArrow=none;html=1;entryX=0.25;entryY=0;entryDx=0;entryDy=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" parent="1" source="2" target="2" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="390" y="380" as="sourcePoint"/>
                         <mxPoint x="200" y="110" as="targetPoint"/>
                     </mxGeometry>
+                </mxCell>
+                <mxCell id="4" value="上传碎片&lt;br&gt;---&lt;br&gt;文件ID&lt;br&gt;碎片所属范围" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="120" y="800" width="160" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="找到缓存" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="120" y="920" width="160" height="80" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
