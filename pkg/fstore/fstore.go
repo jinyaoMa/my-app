@@ -1,22 +1,22 @@
 package fstore
 
 import (
+	"os"
 	"path/filepath"
 	"slices"
 )
 
 type FStore struct {
-	mount    IMount
 	options  *FStoreOptions
 	storages []*Storage
 }
 
 // CreateStorage implements IFStore.
-func (fstore *FStore) CreateStorage(apath string) (storage *Storage, ok bool) {
-	if _, err := fstore.mount.Refresh(); err != nil {
+func (fstore *FStore) CreateStorage(mount IMount, apath string) (storage *Storage, ok bool) {
+	if fi, err := os.Stat(apath); err != nil || !fi.IsDir() {
 		return nil, false
 	}
-	if partition := fstore.mount.FindPartition(apath); partition != nil && !slices.ContainsFunc(fstore.storages, func(s *Storage) bool {
+	if partition := mount.FindPartition(apath); partition != nil && !slices.ContainsFunc(fstore.storages, func(s *Storage) bool {
 		return s.Mountpoint == partition.Mountpoint
 	}) {
 		storage = &Storage{
@@ -30,10 +30,15 @@ func (fstore *FStore) CreateStorage(apath string) (storage *Storage, ok bool) {
 	return nil, false
 }
 
-func NewFStore(mount IMount, options *FStoreOptions) (fstore *FStore, iFstore IFStore) {
+// Storages implements IFStore.
+func (fstore *FStore) Storages() []*Storage {
+	return fstore.storages
+}
+
+func NewFStore(options *FStoreOptions) (fstore *FStore, iFstore IFStore) {
 	fstore = &FStore{
-		mount:   mount,
-		options: options,
+		options:  options,
+		storages: make([]*Storage, 0),
 	}
 	return fstore, fstore
 }

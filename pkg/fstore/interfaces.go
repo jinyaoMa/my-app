@@ -1,7 +1,8 @@
 package fstore
 
 type IFStore interface {
-	CreateStorage(apath string) (storage *Storage, ok bool)
+	Storages() []*Storage
+	CreateStorage(mount IMount, apath string) (storage *Storage, ok bool)
 }
 
 type IMount interface {
