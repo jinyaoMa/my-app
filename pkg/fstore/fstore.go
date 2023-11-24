@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -17,12 +16,12 @@ type FStore struct {
 	mount             IMount
 	options           *Options
 	storages          []*Storage
-	allowedCacheIdMap map[string]time.Time
+	allowedCacheIdMap map[string]bool
 }
 
 // FillCache implements IFStore.
 func (fstore *FStore) FillCache(uid string, cacheId string, rangeStart uint64, rangeEnd uint64, data []byte) (err error) {
-	if _, ok := fstore.allowedCacheIdMap[cacheId]; ok {
+	if active, ok := fstore.allowedCacheIdMap[cacheId]; ok && active {
 		cachePath := ""
 		storages := fstore.GetCurrentStorages()
 		if i := slices.IndexFunc(storages, func(s *Storage) bool {
@@ -91,7 +90,7 @@ func (fstore *FStore) PickAStorage(size uint64) (storage *Storage, cacheId strin
 		if err := fstore.prepareCache(storages[maxIndex], cacheId, size); err != nil {
 			return nil, "", err
 		}
-		fstore.allowedCacheIdMap[cacheId] = time.Now()
+		fstore.allowedCacheIdMap[cacheId] = true
 		return storages[maxIndex], cacheId, nil
 	}
 	return nil, "", errors.New("no valid storages")
@@ -120,6 +119,9 @@ func (fstore *FStore) CreateStorage(apath string, replace ...bool) (storage *Sto
 			return strings.HasPrefix(s.APath, p.Mountpoint)
 		}); i >= 0 {
 			if len(replace) > 0 && replace[0] {
+				if err := fstore.loadCacheIds(cachePath); err != nil {
+					return nil, err
+				}
 				fstore.storages[i].Partition = p
 				fstore.storages[i].UID = fmt.Sprintf("%x", crc32.ChecksumIEEE([]byte(apath)))
 				fstore.storages[i].APath = apath
@@ -130,6 +132,9 @@ func (fstore *FStore) CreateStorage(apath string, replace ...bool) (storage *Sto
 				return nil, errors.New("do you want to replace the exist storage?")
 			}
 		} else {
+			if err := fstore.loadCacheIds(cachePath); err != nil {
+				return nil, err
+			}
 			storage = &Storage{
 				Partition: p,
 				UID:       fmt.Sprintf("%x", crc32.ChecksumIEEE([]byte(apath))),
@@ -161,7 +166,7 @@ func NewFStore(mount IMount, options *Options) (fstore *FStore, iFstore IFStore)
 		mount:             mount,
 		options:           options,
 		storages:          make([]*Storage, 0),
-		allowedCacheIdMap: make(map[string]time.Time),
+		allowedCacheIdMap: make(map[string]bool),
 	}
 	return fstore, fstore
 }

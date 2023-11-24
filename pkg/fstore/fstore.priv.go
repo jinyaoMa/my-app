@@ -2,8 +2,12 @@ package fstore
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
+
+	"github.com/google/uuid"
 )
 
 // cache fragment filename format `{cacheId}.{rangeStartIndex:inclusive}-{rangeEndIndex:exclusive}`
@@ -31,4 +35,21 @@ func (fstore *FStore) prepareCache(storage *Storage, cacheId string, size uint64
 
 func (fstore *FStore) getCacheFilename(cacheId string, rangeStart uint64, rangeEnd uint64) string {
 	return fmt.Sprintf("%s.%d-%d", cacheId, rangeStart, rangeEnd)
+}
+
+func (fstore *FStore) loadCacheIds(cpath string) (err error) {
+	err = filepath.WalkDir(cpath, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		filenameParts := strings.Split(filepath.Base(path), ".")
+		if len(filenameParts) == 2 {
+			if _, err := uuid.Parse(filenameParts[0]); err == nil {
+				fstore.allowedCacheIdMap[filenameParts[0]] = true
+			}
+		}
+		return nil
+	})
+	return err
 }
