@@ -1,12 +1,13 @@
 package fstore
 
 type IFStore interface {
-	GetCurrentStorages() []*Storage
+	GetCurrentStorageMap() map[string]*Storage
 	CreateStorage(apath string, replace ...bool) (storage *Storage, err error)
 	SearchFile(filename string, cache ...bool) (apath string, err error)
 	PickAStorage(size uint64) (storage *Storage, cacheId string, err error)
 	GetUsage() (usage *Usage, err error)
-	FillCache(uid string, cacheId string, rangeStart uint64, rangeEnd uint64, data []byte) (err error)
+	FillCache(uid string, cacheId string, rangeStart uint64, rangeEnd uint64, data []byte) (checksum string, err error)
+	Persist(uid string, cacheId string, checksum string) (err error)
 }
 
 type IMount interface {

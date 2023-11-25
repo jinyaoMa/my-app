@@ -18,6 +18,6 @@ var (
 	DefaultOptions = &Options{
 		CacheFolderName: ".cache",
 		BufferSize:      4 * KB,
-		FragmentSize:    2 * MB,
+		FragmentSize:    4 * MB,
 	}
 )
