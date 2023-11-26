@@ -1,9 +1,12 @@
 package fstore
 
+import "os"
+
 type IFStore interface {
 	GetCurrentStorageMap() map[string]*Storage
 	CreateStorage(apath string, replace ...bool) (storage *Storage, err error)
 	SearchFile(filename string, cache ...bool) (apath string, err error)
+	SearchAndOpenFile(filename string, flag int, cache ...bool) (file *os.File, err error)
 	PickAStorage(size uint64) (storage *Storage, cacheId string, err error)
 	GetUsage() (usage *Usage, err error)
 	FillCache(uid string, cacheId string, rangeStart uint64, rangeEnd uint64, data []byte) (checksum string, err error)

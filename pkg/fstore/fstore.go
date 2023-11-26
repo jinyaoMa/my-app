@@ -18,6 +18,16 @@ type FStore struct {
 	crc32Table        *crc32.Table
 }
 
+// SearchAndOpenFile implements IFStore.
+func (fstore *FStore) SearchAndOpenFile(filename string, flag int, cache ...bool) (file *os.File, err error) {
+	apath, err := fstore.SearchFile(filename, cache...)
+	if err != nil {
+		return nil, err
+	}
+
+	return os.OpenFile(apath, flag, os.ModePerm)
+}
+
 // ClearCache implements IFStore.
 func (fstore *FStore) ClearCache(uid string, cacheId string, progress func(c int, t int)) (err error) {
 	active, ok := fstore.allowedCacheIdMap[cacheId]
