@@ -44,7 +44,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.17.0 // indirect
-	github.com/klauspost/cpuid/v2 v2.2.6 // indirect
+	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/labstack/echo/v4 v4.11.1 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/leaanthony/go-ansi-parser v1.6.1 // indirect
@@ -69,7 +69,6 @@ require (
 	github.com/wailsapp/go-webview2 v1.0.5 // indirect
 	github.com/wailsapp/mimetype v1.4.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
-	github.com/zeebo/xxh3 v1.0.2 // indirect
 	go.opentelemetry.io/otel v1.18.0 // indirect
 	go.opentelemetry.io/otel/metric v1.18.0 // indirect
 	go.opentelemetry.io/otel/trace v1.18.0 // indirect
@@ -84,9 +83,10 @@ require (
 	dario.cat/mergo v1.0.0
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/wailsapp/wails/v2 v2.6.0
+	github.com/zeebo/xxh3 v1.0.2
 	golang.org/x/crypto v0.13.0
 	golang.org/x/net v0.15.0 // indirect
 	golang.org/x/sync v0.3.0
-	golang.org/x/sys v0.14.0 // indirect
+	golang.org/x/sys v0.12.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 )

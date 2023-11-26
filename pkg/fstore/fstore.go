@@ -21,35 +21,30 @@ type FStore struct {
 }
 
 // Persist implements IFStore.
-func (fstore *FStore) Persist(uid string, cacheId string, checksum string) (err error) {
+func (fstore *FStore) Persist(uid string, cacheId string, ext string) (filename string, err error) {
 	active, ok := fstore.allowedCacheIdMap[cacheId]
 	if !ok || !active {
 		invalid := fmt.Sprintf("cacheId %s invalid", cacheId)
-		return errors.New(invalid)
+		return "", errors.New(invalid)
 	}
 
 	storageMap := fstore.GetCurrentStorageMap()
 	s, ok := storageMap[uid]
 	if !ok || !s.Valid {
 		invalid := fmt.Sprintf("uid %s invalid", uid)
-		return errors.New(invalid)
+		return "", errors.New(invalid)
 	}
 
 	apaths, err := s.SearchCache(cacheId)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	sum, err := fstore.checksum(apaths...)
+	cacheFilename := filepath.Join(s.CPath, cacheId)
+	filename, err = fstore.persist(s.APath, ext, cacheFilename, apaths...)
 	if err != nil {
-		return err
+		return "", err
 	}
-
-	if checksum != sum {
-		broken := fmt.Sprintf("checksum %s wrong", checksum)
-		return errors.New(broken)
-	}
-
 	return
 }
 
@@ -120,7 +115,7 @@ func (fstore *FStore) PickAStorage(size uint64) (storage *Storage, cacheId strin
 	storageMap := fstore.GetCurrentStorageMap()
 	maxUID := ""
 	maxSize := uint64(0)
-	requiredSize := size*2 + fstore.options.BufferSize
+	requiredSize := size*2 + fstore.options.ThresholdSize
 	for uid, s := range storageMap {
 		if s.Valid {
 			if s := fstore.mount.GetFreeSize(s.APath); s > requiredSize && s > maxSize {

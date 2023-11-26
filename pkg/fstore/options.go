@@ -10,6 +10,7 @@ const (
 
 type Options struct {
 	CacheFolderName string
+	ThresholdSize   uint64 // space tried to keep per storage
 	BufferSize      uint64
 	FragmentSize    uint64
 }
@@ -17,7 +18,8 @@ type Options struct {
 var (
 	DefaultOptions = &Options{
 		CacheFolderName: ".cache",
-		BufferSize:      4 * KB,
-		FragmentSize:    4 * MB,
+		ThresholdSize:   8 * GB,
+		BufferSize:      8 * KB,
+		FragmentSize:    8 * MB,
 	}
 )

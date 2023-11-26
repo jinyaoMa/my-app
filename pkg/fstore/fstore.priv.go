@@ -2,9 +2,9 @@ package fstore
 
 import (
 	"crypto/sha1"
+	"encoding/binary"
 	"errors"
 	"fmt"
-	"hash/crc64"
 	"io"
 	"io/fs"
 	"os"
@@ -64,8 +64,8 @@ func (fstore *FStore) loadCacheIds(cpath string) (err error) {
 	return err
 }
 
-// persist checksum format `{sha1:160bit:40hex}-{size:64bit:16hex}-{xxh3:128bit:32hex}-{crc64:64bit:16hex}`
-func (fstore *FStore) checksum(apaths ...string) (sum string, err error) {
+// persist checksum format `{sha1:160bit:40hex}-{xxh3:128bit:32hex}-{size:64bit:16hex}`
+func (fstore *FStore) checksum(loading func(buffer []byte) error, apaths ...string) (sum string, err error) {
 	if len(apaths) == 0 {
 		return "", errors.New("no apaths")
 	}
@@ -73,8 +73,7 @@ func (fstore *FStore) checksum(apaths ...string) (sum string, err error) {
 	buffer := make([]byte, fstore.options.BufferSize)
 	size := uint64(0)
 	sha1New := sha1.New()
-	xxhNew := xxh3.New()
-	crc64New := crc64.New(fstore.crc64Table)
+	xxh3New := xxh3.New()
 	for _, apath := range apaths {
 		f, err := os.Open(apath)
 		if err != nil {
@@ -92,24 +91,53 @@ func (fstore *FStore) checksum(apaths ...string) (sum string, err error) {
 			}
 
 			temp := buffer[0:n]
-			size += uint64(n)
 			_, err = sha1New.Write(temp)
 			if err != nil {
 				f.Close()
 				return "", err
 			}
-			_, err = xxhNew.Write(temp)
+			_, err = xxh3New.Write(temp)
 			if err != nil {
 				f.Close()
 				return "", err
 			}
-			_, err = crc64New.Write(temp)
-			if err != nil {
-				f.Close()
-				return "", err
+			size += uint64(n)
+			if loading != nil {
+				if err = loading(temp); err != nil {
+					return "", err
+				}
 			}
 		}
 		f.Close()
 	}
-	return fmt.Sprintf("%x-%x-%x-%x", sha1New.Sum(nil), size, xxhNew.Sum128().Bytes(), crc64New.Sum(nil)), nil
+
+	bsize := make([]byte, 8)
+	binary.BigEndian.PutUint64(bsize, size)
+	return fmt.Sprintf("%x-%x-%x-%x", sha1New.Sum(nil), xxh3New.Sum128().Bytes(), bsize), nil
+}
+
+// persist checksum format `{sha1:160bit:40hex}-{xxh3:128bit:32hex}-{size:64bit:16hex}`
+// ext => ".txt", ".go"...
+func (fstore *FStore) persist(desDir string, ext string, tmpFilename string, apaths ...string) (filename string, err error) {
+	tmp, err := os.Create(tmpFilename)
+	if err != nil {
+		return "", err
+	}
+	defer tmp.Close()
+
+	sum, err := fstore.checksum(func(buffer []byte) error {
+		_, err := tmp.Write(buffer)
+		return err
+	}, apaths...)
+	if err != nil {
+		return "", err
+	}
+	filename = sum + ext
+
+	tmp.Close()
+	err = os.Rename(tmpFilename, filepath.Join(desDir, filename))
+	if err != nil {
+		return "", err
+	}
+	return
 }

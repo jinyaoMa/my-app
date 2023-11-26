@@ -7,7 +7,7 @@ type IFStore interface {
 	PickAStorage(size uint64) (storage *Storage, cacheId string, err error)
 	GetUsage() (usage *Usage, err error)
 	FillCache(uid string, cacheId string, rangeStart uint64, rangeEnd uint64, data []byte) (checksum string, err error)
-	Persist(uid string, cacheId string, checksum string) (err error)
+	Persist(uid string, cacheId string, ext string) (filename string, err error)
 }
 
 type IMount interface {
