@@ -8,6 +8,7 @@ type IFStore interface {
 	GetUsage() (usage *Usage, err error)
 	FillCache(uid string, cacheId string, rangeStart uint64, rangeEnd uint64, data []byte) (checksum string, err error)
 	Persist(uid string, cacheId string, ext string) (filename string, err error)
+	ClearCache(uid string, cacheId string, progress func(c int, t int)) (err error)
 }
 
 type IMount interface {

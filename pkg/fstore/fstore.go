@@ -20,6 +20,38 @@ type FStore struct {
 	crc64Table        *crc64.Table
 }
 
+// ClearCache implements IFStore.
+func (fstore *FStore) ClearCache(uid string, cacheId string, progress func(c int, t int)) (err error) {
+	active, ok := fstore.allowedCacheIdMap[cacheId]
+	if !ok || !active {
+		invalid := fmt.Sprintf("cacheId %s invalid", cacheId)
+		return errors.New(invalid)
+	}
+
+	storageMap := fstore.GetCurrentStorageMap()
+	s, ok := storageMap[uid]
+	if !ok || !s.Valid {
+		invalid := fmt.Sprintf("uid %s invalid", uid)
+		return errors.New(invalid)
+	}
+
+	apaths, err := s.SearchCache(cacheId)
+	if err != nil {
+		return err
+	}
+
+	total := len(apaths)
+	for i, apath := range apaths {
+		if err := os.Remove(apath); err != nil {
+			return err
+		}
+		if progress != nil {
+			progress(i+1, total)
+		}
+	}
+	return
+}
+
 // Persist implements IFStore.
 func (fstore *FStore) Persist(uid string, cacheId string, ext string) (filename string, err error) {
 	active, ok := fstore.allowedCacheIdMap[cacheId]
