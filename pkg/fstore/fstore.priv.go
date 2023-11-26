@@ -113,7 +113,7 @@ func (fstore *FStore) checksum(loading func(buffer []byte) error, apaths ...stri
 
 	bsize := make([]byte, 8)
 	binary.BigEndian.PutUint64(bsize, size)
-	return fmt.Sprintf("%x-%x-%x-%x", sha1New.Sum(nil), xxh3New.Sum128().Bytes(), bsize), nil
+	return fmt.Sprintf("%x-%x-%x", sha1New.Sum(nil), xxh3New.Sum128().Bytes(), bsize), nil
 }
 
 // persist checksum format `{sha1:160bit:40hex}-{xxh3:128bit:32hex}-{size:64bit:16hex}`

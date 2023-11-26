@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"hash/crc32"
-	"hash/crc64"
 	"os"
 	"path/filepath"
 
@@ -17,7 +16,6 @@ type FStore struct {
 	storageMap        map[string]*Storage // uid: storage
 	allowedCacheIdMap map[string]bool     // cacheId: active bool
 	crc32Table        *crc32.Table
-	crc64Table        *crc64.Table
 }
 
 // ClearCache implements IFStore.
@@ -49,6 +47,7 @@ func (fstore *FStore) ClearCache(uid string, cacheId string, progress func(c int
 			progress(i+1, total)
 		}
 	}
+	delete(fstore.allowedCacheIdMap, cacheId)
 	return
 }
 
@@ -239,7 +238,6 @@ func NewFStore(mount IMount, options *Options) (fstore *FStore, iFstore IFStore)
 		storageMap:        make(map[string]*Storage),
 		allowedCacheIdMap: make(map[string]bool),
 		crc32Table:        crc32.MakeTable(crc32.Castagnoli),
-		crc64Table:        crc64.MakeTable(crc64.ISO),
 	}
 	return fstore, fstore
 }

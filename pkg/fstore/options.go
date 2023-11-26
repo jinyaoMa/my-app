@@ -11,8 +11,8 @@ const (
 type Options struct {
 	CacheFolderName string
 	ThresholdSize   uint64 // space tried to keep per storage
-	BufferSize      uint64
-	FragmentSize    uint64
+	BufferSize      uint64 // memory used to read data in iteration
+	FragmentSize    uint64 // cache file fragment size
 }
 
 var (
