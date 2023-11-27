@@ -8,8 +8,18 @@ import (
 	"strings"
 )
 
+type StorageMap map[string]*Storage // pid: storage
+
+func (storageMap StorageMap) ToList() (list []*Storage) {
+	for pid := range storageMap {
+		list = append(list, storageMap[pid])
+	}
+	return
+}
+
 type Storage struct {
 	*Partition
+	PID   string `json:"pid"`   // define storage by partition mountpoint
 	APath string `json:"apath"` // the absolute path in partition to use for storage
 	CPath string `json:"cpath"` // the absolute cache path of storage
 	Valid bool   `json:"valid"` // if storage is valid, the path may disappear somehow
