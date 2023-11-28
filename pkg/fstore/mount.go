@@ -2,6 +2,7 @@ package fstore
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/shirou/gopsutil/v3/disk"
@@ -52,7 +53,8 @@ func (*Mount) FindPartition(apath string) (partition *Partition, err error) {
 			}, nil
 		}
 	}
-	return nil, errors.New("partition not found")
+	e := fmt.Sprintf("partition of path %s not found", apath)
+	return nil, errors.New(e)
 }
 
 func NewMount() (mount *Mount, iMount IMount) {

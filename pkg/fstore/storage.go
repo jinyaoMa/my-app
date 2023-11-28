@@ -2,8 +2,9 @@ package fstore
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
-	"os"
+	"my-app/pkg/base"
 	"path/filepath"
 	"strings"
 )
@@ -27,7 +28,8 @@ type Storage struct {
 
 func (storage *Storage) SearchFile(filename string, cache ...bool) (apath string, err error) {
 	if !storage.Valid {
-		return "", errors.New("storage invalid")
+		e := fmt.Sprintf("storage %s invalid", storage.APath)
+		return "", errors.New(e)
 	}
 
 	if len(cache) > 0 && cache[0] {
@@ -36,19 +38,17 @@ func (storage *Storage) SearchFile(filename string, cache ...bool) (apath string
 		apath = filepath.Join(storage.APath, filename)
 	}
 
-	var fi fs.FileInfo
-	if fi, err = os.Stat(apath); err == nil && !fi.IsDir() {
-		return apath, err
+	if !base.IsFileExists(apath) {
+		e := fmt.Sprintf("file %s not exists", apath)
+		return "", errors.New(e)
 	}
-	if err != nil {
-		return "", err
-	}
-	return "", errors.New("filename points to a directory")
+	return
 }
 
 func (storage *Storage) SearchCache(cacheId string) (apaths []string, err error) {
 	if !storage.Valid {
-		return nil, errors.New("storage invalid")
+		e := fmt.Sprintf("storage %s invalid", storage.APath)
+		return nil, errors.New(e)
 	}
 	err = filepath.WalkDir(storage.CPath, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {

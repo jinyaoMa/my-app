@@ -3,7 +3,6 @@ package fstore
 import (
 	"crypto/sha1"
 	"encoding/binary"
-	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -67,7 +66,7 @@ func (fstore *FStore) loadCacheIds(cpath string) (err error) {
 // persist checksum format `{sha1:160bit:40hex}-{xxh3:128bit:32hex}-{size:64bit:16hex}`
 func (fstore *FStore) checksum(loading func(buffer []byte) error, apaths ...string) (sum string, err error) {
 	if len(apaths) == 0 {
-		return "", errors.New("no apaths")
+		return "", nil
 	}
 
 	buffer := make([]byte, fstore.options.BufferSize)

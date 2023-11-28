@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hash/crc32"
 	"io"
+	"my-app/pkg/base"
 	"os"
 	"path/filepath"
 
@@ -56,8 +57,8 @@ func (fstore *FStore) GetFragmentSize() uint64 {
 func (fstore *FStore) RemoveStorage(pid string) (err error) {
 	_, ok := fstore.storageMap[pid]
 	if !ok {
-		invalid := fmt.Sprintf("pid %s invalid", pid)
-		return errors.New(invalid)
+		e := fmt.Sprintf("pid %s invalid", pid)
+		return errors.New(e)
 	}
 
 	delete(fstore.storageMap, pid)
@@ -78,15 +79,15 @@ func (fstore *FStore) SearchAndOpenFile(filename string, flag int, cache ...bool
 func (fstore *FStore) ClearCache(pid string, cacheId string, progress func(c int, t int)) (err error) {
 	active, ok := fstore.allowedCacheIdMap[cacheId]
 	if !ok || !active {
-		invalid := fmt.Sprintf("cacheId %s invalid", cacheId)
-		return errors.New(invalid)
+		e := fmt.Sprintf("cacheId %s invalid", cacheId)
+		return errors.New(e)
 	}
 
 	storageMap := fstore.GetCurrentStorageMap()
 	s, ok := storageMap[pid]
 	if !ok || !s.Valid {
-		invalid := fmt.Sprintf("pid %s invalid", pid)
-		return errors.New(invalid)
+		e := fmt.Sprintf("pid %s invalid", pid)
+		return errors.New(e)
 	}
 
 	apaths, err := s.SearchCache(cacheId)
@@ -111,15 +112,15 @@ func (fstore *FStore) ClearCache(pid string, cacheId string, progress func(c int
 func (fstore *FStore) Persist(pid string, cacheId string, ext string) (filename string, err error) {
 	active, ok := fstore.allowedCacheIdMap[cacheId]
 	if !ok || !active {
-		invalid := fmt.Sprintf("cacheId %s invalid", cacheId)
-		return "", errors.New(invalid)
+		e := fmt.Sprintf("cacheId %s invalid", cacheId)
+		return "", errors.New(e)
 	}
 
 	storageMap := fstore.GetCurrentStorageMap()
 	s, ok := storageMap[pid]
 	if !ok || !s.Valid {
-		invalid := fmt.Sprintf("pid %s invalid", pid)
-		return "", errors.New(invalid)
+		e := fmt.Sprintf("pid %s invalid", pid)
+		return "", errors.New(e)
 	}
 
 	apaths, err := s.SearchCache(cacheId)
@@ -139,24 +140,24 @@ func (fstore *FStore) Persist(pid string, cacheId string, ext string) (filename 
 func (fstore *FStore) FillCache(pid string, cacheId string, rangeStart uint64, rangeEnd uint64, data []byte) (checksum string, err error) {
 	active, ok := fstore.allowedCacheIdMap[cacheId]
 	if !ok || !active {
-		invalid := fmt.Sprintf("cacheId %s invalid", cacheId)
-		return "", errors.New(invalid)
+		e := fmt.Sprintf("cacheId %s invalid", cacheId)
+		return "", errors.New(e)
 	}
 	if rangeEnd-rangeStart != fstore.options.FragmentSize {
-		invalid := fmt.Sprintf("data range %d-%d invalid", rangeStart, rangeEnd)
-		return "", errors.New(invalid)
+		e := fmt.Sprintf("data range %d-%d invalid", rangeStart, rangeEnd)
+		return "", errors.New(e)
 	}
 	if uint64(len(data)) != fstore.options.FragmentSize {
-		invalid := fmt.Sprintf("data length must be equal to fragment size %d", fstore.options.FragmentSize)
-		return "", errors.New(invalid)
+		e := fmt.Sprintf("data length must be equal to fragment size %d", fstore.options.FragmentSize)
+		return "", errors.New(e)
 	}
 
 	cacheFilename := fstore.getCacheFilename(cacheId, rangeStart, rangeEnd)
 	storageMap := fstore.GetCurrentStorageMap()
 	s, ok := storageMap[pid]
 	if !ok || !s.Valid {
-		invalid := fmt.Sprintf("pid %s invalid", pid)
-		return "", errors.New(invalid)
+		e := fmt.Sprintf("pid %s invalid", pid)
+		return "", errors.New(e)
 	}
 
 	f, err := os.OpenFile(filepath.Join(s.CPath, cacheFilename), os.O_RDWR|os.O_TRUNC, os.ModePerm)
@@ -219,7 +220,8 @@ func (fstore *FStore) PickAStorage(size uint64) (storage *Storage, cacheId strin
 		fstore.allowedCacheIdMap[cacheId] = true
 		return storageMap[maxPID], cacheId, nil
 	}
-	return nil, "", errors.New("no valid storages")
+	e := fmt.Sprintf("no valid storages with space more than %d + %d * 2", fstore.options.ThresholdSize, size)
+	return nil, "", errors.New(e)
 }
 
 // SearchFile implements IFStore.
@@ -231,8 +233,8 @@ func (fstore *FStore) SearchFile(filename string, cache ...bool) (apath string, 
 			}
 		}
 	}
-	notFound := fmt.Sprintf("file %s not found", filename)
-	return "", errors.New(notFound)
+	e := fmt.Sprintf("file %s not found", filename)
+	return "", errors.New(e)
 }
 
 // CreateStorage implements IFStore.
@@ -244,8 +246,8 @@ func (fstore *FStore) CreateStorage(apath string, replace ...bool) (storage *Sto
 
 	p, err := fstore.mount.FindPartition(apath)
 	if err != nil {
-		notExist := fmt.Sprintf("partition for %s not exist", apath)
-		return nil, errors.New(notExist)
+		e := fmt.Sprintf("partition for %s not exist", apath)
+		return nil, errors.New(e)
 	}
 
 	pid := fmt.Sprintf("%x", crc32.Checksum([]byte(p.Mountpoint), fstore.crc32Table))
@@ -265,7 +267,8 @@ func (fstore *FStore) CreateStorage(apath string, replace ...bool) (storage *Sto
 	}
 
 	if len(replace) == 0 || !replace[0] {
-		return nil, errors.New("do you want to replace the exist storage?")
+		e := fmt.Sprintf("do you want to replace the exist storage (%s)?", s.APath)
+		return nil, errors.New(e)
 	}
 
 	if err := fstore.loadCacheIds(cachePath); err != nil {
@@ -282,9 +285,7 @@ func (fstore *FStore) CreateStorage(apath string, replace ...bool) (storage *Sto
 // GetCurrentStorageMap implements IFStore.
 func (fstore *FStore) GetCurrentStorageMap() StorageMap {
 	for pid := range fstore.storageMap {
-		if fi, err := os.Stat(fstore.storageMap[pid].APath); err != nil || !fi.IsDir() {
-			fstore.storageMap[pid].Valid = false
-		}
+		fstore.storageMap[pid].Valid = base.IsDirectoryExists(fstore.storageMap[pid].APath)
 	}
 	return fstore.storageMap
 }
