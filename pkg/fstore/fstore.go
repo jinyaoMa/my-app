@@ -290,6 +290,9 @@ func (fstore *FStore) GetCurrentStorageMap() StorageMap {
 }
 
 func NewFStore(mount IMount, options *Options) (fstore *FStore, iFstore IFStore) {
+	if !options.Merged {
+		options = NewOptions(options)
+	}
 	fstore = &FStore{
 		mount:             mount,
 		options:           options,

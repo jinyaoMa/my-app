@@ -13,6 +13,7 @@ const (
 )
 
 type Options struct {
+	base.Options
 	CacheFolderName string
 	ThresholdSize   uint64 // space tried to keep per storage
 	BufferSize      uint64 // memory used to read data in iteration
