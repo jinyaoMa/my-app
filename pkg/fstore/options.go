@@ -29,6 +29,6 @@ func DefaultOptions() *Options {
 	}
 }
 
-func NewOptions(dst *Options) *Options {
+func NewOptions(dst *Options) (*Options, error) {
 	return base.SimpleMerge(DefaultOptions(), dst)
 }

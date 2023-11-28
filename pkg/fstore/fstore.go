@@ -289,10 +289,12 @@ func (fstore *FStore) GetCurrentStorageMap() StorageMap {
 	return fstore.storageMap
 }
 
-func NewFStore(mount IMount, options *Options) (fstore *FStore, iFstore IFStore) {
-	if !options.Merged {
-		options = NewOptions(options)
+func NewFStore(mount IMount, options *Options) (fstore *FStore, iFstore IFStore, err error) {
+	options, err = NewOptions(options)
+	if err != nil {
+		return nil, nil, err
 	}
+
 	fstore = &FStore{
 		mount:             mount,
 		options:           options,
@@ -300,5 +302,5 @@ func NewFStore(mount IMount, options *Options) (fstore *FStore, iFstore IFStore)
 		allowedCacheIdMap: make(map[string]bool),
 		crc32Table:        crc32.MakeTable(crc32.Castagnoli),
 	}
-	return fstore, fstore
+	return fstore, fstore, nil
 }
