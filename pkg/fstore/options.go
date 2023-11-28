@@ -1,5 +1,9 @@
 package fstore
 
+import (
+	"my-app/pkg/base"
+)
+
 const (
 	B  uint64 = 1
 	KB        = 1024 * B
@@ -15,11 +19,15 @@ type Options struct {
 	FragmentSize    uint64 // cache file fragment size
 }
 
-var (
-	DefaultOptions = &Options{
+func DefaultOptions() *Options {
+	return &Options{
 		CacheFolderName: ".cache",
 		ThresholdSize:   8 * GB,
 		BufferSize:      8 * KB,
 		FragmentSize:    8 * MB,
 	}
-)
+}
+
+func NewOptions(dst *Options) *Options {
+	return base.SimpleMerge(DefaultOptions(), dst)
+}
