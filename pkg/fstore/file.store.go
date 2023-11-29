@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type FStore struct {
+type FileStore struct {
 	mount             IMount
 	options           *Options
 	storageMap        StorageMap      // pid: storage
@@ -20,8 +20,8 @@ type FStore struct {
 	crc32Table        *crc32.Table
 }
 
-// SearchFileAndGetData implements IFStore.
-func (fstore *FStore) SearchFileAndGetData(filename string, rangeStart uint64, rangeEnd uint64, cache ...bool) (data []byte, err error) {
+// SearchFileAndGetData implements IFileStore.
+func (fileStore *FileStore) SearchFileAndGetData(filename string, rangeStart uint64, rangeEnd uint64, cache ...bool) (data []byte, err error) {
 	if rangeEnd-rangeStart == 0 {
 		e := fmt.Sprintf("rangeStart %d and rangeEnd %d are the same", rangeStart, rangeEnd)
 		return nil, errors.New(e)
@@ -33,7 +33,7 @@ func (fstore *FStore) SearchFileAndGetData(filename string, rangeStart uint64, r
 		return nil, errors.New(e)
 	}
 
-	f, err := fstore.SearchAndOpenFile(filename, os.O_RDONLY, cache...)
+	f, err := fileStore.SearchAndOpenFile(filename, os.O_RDONLY, cache...)
 	if err != nil {
 		return nil, err
 	}
@@ -48,26 +48,26 @@ func (fstore *FStore) SearchFileAndGetData(filename string, rangeStart uint64, r
 	return
 }
 
-// GetFragmentSize implements IFStore.
-func (fstore *FStore) GetFragmentSize() uint64 {
-	return fstore.options.FragmentSize
+// GetFragmentSize implements IFileStore.
+func (fileStore *FileStore) GetFragmentSize() uint64 {
+	return fileStore.options.FragmentSize
 }
 
-// RemoveStorage implements IFStore.
-func (fstore *FStore) RemoveStorage(pid string) (err error) {
-	_, ok := fstore.storageMap[pid]
+// RemoveStorage implements IFileStore.
+func (fileStore *FileStore) RemoveStorage(pid string) (err error) {
+	_, ok := fileStore.storageMap[pid]
 	if !ok {
 		e := fmt.Sprintf("pid %s invalid", pid)
 		return errors.New(e)
 	}
 
-	delete(fstore.storageMap, pid)
+	delete(fileStore.storageMap, pid)
 	return
 }
 
-// SearchAndOpenFile implements IFStore.
-func (fstore *FStore) SearchAndOpenFile(filename string, flag int, cache ...bool) (file *os.File, err error) {
-	apath, err := fstore.SearchFile(filename, cache...)
+// SearchAndOpenFile implements IFileStore.
+func (fileStore *FileStore) SearchAndOpenFile(filename string, flag int, cache ...bool) (file *os.File, err error) {
+	apath, err := fileStore.SearchFile(filename, cache...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,15 +75,15 @@ func (fstore *FStore) SearchAndOpenFile(filename string, flag int, cache ...bool
 	return os.OpenFile(apath, flag, os.ModePerm)
 }
 
-// ClearCache implements IFStore.
-func (fstore *FStore) ClearCache(pid string, cacheId string, progress func(c int, t int)) (err error) {
-	active, ok := fstore.allowedCacheIdMap[cacheId]
+// ClearCache implements IFileStore.
+func (fileStore *FileStore) ClearCache(pid string, cacheId string, progress func(c int, t int)) (err error) {
+	active, ok := fileStore.allowedCacheIdMap[cacheId]
 	if !ok || !active {
 		e := fmt.Sprintf("cacheId %s invalid", cacheId)
 		return errors.New(e)
 	}
 
-	storageMap := fstore.GetCurrentStorageMap()
+	storageMap := fileStore.GetCurrentStorageMap()
 	s, ok := storageMap[pid]
 	if !ok || !s.Valid {
 		e := fmt.Sprintf("pid %s invalid", pid)
@@ -104,19 +104,19 @@ func (fstore *FStore) ClearCache(pid string, cacheId string, progress func(c int
 			progress(i+1, total)
 		}
 	}
-	delete(fstore.allowedCacheIdMap, cacheId)
+	delete(fileStore.allowedCacheIdMap, cacheId)
 	return
 }
 
-// Persist implements IFStore.
-func (fstore *FStore) Persist(pid string, cacheId string, ext string) (filename string, err error) {
-	active, ok := fstore.allowedCacheIdMap[cacheId]
+// Persist implements IFileStore.
+func (fileStore *FileStore) Persist(pid string, cacheId string, ext string) (filename string, err error) {
+	active, ok := fileStore.allowedCacheIdMap[cacheId]
 	if !ok || !active {
 		e := fmt.Sprintf("cacheId %s invalid", cacheId)
 		return "", errors.New(e)
 	}
 
-	storageMap := fstore.GetCurrentStorageMap()
+	storageMap := fileStore.GetCurrentStorageMap()
 	s, ok := storageMap[pid]
 	if !ok || !s.Valid {
 		e := fmt.Sprintf("pid %s invalid", pid)
@@ -129,31 +129,31 @@ func (fstore *FStore) Persist(pid string, cacheId string, ext string) (filename 
 	}
 
 	cacheFilename := filepath.Join(s.CPath, cacheId)
-	filename, err = fstore.persist(s.APath, ext, cacheFilename, apaths...)
+	filename, err = fileStore.persist(s.APath, ext, cacheFilename, apaths...)
 	if err != nil {
 		return "", err
 	}
 	return
 }
 
-// FillCache implements IFStore.
-func (fstore *FStore) FillCache(pid string, cacheId string, rangeStart uint64, rangeEnd uint64, data []byte) (checksum string, err error) {
-	active, ok := fstore.allowedCacheIdMap[cacheId]
+// FillCache implements IFileStore.
+func (fileStore *FileStore) FillCache(pid string, cacheId string, rangeStart uint64, rangeEnd uint64, data []byte) (checksum string, err error) {
+	active, ok := fileStore.allowedCacheIdMap[cacheId]
 	if !ok || !active {
 		e := fmt.Sprintf("cacheId %s invalid", cacheId)
 		return "", errors.New(e)
 	}
-	if rangeEnd-rangeStart != fstore.options.FragmentSize {
+	if rangeEnd-rangeStart != fileStore.options.FragmentSize {
 		e := fmt.Sprintf("data range %d-%d invalid", rangeStart, rangeEnd)
 		return "", errors.New(e)
 	}
-	if uint64(len(data)) != fstore.options.FragmentSize {
-		e := fmt.Sprintf("data length must be equal to fragment size %d", fstore.options.FragmentSize)
+	if uint64(len(data)) != fileStore.options.FragmentSize {
+		e := fmt.Sprintf("data length must be equal to fragment size %d", fileStore.options.FragmentSize)
 		return "", errors.New(e)
 	}
 
-	cacheFilename := fstore.getCacheFilename(cacheId, rangeStart, rangeEnd)
-	storageMap := fstore.GetCurrentStorageMap()
+	cacheFilename := fileStore.getCacheFilename(cacheId, rangeStart, rangeEnd)
+	storageMap := fileStore.GetCurrentStorageMap()
 	s, ok := storageMap[pid]
 	if !ok || !s.Valid {
 		e := fmt.Sprintf("pid %s invalid", pid)
@@ -171,15 +171,15 @@ func (fstore *FStore) FillCache(pid string, cacheId string, rangeStart uint64, r
 		return "", err
 	}
 
-	crc32New := crc32.New(fstore.crc32Table)
+	crc32New := crc32.New(fileStore.crc32Table)
 	return fmt.Sprintf("%x", crc32New.Sum(nil)), nil
 }
 
-// GetUsage implements IFStore.
-func (fstore *FStore) GetUsage() (usage *Usage, err error) {
+// GetUsage implements IFileStore.
+func (fileStore *FileStore) GetUsage() (usage *Usage, err error) {
 	usage = &Usage{}
 	count := 0
-	for _, s := range fstore.GetCurrentStorageMap() {
+	for _, s := range fileStore.GetCurrentStorageMap() {
 		if s.Valid {
 			if u, err := s.GetUsage(); err != nil {
 				return nil, err
@@ -198,15 +198,15 @@ func (fstore *FStore) GetUsage() (usage *Usage, err error) {
 	return
 }
 
-// PickAStorage implements IFStore.
-func (fstore *FStore) PickAStorage(size uint64) (storage *Storage, cacheId string, err error) {
-	storageMap := fstore.GetCurrentStorageMap()
+// PickAStorage implements IFileStore.
+func (fileStore *FileStore) PickAStorage(size uint64) (storage *Storage, cacheId string, err error) {
+	storageMap := fileStore.GetCurrentStorageMap()
 	maxPID := ""
 	maxSize := uint64(0)
-	requiredSize := size*2 + fstore.options.ThresholdSize
+	requiredSize := size*2 + fileStore.options.ThresholdSize
 	for pid, s := range storageMap {
 		if s.Valid {
-			if s := fstore.mount.GetFreeSize(s.APath); s > requiredSize && s > maxSize {
+			if s := fileStore.mount.GetFreeSize(s.APath); s > requiredSize && s > maxSize {
 				maxSize = s
 				maxPID = pid
 			}
@@ -214,19 +214,19 @@ func (fstore *FStore) PickAStorage(size uint64) (storage *Storage, cacheId strin
 	}
 	if maxPID != "" {
 		cacheId = uuid.NewString()
-		if err := fstore.prepareCache(storageMap[maxPID].CPath, cacheId, size); err != nil {
+		if err := fileStore.prepareCache(storageMap[maxPID].CPath, cacheId, size); err != nil {
 			return nil, "", err
 		}
-		fstore.allowedCacheIdMap[cacheId] = true
+		fileStore.allowedCacheIdMap[cacheId] = true
 		return storageMap[maxPID], cacheId, nil
 	}
-	e := fmt.Sprintf("no valid storages with space more than %d + %d * 2", fstore.options.ThresholdSize, size)
+	e := fmt.Sprintf("no valid storages with space more than %d + %d * 2", fileStore.options.ThresholdSize, size)
 	return nil, "", errors.New(e)
 }
 
-// SearchFile implements IFStore.
-func (fstore *FStore) SearchFile(filename string, cache ...bool) (apath string, err error) {
-	for _, s := range fstore.GetCurrentStorageMap() {
+// SearchFile implements IFileStore.
+func (fileStore *FileStore) SearchFile(filename string, cache ...bool) (apath string, err error) {
+	for _, s := range fileStore.GetCurrentStorageMap() {
 		if s.Valid {
 			if apath, err = s.SearchFile(filename, cache...); err == nil {
 				return apath, nil
@@ -237,33 +237,33 @@ func (fstore *FStore) SearchFile(filename string, cache ...bool) (apath string, 
 	return "", errors.New(e)
 }
 
-// CreateStorage implements IFStore.
-func (fstore *FStore) CreateStorage(apath string, replace ...bool) (storage *Storage, err error) {
-	cachePath := filepath.Join(apath, fstore.options.CacheFolderName)
+// CreateStorage implements IFileStore.
+func (fileStore *FileStore) CreateStorage(apath string, replace ...bool) (storage *Storage, err error) {
+	cachePath := filepath.Join(apath, fileStore.options.CacheFolderName)
 	if err := os.MkdirAll(cachePath, os.ModeDir); err != nil {
 		return nil, err
 	}
 
-	p, err := fstore.mount.FindPartition(apath)
+	p, err := fileStore.mount.FindPartition(apath)
 	if err != nil {
 		e := fmt.Sprintf("partition for %s not exist", apath)
 		return nil, errors.New(e)
 	}
 
-	pid := fmt.Sprintf("%x", crc32.Checksum([]byte(p.Mountpoint), fstore.crc32Table))
-	s, ok := fstore.storageMap[pid]
+	pid := fmt.Sprintf("%x", crc32.Checksum([]byte(p.Mountpoint), fileStore.crc32Table))
+	s, ok := fileStore.storageMap[pid]
 	if !ok { // add new storage
-		if err := fstore.loadCacheIds(cachePath); err != nil {
+		if err := fileStore.loadCacheIds(cachePath); err != nil {
 			return nil, err
 		}
-		fstore.storageMap[pid] = &Storage{
+		fileStore.storageMap[pid] = &Storage{
 			Partition: p,
 			PID:       pid,
 			APath:     apath,
 			CPath:     cachePath,
 			Valid:     true,
 		}
-		return fstore.storageMap[pid], nil
+		return fileStore.storageMap[pid], nil
 	}
 
 	if len(replace) == 0 || !replace[0] {
@@ -271,7 +271,7 @@ func (fstore *FStore) CreateStorage(apath string, replace ...bool) (storage *Sto
 		return nil, errors.New(e)
 	}
 
-	if err := fstore.loadCacheIds(cachePath); err != nil {
+	if err := fileStore.loadCacheIds(cachePath); err != nil {
 		return nil, err
 	}
 	s.Partition = p
@@ -282,26 +282,26 @@ func (fstore *FStore) CreateStorage(apath string, replace ...bool) (storage *Sto
 	return s, nil
 }
 
-// GetCurrentStorageMap implements IFStore.
-func (fstore *FStore) GetCurrentStorageMap() StorageMap {
-	for pid := range fstore.storageMap {
-		fstore.storageMap[pid].Valid = base.IsDirectoryExists(fstore.storageMap[pid].APath)
+// GetCurrentStorageMap implements IFileStore.
+func (fileStore *FileStore) GetCurrentStorageMap() StorageMap {
+	for pid := range fileStore.storageMap {
+		fileStore.storageMap[pid].Valid = base.IsDirectoryExists(fileStore.storageMap[pid].APath)
 	}
-	return fstore.storageMap
+	return fileStore.storageMap
 }
 
-func NewFStore(mount IMount, options *Options) (fstore *FStore, iFstore IFStore, err error) {
+func NewFileStore(mount IMount, options *Options) (fileStore *FileStore, iFilestore IFileStore, err error) {
 	options, err = NewOptions(options)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	fstore = &FStore{
+	fileStore = &FileStore{
 		mount:             mount,
 		options:           options,
 		storageMap:        make(StorageMap),
 		allowedCacheIdMap: make(map[string]bool),
 		crc32Table:        crc32.MakeTable(crc32.Castagnoli),
 	}
-	return fstore, fstore, nil
+	return fileStore, fileStore, nil
 }

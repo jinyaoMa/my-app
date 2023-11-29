@@ -19,14 +19,14 @@ var (
 	regDataRange = regexp.MustCompile(`^\d+\-\d+$`)
 )
 
-func (fstore *FStore) prepareCache(cpath string, cacheId string, size uint64) (err error) {
-	fragmentBuffer := make([]byte, fstore.options.FragmentSize)
+func (fileStore *FileStore) prepareCache(cpath string, cacheId string, size uint64) (err error) {
+	fragmentBuffer := make([]byte, fileStore.options.FragmentSize)
 	for i := uint64(0); size > 0; {
 		fragmentFilename := ""
-		if size > fstore.options.FragmentSize {
-			fragmentFilename = fstore.getCacheFilename(cacheId, i, i+fstore.options.FragmentSize)
+		if size > fileStore.options.FragmentSize {
+			fragmentFilename = fileStore.getCacheFilename(cacheId, i, i+fileStore.options.FragmentSize)
 		} else {
-			fragmentFilename = fstore.getCacheFilename(cacheId, i, i+size)
+			fragmentFilename = fileStore.getCacheFilename(cacheId, i, i+size)
 			fragmentBuffer = make([]byte, size)
 		}
 
@@ -35,18 +35,18 @@ func (fstore *FStore) prepareCache(cpath string, cacheId string, size uint64) (e
 			return err
 		}
 
-		size -= fstore.options.FragmentSize
-		i += fstore.options.FragmentSize
+		size -= fileStore.options.FragmentSize
+		i += fileStore.options.FragmentSize
 	}
 	return
 }
 
 // cache fragment filename format `{cacheId}.{rangeStartIndex:inclusive}-{rangeEndIndex:exclusive}`
-func (fstore *FStore) getCacheFilename(cacheId string, rangeStart uint64, rangeEnd uint64) string {
+func (fileStore *FileStore) getCacheFilename(cacheId string, rangeStart uint64, rangeEnd uint64) string {
 	return fmt.Sprintf("%s.%d-%d", cacheId, rangeStart, rangeEnd)
 }
 
-func (fstore *FStore) loadCacheIds(cpath string) (err error) {
+func (fileStore *FileStore) loadCacheIds(cpath string) (err error) {
 	err = filepath.WalkDir(cpath, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -55,7 +55,7 @@ func (fstore *FStore) loadCacheIds(cpath string) (err error) {
 		filenameParts := strings.Split(filepath.Base(path), ".")
 		if len(filenameParts) == 2 {
 			if _, err := uuid.Parse(filenameParts[0]); err == nil {
-				fstore.allowedCacheIdMap[filenameParts[0]] = true
+				fileStore.allowedCacheIdMap[filenameParts[0]] = true
 			}
 		}
 		return nil
@@ -64,12 +64,12 @@ func (fstore *FStore) loadCacheIds(cpath string) (err error) {
 }
 
 // persist checksum format `{sha1:160bit:40hex}-{xxh3:128bit:32hex}-{size:64bit:16hex}`
-func (fstore *FStore) checksum(loading func(buffer []byte) error, apaths ...string) (sum string, err error) {
+func (fileStore *FileStore) checksum(loading func(buffer []byte) error, apaths ...string) (sum string, err error) {
 	if len(apaths) == 0 {
 		return "", nil
 	}
 
-	buffer := make([]byte, fstore.options.BufferSize)
+	buffer := make([]byte, fileStore.options.BufferSize)
 	size := uint64(0)
 	sha1New := sha1.New()
 	xxh3New := xxh3.New()
@@ -117,14 +117,14 @@ func (fstore *FStore) checksum(loading func(buffer []byte) error, apaths ...stri
 
 // persist checksum format `{sha1:160bit:40hex}-{xxh3:128bit:32hex}-{size:64bit:16hex}`
 // ext => ".txt", ".go"...
-func (fstore *FStore) persist(desDir string, ext string, tmpFilename string, apaths ...string) (filename string, err error) {
+func (fileStore *FileStore) persist(desDir string, ext string, tmpFilename string, apaths ...string) (filename string, err error) {
 	tmp, err := os.Create(tmpFilename)
 	if err != nil {
 		return "", err
 	}
 	defer tmp.Close()
 
-	sum, err := fstore.checksum(func(buffer []byte) error {
+	sum, err := fileStore.checksum(func(buffer []byte) error {
 		_, err := tmp.Write(buffer)
 		return err
 	}, apaths...)

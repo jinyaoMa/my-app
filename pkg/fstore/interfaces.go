@@ -2,7 +2,7 @@ package fstore
 
 import "os"
 
-type IFStore interface {
+type IFileStore interface {
 	GetFragmentSize() uint64
 	GetCurrentStorageMap() StorageMap
 	CreateStorage(apath string, replace ...bool) (storage *Storage, err error)
