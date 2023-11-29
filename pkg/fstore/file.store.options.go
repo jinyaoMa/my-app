@@ -12,7 +12,7 @@ const (
 	TB        = 1024 * GB
 )
 
-type Options struct {
+type FileStoreOptions struct {
 	base.Options
 	CacheFolderName string
 	ThresholdSize   uint64 // space tried to keep per storage
@@ -20,8 +20,8 @@ type Options struct {
 	FragmentSize    uint64 // cache file fragment size
 }
 
-func DefaultOptions() *Options {
-	return &Options{
+func DefaultFileStoreOptions() *FileStoreOptions {
+	return &FileStoreOptions{
 		CacheFolderName: ".cache",
 		ThresholdSize:   8 * GB,
 		BufferSize:      8 * KB,
@@ -29,6 +29,6 @@ func DefaultOptions() *Options {
 	}
 }
 
-func NewOptions(dst *Options) (*Options, error) {
-	return base.SimpleMerge(DefaultOptions(), dst)
+func NewFileStoreOptions(dst *FileStoreOptions) (*FileStoreOptions, error) {
+	return base.SimpleMerge(DefaultFileStoreOptions(), dst)
 }

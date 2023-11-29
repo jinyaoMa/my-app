@@ -14,7 +14,7 @@ import (
 
 type FileStore struct {
 	mount             IMount
-	options           *Options
+	options           *FileStoreOptions
 	storageMap        StorageMap      // pid: storage
 	allowedCacheIdMap map[string]bool // cacheId: active bool
 	crc32Table        *crc32.Table
@@ -290,8 +290,8 @@ func (fileStore *FileStore) GetCurrentStorageMap() StorageMap {
 	return fileStore.storageMap
 }
 
-func NewFileStore(mount IMount, options *Options) (fileStore *FileStore, iFilestore IFileStore, err error) {
-	options, err = NewOptions(options)
+func NewFileStore(mount IMount, options *FileStoreOptions) (fileStore *FileStore, iFilestore IFileStore, err error) {
+	options, err = NewFileStoreOptions(options)
 	if err != nil {
 		return nil, nil, err
 	}
