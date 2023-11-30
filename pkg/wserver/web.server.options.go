@@ -44,5 +44,5 @@ func DefaultWebServerOptions() *WebServerOptions {
 }
 
 func NewWebServerOptions(dst *WebServerOptions) (*WebServerOptions, error) {
-	return base.SimpleMerge(DefaultWebServerOptions(), dst)
+	return base.MergeOptions(DefaultWebServerOptions(), dst)
 }

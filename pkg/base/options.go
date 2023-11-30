@@ -26,7 +26,7 @@ func NewOptions() (*Options, IOptions) {
 	return options, options
 }
 
-func SimpleMerge[T IOptions](src T, dst T) (T, error) {
+func MergeOptions[T IOptions](src T, dst T) (T, error) {
 	if dst.HasMerged() {
 		return dst, nil
 	}

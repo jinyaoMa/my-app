@@ -34,5 +34,5 @@ func DefaultDBOptions() *DBOptions {
 }
 
 func NewDBOptions(dst *DBOptions) (*DBOptions, error) {
-	return base.SimpleMerge(DefaultDBOptions(), dst)
+	return base.MergeOptions(DefaultDBOptions(), dst)
 }

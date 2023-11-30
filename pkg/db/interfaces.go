@@ -15,3 +15,14 @@ type IEntity interface {
 	AfterCreate(tx *gorm.DB) (err error)
 	AfterSave(tx *gorm.DB) (err error)
 }
+
+type ICRUD[TEntity IEntity] interface {
+	BuildQuery(criteria *QueryCriteria, condition QueryCondition, includes ...string) (db *DB, err error)
+	Query(criteria *QueryCriteria, condition QueryCondition, includes ...string) (entities []TEntity, err error)
+	GetById(id int64) (entity TEntity, err error)
+	All() (entities []TEntity, err error)
+	FindOne(condition QueryCondition) (entity TEntity, err error)
+	Save(entity TEntity) (affected int64, err error)
+	SaveAll(entities []TEntity) (affected int64, err error)
+	Delete(id int64) (affected int64, err error)
+}

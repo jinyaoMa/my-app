@@ -30,5 +30,5 @@ func DefaultFileStoreOptions() *FileStoreOptions {
 }
 
 func NewFileStoreOptions(dst *FileStoreOptions) (*FileStoreOptions, error) {
-	return base.SimpleMerge(DefaultFileStoreOptions(), dst)
+	return base.MergeOptions(DefaultFileStoreOptions(), dst)
 }
