@@ -9,6 +9,7 @@ type IFileStore interface {
 	RemoveStorage(pid string) (err error)
 	SearchFile(filename string, cache ...bool) (apath string, err error)
 	SearchAndOpenFile(filename string, flag int, cache ...bool) (file *os.File, err error)
+	SearchAndCopyFile(filename string, newExt string, cache ...bool) (err error)
 	SearchFileAndGetData(filename string, rangeStart uint64, rangeEnd uint64, cache ...bool) (data []byte, err error)
 	PickAStorage(size uint64) (storage *Storage, cacheId string, err error)
 	GetUsage() (usage *Usage, err error)

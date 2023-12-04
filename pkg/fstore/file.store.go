@@ -8,6 +8,7 @@ import (
 	"my-app/pkg/base"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -18,6 +19,42 @@ type FileStore struct {
 	storageMap        StorageMap      // pid: storage
 	allowedCacheIdMap map[string]bool // cacheId: active bool
 	crc32Table        *crc32.Table
+}
+
+// SearchAndCopyFile implements IFileStore.
+func (fileStore *FileStore) SearchAndCopyFile(filename string, newExt string, cache ...bool) (err error) {
+	apath, err := fileStore.SearchFile(filename, cache...)
+	if err != nil {
+		return err
+	}
+
+	newExt = strings.TrimSpace(newExt)
+	oldExt := filepath.Ext(apath)
+	if strings.EqualFold(newExt, oldExt) {
+		e := fmt.Sprintf("newExt %s is the same as the old one %s", newExt, oldExt)
+		return errors.New(e)
+	}
+
+	newApath := base.GetFilepathWithoutExtension(apath) + newExt
+	if base.IsFileExists(newApath) {
+		e := fmt.Sprintf("newExt %s has been used", newExt)
+		return errors.New(e)
+	}
+
+	file, err := os.Open(apath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	newFile, err := os.Create(newApath)
+	if err != nil {
+		return err
+	}
+	defer newFile.Close()
+
+	buffer := make([]byte, fileStore.options.BufferSize)
+	_, err = io.CopyBuffer(newFile, file, buffer)
+	return
 }
 
 // SearchFileAndGetData implements IFileStore.

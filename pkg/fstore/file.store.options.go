@@ -24,8 +24,8 @@ func DefaultFileStoreOptions() *FileStoreOptions {
 	return &FileStoreOptions{
 		CacheFolderName: ".cache",
 		ThresholdSize:   8 * GB,
-		BufferSize:      8 * KB,
-		FragmentSize:    8 * MB,
+		BufferSize:      32 * KB,
+		FragmentSize:    16 * MB,
 	}
 }
 
