@@ -1,6 +1,8 @@
 package db
 
-import "gorm.io/gorm/clause"
+import (
+	"gorm.io/gorm/clause"
+)
 
 type CRUD[TEntity IEntity] struct {
 	db *DB
@@ -59,8 +61,11 @@ func (crud *CRUD[TEntity]) Delete(id int64) (affected int64, err error) {
 }
 
 // FindOne implements ICRUD.
-func (crud *CRUD[TEntity]) FindOne(condition QueryCondition) (entity TEntity, err error) {
-	tx := crud.db.Limit(1)
+func (crud *CRUD[TEntity]) FindOne(condition QueryCondition, includes ...string) (entity TEntity, err error) {
+	tx := crud.db.DB
+	for _, include := range includes {
+		tx = tx.Preload(include)
+	}
 	condition(func(query any, args ...any) {
 		tx = tx.Where(query, args...)
 	})
@@ -69,8 +74,12 @@ func (crud *CRUD[TEntity]) FindOne(condition QueryCondition) (entity TEntity, er
 }
 
 // GetById implements ICRUD.
-func (crud *CRUD[TEntity]) GetById(id int64) (entity TEntity, err error) {
-	err = crud.db.First(&entity, id).Error
+func (crud *CRUD[TEntity]) GetById(id int64, includes ...string) (entity TEntity, err error) {
+	tx := crud.db.DB
+	for _, include := range includes {
+		tx = tx.Preload(include)
+	}
+	err = tx.First(&entity, id).Error
 	return
 }
 
