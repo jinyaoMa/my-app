@@ -45,6 +45,37 @@ func (storage *Storage) SearchFile(filename string, cache ...bool) (apath string
 	return
 }
 
+func (storage *Storage) SearchFileByChecksum(checksum string, cache ...bool) (apath string, filename string, err error) {
+	if !storage.Valid {
+		e := fmt.Sprintf("storage %s invalid", storage.APath)
+		return "", "", errors.New(e)
+	}
+
+	target := storage.APath
+	if len(cache) > 0 && cache[0] {
+		target = storage.CPath
+	}
+
+	err = filepath.WalkDir(target, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if target == path {
+			return nil
+		}
+		if d.IsDir() {
+			return filepath.SkipDir
+		}
+		if strings.HasPrefix(d.Name(), checksum) {
+			apath = path
+			filename = d.Name()
+			return filepath.SkipAll
+		}
+		return nil
+	})
+	return
+}
+
 func (storage *Storage) SearchCache(cacheId string) (apaths []string, err error) {
 	if !storage.Valid {
 		e := fmt.Sprintf("storage %s invalid", storage.APath)

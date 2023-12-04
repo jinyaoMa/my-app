@@ -21,6 +21,19 @@ type FileStore struct {
 	crc32Table        *crc32.Table
 }
 
+// SearchFileByChecksum implements IFileStore.
+func (fileStore *FileStore) SearchFileByChecksum(checksum string, cache ...bool) (apath string, filename string, err error) {
+	for _, s := range fileStore.GetCurrentStorageMap() {
+		if s.Valid {
+			if apath, filename, err = s.SearchFileByChecksum(checksum, cache...); err == nil {
+				return apath, filename, nil
+			}
+		}
+	}
+	e := fmt.Sprintf("checksum %s not found", checksum)
+	return "", "", errors.New(e)
+}
+
 // SearchAndCopyFile implements IFileStore.
 func (fileStore *FileStore) SearchAndCopyFile(filename string, newExt string, cache ...bool) (err error) {
 	apath, err := fileStore.SearchFile(filename, cache...)
