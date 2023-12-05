@@ -1,6 +1,7 @@
 package db
 
 import (
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -59,6 +60,24 @@ func (crud *CRUD[TEntity]) BuildQuery(criteria *QueryCriteria, condition QueryCo
 // Delete implements ICRUD.
 func (crud *CRUD[TEntity]) Delete(id int64) (affected int64, err error) {
 	result := crud.db.Delete(new(TEntity), id)
+	affected = result.RowsAffected
+	err = result.Error
+	return
+}
+
+// DeleteBy implements ICRUD.
+func (crud *CRUD[TEntity]) DeleteBy(condition QueryCondition) (affected int64, err error) {
+	count := 0
+	tx := crud.db.DB
+	condition(func(query any, args ...any) {
+		tx = tx.Where(query, args...)
+		count++
+	})
+	if count == 0 {
+		err = gorm.ErrMissingWhereClause
+		return
+	}
+	result := tx.Delete(new(TEntity))
 	affected = result.RowsAffected
 	err = result.Error
 	return

@@ -19,6 +19,15 @@ func (db *DB) Session(cfg *gorm.Session) *DB {
 	}
 }
 
+func (db *DB) Transaction(fc func(tx *DB) error) error {
+	return db.DB.Transaction(func(tx *gorm.DB) error {
+		return fc(&DB{
+			DB:      tx,
+			options: db.options,
+		})
+	})
+}
+
 func (db *DB) SetupJoinTables(joinTables ...JoinTable) (err error) {
 	for _, joinTable := range joinTables {
 		if err = db.SetupJoinTable(joinTable.From, joinTable.Field, joinTable.To); err != nil {
