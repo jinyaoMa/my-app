@@ -13,7 +13,7 @@ type DBOptions struct {
 	base.Options
 	GormDialector gorm.Dialector
 	GormOptions   []gorm.Option
-	OnInitialized func(db *DB) (err error)
+	OnInitialized func(db *gorm.DB) (err error)
 	LoggerConfig  logger.Config
 }
 

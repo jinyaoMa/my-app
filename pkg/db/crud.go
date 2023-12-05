@@ -6,12 +6,12 @@ import (
 )
 
 type CRUD[TEntity IEntity] struct {
-	db *DB
+	db *gorm.DB
 }
 
 // All implements ICRUD.
 func (crud *CRUD[TEntity]) All(selected ...string) (entities []TEntity, err error) {
-	tx := crud.db.DB
+	tx := crud.db
 	if len(selected) > 0 {
 		tx = tx.Select(selected)
 	}
@@ -20,13 +20,13 @@ func (crud *CRUD[TEntity]) All(selected ...string) (entities []TEntity, err erro
 }
 
 // BuildQuery implements ICRUD.
-func (crud *CRUD[TEntity]) BuildQuery(criteria *QueryCriteria, condition QueryCondition, includes ...string) (db *DB, err error) {
+func (crud *CRUD[TEntity]) BuildQuery(criteria *QueryCriteria, condition QueryCondition, includes ...string) (tx *gorm.DB, err error) {
 	criteria, err = NewQueryCriteria(criteria)
 	if err != nil {
 		return nil, err
 	}
 
-	tx := crud.db.Limit(criteria.Size).Offset(criteria.Offset())
+	tx = crud.db.Limit(criteria.Size).Offset(criteria.Offset())
 
 	for _, include := range includes {
 		tx = tx.Preload(include)
@@ -51,10 +51,7 @@ func (crud *CRUD[TEntity]) BuildQuery(criteria *QueryCriteria, condition QueryCo
 		tx = tx.Where(query, args...)
 	})
 
-	return &DB{
-		options: crud.db.options,
-		DB:      tx,
-	}, nil
+	return tx, nil
 }
 
 // Delete implements ICRUD.
@@ -68,7 +65,7 @@ func (crud *CRUD[TEntity]) Delete(id int64) (affected int64, err error) {
 // DeleteBy implements ICRUD.
 func (crud *CRUD[TEntity]) DeleteBy(condition QueryCondition) (affected int64, err error) {
 	count := 0
-	tx := crud.db.DB
+	tx := crud.db
 	condition(func(query any, args ...any) {
 		tx = tx.Where(query, args...)
 		count++
@@ -85,7 +82,7 @@ func (crud *CRUD[TEntity]) DeleteBy(condition QueryCondition) (affected int64, e
 
 // FindOne implements ICRUD.
 func (crud *CRUD[TEntity]) FindOne(condition QueryCondition, includes ...string) (entity TEntity, err error) {
-	tx := crud.db.DB
+	tx := crud.db
 	for _, include := range includes {
 		tx = tx.Preload(include)
 	}
@@ -98,7 +95,7 @@ func (crud *CRUD[TEntity]) FindOne(condition QueryCondition, includes ...string)
 
 // GetById implements ICRUD.
 func (crud *CRUD[TEntity]) GetById(id int64, includes ...string) (entity TEntity, err error) {
-	tx := crud.db.DB
+	tx := crud.db
 	for _, include := range includes {
 		tx = tx.Preload(include)
 	}
@@ -148,7 +145,7 @@ func (crud *CRUD[TEntity]) Update(entity TEntity, selected []string, omitted ...
 	return
 }
 
-func NewCRUD[TEntity IEntity](db *DB) (crud *CRUD[TEntity], iCrud ICRUD[TEntity]) {
+func NewCRUD[TEntity IEntity](db *gorm.DB) (crud *CRUD[TEntity], iCrud ICRUD[TEntity]) {
 	crud = &CRUD[TEntity]{
 		db: db,
 	}

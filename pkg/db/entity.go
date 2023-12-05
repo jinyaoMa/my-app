@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Entity struct {
+type Entity[TEntity IEntity] struct {
 	ID        int64          `gorm:"primaryKey; autoIncrement" json:"id"`
 	CreatedAt time.Time      `gorm:"autoCreateTime" json:"createdAt"`
 	UpdatedAt time.Time      `gorm:"autoUpdateTime" json:"updatedAt"`
@@ -15,53 +15,55 @@ type Entity struct {
 }
 
 // AfterCreate implements IEntity
-func (entity *Entity) AfterCreate(tx *gorm.DB) (err error) {
+func (entity *Entity[TEntity]) AfterCreate(tx *gorm.DB) (err error) {
 	return
 }
 
 // AfterDelete implements IEntity
-func (entity *Entity) AfterDelete(tx *gorm.DB) (err error) {
+func (entity *Entity[TEntity]) AfterDelete(tx *gorm.DB) (err error) {
 	return
 }
 
 // AfterFind implements IEntity
-func (entity *Entity) AfterFind(tx *gorm.DB) (err error) {
+func (entity *Entity[TEntity]) AfterFind(tx *gorm.DB) (err error) {
 	return
 }
 
 // AfterSave implements IEntity
-func (entity *Entity) AfterSave(tx *gorm.DB) (err error) {
+func (entity *Entity[TEntity]) AfterSave(tx *gorm.DB) (err error) {
 	return
 }
 
 // AfterUpdate implements IEntity
-func (entity *Entity) AfterUpdate(tx *gorm.DB) (err error) {
+func (entity *Entity[TEntity]) AfterUpdate(tx *gorm.DB) (err error) {
 	return
 }
 
 // BeforeCreate implements IEntity
-func (entity *Entity) BeforeCreate(tx *gorm.DB) (err error) {
+func (entity *Entity[TEntity]) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
 // BeforeDelete implements IEntity
-func (entity *Entity) BeforeDelete(tx *gorm.DB) (err error) {
+func (entity *Entity[TEntity]) BeforeDelete(tx *gorm.DB) (err error) {
 	return
 }
 
 // BeforeSave implements IEntity
-func (entity *Entity) BeforeSave(tx *gorm.DB) (err error) {
+func (entity *Entity[TEntity]) BeforeSave(tx *gorm.DB) (err error) {
 	return
 }
 
 // BeforeUpdate implements IEntity
-func (entity *Entity) BeforeUpdate(tx *gorm.DB) (err error) {
-	if entity != nil {
-		entity.Version += 1
+func (entity *Entity[TEntity]) BeforeUpdate(tx *gorm.DB) (err error) {
+	entity.Version += 1
+	result := tx.Model(new(TEntity)).Where("id = ?", entity.ID).Update("Version", entity.Version)
+	if result.Error != nil {
+		return result.Error
 	}
 	return
 }
 
-func NewEntity(entity *Entity) IEntity {
+func NewEntity[TEntity IEntity](entity *Entity[TEntity]) IEntity {
 	return entity
 }

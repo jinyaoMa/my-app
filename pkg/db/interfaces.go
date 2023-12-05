@@ -17,7 +17,7 @@ type IEntity interface {
 }
 
 type ICRUD[TEntity IEntity] interface {
-	BuildQuery(criteria *QueryCriteria, condition QueryCondition, includes ...string) (db *DB, err error)
+	BuildQuery(criteria *QueryCriteria, condition QueryCondition, includes ...string) (tx *gorm.DB, err error)
 	Query(criteria *QueryCriteria, condition QueryCondition, includes ...string) (entities []TEntity, err error)
 	GetById(id int64, includes ...string) (entity TEntity, err error)
 	All(selected ...string) (entities []TEntity, err error)

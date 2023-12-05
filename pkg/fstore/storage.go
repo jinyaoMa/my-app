@@ -6,7 +6,12 @@ import (
 	"io/fs"
 	"my-app/pkg/base"
 	"path/filepath"
+	"regexp"
 	"strings"
+)
+
+var (
+	regDataRange = regexp.MustCompile(`^\d+\-\d+$`)
 )
 
 type StorageMap map[string]*Storage // pid: storage
@@ -76,6 +81,7 @@ func (storage *Storage) SearchFileByChecksum(checksum string, cache ...bool) (ap
 	return
 }
 
+// cache fragment filename format `{cacheId}.{rangeStartIndex:inclusive}-{rangeEndIndex:exclusive}`
 func (storage *Storage) SearchCache(cacheId string) (apaths []string, err error) {
 	if !storage.Valid {
 		e := fmt.Sprintf("storage %s invalid", storage.APath)

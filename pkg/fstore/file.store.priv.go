@@ -8,15 +8,10 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/google/uuid"
 	"github.com/zeebo/xxh3"
-)
-
-var (
-	regDataRange = regexp.MustCompile(`^\d+\-\d+$`)
 )
 
 func (fileStore *FileStore) prepareCache(cpath string, cacheId string, size uint64) (err error) {
@@ -63,7 +58,7 @@ func (fileStore *FileStore) loadCacheIds(cpath string) (err error) {
 	return err
 }
 
-// persist checksum format `{sha1:160bit:40hex}-{xxh3:128bit:32hex}-{size:64bit:16hex}`
+// persist checksum format `{sha1:160bit:40hex}{xxh3:128bit:32hex}{size:64bit:16hex}`
 func (fileStore *FileStore) checksum(loading func(buffer []byte) error, apaths ...string) (sum string, err error) {
 	if len(apaths) == 0 {
 		return "", nil
@@ -112,10 +107,10 @@ func (fileStore *FileStore) checksum(loading func(buffer []byte) error, apaths .
 
 	bsize := make([]byte, 8)
 	binary.BigEndian.PutUint64(bsize, size)
-	return fmt.Sprintf("%x-%x-%x", sha1New.Sum(nil), xxh3New.Sum128().Bytes(), bsize), nil
+	return fmt.Sprintf("%x%x%x", sha1New.Sum(nil), xxh3New.Sum128().Bytes(), bsize), nil
 }
 
-// persist checksum format `{sha1:160bit:40hex}-{xxh3:128bit:32hex}-{size:64bit:16hex}`
+// persist checksum format `{sha1:160bit:40hex}{xxh3:128bit:32hex}{size:64bit:16hex}`
 // ext => ".txt", ".go"...
 func (fileStore *FileStore) persist(desDir string, ext string, tmpFilename string, apaths ...string) (filename string, err error) {
 	tmp, err := os.Create(tmpFilename)

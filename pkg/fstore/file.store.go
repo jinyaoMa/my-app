@@ -221,8 +221,7 @@ func (fileStore *FileStore) FillCache(pid string, cacheId string, rangeStart uin
 		return "", err
 	}
 
-	crc32New := crc32.New(fileStore.crc32Table)
-	return fmt.Sprintf("%x", crc32New.Sum(nil)), nil
+	return fmt.Sprintf("%x", crc32.Checksum(data, fileStore.crc32Table)), nil
 }
 
 // GetUsage implements IFileStore.
