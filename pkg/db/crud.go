@@ -9,8 +9,12 @@ type CRUD[TEntity IEntity] struct {
 }
 
 // All implements ICRUD.
-func (crud *CRUD[TEntity]) All() (entities []TEntity, err error) {
-	err = crud.db.Find(&entities).Error
+func (crud *CRUD[TEntity]) All(selected ...string) (entities []TEntity, err error) {
+	tx := crud.db.DB
+	if len(selected) > 0 {
+		tx = tx.Select(selected)
+	}
+	err = tx.Find(&entities).Error
 	return
 }
 
@@ -90,7 +94,7 @@ func (crud *CRUD[TEntity]) Query(criteria *QueryCriteria, condition QueryConditi
 		return nil, err
 	}
 
-	err = tx.Find(&entities).Error
+	err = tx.Find(entities).Error
 	return
 }
 
@@ -104,7 +108,22 @@ func (crud *CRUD[TEntity]) Save(entity TEntity) (affected int64, err error) {
 
 // SaveAll implements ICRUD.
 func (crud *CRUD[TEntity]) SaveAll(entities []TEntity) (affected int64, err error) {
-	result := crud.db.Save(&entities)
+	result := crud.db.Save(entities)
+	affected = result.RowsAffected
+	err = result.Error
+	return
+}
+
+// Update implements ICRUD.
+func (crud *CRUD[TEntity]) Update(entity TEntity, selected []string, omitted ...string) (affected int64, err error) {
+	tx := crud.db.Model(&entity)
+	if len(selected) > 0 {
+		tx = tx.Select(selected)
+	}
+	if len(omitted) > 0 {
+		tx = tx.Omit(omitted...)
+	}
+	result := tx.Updates(entity)
 	affected = result.RowsAffected
 	err = result.Error
 	return
