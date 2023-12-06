@@ -7,11 +7,11 @@ import (
 )
 
 type Entity[TEntity IEntity] struct {
-	ID        int64          `gorm:"primaryKey; autoIncrement" json:"id"`
+	ID        uint64         `gorm:"primaryKey; autoIncrement" json:"id"`
 	CreatedAt time.Time      `gorm:"autoCreateTime" json:"createdAt"`
 	UpdatedAt time.Time      `gorm:"autoUpdateTime" json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt"`
-	Version   int64          `gorm:"default:1; <-:update" json:"version"`
+	Version   uint64         `gorm:"default:1; <-:update" json:"version"`
 }
 
 // AfterCreate implements IEntity

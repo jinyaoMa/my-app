@@ -12,7 +12,7 @@ type FileExtension struct {
 	Ext  string         `gorm:""` // er. .jpg include period
 
 	/* belongs to */
-	FileCategoryID int64        `gorm:""`
+	FileCategoryID *uint64      `gorm:""`
 	FileCategory   FileCategory `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 
 	/* has many */

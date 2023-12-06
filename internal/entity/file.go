@@ -21,9 +21,9 @@ type File struct {
 	Checksum string `gorm:"size:88; index"`
 
 	/* belongs to */
-	UserID          int64         `gorm:""`
+	UserID          uint64        `gorm:""`
 	User            User          `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	FileExtensionID int64         `gorm:""`
+	FileExtensionID uint64        `gorm:""`
 	FileExtension   FileExtension `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
