@@ -3,20 +3,20 @@ package base
 import "strings"
 
 var (
-	CodeDigitRunes = []rune{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}
+	CodeDigits = []string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
 )
 
-func GenerateCode(size uint, runes ...rune) string {
+func GenerateCode(size uint, chars ...string) string {
 	builder := new(strings.Builder)
-	num := len(runes)
+	num := len(chars)
 	if num > 0 {
 		for i := uint(0); i < size; i++ {
-			builder.WriteRune(runes[randGenerator.Intn(num)])
+			builder.WriteString(chars[randGenerator.Intn(num)])
 		}
 	} else {
-		num := len(CodeDigitRunes)
+		num := len(CodeDigits)
 		for i := uint(0); i < size; i++ {
-			builder.WriteRune(CodeDigitRunes[randGenerator.Intn(num)])
+			builder.WriteString(CodeDigits[randGenerator.Intn(num)])
 		}
 	}
 	return builder.String()
