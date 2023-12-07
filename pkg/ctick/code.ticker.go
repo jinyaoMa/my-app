@@ -6,27 +6,38 @@ import (
 )
 
 type CodeTicker struct {
-	options     *CodeTickerOptions
-	code        string
-	expiredTime time.Time
-	ticker      *time.Ticker
-	reset       chan *CodeTickerOptions
-	done        chan bool
+	options   *CodeTickerOptions
+	token     *CodeToken
+	ticker    *time.Ticker
+	resetChan chan *CodeTickerOptions
+	getChan   chan chan *CodeToken
+	doneChan  chan bool
+}
+
+type CodeToken struct {
+	Code        string
+	ExpiredTime time.Time
 }
 
 // Done implements ICodeTicker.
 func (codeTicker *CodeTicker) Done() {
-	close(codeTicker.done)
+	codeTicker.Stop()
+	close(codeTicker.doneChan)
 }
 
 // Get implements ICodeTicker.
-func (codeTicker *CodeTicker) Get() (code string, expiredTime time.Time) {
-	return codeTicker.code, codeTicker.expiredTime
+func (codeTicker *CodeTicker) Get() (ticket *CodeToken) {
+	tokenChan := make(chan *CodeToken, 1)
+	defer close(tokenChan)
+
+	codeTicker.getChan <- tokenChan
+	ticket = <-tokenChan
+	return
 }
 
 // Reset implements ICodeTicker.
 func (codeTicker *CodeTicker) Reset(options *CodeTickerOptions) {
-	codeTicker.reset <- options
+	codeTicker.resetChan <- options
 }
 
 // Stop implements ICodeTicker.
@@ -36,12 +47,17 @@ func (codeTicker *CodeTicker) Stop() {
 
 // Verify implements ICodeTicker.
 func (codeTicker *CodeTicker) Verify(code string) bool {
-	return codeTicker.code == code
+	return codeTicker.token.Code == code
 }
 
 func (codeTicker *CodeTicker) refresh() {
-	codeTicker.code = base.GenerateCode(codeTicker.options.Size, codeTicker.options.Chars...)
-	codeTicker.expiredTime = time.Now().Add(codeTicker.options.Expiration)
+	codeTicker.token.Code = base.GenerateCode(codeTicker.options.Size, codeTicker.options.Chars...)
+	codeTicker.token.ExpiredTime = time.Now().Add(codeTicker.options.Expiration)
+}
+
+func (codeTicker *CodeTicker) reset(options *CodeTickerOptions) {
+	codeTicker.refresh()
+	codeTicker.ticker.Reset(options.Expiration)
 }
 
 func NewCodeTicker(options *CodeTickerOptions) (codeTicker *CodeTicker, iCodeTicker ICodeTicker, err error) {
@@ -51,21 +67,25 @@ func NewCodeTicker(options *CodeTickerOptions) (codeTicker *CodeTicker, iCodeTic
 	}
 
 	codeTicker = &CodeTicker{
-		options:     options,
-		code:        base.GenerateCode(options.Size, options.Chars...),
-		expiredTime: time.Now().Add(options.Expiration),
-		ticker:      time.NewTicker(options.Expiration),
-		reset:       make(chan *CodeTickerOptions),
-		done:        make(chan bool),
+		options: options,
+		token: &CodeToken{
+			Code:        base.GenerateCode(options.Size, options.Chars...),
+			ExpiredTime: time.Now().Add(options.Expiration),
+		},
+		ticker:    time.NewTicker(options.Expiration),
+		resetChan: make(chan *CodeTickerOptions),
+		getChan:   make(chan chan *CodeToken),
+		doneChan:  make(chan bool),
 	}
 	go func(codeTicker *CodeTicker) {
 		for {
 			select {
-			case <-codeTicker.done:
+			case <-codeTicker.doneChan:
 				return
-			case codeTicker.options = <-codeTicker.reset:
-				codeTicker.refresh()
-				codeTicker.ticker.Reset(options.Expiration)
+			case options := <-codeTicker.resetChan:
+				codeTicker.reset(options)
+			case tokenChan := <-codeTicker.getChan:
+				tokenChan <- codeTicker.token
 			case <-codeTicker.ticker.C:
 				codeTicker.refresh()
 			}
