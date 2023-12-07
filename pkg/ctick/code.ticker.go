@@ -2,27 +2,24 @@ package ctick
 
 import (
 	"my-app/pkg/base"
+	"reflect"
+	"runtime"
 	"time"
 )
 
 type CodeTicker struct {
+	command   base.ICommand
 	options   *CodeTickerOptions
 	token     *CodeToken
 	ticker    *time.Ticker
 	resetChan chan *CodeTickerOptions
 	getChan   chan chan *CodeToken
-	doneChan  chan bool
 }
 
-type CodeToken struct {
-	Code        string
-	ExpiredTime time.Time
-}
-
-// Done implements ICodeTicker.
-func (codeTicker *CodeTicker) Done() {
-	codeTicker.Stop()
-	close(codeTicker.doneChan)
+// Close implements ICodeTicker.
+func (codeTicker *CodeTicker) Close() {
+	codeTicker.ticker.Stop()
+	codeTicker.command.Close()
 }
 
 // Get implements ICodeTicker.
@@ -38,11 +35,6 @@ func (codeTicker *CodeTicker) Get() (ticket *CodeToken) {
 // Reset implements ICodeTicker.
 func (codeTicker *CodeTicker) Reset(options *CodeTickerOptions) {
 	codeTicker.resetChan <- options
-}
-
-// Stop implements ICodeTicker.
-func (codeTicker *CodeTicker) Stop() {
-	codeTicker.ticker.Stop()
 }
 
 // Verify implements ICodeTicker.
@@ -73,23 +65,33 @@ func NewCodeTicker(options *CodeTickerOptions) (codeTicker *CodeTicker, iCodeTic
 			ExpiredTime: time.Now().Add(options.Expiration),
 		},
 		ticker:    time.NewTicker(options.Expiration),
-		resetChan: make(chan *CodeTickerOptions),
-		getChan:   make(chan chan *CodeToken),
-		doneChan:  make(chan bool),
+		resetChan: make(chan *CodeTickerOptions, 1),
+		getChan:   make(chan chan *CodeToken, runtime.NumCPU()),
 	}
-	go func(codeTicker *CodeTicker) {
-		for {
-			select {
-			case <-codeTicker.doneChan:
-				return
-			case options := <-codeTicker.resetChan:
+
+	_, codeTicker.command = base.NewCommand(&base.CommandCase{
+		Chan: reflect.ValueOf(codeTicker.resetChan),
+		Callback: func(recv reflect.Value, ok bool) bool {
+			if options, ok := recv.Interface().(*CodeTickerOptions); ok {
 				codeTicker.reset(options)
-			case tokenChan := <-codeTicker.getChan:
-				tokenChan <- codeTicker.token
-			case <-codeTicker.ticker.C:
-				codeTicker.refresh()
 			}
-		}
-	}(codeTicker)
+			return false
+		},
+	}, &base.CommandCase{
+		Chan: reflect.ValueOf(codeTicker.getChan),
+		Callback: func(recv reflect.Value, ok bool) bool {
+			if tokenChan, ok := recv.Interface().(chan *CodeToken); ok {
+				tokenChan <- codeTicker.token
+			}
+			return false
+		},
+	}, &base.CommandCase{
+		Chan: reflect.ValueOf(codeTicker.ticker.C),
+		Callback: func(recv reflect.Value, ok bool) bool {
+			codeTicker.refresh()
+			return false
+		},
+	})
+	codeTicker.command.Open()
 	return codeTicker, codeTicker, nil
 }
