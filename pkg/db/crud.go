@@ -6,12 +6,12 @@ import (
 )
 
 type CRUD[TEntity IEntity] struct {
-	db *gorm.DB
+	session *gorm.DB
 }
 
 // All implements ICRUD.
 func (crud *CRUD[TEntity]) All(selected ...string) (entities []TEntity, err error) {
-	tx := crud.db
+	tx := crud.session
 	if len(selected) > 0 {
 		tx = tx.Select(selected)
 	}
@@ -26,7 +26,7 @@ func (crud *CRUD[TEntity]) BuildQuery(criteria *QueryCriteria, condition QueryCo
 		return nil, err
 	}
 
-	tx = crud.db.Limit(criteria.Size).Offset(criteria.Offset())
+	tx = crud.session.Limit(criteria.Size).Offset(criteria.Offset())
 
 	for _, include := range includes {
 		tx = tx.Preload(include)
@@ -56,7 +56,7 @@ func (crud *CRUD[TEntity]) BuildQuery(criteria *QueryCriteria, condition QueryCo
 
 // Delete implements ICRUD.
 func (crud *CRUD[TEntity]) Delete(id int64) (affected int64, err error) {
-	result := crud.db.Delete(new(TEntity), id)
+	result := crud.session.Delete(new(TEntity), id)
 	affected = result.RowsAffected
 	err = result.Error
 	return
@@ -65,7 +65,7 @@ func (crud *CRUD[TEntity]) Delete(id int64) (affected int64, err error) {
 // DeleteBy implements ICRUD.
 func (crud *CRUD[TEntity]) DeleteBy(condition QueryCondition) (affected int64, err error) {
 	count := 0
-	tx := crud.db
+	tx := crud.session
 	condition(func(query any, args ...any) {
 		tx = tx.Where(query, args...)
 		count++
@@ -82,7 +82,7 @@ func (crud *CRUD[TEntity]) DeleteBy(condition QueryCondition) (affected int64, e
 
 // FindOne implements ICRUD.
 func (crud *CRUD[TEntity]) FindOne(condition QueryCondition, includes ...string) (entity TEntity, err error) {
-	tx := crud.db
+	tx := crud.session
 	for _, include := range includes {
 		tx = tx.Preload(include)
 	}
@@ -95,7 +95,7 @@ func (crud *CRUD[TEntity]) FindOne(condition QueryCondition, includes ...string)
 
 // GetById implements ICRUD.
 func (crud *CRUD[TEntity]) GetById(id int64, includes ...string) (entity TEntity, err error) {
-	tx := crud.db
+	tx := crud.session
 	for _, include := range includes {
 		tx = tx.Preload(include)
 	}
@@ -116,7 +116,7 @@ func (crud *CRUD[TEntity]) Query(criteria *QueryCriteria, condition QueryConditi
 
 // Save implements ICRUD.
 func (crud *CRUD[TEntity]) Save(entity TEntity) (affected int64, err error) {
-	result := crud.db.Save(&entity)
+	result := crud.session.Save(&entity)
 	affected = result.RowsAffected
 	err = result.Error
 	return
@@ -124,7 +124,7 @@ func (crud *CRUD[TEntity]) Save(entity TEntity) (affected int64, err error) {
 
 // SaveAll implements ICRUD.
 func (crud *CRUD[TEntity]) SaveAll(entities []TEntity) (affected int64, err error) {
-	result := crud.db.Save(entities)
+	result := crud.session.Save(entities)
 	affected = result.RowsAffected
 	err = result.Error
 	return
@@ -132,7 +132,7 @@ func (crud *CRUD[TEntity]) SaveAll(entities []TEntity) (affected int64, err erro
 
 // Update implements ICRUD.
 func (crud *CRUD[TEntity]) Update(entity TEntity, selected []string, omitted ...string) (affected int64, err error) {
-	tx := crud.db.Model(&entity)
+	tx := crud.session.Model(&entity)
 	if len(selected) > 0 {
 		tx = tx.Select(selected)
 	}
@@ -145,9 +145,9 @@ func (crud *CRUD[TEntity]) Update(entity TEntity, selected []string, omitted ...
 	return
 }
 
-func NewCRUD[TEntity IEntity](db *gorm.DB) (crud *CRUD[TEntity], iCrud ICRUD[TEntity]) {
+func NewCRUD[TEntity IEntity](session *gorm.DB) (crud *CRUD[TEntity], iCrud ICRUD[TEntity]) {
 	crud = &CRUD[TEntity]{
-		db: db,
+		session: session,
 	}
 	return crud, crud
 }
