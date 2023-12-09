@@ -96,7 +96,7 @@ func NewAesWithSalt(password string, saltHeaders ...string) (saltedAES *SaltedAE
 	saltedAES = &SaltedAES{
 		password:         []byte(password),
 		saltHeader:       saltHeaders[0],
-		saltHeaderLength: len(saltHeaders[0]),
+		saltHeaderLength: len([]byte(saltHeaders[0])),
 	}
 	return saltedAES, saltedAES
 }

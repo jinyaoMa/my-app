@@ -1,8 +1,10 @@
 package entity
 
 import (
+	"encoding/hex"
 	"my-app/pkg/db"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -38,4 +40,21 @@ func (user *User) BeforeUpdate(tx *gorm.DB) (err error) {
 		Password: user.Password,
 	})
 	return
+}
+
+func (user *User) HashPassword(cost int) (err error) {
+	bPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), cost)
+	if err != nil {
+		return err
+	}
+	user.Password = hex.EncodeToString(bPassword)
+	return
+}
+
+func (user *User) VerifyPassword(plain string) (ok bool) {
+	bPassword, err := hex.DecodeString(user.Password)
+	if err != nil {
+		return false
+	}
+	return bcrypt.CompareHashAndPassword(bPassword, []byte(plain)) == nil
 }
