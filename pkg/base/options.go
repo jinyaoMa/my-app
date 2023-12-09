@@ -2,27 +2,22 @@ package base
 
 import "dario.cat/mergo"
 
-type IOptions interface {
-	HasMerged() bool
-	SetMerged(merged bool)
-}
-
 type Options struct {
-	Merged bool
+	merged bool
 }
 
 // GetMerged implements IOptions.
 func (options *Options) HasMerged() bool {
-	return options.Merged
+	return options.merged
 }
 
 // SetMerged implements IOptions.
 func (options *Options) SetMerged(merged bool) {
-	options.Merged = merged
+	options.merged = merged
 }
 
-func NewOptions() (*Options, IOptions) {
-	options := new(Options)
+func NewOptions() (options *Options, iOptions IOptions) {
+	options = new(Options)
 	return options, options
 }
 

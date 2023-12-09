@@ -2,6 +2,11 @@ package base
 
 import "io/fs"
 
+type IOptions interface {
+	HasMerged() bool
+	SetMerged(merged bool)
+}
+
 type IAssets interface {
 	ReadBytes(path string) (bytes []byte, err error)
 	Sub(dir string) (subAssets IAssets, err error)
