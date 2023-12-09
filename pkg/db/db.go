@@ -7,7 +7,7 @@ import (
 	gormLogger "gorm.io/gorm/logger"
 )
 
-func NewDB(logger *log.Logger, options *DBOptions) (db *gorm.DB, err error) {
+func Open(logger *log.Logger, options *DBOptions) (db *gorm.DB, err error) {
 	options, err = NewDBOptions(options)
 	if err != nil {
 		return nil, err
@@ -20,7 +20,7 @@ func NewDB(logger *log.Logger, options *DBOptions) (db *gorm.DB, err error) {
 
 	db.Logger = gormLogger.New(logger, options.LoggerConfig)
 
-	err = options.OnInitialized(db)
+	err = options.OnOpened(db)
 	if err != nil {
 		return
 	}

@@ -5,11 +5,6 @@ import (
 	"sync"
 )
 
-type ICommand interface {
-	Open()
-	Close()
-}
-
 type CommandCase struct {
 	Chan     reflect.Value // channel to receive signal
 	Callback func(recv reflect.Value, ok bool) (quit bool)

@@ -64,6 +64,6 @@ func (entity *Entity[TEntity]) BeforeUpdate(tx *gorm.DB) (err error) {
 	return
 }
 
-func NewEntity[TEntity IEntity](entity *Entity[TEntity]) IEntity {
-	return entity
+func NewEntity[TEntity IEntity](entity *Entity[TEntity]) (entity_ *Entity[TEntity], iEntity IEntity) {
+	return entity, entity
 }

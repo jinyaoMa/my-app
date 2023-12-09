@@ -21,7 +21,7 @@ func (assets *Assets) ReadBytes(path string) (bytes []byte, err error) {
 	return
 }
 
-func (assets *Assets) Sub(dir string) (subAssets *Assets, err error) {
+func (assets *Assets) Sub(dir string) (subAssets IAssets, err error) {
 	sub, err := fs.Sub(assets, dir)
 	if err != nil {
 		return nil, err
@@ -43,9 +43,9 @@ func (assets *Assets) WalkFiles(dir string, fn func(path string, filename string
 	})
 }
 
-func NewAssets(apath string) (assets *Assets) {
+func NewAssets(apath string) (assets *Assets, iAssets IAssets) {
 	assets = &Assets{
 		FS: os.DirFS(apath),
 	}
-	return assets
+	return assets, assets
 }
