@@ -94,27 +94,44 @@ func (i18n *I18n[TTranslation]) Locale(locales ...string) (currentLocale string)
 	return i18n.currentLocale
 }
 
-func (i18n *I18n[TTranslation]) T() (translation TTranslation) {
-	if translation, ok := i18n.translationMap[i18n.currentLocale]; ok {
+func (i18n *I18n[TTranslation]) Translation(locales ...string) (translation TTranslation) {
+	target := i18n.currentLocale
+	if len(locales) == 1 {
+		target = locales[0]
+	}
+	if translation, ok := i18n.translationMap[target]; ok {
 		return translation
 	}
 	return i18n.options.Placeholder
 }
 
-func NewI18n[TTranslation ITranslation](options *I18nOptions[TTranslation]) (i18n *I18n[TTranslation], err error) {
+func (i18n *I18n[TTranslation]) Translations(locales ...string) (translations []TTranslation) {
+	if len(locales) > 0 {
+		for _, locale := range locales {
+			if translation, ok := i18n.translationMap[locale]; ok {
+				translations = append(translations, translation)
+			}
+		}
+		return
+	}
+	return i18n.translations
+}
+
+func NewI18n[TTranslation ITranslation](options *I18nOptions[TTranslation]) (i18n *I18n[TTranslation], iI18n II18n[TTranslation], err error) {
 	options, err = NewI18nOptions(options)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if err := os.MkdirAll(options.APath, os.ModeDir); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return &I18n[TTranslation]{
+	i18n = &I18n[TTranslation]{
 		options:        options,
 		availLocales:   make([]string, 0, 18),
 		translations:   make([]TTranslation, 0, 18),
 		translationMap: make(map[string]TTranslation),
-	}, nil
+	}
+	return i18n, i18n, nil
 }

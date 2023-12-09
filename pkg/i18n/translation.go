@@ -25,6 +25,6 @@ func (translation *Translation) SetLocale(locale string) {
 	translation.Locale = locale
 }
 
-func NewTranslation(translation *Translation) ITranslation {
-	return translation
+func NewTranslation(translation *Translation) (translation_ *Translation, iTranslation ITranslation) {
+	return translation, translation
 }

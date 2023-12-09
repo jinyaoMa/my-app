@@ -93,10 +93,10 @@ func (j *JWT[TClaims]) RefreshToken(accessToken string, refreshToken string) (ne
 	return j.GenerateToken(claims)
 }
 
-func NewJWT[TClaims IClaims](crypto crypto.ICrypto, options *JWTOptions) (j *JWT[TClaims], iJWT IJWT[TClaims]) {
-	j = &JWT[TClaims]{
+func NewJWT[TClaims IClaims](crypto crypto.ICrypto, options *JWTOptions) (jwt *JWT[TClaims], iJWT IJWT[TClaims]) {
+	jwt = &JWT[TClaims]{
 		options: options,
 		crypto:  crypto,
 	}
-	return j, j
+	return jwt, jwt
 }
