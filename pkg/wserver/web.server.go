@@ -43,7 +43,11 @@ func (webServer *WebServer) Start(options *WebServerOptions) (ok bool) {
 		if !webServer.isRunning {
 			// stopped, can start
 			if options, err := NewWebServerOptions(options); err == nil {
+				webServer.hasErrors = false
 				return webServer.start(options)
+			} else {
+				webServer.logger.Printf("server start error: %+v\n", err)
+				webServer.hasErrors = true
 			}
 		}
 	}

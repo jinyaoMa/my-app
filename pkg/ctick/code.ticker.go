@@ -2,54 +2,44 @@ package ctick
 
 import (
 	"my-app/pkg/base"
-	"reflect"
 	"runtime"
 	"time"
 )
 
 type CodeTicker struct {
-	command   base.ICommand
-	options   *CodeTickerOptions
-	token     *CodeToken
-	ticker    *time.Ticker
-	resetChan chan *CodeTickerOptions
-	getChan   chan chan *CodeToken
+	options *CodeTickerOptions
+	token   *CodeToken
+	ticker  *time.Ticker
+	resetCh chan *CodeTickerOptions
+	getCh   chan chan *CodeToken
+	closeCh chan struct{}
 }
 
 // Close implements ICodeTicker.
 func (codeTicker *CodeTicker) Close() {
 	codeTicker.ticker.Stop()
-	codeTicker.command.Close()
+	close(codeTicker.closeCh)
+	codeTicker.closeCh = make(chan struct{})
 }
 
 // Get implements ICodeTicker.
 func (codeTicker *CodeTicker) Get() (ticket *CodeToken) {
-	tokenChan := make(chan *CodeToken, 1)
-	defer close(tokenChan)
+	tokenCh := make(chan *CodeToken, 1)
+	defer close(tokenCh)
 
-	codeTicker.getChan <- tokenChan
-	ticket = <-tokenChan
+	codeTicker.getCh <- tokenCh
+	ticket = <-tokenCh
 	return
 }
 
 // Reset implements ICodeTicker.
 func (codeTicker *CodeTicker) Reset(options *CodeTickerOptions) {
-	codeTicker.resetChan <- options
+	codeTicker.resetCh <- options
 }
 
 // Verify implements ICodeTicker.
 func (codeTicker *CodeTicker) Verify(code string) bool {
 	return codeTicker.token.Code == code
-}
-
-func (codeTicker *CodeTicker) refresh() {
-	codeTicker.token.Code = base.GenerateCode(codeTicker.options.Size, codeTicker.options.Chars...)
-	codeTicker.token.ExpiredTime = time.Now().Add(codeTicker.options.Expiration)
-}
-
-func (codeTicker *CodeTicker) reset(options *CodeTickerOptions) {
-	codeTicker.refresh()
-	codeTicker.ticker.Reset(options.Expiration)
 }
 
 func NewCodeTicker(options *CodeTickerOptions) (codeTicker *CodeTicker, iCodeTicker ICodeTicker, err error) {
@@ -64,34 +54,11 @@ func NewCodeTicker(options *CodeTickerOptions) (codeTicker *CodeTicker, iCodeTic
 			Code:        base.GenerateCode(options.Size, options.Chars...),
 			ExpiredTime: time.Now().Add(options.Expiration),
 		},
-		ticker:    time.NewTicker(options.Expiration),
-		resetChan: make(chan *CodeTickerOptions, 1),
-		getChan:   make(chan chan *CodeToken, runtime.NumCPU()),
+		ticker:  time.NewTicker(options.Expiration),
+		resetCh: make(chan *CodeTickerOptions, 1),
+		getCh:   make(chan chan *CodeToken, runtime.NumCPU()),
+		closeCh: make(chan struct{}),
 	}
-
-	_, codeTicker.command = base.NewCommand(&base.CommandCase{
-		Chan: reflect.ValueOf(codeTicker.resetChan),
-		Callback: func(recv reflect.Value, ok bool) bool {
-			if options, ok := recv.Interface().(*CodeTickerOptions); ok {
-				codeTicker.reset(options)
-			}
-			return false
-		},
-	}, &base.CommandCase{
-		Chan: reflect.ValueOf(codeTicker.getChan),
-		Callback: func(recv reflect.Value, ok bool) bool {
-			if tokenChan, ok := recv.Interface().(chan *CodeToken); ok {
-				tokenChan <- codeTicker.token
-			}
-			return false
-		},
-	}, &base.CommandCase{
-		Chan: reflect.ValueOf(codeTicker.ticker.C),
-		Callback: func(recv reflect.Value, ok bool) bool {
-			codeTicker.refresh()
-			return false
-		},
-	})
-	codeTicker.command.Open()
+	go codeTicker.routine()
 	return codeTicker, codeTicker, nil
 }
