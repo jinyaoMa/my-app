@@ -10,6 +10,10 @@ type Configs struct {
 	FileStore
 }
 
+func DefaultConfigs() (cfg *Configs, err error) {
+	return &Configs{}, nil
+}
+
 func NewConfigs(path string) (cfg *Configs, err error) {
 	var iniFile *ini.File
 	iniFile, err = ini.LooseLoad(path)
@@ -17,7 +21,7 @@ func NewConfigs(path string) (cfg *Configs, err error) {
 		return nil, err
 	}
 
-	cfg, err = Default()
+	cfg, err = DefaultConfigs()
 	if err != nil {
 		return nil, err
 	}
