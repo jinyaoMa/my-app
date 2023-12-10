@@ -8,6 +8,7 @@ import (
 )
 
 type MenuItem[TTranslation i18n.ITranslation] struct {
+	Key  string
 	bind *systray.MenuItem
 
 	/* style */
@@ -19,22 +20,9 @@ type MenuItem[TTranslation i18n.ITranslation] struct {
 	Enabled bool
 	Checked bool
 
-	OnClick func(ctx context.Context) (quit bool)
-	SubMenu []*MenuItem[TTranslation]
-}
-
-func (menuItem *MenuItem[TTranslation]) TemplateIcon(translation TTranslation) (templateIconBytes []byte, regularIconBytes []byte) {
-	panic("unimplemented")
-}
-
-func (menuItem *MenuItem[TTranslation]) Title(translation TTranslation) string {
-	panic("unimplemented")
-}
-
-func (menuItem *MenuItem[TTranslation]) Tooltip(translation TTranslation) string {
-	panic("unimplemented")
-}
-
-func NewMenuItem[TTranslation i18n.ITranslation]() *MenuItem[TTranslation] {
-	return &MenuItem[TTranslation]{}
+	TemplateIcon func(translation TTranslation) (templateIconBytes []byte, regularIconBytes []byte)
+	Title        func(translation TTranslation) string
+	Tooltip      func(translation TTranslation) string
+	OnClick      func(menuitem *MenuItem[TTranslation], ctx context.Context) (quit bool)
+	SubMenu      []*MenuItem[TTranslation]
 }

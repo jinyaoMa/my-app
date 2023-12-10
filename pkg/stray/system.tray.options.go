@@ -14,7 +14,17 @@ type SystemTrayOptions[TTranslation i18n.ITranslation] struct {
 }
 
 func DefaultSystemTrayOptions[TTranslation i18n.ITranslation]() *SystemTrayOptions[TTranslation] {
-	return &SystemTrayOptions[TTranslation]{}
+	return &SystemTrayOptions[TTranslation]{
+		TemplateIcon: func(translation TTranslation) (templateIconBytes []byte, regularIconBytes []byte) {
+			return
+		},
+		Title: func(translation TTranslation) string {
+			return ""
+		},
+		Tooltip: func(translation TTranslation) string {
+			return ""
+		},
+	}
 }
 
 func NewSystemTrayOptions[TTranslation i18n.ITranslation](dst *SystemTrayOptions[TTranslation]) (*SystemTrayOptions[TTranslation], error) {

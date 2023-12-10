@@ -23,7 +23,7 @@ func (tray *systemTray[TTranslation]) routine() {
 	}
 	for {
 		chosen, _, _ := reflect.Select(cases)
-		if menuitems[chosen].OnClick != nil && menuitems[chosen].OnClick(tray.ctx) {
+		if menuitems[chosen].OnClick != nil && menuitems[chosen].OnClick(menuitems[chosen], tray.ctx) {
 			break
 		}
 	}
@@ -44,20 +44,25 @@ func (tray *systemTray[TTranslation]) flat(items ...*MenuItem[TTranslation]) (me
 }
 
 func (tray *systemTray[TTranslation]) update(items ...*MenuItem[TTranslation]) {
+	var menu []*MenuItem[TTranslation]
 	var templateIconBytes, regularIconBytes []byte
 	var title, tooltip string
-	var menu []*MenuItem[TTranslation]
 
 	if len(items) > 0 {
-		templateIconBytes, regularIconBytes = items[0].TemplateIcon(tray.translation)
-		title = items[0].Title(tray.translation)
-		tooltip = items[0].Tooltip(tray.translation)
 		menu = items[0].SubMenu
-
 		menuitem := items[0].bind
-		menuitem.SetTemplateIcon(templateIconBytes, regularIconBytes)
-		menuitem.SetTitle(title)
-		menuitem.SetTooltip(tooltip)
+		if items[0].TemplateIcon != nil {
+			templateIconBytes, regularIconBytes = items[0].TemplateIcon(tray.translation)
+			menuitem.SetTemplateIcon(templateIconBytes, regularIconBytes)
+		}
+		if items[0].Title != nil {
+			title = items[0].Title(tray.translation)
+			menuitem.SetTitle(title)
+		}
+		if items[0].Tooltip != nil {
+			tooltip = items[0].Tooltip(tray.translation)
+			menuitem.SetTooltip(tooltip)
+		}
 
 		if items[0].Visible {
 			menuitem.Show()
@@ -75,14 +80,19 @@ func (tray *systemTray[TTranslation]) update(items ...*MenuItem[TTranslation]) {
 			menuitem.Hide()
 		}
 	} else {
-		templateIconBytes, regularIconBytes = tray.options.TemplateIcon(tray.translation)
-		title = tray.options.Title(tray.translation)
-		tooltip = tray.options.Tooltip(tray.translation)
 		menu = tray.options.Menu
-
-		systray.SetTemplateIcon(templateIconBytes, regularIconBytes)
-		systray.SetTitle(title)
-		systray.SetTooltip(tooltip)
+		if tray.options.TemplateIcon != nil {
+			templateIconBytes, regularIconBytes = tray.options.TemplateIcon(tray.translation)
+			systray.SetTemplateIcon(templateIconBytes, regularIconBytes)
+		}
+		if tray.options.Title != nil {
+			title = tray.options.Title(tray.translation)
+			systray.SetTitle(title)
+		}
+		if tray.options.Tooltip != nil {
+			tooltip = tray.options.Tooltip(tray.translation)
+			systray.SetTooltip(tooltip)
+		}
 	}
 
 	for _, item := range menu {
