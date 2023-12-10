@@ -4,8 +4,10 @@ import "gopkg.in/ini.v1"
 
 // use absolute path for all path values
 type Configs struct {
-	IsDev      bool
-	AssetsPath string
+	Dev bool
+	Crypto
+	Paths
+	FileStore
 }
 
 func NewConfigs(path string) (cfg *Configs, err error) {

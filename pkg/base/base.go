@@ -10,7 +10,7 @@ var (
 )
 
 func init() {
-	randGenerator = rand.New(rand.NewSource(time.Now().UnixNano()))
+	randGenerator = rand.New(rand.NewSource(time.Now().UnixMicro()))
 }
 
 func GetRandGenerator() *rand.Rand {

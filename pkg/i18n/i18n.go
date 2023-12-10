@@ -73,12 +73,8 @@ func (i18n *I18n[TTranslation]) Load() error {
 	i18n.availLocales = availLocales
 	i18n.translations = translations
 	i18n.translationMap = translationMap
-	if i18n.options.Locale == "" {
-		if len(i18n.availLocales) > 0 {
-			i18n.currentLocale = i18n.availLocales[0]
-		}
-	} else {
-		i18n.currentLocale = i18n.options.Locale
+	if len(i18n.availLocales) > 0 && !slices.Contains(i18n.availLocales, i18n.currentLocale) {
+		i18n.currentLocale = i18n.availLocales[0]
 	}
 	return nil
 }

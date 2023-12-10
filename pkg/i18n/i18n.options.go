@@ -8,7 +8,6 @@ import (
 type I18nOptions[TTranslation ITranslation] struct {
 	base.Options
 	APath       string       // language asset absolute path
-	Locale      string       // default language
 	Placeholder TTranslation // translation placeholder
 }
 
@@ -20,7 +19,6 @@ func DefaultI18nOptions[TTranslation ITranslation]() (*I18nOptions[TTranslation]
 
 	return &I18nOptions[TTranslation]{
 		APath:       filepath.Join(xDir, "Languages/"),
-		Locale:      "",
 		Placeholder: *new(TTranslation),
 	}, nil
 }
