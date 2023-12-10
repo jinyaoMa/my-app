@@ -113,5 +113,4 @@ func (tray *systemTray[TTranslation]) update(items ...*MenuItem[TTranslation]) {
 			tray.update(item)
 		}
 	}
-	return
 }
