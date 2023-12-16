@@ -10,8 +10,8 @@ import (
 
 type User struct {
 	db.Entity[*User]
-	Account  string `gorm:"unique; index; not null"` // encrypted
-	Password string `gorm:"not null"`                // hashed
+	Account  string `gorm:"unique; index; not null; <-:create"` // encrypted
+	Password string `gorm:"not null"`                           // hashed
 	Active   bool   `gorm:"default:true"`
 
 	/* has many */
@@ -35,10 +35,12 @@ func (user *User) BeforeUpdate(tx *gorm.DB) (err error) {
 		return
 	}
 
-	tx.Create(&UserPassword{
-		Account:  user.Account,
-		Password: user.Password,
-	})
+	if tx.Statement.Changed("Password") {
+		tx.Create(&UserPassword{
+			Account:  user.Account,
+			Password: user.Password,
+		})
+	}
 	return
 }
 

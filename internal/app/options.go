@@ -2,7 +2,7 @@ package app
 
 import (
 	"my-app/internal/entity"
-	"my-app/pkg/base"
+	"my-app/pkg/db"
 )
 
 var (
@@ -17,14 +17,20 @@ const (
 )
 
 func initOptions() []*entity.Option {
-	dirCerts, err := base.GetPathStartedFromExecutable("Certs")
-	if err != nil {
-		panic(err)
-	}
-
 	options = []*entity.Option{
 		{
-			Name:      "",
+			Entity: db.Entity[*entity.Option]{
+				ID: 1,
+			},
+			Name:      OptionNameLocale,
+			Value:     "",
+			Encrypted: false,
+		},
+		{
+			Entity: db.Entity[*entity.Option]{
+				ID: 2,
+			},
+			Name:      OptionNameTheme,
 			Value:     "",
 			Encrypted: false,
 		},

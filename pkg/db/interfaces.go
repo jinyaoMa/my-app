@@ -25,6 +25,7 @@ type ICRUD[TEntity IEntity] interface {
 	Save(entity TEntity) (affected int64, err error)
 	SaveAll(entities []TEntity) (affected int64, err error)
 	Update(entity TEntity, selected []string, omitted ...string) (affected int64, err error)
+	UpdateAll(entities []TEntity, selected []string, omitted ...string) (affected int64, err error)
 	Delete(id int64) (affected int64, err error)
 	DeleteBy(condition QueryCondition) (affected int64, err error)
 }

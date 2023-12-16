@@ -145,6 +145,27 @@ func (crud *CRUD[TEntity]) Update(entity TEntity, selected []string, omitted ...
 	return
 }
 
+// UpdateAll implements ICRUD.
+func (crud *CRUD[TEntity]) UpdateAll(entities []TEntity, selected []string, omitted ...string) (affected int64, err error) {
+	count := len(entities)
+	for i := 0; i < count; i++ {
+		tx := crud.session.Model(entities[i])
+		if len(selected) > 0 {
+			tx = tx.Select(selected)
+		}
+		if len(omitted) > 0 {
+			tx = tx.Omit(omitted...)
+		}
+		result := tx.Updates(entities[i])
+		affected = result.RowsAffected
+		err = result.Error
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
 func NewCRUD[TEntity IEntity](session *gorm.DB) (crud *CRUD[TEntity], iCrud ICRUD[TEntity]) {
 	crud = &CRUD[TEntity]{
 		session: session,
