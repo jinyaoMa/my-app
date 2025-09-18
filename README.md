@@ -1,3 +1,5 @@
+[Click here to view my-app using Wails V3](https://github.com/jinyaoMa/my-app/tree/v3)
+
 # My Application (my-app)
 
 > [English](./README.md) | [简体中文](./README.zh.md)
