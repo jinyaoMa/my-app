@@ -1,4 +1,4 @@
-[Click here to view my-app using Wails V3](https://github.com/jinyaoMa/my-app/tree/v3)
+[Click here to view my-app which used Wails V3](https://github.com/jinyaoMa/my-app/tree/v3)
 
 # My Application (my-app)
 
