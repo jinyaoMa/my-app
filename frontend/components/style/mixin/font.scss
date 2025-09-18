@@ -1,0 +1,14 @@
+@use 'sass:list';
+@use 'sass:math';
+
+@mixin my-font() {
+  $ruler: (12, 20), (14, 22), (16, 24), (20, 28), (24, 32), (30, 38), (38, 46), (46, 54), (56, 64), (68, 76);
+
+  @each $r in $ruler {
+    $size: list.nth($r, 1);
+    $height: list.nth($r, 2);
+    --my-font-size-#{$size}: #{$size}px;
+    --my-font-height-#{$size}: #{$height};
+    --my-line-height-#{$size}: #{math.div($height, $size)};
+  }
+}

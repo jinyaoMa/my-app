@@ -1,0 +1,81 @@
+version: '3'
+
+tasks:
+  go:mod:tidy:
+    summary: Runs `go mod tidy`
+    internal: true
+    cmds:
+      - go mod tidy
+
+  install:frontend:deps:
+    summary: Install frontend dependencies
+    sources:
+      - package.json
+      - pnpm-lock.json
+      - pnpm-workspace.yaml
+    generates:
+      - node_modules/*
+    preconditions:
+      - sh: pnpm version
+        msg: "Looks like pnpm isn't installed. Please install it: https://pnpm.io/installation"
+    cmds:
+      - pnpm install --ignore-scripts
+
+  build:frontend:
+    label: build:frontend (PRODUCTION={{.PRODUCTION}})
+    summary: Build the frontend project
+    sources:
+      - frontend/**/*
+    generates:
+      - build/bin/statics/**/*
+    deps:
+      - task: install:frontend:deps
+      - task: generate:bindings
+        vars:
+          BUILD_FLAGS:
+            ref: .BUILD_FLAGS
+    cmds:
+      - pnpm --filter @jinyaoma/my-app run --silent {{.BUILD_COMMAND}}
+    env:
+      PRODUCTION: '{{.PRODUCTION | default "false"}}'
+    vars:
+      BUILD_COMMAND: '{{if eq .PRODUCTION "true"}}build{{else}}build-dev{{end}}'
+
+  generate:bindings:
+    label: generate:bindings (BUILD_FLAGS={{.BUILD_FLAGS}})
+    summary: Generates bindings for the frontend
+    deps:
+      - task: go:mod:tidy
+    sources:
+      - '**/*.[jt]s'
+      - exclude: frontend/sdk/**/*
+      - frontend/sdk/bindings/**/* # Rerun when switching between dev/production mode causes changes in output
+      - '**/*.go'
+      - go.mod
+      - go.sum
+    generates:
+      - frontend/sdk/bindings/**/*
+    cmds:
+      - '{{.WAILS3}} generate bindings -f "{{.BUILD_FLAGS}}"{{if .USE_TYPESCRIPT}} -ts{{end}} -clean=true -d frontend/sdk/bindings ./...'
+
+  generate:icons:
+    summary: Generates Windows `.ico` and Mac `.icns` files from an image
+    sources:
+      - build/appicon.png
+    generates:
+      - build/darwin/icons.icns
+      - build/windows/icon.ico
+    cmds:
+      - '{{.WAILS3}} generate icons -input build/appicon.png -macfilename build/darwin/icons.icns -windowsfilename build/windows/icon.ico'
+
+  dev:frontend:
+    summary: Runs the frontend in development mode
+    deps:
+      - task: install:frontend:deps
+    cmds:
+      - pnpm --filter @jinyaoma/my-app run dev --port {{.VITE_PORT}} --strictPort
+
+  update:build-assets:
+    summary: Updates the build assets
+    cmds:
+      - '{{.WAILS3}} update build-assets -name "{{.APP_NAME}}" -binaryname "{{.APP_NAME}}" -config Taskfile.config.yml -dir ./build'

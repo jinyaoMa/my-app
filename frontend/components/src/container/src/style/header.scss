@@ -1,0 +1,6 @@
+.my-header {
+  &__sticky {
+    position: sticky;
+    z-index: 1;
+  }
+}

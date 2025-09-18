@@ -1,0 +1,32 @@
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>CFBundlePackageType</key>
+            <string>APPL</string>
+        <key>CFBundleName</key>
+            <string>My Application</string>
+        <key>CFBundleExecutable</key>
+            <string>my-app</string>
+        <key>CFBundleIdentifier</key>
+            <string>cn.majinyao.my-app</string>
+        <key>CFBundleVersion</key>
+            <string>0.0.0</string>
+        <key>CFBundleGetInfoString</key>
+            <string>run locally and controllable</string>
+        <key>CFBundleShortVersionString</key>
+            <string>0.0.0</string>
+        <key>CFBundleIconFile</key>
+            <string>icons</string>
+        <key>LSMinimumSystemVersion</key>
+            <string>10.15.0</string>
+        <key>NSHighResolutionCapable</key>
+            <string>true</string>
+        <key>NSHumanReadableCopyright</key>
+            <string>(c) 2025, Jinyao Ma</string>
+        <key>NSAppTransportSecurity</key>
+        <dict>
+            <key>NSAllowsLocalNetworking</key>
+            <true/>
+        </dict>
+    </dict>
+</plist>

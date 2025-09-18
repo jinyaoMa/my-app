@@ -1,0 +1,7 @@
+@use "./reset.scss" as *;
+
+.group {
+  > :nth-child(n) {
+    margin: 0 5px;
+  }
+}

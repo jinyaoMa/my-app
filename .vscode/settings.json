@@ -1,0 +1,24 @@
+{
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    ".gitignore": ".git*",
+    ".editorconfig": ".prettierrc.json",
+    "go.mod": "go.sum",
+    "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*",
+    "tsconfig.json": "tsconfig.*.json",
+    "vite.config.*": "vitest.config.*, cypress.config.*, playwright.config.*",
+    "Taskfile.yml": "Taskfile.*"
+  },
+  "go.testFlags": ["-v", "-count=1"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  }
+}

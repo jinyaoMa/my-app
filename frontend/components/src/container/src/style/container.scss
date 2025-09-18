@@ -1,0 +1,16 @@
+.my-container {
+  display: flex;
+  flex-grow: 1;
+
+  &__scrollable {
+    overflow: auto;
+  }
+
+  &__direction_vertical {
+    flex-direction: column;
+  }
+
+  &__direction_horizontal {
+    flex-direction: row;
+  }
+}

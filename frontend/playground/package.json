@@ -1,0 +1,22 @@
+{
+  "name": "@jinyaoma/my-playground",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@jinyaoma/my-components": "workspace:^",
+    "vue": "^3.5.20",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "less": "^4.4.1",
+    "sass": "^1.91.0",
+    "typescript": "^5.9.2",
+    "vite": "^6.3.5",
+    "vue-tsc": "^2.2.12"
+  }
+}

@@ -1,46 +1,3 @@
-# Custom
-#
-.tools
-air/bin
-build/bin
-frontend/wailsjs
-backend/web/certs
-backend/web/docs
-backend/web/swagger
-backend/wails/assets
-*-res.syso
-
-# From the vue template of vite
-#
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-
-# If you prefer the allow list template instead of the deny list, see community template:
-# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
-#
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -56,6 +13,12 @@ dist-ssr
 
 # Dependency directories (remove the comment below to include it)
 vendor/
+node_modules
 
-# Go workspace file
-go.work
+# Auto generated folders
+dist
+.task/
+build/bin/library/
+build/bin/statics/app
+build/bin/statics/docs
+build/bin/my-app.*

@@ -1,0 +1,30 @@
+@use '../../../../style/variable.scss' as *;
+
+.my-button {
+  display: inline-block;
+  align-items: center;
+  line-height: 1em;
+  vertical-align: middle;
+  cursor: pointer;
+  gap: 0.5em;
+  padding: 0.5em;
+  border-width: 0;
+
+  @each $t in $my-color-types {
+    &__type_#{$t} {
+      color: var(--my-color-bg-container);
+      background-color: var(--my-color-#{$t}-6);
+    }
+  }
+
+  &__mode_normal {
+  }
+
+  &__round {
+    border-radius: 0.6rem;
+  }
+}
+
+.my-button-text {
+  text-transform: uppercase;
+}

@@ -1,0 +1,38 @@
+@use 'sass:color';
+@use 'sass:list';
+@use 'sass:math';
+@use '../function/color.scss' as *;
+
+// @mixin my-color-fill($text-base: #000000, $dark-theme: false) {
+//   @if $dark-theme {
+//     @for $i from 1 through 4 {
+//       // y = -0.0033 * x^3 + 0.03 * x^2 - 0.1267 * x + 0.28
+//       --my-color-fill-#{$i}: #{color.change(
+//           $text-base,
+//           $alpha: -0.0033 * math.pow($i, 3) + 0.03 * math.pow($i, 2) - 0.1267 * $i + 0.28
+//         )};
+//     }
+//   } @else {
+//     @for $i from 1 through 4 {
+//       // y = -0.0117 * x^3 + 0.105 * x^2 - 0.3233 * x + 0.38
+//       --my-color-fill-#{$i}: #{color.change(
+//           $text-base,
+//           $alpha: -0.0117 * math.pow($i, 3) + 0.105 * math.pow($i, 2) - 0.3233 * $i + 0.38
+//         )};
+//     }
+//   }
+// }
+
+@mixin my-color-text($color: #000, $bg-color: #fff) {
+  $ruler: 20%, 33%, 40%, 60%, 80%, 100%;
+
+  @for $i from $color-start-index through $color-main-index {
+    --my-color-text-#{$i}: #{color.mix($color, $bg-color, list.nth($ruler, $i))};
+  }
+}
+
+@mixin my-color-($name: primary, $color: #1677ff, $dark-theme: false, $bg-color: #141414) {
+  @for $i from $color-start-index through $color-total-index {
+    --my-color-#{$name}-#{$i}: #{generate($color, $i, $dark-theme, $bg-color)};
+  }
+}

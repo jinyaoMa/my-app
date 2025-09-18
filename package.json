@@ -1,45 +1,49 @@
 {
-  "name": "my-app",
-  "version": "1.0.0",
-  "description": "My App is a continuously updated personal service collection.",
-  "author": "jinyaoMa",
-  "license": "MIT",
+  "name": "@jinyaoma/my-app",
+  "author": "jinyaoMa<jinyao.ma@outlook.com>",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "packageManager": "pnpm@10.15.0",
   "scripts": {
-    "wails:dev": "cross-env MY_APP_LOG=0 .tools\\wails dev -s true -noreload",
-    "wails:build": ".tools\\wails build --platform windows/amd64",
-    "upx:compress": ".tools\\upx -9 build/bin/MyApp.exe",
-    "air:dev": "cross-env MY_APP_AIR=1 MY_APP_LOG=0 .tools\\air -c air/.air.toml",
-    "swag:docs": ".tools\\swag init -g backend/web/api/api.go -o backend/web/swagger",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "icons:build": "pnpm --filter @jinyaoma/my-app-icons exec node build.js",
-    "design:build": "pnpm --filter @jinyaoma/my-app-design exec vue-tsc --noEmit && pnpm --filter @jinyaoma/my-app-design exec vite build",
-    "update:dependencies": "pnpm up -r --latest && go get -u && go mod tidy",
-    "install:assets": "mkdirp backend/wails/assets && echo \"\" > backend/wails/assets/index.html",
-    "install:frontend": "pnpm icons:build && pnpm design:build",
-    "install:certs": "mkdirp backend/web/certs && openssl req -x509 -nodes -days 36524 -newkey rsa:2048 -keyout backend/web/certs/localhost.key -out backend/web/certs/localhost.crt -subj \"//SKIP=skip/CN=localhost\"",
-    "install:docs": "pnpm swag:docs && pnpm docs:build",
-    "install:build": "go mod tidy && pnpm wails:build && pnpm upx:compress",
-    "install": "pnpm install:assets && pnpm install:frontend && pnpm install:certs && pnpm install:docs && pnpm install:build",
-    "preinstall:air": "cross-env GOBIN=\"%cd%\\.tools\" go install github.com/cosmtrek/air@latest",
-    "preinstall:swag": "cross-env GOBIN=\"%cd%\\.tools\" go install github.com/swaggo/swag/cmd/swag@latest",
-    "preinstall:upx": "curl -L https://github.com/upx/upx/releases/download/v3.96/upx-3.96-win64.zip > upx.zip && unzip -p upx.zip '*/upx.exe' > .tools/upx.exe && rm upx.zip",
-    "preinstall:wails": "cross-env GOBIN=\"%cd%\\.tools\" go install github.com/wailsapp/wails/v2/cmd/wails@latest",
-    "preinstall": "pnpm preinstall:air && pnpm preinstall:wails && pnpm preinstall:swag && pnpm preinstall:upx"
+    "app:dev": ".\\.tools\\wails3 task dev",
+    "app:build": ".\\.tools\\wails3 task build && .\\.tools\\upx -9 build/bin/my-app.exe",
+    "app:update-build-assets": ".\\.tools\\wails3 task common:update:build-assets",
+    "api:dev": ".\\.tools\\air -c air.toml",
+    "frontend:app:dev": "pnpm --filter @jinyaoma/my-app run dev",
+    "frontend:app:build": "pnpm --filter @jinyaoma/my-app run build",
+    "frontend:components:dev": "pnpm --filter @jinyaoma/my-playground run dev",
+    "frontend:components:build": "pnpm --filter @jinyaoma/my-components run build",
+    "frontend:components:create": "esno ./.tools/components/create/index.ts",
+    "frontend:docs:dev": "vitepress dev frontend/docs --port 8000",
+    "frontend:docs:build": "vitepress build frontend/docs",
+    "frontend:icons:build": "pnpm --filter @jinyaoma/my-icons run build",
+    "doctor": ".\\.tools\\wails3 doctor",
+    "install": "run-p -clns install:p:* || echo 'errors ignored'",
+    "install:mkcert:ca": "mkcert create-ca --organization \"Test CA\" --country-code \"CN\" --state \"\" --locality \"\" --validity 36524 --key build/bin/my-app.ca.key --cert build/bin/my-app.ca.cert",
+    "install:mkcert:cert": "mkcert create-ca --organization \"Test CA\" --country-code \"CN\" --state \"\" --locality \"\" --validity 36524 --key build/bin/my-app.ca.key --cert build/bin/my-app.ca.cert",
+    "install:p:mkcert": "run-s -clns install:mkcert:ca install:mkcert:cert",
+    "install:p:frontend": "run-p -clns frontend:icons:build frontend:components:build",
+    "install:p:backend:nsis": "winget install NSIS.NSIS --accept-package-agreements --accept-source-agreements --silent",
+    "install:p:backend:air": "cross-env GOBIN='%cd%/.tools' go install github.com/air-verse/air@latest",
+    "install:p:backend:wails": "cross-env GOBIN='%cd%/.tools' go install -v github.com/wailsapp/wails/v3/cmd/wails3@latest",
+    "install:p:backend:upx": "curl -L -k https://github.com/upx/upx/releases/download/v5.0.2/upx-5.0.2-win64.zip > upx.zip && tar -zxf upx.zip && move upx-5.0.2-win64\\upx.exe .tools && rmdir /s/q upx-5.0.2-win64 && del upx.zip"
+  },
+  "noscripts": {
+    "frontend:components:new": "esno ./.tools/components/create_component/index.ts",
+    "frontend:components:test": "esno ./.tools/components/create_test_vue/index.ts",
+    "frontend:components:docs": "esno ./.tools/components/create_vitepress_comp/index.ts"
   },
   "devDependencies": {
-    "@types/node": "^18.11.9",
+    "@types/node": "^24.3.0",
+    "chalk": "^5.6.0",
     "cross-env": "^7.0.3",
-    "mkdirp": "^1.0.4",
-    "vitepress": "1.0.0-alpha.27",
-    "vue": "^3.2.41"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jinyaoMa/my-app.git"
-  },
-  "bugs": {
-    "url": "https://github.com/jinyaoMa/my-app/issues"
-  },
-  "homepage": "https://github.com/jinyaoMa/my-app#readme"
+    "esno": "^4.8.0",
+    "mkcert": "^3.2.0",
+    "mkdirp": "^3.0.1",
+    "npm-run-all2": "^8.0.4",
+    "vitepress": "^1.6.4"
+  }
 }

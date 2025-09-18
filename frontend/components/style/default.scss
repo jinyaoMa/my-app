@@ -1,0 +1,68 @@
+@use './mixin/color.scss' as *;
+@use './mixin/font.scss' as *;
+@use './variable.scss' as *;
+
+$my-color-type-map: (
+  primary: #1677ff,
+  success: #52c41a,
+  warning: #faad14,
+  error: #ff4d4f,
+  info: #909399,
+  link: #1677ff
+);
+
+$my-color-white: #fff;
+$my-color-black: #000;
+$my-color-text-base: #000;
+
+@mixin my-theme-default {
+  @include my-font();
+}
+
+@mixin my-theme-light {
+  --my-color-white: #{$my-color-white};
+  --my-color-black: #{$my-color-black};
+  --my-color-text-base: #{$my-color-text-base};
+
+  @each $t, $c in $my-color-type-map {
+    @include my-color-($t, $c);
+  }
+
+  @include my-color-text($my-color-text-base, $my-color-white);
+}
+
+@mixin my-theme-dark {
+  --my-color-white: #{$my-color-white};
+  --my-color-black: #{$my-color-black};
+  --my-color-text-base: #{$my-color-text-base};
+
+  @each $t, $c in $my-color-type-map {
+    @include my-color-($t, $c, true, $my-color-black);
+  }
+
+  @include my-color-text($my-color-text-base, $my-color-white);
+}
+
+.css-var-default {
+  @include my-theme-default();
+}
+
+@media (prefers-color-scheme: light) {
+  .css-var-default {
+    @include my-theme-light();
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .css-var-default {
+    @include my-theme-dark();
+  }
+}
+
+:root.light .css-var-default {
+  @include my-theme-light();
+}
+
+:root.dark .css-var-default {
+  @include my-theme-dark();
+}

@@ -1,0 +1,54 @@
+{
+  "name": "@jinyaoma/my-design",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "dist/lib/index.js",
+  "module": "dist/es/index.js",
+  "types": "dist/es/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/es/index.d.ts",
+      "import": "./dist/es/index.js",
+      "require": "./dist/lib/index.js"
+    },
+    "./es": {
+      "types": "./dist/es/index.d.ts",
+      "import": "./dist/es/index.js"
+    },
+    "./lib": {
+      "types": "./dist/lib/index.d.ts",
+      "require": "./dist/lib/index.js"
+    },
+    "./es/*.mjs": {
+      "types": "./dist/es/*.d.ts",
+      "import": "./dist/es/*.js"
+    },
+    "./es/*": {
+      "types": [
+        "./dist/es/*.d.ts",
+        "./dist/es/*/index.d.ts"
+      ],
+      "import": "./dist/es/*.js"
+    },
+    "./lib/*.js": {
+      "types": "./dist/lib/*.d.ts",
+      "require": "./dist/lib/*.js"
+    },
+    "./lib/*": {
+      "types": [
+        "./dist/lib/*.d.ts",
+        "./dist/lib/*/index.d.ts"
+      ],
+      "require": "./dist/lib/*.js"
+    },
+    "./*": "./*"
+  },
+  "style": "dist/lib/my-components.css",
+  "sideEffects": [
+    "dist/*/*.css"
+  ],
+  "peerDependencies": {
+    "vue": "^3.5.16",
+    "vue-router": "^4.5.1"
+  }
+}

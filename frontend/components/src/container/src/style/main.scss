@@ -1,0 +1,8 @@
+.my-main {
+  flex-grow: 1;
+
+  &__sticky {
+    position: sticky;
+    z-index: 1;
+  }
+}

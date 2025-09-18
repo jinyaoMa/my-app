@@ -1,10 +1,19 @@
 {
   "recommendations": [
-    "editorconfig.editorconfig",
-    "esbenp.prettier-vscode",
+    "hediet.vscode-drawio",
+    "EditorConfig.EditorConfig",
+    "dbaeumer.vscode-eslint",
+    "tamasfe.even-better-toml",
     "golang.go",
-    "vue.volar",
-    "bungcip.better-toml",
-    "hediet.vscode-drawio"
+    "yzhang.markdown-all-in-one",
+    "esbenp.prettier-vscode",
+    "sibiraj-s.vscode-scss-formatter",
+    "Vue.volar",
+    "vitest.explorer",
+    "ms-playwright.playwright",
+    "qwtel.sqlite-viewer",
+    "redhat.vscode-xml",
+    "dotjoshjohnson.xml",
+    "redhat.vscode-yaml"
   ]
 }

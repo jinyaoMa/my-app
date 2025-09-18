@@ -1,0 +1,35 @@
+{
+  "systray": {
+    "tooltip": {
+      "appname": "MY APP",
+      "api": {
+        "start": "Server: ON",
+        "stop": "Server: OFF"
+      },
+      "language": "Locale: ",
+      "theme": "Theme: "
+    },
+    "menu": {
+      "api": {
+        "start": "Disable HTTP Server",
+        "stop": "Enable HTTP Server"
+      },
+      "apid": "Open API Docs",
+      "docs": "Open Application Docs",
+      "quit": "Quit",
+      "display": {
+        "language": {
+          "title": "Display Language"
+        }
+      },
+      "color": {
+        "theme": {
+          "title": "Color Theme",
+          "system": "System Default",
+          "light": "Light",
+          "dark": "Dark"
+        }
+      }
+    }
+  }
+}

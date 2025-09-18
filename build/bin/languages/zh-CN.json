@@ -1,0 +1,35 @@
+{
+  "systray": {
+    "tooltip": {
+      "appname": "我的 APP",
+      "api": {
+        "start": "服务: 开",
+        "stop": "服务: 关"
+      },
+      "language": "语言: ",
+      "theme": "主题: "
+    },
+    "menu": {
+      "api": {
+        "start": "停止 HTTP 服务器",
+        "stop": "启动 HTTP 服务器"
+      },
+      "apid": "打开 API 文档",
+      "docs": "打开 应用文档",
+      "quit": "退出",
+      "display": {
+        "language": {
+          "title": "选择 显示语言"
+        }
+      },
+      "color": {
+        "theme": {
+          "title": "选择 颜色主题",
+          "system": "跟随系统",
+          "light": "浅色",
+          "dark": "深色"
+        }
+      }
+    }
+  }
+}

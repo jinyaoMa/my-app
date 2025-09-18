@@ -1,0 +1,12 @@
+[
+  {
+    "Code": "zh-CN",
+    "Text": "简体中文",
+    "File": "zh-CN.json"
+  },
+  {
+    "Code": "en-US",
+    "Text": "English (US)",
+    "File": "en-US.json"
+  }
+]

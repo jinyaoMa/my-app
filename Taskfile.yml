@@ -1,0 +1,36 @@
+version: '3'
+
+vars:
+  APP_NAME: 'my-app'
+  BIN_DIR: 'build/bin'
+  VITE_PORT: '{{.WAILS_VITE_PORT | default 9245}}'
+  USE_TYPESCRIPT: true
+  WAILS3_PATH: '.\\.tools\\wails3'
+  WAILS3: '{{.WAILS3_PATH | default "wails3"}}'
+
+includes:
+  common: ./build/Taskfile.yml
+  windows: ./build/windows/Taskfile.yml
+  darwin: ./build/darwin/Taskfile.yml
+  linux: ./build/linux/Taskfile.yml
+
+tasks:
+  build:
+    summary: Builds the application
+    cmds:
+      - task: '{{OS}}:build'
+
+  package:
+    summary: Packages a production build of the application
+    cmds:
+      - task: '{{OS}}:package'
+
+  run:
+    summary: Runs the application
+    cmds:
+      - task: '{{OS}}:run'
+
+  dev:
+    summary: Runs the application in development mode
+    cmds:
+      - '{{.WAILS3}} dev -config ./Taskfile.config.yml -port {{.VITE_PORT}}'

@@ -1,0 +1,193 @@
+// Refer to Ant Design 4.x
+
+@use 'sass:color';
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:math';
+
+$hue-step: 2;
+$saturation-step-back: -0.16;
+$saturation-step-forward: 0.05;
+$brightness-step-back: -0.15;
+$brightness-step-forward: 0.05;
+
+$color-start-index: 1;
+$color-main-index: 6;
+$color-total-index: 10;
+
+@function dark-color-map() {
+  @return iw(8, 85%), iw(7, 75%), iw(6, 70%), iw(6, 55%), iw(6, 35%), iw(6, 15%), iw(5, 10%),
+    iw(4, 5%), iw(3, 3%), iw(2, 2%);
+}
+
+@function generate($color, $index, $dark-theme: false, $bg-color: #141414) {
+  @if $dark-theme {
+    $iw: list.nth(dark-color-map(), $index);
+    $i: iw_index($iw);
+    $w: iw_weight($iw);
+    @return color.mix($bg-color, generate($color, $i), $w);
+  }
+
+  // main color
+  $hsv: hsl2hsv($color);
+  $h: hsv_hue($hsv);
+  $s: hsv_saturation($hsv);
+  $v: hsv_value($hsv);
+
+  // define scope
+  $is-light: $index < $color-main-index;
+  // how many steps to walk from origin?
+  $steps: $index - $color-main-index;
+  @if $is-light {
+    $steps: $color-main-index - $index;
+  }
+
+  // generate color
+  $new-h: generate-hue($h, $steps, $is-light);
+  $new-s: generate-saturation($s, $steps, $is-light);
+  @if $h== 0 and $s == 0 {
+    $new-s: $s; // grey color
+  }
+  $new-v: generate-value($v, $steps, $is-light);
+  $new-hsv: hsv($new-h, $new-s, $new-v);
+  $new-hsl: hsv2hsl($new-hsv);
+  @return $new-hsl;
+}
+
+// not sure the purpose to change hue...
+@function generate-hue($H_, $steps, $is-light) {
+  $new-hue: 0deg;
+  @if $H_ >= 60deg and $H_ <= 240deg {
+    // cool color
+    @if $is-light {
+      $new-hue: $H_ - $hue-step * $steps;
+    } @else {
+      $new-hue: $H_ + $hue-step * $steps;
+    }
+  } @else {
+    // warm color
+    @if $is-light {
+      $new-hue: $H_ + $hue-step * $steps;
+    } @else {
+      $new-hue: $H_ - $hue-step * $steps;
+    }
+  }
+
+  // H_: 0deg to 359deg (int)
+  @if ($new-hue < 0deg) {
+    $new-hue: $new-hue + 360deg;
+  } @else if ($new-hue >= 360deg) {
+    $new-hue: $new-hue - 360deg;
+  }
+  @return math.round($new-hue);
+}
+
+@function generate-saturation($S_, $steps, $is-light) {
+  $new-saturation: 0;
+  @if $is-light {
+    $new-saturation: $S_ + $saturation-step-back * $steps;
+  } @else {
+    @if $steps == $color-total-index - $color-main-index {
+      $new-saturation: $S_ +
+        $brightness-step-forward *
+        $steps *
+        0.8; // last smaller step for dark side
+    } @else {
+      $new-saturation: $S_ + $brightness-step-forward * $steps;
+    }
+  }
+
+  // S_: 0.06 to 1.0
+  @if $new-saturation > 1 {
+    $new-saturation: 1;
+  } @else if $new-saturation < 0.06 {
+    $new-saturation: 0.06;
+  }
+
+  // set lightest color to be in range of 0.06 to 0.1
+  @if $is-light and $steps == $color-main-index - 1 and $new-saturation > 0.1 {
+    $new-saturation: 0.1;
+  }
+  @return $new-saturation;
+}
+
+@function generate-value($V_, $steps, $is-light) {
+  $new-value: 0;
+  @if $is-light {
+    $new-value: $V_ + $brightness-step-forward * $steps;
+  } @else {
+    $new-value: $V_ + $brightness-step-back * $steps;
+  }
+
+  // L_: 0.0 to 1.0
+  @if $new-value > 1 {
+    $new-value: 1;
+  }
+  @return $new-value;
+}
+
+@function hsv2hsl($hsv) {
+  // unit convert
+  // H_: 0deg to 359deg (int)
+  // S_: 0.0 to 1.0 => 0% to 100%
+  // V_: 0.0 to 1.0 => 0% to 100%
+
+  $H_: hsv_hue($hsv);
+  $S_: hsv_saturation($hsv);
+  $V_: hsv_value($hsv);
+
+  // L = 0.5 * V' * (2 - S')
+  $L: 0.5 * $V_ * (2 - $S_);
+
+  // S = V' * S' / [1 - abs(2L - 1)]
+  $S: math.div($V_ * $S_, 1 - math.abs(2 * $L - 1));
+
+  @return hsl($H_, math.percentage($S), math.percentage($L));
+}
+
+@function hsl2hsv($color) {
+  // unit convert
+  // H: 0deg to 359deg (int)
+  // S: 0% to 100% => 0.0 to 1.0
+  // L: 0% to 100% => 0.0 to 1.0
+
+  $H: math.round(color.channel($color, 'hue', $space: hsl));
+  $S: math.div(color.channel($color, 'saturation', $space: hsl), 100%);
+  $L: math.div(color.channel($color, 'lightness', $space: hsl), 100%);
+
+  // V' = (2L + S * [1 - abs(2L - 1)]) / 2
+  $V_: math.div(2 * $L + $S * (1 - math.abs(2 * $L - 1)), 2);
+
+  // S' = 2 * (V' - L) / V'
+  $S_: math.div(2 * ($V_ - $L), $V_);
+
+  @return hsv($H, $S_, $V_);
+}
+
+@function hsv($H_, $S_, $V_) {
+  @return ('H': $H_, 'S': $S_, 'V': $V_);
+}
+
+@function hsv_hue($hsv) {
+  @return map.get($hsv, 'H');
+}
+
+@function hsv_saturation($hsv) {
+  @return map.get($hsv, 'S');
+}
+
+@function hsv_value($hsv) {
+  @return map.get($hsv, 'V');
+}
+
+@function iw($index, $weight) {
+  @return ('Index': $index, 'Weight': $weight);
+}
+
+@function iw_index($iw) {
+  @return map.get($iw, 'Index');
+}
+
+@function iw_weight($iw) {
+  @return map.get($iw, 'Weight');
+}

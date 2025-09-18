@@ -1,0 +1,21 @@
+.my-icon {
+  display: inline-flex;
+  vertical-align: bottom;
+  justify-content: center;
+  align-items: center;
+  font-size: 1em;
+
+  &__regular {
+    font-size: 100%;
+  }
+  &__small {
+    font-size: 88%;
+  }
+  &__large {
+    font-size: 112%;
+  }
+}
+
+[class^='my-icon-'] {
+  font-style: normal;
+}
