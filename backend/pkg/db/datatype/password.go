@@ -8,13 +8,13 @@ import (
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
-	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
 )
 
 type Password string
 
 func (p Password) VerifyBase64(tx *gorm.DB, password string) (ok bool, err error) {
-	keygen, ok := db.GetKeygen(tx)
+	keygen, ok := dbcontext.GetKeygen(tx)
 	if !ok {
 		return false, errors.New("db context does not contain keygen")
 	}
@@ -40,7 +40,7 @@ func (p *Password) Scan(ctx context.Context, field *schema.Field, dst reflect.Va
 // dst: current model value, `user` in the below example
 // fieldValue: current field's value of the dst
 func (p Password) Value(ctx context.Context, field *schema.Field, dst reflect.Value, fieldValue any) (any, error) {
-	keygen, ok := db.GetKeygenFromContext(ctx)
+	keygen, ok := dbcontext.GetKeygenFromContext(ctx)
 	if !ok {
 		return nil, errors.New("db context does not contain keygen")
 	}

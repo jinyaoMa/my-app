@@ -9,6 +9,7 @@ import (
 	"majinyao.cn/my-app/backend/pkg/crypto/hasher"
 	"majinyao.cn/my-app/backend/pkg/crypto/hasher/sha3"
 	"majinyao.cn/my-app/backend/pkg/fwt"
+	"majinyao.cn/my-app/backend/pkg/snowflake"
 	"majinyao.cn/my-app/backend/pkg/test"
 	"majinyao.cn/my-app/backend/pkg/utils"
 )
@@ -32,6 +33,12 @@ func TestFwt(t *testing.T) {
 
 	key := "mjy"
 	f, err := fwt.New[UserData](fwt.Options{
+		Snowflake: snowflake.Options{
+			Epoch:    now,
+			NodeBits: 7,
+			StepBits: 14,
+			NodeId:   1,
+		},
 		Hasher: hasher.Options{
 			Alg:  sha3.Alg,
 			Salt: key,
@@ -79,7 +86,7 @@ func TestFwt(t *testing.T) {
 		t.Fatalf("ValidateClaims failed: %v", err)
 	}
 
-	newAccessToken, newRefreshToken, expiredAt, err := f.Refresh(userdata, refreshToken, func(data UserData) (newData UserData, err error) {
+	newAccessToken, newRefreshToken, expiredAt, err := f.Refresh(userClaims, refreshToken, func(data UserData) (newData UserData, err error) {
 		data.Nums[1] = 7
 		return data, nil
 	})

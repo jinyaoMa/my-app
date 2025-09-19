@@ -1,6 +1,9 @@
 package entity
 
-import "majinyao.cn/my-app/backend/pkg/db"
+import (
+	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/datatype"
+)
 
 type FileExtension struct {
 	db.Entity
@@ -9,7 +12,7 @@ type FileExtension struct {
 	Name string `gorm:"index;size:254;comment:File Extension Display Name;"`
 	Mime string `gorm:"index;size:254;comment:File Extension Mime;"`
 
-	FileCategoryId *int64 `gorm:"comment:File Category Id;"`
+	FileCategoryId *datatype.Id `gorm:"comment:File Category Id;"`
 	FileCategory   *FileCategory
 
 	Files []File

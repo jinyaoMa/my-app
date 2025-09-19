@@ -8,7 +8,7 @@ info:
   companyName: '@jinyaoma' # The name of the company
   productName: 'My Application' # The name of the application
   productIdentifier: 'cn.majinyao.my-app' # The unique product identifier
-  description: 'My Application with many features' # The application description
+  description: 'My Application' # The application description
   copyright: '(c) 2025, Jinyao Ma' # Copyright text
   comments: 'run locally and controllable' # Comments
   version: '0.0.0' # The application version

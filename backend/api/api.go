@@ -26,11 +26,11 @@ func New(ctx context.Context, tx *gorm.DB, options Options) (router.IRouter, err
 				}
 			}
 
-			cache := memcache.Get(ctx)
-			userdata := authfwt.GetUserData[schemas.UserData](ctx)
-			authPerm, _ := cache.Get(fmt.Sprintf("auth_perm_%d", userdata.UserId))
+			cache := memcache.GetFromHumaContext(ctx)
+			claims := authfwt.GetClaimsFromHumaContext[schemas.UserData](ctx)
+			authPerm, _ := cache.Get(fmt.Sprintf("auth_perm_%d", claims.Data.UserId))
 			perm, _ := authPerm.(flag.IFlag)
-			if slices.ContainsFunc(requiredEnums, perm.IsOn) {
+			if perm != nil && slices.ContainsFunc(requiredEnums, perm.IsOn) {
 				return nil
 			}
 			return errors.New("no permission")

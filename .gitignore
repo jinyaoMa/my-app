@@ -18,7 +18,10 @@ node_modules
 # Auto generated folders
 dist
 .task/
+build/bin/certs/
 build/bin/library/
 build/bin/statics/app
 build/bin/statics/docs
+build/bin/config.json
+build/bin/*.log
 build/bin/my-app.*

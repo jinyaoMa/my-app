@@ -1,13 +1,16 @@
 package entity
 
-import "majinyao.cn/my-app/backend/pkg/db"
+import (
+	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/datatype"
+)
 
 type UserRole struct {
 	db.Entity
 
-	UserId int64 `gorm:"comment:User Id;"`
+	UserId datatype.Id `gorm:"comment:User Id;"`
 	User   User
 
-	RoleId int64 `gorm:"comment:Role Id;"`
+	RoleId datatype.Id `gorm:"comment:Role Id;"`
 	Role   Role
 }

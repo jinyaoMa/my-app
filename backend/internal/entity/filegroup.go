@@ -1,14 +1,17 @@
 package entity
 
-import "majinyao.cn/my-app/backend/pkg/db"
+import (
+	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/datatype"
+)
 
 type FileGroup struct {
 	db.Entity
 
-	FileId int64 `gorm:"comment:File Id;"`
+	FileId datatype.Id `gorm:"comment:File Id;"`
 	File   File
 
-	GroupId int64 `gorm:"comment:Group Id;"`
+	GroupId datatype.Id `gorm:"comment:Group Id;"`
 	Group   Group
 
 	NoCreate bool `gorm:"comment:No Create;"`

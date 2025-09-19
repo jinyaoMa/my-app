@@ -6,7 +6,7 @@ import (
 
 	"gorm.io/gorm"
 	"majinyao.cn/my-app/backend/internal/entity"
-	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
 )
 
 type IOperationIdEnumPairService interface {
@@ -59,11 +59,11 @@ func (s *OperationIdEnumPairService) Init(tx *gorm.DB) *OperationIdEnumPairServi
 }
 
 func (s *OperationIdEnumPairService) InitWithCancelUnderContext(ctx context.Context, tx *gorm.DB) (*OperationIdEnumPairService, context.CancelFunc) {
-	tx, cancel := db.SectionUnderContextWithCancel(ctx, tx)
+	tx, cancel := dbcontext.SectionUnderContextWithCancel(ctx, tx)
 	return s.Init(tx), cancel
 }
 
 func (s *OperationIdEnumPairService) InitWithTimeoutUnderContext(ctx context.Context, tx *gorm.DB, timeout time.Duration) (*OperationIdEnumPairService, context.CancelFunc) {
-	tx, cancel := db.SectionUnderContextWithTimeout(ctx, tx, timeout)
+	tx, cancel := dbcontext.SectionUnderContextWithTimeout(ctx, tx, timeout)
 	return s.Init(tx), cancel
 }

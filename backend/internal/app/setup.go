@@ -8,7 +8,7 @@ import (
 	"majinyao.cn/my-app/backend/internal/entity"
 	"majinyao.cn/my-app/backend/pkg/cflog"
 	"majinyao.cn/my-app/backend/pkg/config"
-	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
 	"majinyao.cn/my-app/backend/pkg/executable"
 	"majinyao.cn/my-app/backend/pkg/flag"
 	"majinyao.cn/my-app/backend/pkg/h3server"
@@ -34,7 +34,7 @@ func setup(
 	h3s h3server.IH3Server,
 ) {
 	// setup data
-	tx, cancel := db.SectionUnderContextWithCancel(ctx, tx)
+	tx, cancel := dbcontext.SectionUnderContextWithCancel(ctx, tx)
 	defer cancel()
 	err := tx.Transaction(func(tx *gorm.DB) error {
 		optionSystemLocale := entity.Option{
@@ -196,7 +196,7 @@ func setup(
 			Key: entity.OptionKeyServerCertFile,
 		}
 		optionServerCertFile.SysOp(true)
-		optionServerCertFile.SetString(exe.GetPathWithExt(".cert"))
+		optionServerCertFile.SetString(exe.JoinDir("certs", "localhost.cert"))
 		if res := tx.FirstOrCreate(&optionServerCertFile, entity.Option{
 			Key: entity.OptionKeyServerCertFile,
 		}); res.Error != nil {
@@ -207,7 +207,7 @@ func setup(
 			Key: entity.OptionKeyServerKeyFile,
 		}
 		optionServerKeyFile.SysOp(true)
-		optionServerKeyFile.SetString(exe.GetPathWithExt(".key"))
+		optionServerKeyFile.SetString(exe.JoinDir("certs", "localhost.key"))
 		if res := tx.FirstOrCreate(&optionServerKeyFile, entity.Option{
 			Key: entity.OptionKeyServerKeyFile,
 		}); res.Error != nil {

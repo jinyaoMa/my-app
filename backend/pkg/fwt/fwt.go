@@ -12,11 +12,12 @@ import (
 	"github.com/apache/fory/go/fory"
 	"majinyao.cn/my-app/backend/pkg/codegen"
 	"majinyao.cn/my-app/backend/pkg/crypto/hasher"
+	"majinyao.cn/my-app/backend/pkg/snowflake"
 )
 
 type IFwt[T IdentityGetter] interface {
 	Generate(data T) (accessToken string, refreshToken string, expiredAt time.Time, err error)
-	Refresh(data T, refreshToken string, handlers ...func(data T) (newData T, err error)) (newAccessToken string, newRefreshToken string, newExpiredAt time.Time, err error)
+	Refresh(claims Claims[T], refreshToken string, handlers ...func(data T) (newData T, err error)) (newAccessToken string, newRefreshToken string, newExpiredAt time.Time, err error)
 	ValidateClaims(claims Claims[T]) (err error)
 	ParseAccessToken(accessToken string) (claims Claims[T], err error)
 	BuildAccessToken(claims Claims[T]) (accessToken string, err error)
@@ -27,11 +28,13 @@ func New[T IdentityGetter](options Options, registers ...func(f *fory.Fory) erro
 }
 
 type refreshClaims struct {
+	id       int64
 	string   string
 	expireAt time.Time
 }
 
 type fwt[T IdentityGetter] struct {
+	snowflake     snowflake.ISnowflake
 	hasher        hasher.IHasher
 	codegen       codegen.ICodegen
 	pool          sync.Pool
@@ -47,6 +50,7 @@ type fwt[T IdentityGetter] struct {
 func (f *fwt[T]) Generate(data T) (accessToken string, refreshToken string, expiredAt time.Time, err error) {
 	now := time.Now()
 	claims := Claims[T]{
+		Id:        f.snowflake.Generate(),
 		Issuer:    f.issuer,
 		Subject:   f.subject,
 		IssuedAt:  now,
@@ -63,33 +67,41 @@ func (f *fwt[T]) Generate(data T) (accessToken string, refreshToken string, expi
 	expiredAt = claims.ExpiredAt
 	refreshToken = f.codegen.Generate(f.refreshLength)
 	f.idMap.Store(data.GetIdentity(), &refreshClaims{
+		id:       claims.Id,
 		string:   refreshToken,
 		expireAt: now.Add(f.refreshAge),
 	})
 	return
 }
 
-func (f *fwt[T]) Refresh(data T, refreshToken string, handlers ...func(data T) (newData T, err error)) (newAccessToken string, newRefreshToken string, newExpiredAt time.Time, err error) {
-	value, loaded := f.idMap.LoadAndDelete(data.GetIdentity())
-	if !loaded {
-		err = errors.New("fwt refresh token invalid")
+func (f *fwt[T]) Refresh(claims Claims[T], refreshToken string, handlers ...func(data T) (newData T, err error)) (
+	newAccessToken string, newRefreshToken string, newExpiredAt time.Time, err error,
+) {
+	value, ok := f.idMap.Load(claims.Data.GetIdentity())
+	if !ok {
+		err = errors.New("fwt data identity invalid " + claims.Data.GetIdentity())
 		return
 	}
 
 	now := time.Now()
-	claims := value.(*refreshClaims)
-	if claims.string != refreshToken {
+	rClaims := value.(*refreshClaims)
+	if rClaims.id != claims.Id {
+		err = errors.New("fwt claims id not matched")
+		return
+	}
+	if rClaims.string != refreshToken {
 		err = errors.New("fwt refresh token wrong")
 		return
 	}
-	if claims.expireAt.Before(now) {
+	if rClaims.expireAt.Before(now) {
+		f.idMap.CompareAndDelete(claims.Data.GetIdentity(), value)
 		err = errors.New("fwt refresh token expired")
 		return
 	}
 
 	for _, handler := range handlers {
 		if handler != nil {
-			data, err = handler(data)
+			claims.Data, err = handler(claims.Data)
 			if err != nil {
 				err = errors.Join(errors.New("fwt refresh token: handler failed"), err)
 				return
@@ -97,7 +109,7 @@ func (f *fwt[T]) Refresh(data T, refreshToken string, handlers ...func(data T) (
 		}
 	}
 
-	newAccessToken, newRefreshToken, newExpiredAt, err = f.Generate(data)
+	newAccessToken, newRefreshToken, newExpiredAt, err = f.Generate(claims.Data)
 	if err != nil {
 		err = errors.Join(errors.New("fwt refresh token: generate new token failed"), err)
 		return
@@ -129,7 +141,10 @@ func (f *fwt[T]) ParseAccessToken(accessToken string) (claims Claims[T], err err
 	}
 
 	f2 := f.pool.Get().(*fory.Fory)
-	defer f.pool.Put(f2)
+	defer func() {
+		f2.Reset()
+		f.pool.Put(f2)
+	}()
 
 	err = f2.Unmarshal(data, &claims)
 	if err != nil {
@@ -141,7 +156,10 @@ func (f *fwt[T]) ParseAccessToken(accessToken string) (claims Claims[T], err err
 
 func (f *fwt[T]) BuildAccessToken(claims Claims[T]) (accessToken string, err error) {
 	f2 := f.pool.Get().(*fory.Fory)
-	defer f.pool.Put(f2)
+	defer func() {
+		f2.Reset()
+		f.pool.Put(f2)
+	}()
 
 	var data []byte
 	data, err = f2.Marshal(claims)
@@ -156,6 +174,11 @@ func (f *fwt[T]) BuildAccessToken(claims Claims[T]) (accessToken string, err err
 }
 
 func (f *fwt[T]) init(options Options, registers ...func(f *fory.Fory) error) (*fwt[T], error) {
+	snowflake, err := snowflake.New(options.Snowflake)
+	if err != nil {
+		return nil, errors.Join(errors.New("fwt init snowflake failed"), err)
+	}
+
 	hasher, err := hasher.New(options.Hasher)
 	if err != nil {
 		return nil, errors.Join(errors.New("fwt init hasher failed"), err)
@@ -199,6 +222,7 @@ func (f *fwt[T]) init(options Options, registers ...func(f *fory.Fory) error) (*
 	}
 	f.pool.Put(f2)
 
+	f.snowflake = snowflake
 	f.hasher = hasher
 	f.codegen = codegen
 	f.issuer = options.Issuer

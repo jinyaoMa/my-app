@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Name=My Application
-Comment=My Application with many features
+Comment=My Application
 # The Exec line includes %u to pass the URL to the application
 Exec=/usr/local/bin/my-app %u
 Terminal=false

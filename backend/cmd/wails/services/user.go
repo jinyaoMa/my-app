@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/copier"
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"gorm.io/gorm"
 	"majinyao.cn/my-app/backend/cmd/wails/views"
 	"majinyao.cn/my-app/backend/internal/app"
 	"majinyao.cn/my-app/backend/internal/entity"
@@ -52,16 +53,12 @@ func (s *UserService) CreateReservedUser(form views.CreateReservedUserForm) (res
 }
 
 func (s *UserService) GetReservedUserInfo() (res views.ReservedUserInfo) {
-	tx, cancel := db.SectionUnderContextWithCancel(s.ctx, app.DB)
+	userService, cancel := service.NewUserService(s.ctx, app.DB)
 	defer cancel()
 
-	var entity entity.User
-	err := tx.Where("reserved = ?", true).First(&entity).Error
-	if err != nil {
-		return
-	}
-
-	err = copier.CopyWithOption(&res, &entity, db.DefaultCopierOption)
+	_, err := userService.ScanOne(&res, func(tx *gorm.DB) (*gorm.DB, error) {
+		return tx.Where("reserved = ?", true), nil
+	})
 	if err != nil {
 		return
 	}

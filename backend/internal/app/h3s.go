@@ -7,15 +7,22 @@ import (
 
 	"gorm.io/gorm"
 	"majinyao.cn/my-app/backend/internal/entity"
-	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
+	"majinyao.cn/my-app/backend/pkg/h3server"
+	"majinyao.cn/my-app/backend/pkg/router"
 )
+
+func initH3S(api router.IRouter) h3server.IH3Server {
+	H3S = h3server.New(api)
+	return H3S
+}
 
 func SHUTDOWN_H3S(ctx context.Context) error {
 	return H3S.Shutdown(ctx)
 }
 
 func RUN_H3S(ctx context.Context, isAuto bool) error {
-	tx, cancel := db.SectionUnderContextWithCancel(ctx, DB)
+	tx, cancel := dbcontext.SectionUnderContextWithCancel(ctx, DB)
 	defer cancel()
 	return tx.Transaction(func(tx *gorm.DB) error {
 		var optionServerAutoRun,

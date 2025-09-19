@@ -8,7 +8,7 @@ import (
 func New(limit int) func(ctx huma.Context, next func(huma.Context)) {
 	m := memcache.New(limit)
 	return func(ctx huma.Context, next func(huma.Context)) {
-		ctx = Attach(ctx, m)
+		ctx = AttachToHumaContext(ctx, m)
 		next(ctx)
 	}
 }

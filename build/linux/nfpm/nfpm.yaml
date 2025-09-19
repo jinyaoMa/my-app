@@ -10,7 +10,7 @@ version: "0.0.0"
 section: "default"
 priority: "extra"
 maintainer: ${GIT_COMMITTER_NAME} <${GIT_COMMITTER_EMAIL}>
-description: "My Application with many features"
+description: "My Application"
 vendor: "@jinyaoma"
 homepage: "https://wails.io"
 license: "MIT"

@@ -8,13 +8,13 @@ import (
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
-	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
 )
 
 type Hashed string
 
 func (s Hashed) VerifyBase64(tx *gorm.DB, data string) (ok bool, err error) {
-	hasher, ok := db.GetHasher(tx)
+	hasher, ok := dbcontext.GetHasher(tx)
 	if !ok {
 		return false, errors.New("db context does not contain hasher")
 	}
@@ -40,7 +40,7 @@ func (h *Hashed) Scan(ctx context.Context, field *schema.Field, dst reflect.Valu
 // dst: current model value, `user` in the below example
 // fieldValue: current field's value of the dst
 func (h Hashed) Value(ctx context.Context, field *schema.Field, dst reflect.Value, fieldValue any) (any, error) {
-	hasher, ok := db.GetHasherFromContext(ctx)
+	hasher, ok := dbcontext.GetHasherFromContext(ctx)
 	if !ok {
 		return nil, errors.New("db context does not contain hasher")
 	}

@@ -9,6 +9,6 @@ type UserPassword struct {
 	db.Entity
 	Password datatype.Encrypted `gorm:"comment:Historical Password;"`
 
-	UserId int64 `gorm:"comment:User Id;"`
+	UserId datatype.Id `gorm:"comment:User Id;"`
 	User   User
 }

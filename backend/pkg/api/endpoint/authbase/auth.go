@@ -26,9 +26,7 @@ func (a *Auth[T]) Init(scheme string, db *gorm.DB, getVerifier func(ctx context.
 	a.Scheme = scheme
 	a.Db = db
 	if getVerifier == nil {
-		a.NewVerifier = func(ctx context.Context, tx *gorm.DB) (Verifier[T], context.CancelFunc) {
-			return newVerifier[T](ctx, tx)
-		}
+		a.NewVerifier = newVerifier[T]
 	} else {
 		a.NewVerifier = getVerifier
 	}

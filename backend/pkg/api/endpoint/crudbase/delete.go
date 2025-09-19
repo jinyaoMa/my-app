@@ -7,16 +7,16 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"majinyao.cn/my-app/backend/pkg/api/schema"
-	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/datatype"
 )
 
 type DeleteInput struct {
-	id int64
-	Id string `query:"id"`
+	id datatype.Id
+	Id string `query:"id" required:"true" doc:"Entity Id (Hex)"`
 }
 
 func (i *DeleteInput) Resolve(ctx huma.Context) (errs []error) {
-	id, err := db.ConvertStringToId(i.Id)
+	id, err := datatype.ParseIdFromHex(i.Id)
 	if err != nil {
 		errs = append(errs, err)
 		return

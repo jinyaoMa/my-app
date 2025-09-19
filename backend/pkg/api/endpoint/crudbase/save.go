@@ -66,7 +66,7 @@ func (c *Crud[T, TItem, TDetail, TSave]) RegisterSave(api huma.API) (op huma.Ope
 			return schema.Fail[string](http.StatusNotModified, "zero affected"), nil
 		}
 
-		return schema.Succeed(entity.GetIdString(), affected), nil
+		return schema.Succeed(entity.GetId().HexString(), affected), nil
 	}
 
 	huma.Register(api, op, handler)

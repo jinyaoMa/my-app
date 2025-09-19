@@ -10,7 +10,8 @@ import (
 )
 
 type RefreshInput struct {
-	Token string `query:"token" doc:"Refresh Token"`
+	Token     string `query:"token" required:"true" doc:"Refresh Token"`
+	VisitorId string `header:"X-Visitor-ID" required:"true" doc:"Visitor Id"`
 }
 
 func (a *Auth[T]) RegisterRefresh(api huma.API) (op huma.Operation) {
@@ -31,11 +32,14 @@ func (a *Auth[T]) RegisterRefresh(api huma.API) (op huma.Operation) {
 
 	handler := func(ctx context.Context, input *RefreshInput) (output *schema.Response[schema.AuthLogin], err error) {
 		f := authfwt.GetFwtFromContext[T](ctx)
-		userdata := authfwt.GetUserDataFromContext[T](ctx)
+		claims := authfwt.GetClaimsFromContext[T](ctx)
 		verifier, cancel := a.NewVerifier(ctx, a.Db)
 		defer cancel()
 
-		accessToken, refreshToken, expiredAt, err := f.Refresh(userdata, input.Token, verifier.VerifyUserData)
+		accessToken, refreshToken, expiredAt, err := f.Refresh(claims, input.Token, func(data T) (newData T, err error) {
+			newData, err = verifier.VerifyUserData(data, input.VisitorId)
+			return
+		})
 		if err != nil {
 			return schema.Fail[schema.AuthLogin](http.StatusInternalServerError, err.Error()), nil
 		}

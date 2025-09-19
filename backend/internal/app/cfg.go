@@ -86,7 +86,7 @@ func defaultConfig(exe executable.IExecutable) Config {
 	return Config{
 		Cflog: cflog.Options{
 			EnableConsole: true,
-			LogFile:       exe.GetPathWithExt(".log"),
+			LogFile:       exe.JoinDir("app.log"),
 			LogPrefix:     "[APP] ",
 		},
 		Storage: storage.Options{
@@ -118,9 +118,14 @@ func defaultConfig(exe executable.IExecutable) Config {
 			DefineJson: "define.json",
 		},
 		Db: db.Options{
-			Driver:   db.DrvSqlite,
-			Dsn:      exe.GetPathWithExt(".db") + "?_pragma=foreign_keys(1)",
+			Cflog: cflog.Options{
+				EnableConsole: true,
+				LogFile:       exe.JoinDir("db.log"),
+				LogPrefix:     "[DB_] ",
+			},
 			LogLevel: logger.Error,
+			Driver:   db.DrvSqlite,
+			Dsn:      exe.GetPathWithExt("db") + "?_pragma=foreign_keys(1)",
 			Snowflake: snowflake.Options{
 				Epoch:    now,
 				NodeBits: 7,
@@ -151,7 +156,7 @@ func defaultConfig(exe executable.IExecutable) Config {
 				DocsVersion: "0.0.0",
 				Cflog: cflog.Options{
 					EnableConsole: true,
-					LogFile:       exe.GetPathWithExt(".api.log"),
+					LogFile:       exe.JoinDir("api.log"),
 					LogPrefix:     "[API] ",
 				},
 				StaticsDirectory: staticsDir,
@@ -167,6 +172,12 @@ func defaultConfig(exe executable.IExecutable) Config {
 			},
 			AuthFwt: authfwt.Options{
 				Fwt: fwt.Options{
+					Snowflake: snowflake.Options{
+						Epoch:    now,
+						NodeBits: 2,
+						StepBits: 18,
+						NodeId:   1,
+					},
 					Hasher: hasher.Options{
 						Alg:       sha3.Alg,
 						Salt:      "mjy+wqq",
@@ -190,7 +201,7 @@ func defaultConfig(exe executable.IExecutable) Config {
 func initCFG(exe executable.IExecutable) config.IConfig[Config] {
 	var err error
 	CFG, err = config.New(config.Options[Config]{
-		Path:    exe.GetPathWithExt(".json"),
+		Path:    exe.GetPathWithExt("json"),
 		Default: defaultConfig(exe),
 	})
 	if err != nil {

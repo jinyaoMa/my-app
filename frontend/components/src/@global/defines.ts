@@ -1,4 +1,5 @@
-import { readonly, ref, Ref } from 'vue'
+import type { Ref } from 'vue'
+import { readonly, ref } from 'vue'
 import { Mode } from './enums'
 
 export interface RwProxy<T> {

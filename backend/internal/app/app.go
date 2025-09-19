@@ -43,11 +43,6 @@ func init() {
 	setup(ctx, exe, cfg, log, store, i19, tx, api, h3s)
 }
 
-func initH3S(api router.IRouter) h3server.IH3Server {
-	H3S = h3server.New(api)
-	return H3S
-}
-
 func initAPI(ctx context.Context, log *cflog.Cflog, tx *gorm.DB, options api.Options) router.IRouter {
 	var err error
 	API, err = api.New(ctx, tx, options)

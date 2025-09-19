@@ -19,6 +19,7 @@ type IdentityGetter interface {
 }
 
 type Claims[T IdentityGetter] struct {
+	Id        int64
 	Issuer    string
 	Subject   string
 	IssuedAt  time.Time // time that claims generated/issued

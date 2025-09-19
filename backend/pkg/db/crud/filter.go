@@ -2,9 +2,12 @@ package crud
 
 import (
 	"regexp"
+	"strings"
 
 	"gorm.io/gorm"
-	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/datatype"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
+	"majinyao.cn/my-app/backend/pkg/utils"
 )
 
 var regFilterField = regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_\.]*$`)
@@ -74,13 +77,13 @@ func (f *Filter) Apply(tx *gorm.DB) *gorm.DB {
 	case FilterSpecialIdString:
 		for i := range f.Params {
 			if v, ok := f.Params[i].(string); ok {
-				if id, err := db.ConvertStringToId(v); err == nil {
+				if id, err := datatype.ParseIdFromHex(v); err == nil {
 					f.Params[i] = id
 				}
 			}
 		}
 	case FilterSpecialEncrypted:
-		cipher, ok := db.GetCipher(tx)
+		cipher, ok := dbcontext.GetCipher(tx)
 		if !ok {
 			return tx
 		}
@@ -91,7 +94,7 @@ func (f *Filter) Apply(tx *gorm.DB) *gorm.DB {
 			}
 		}
 	case FilterSpecialHashed:
-		hasher, ok := db.GetHasher(tx)
+		hasher, ok := dbcontext.GetHasher(tx)
 		if !ok {
 			return tx
 		}
@@ -101,8 +104,20 @@ func (f *Filter) Apply(tx *gorm.DB) *gorm.DB {
 				f.Params[i] = hasher.HashBase64(v)
 			}
 		}
+	case FilterSpecialOid:
+		var oid []int64
+		for i := range f.Params {
+			if v, ok := f.Params[i].(string); ok {
+				for _, id := range strings.Split(v, datatype.OidDelimiter) {
+					if id, err := utils.ConvertHexToInt64(id); err == nil {
+						oid = append(oid, id)
+					}
+				}
+			}
+		}
+		f.Params = []any{datatype.Oid(oid)}
 	case FilterSpecialPassword:
-		keygen, ok := db.GetKeygen(tx)
+		keygen, ok := dbcontext.GetKeygen(tx)
 		if !ok {
 			return tx
 		}

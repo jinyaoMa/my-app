@@ -13,17 +13,17 @@ type key int
 const (
 	keyFwt key = iota + 1
 	keyMemcache
-	keyUserData
+	keyClaims
 )
 
-func AttachFwt[T fwt.IdentityGetter](ctx huma.Context, f fwt.IFwt[T]) huma.Context {
+func AttachFwtToHumaContext[T fwt.IdentityGetter](ctx huma.Context, f fwt.IFwt[T]) huma.Context {
 	if ctx.Context().Value(keyFwt) != nil {
 		panic("authfwt fwt already attached, please check your middlewares")
 	}
 	return huma.WithValue(ctx, keyFwt, f)
 }
 
-func GetFwt[T fwt.IdentityGetter](ctx huma.Context) fwt.IFwt[T] {
+func GetFwtFromHumaContext[T fwt.IdentityGetter](ctx huma.Context) fwt.IFwt[T] {
 	f, ok := ctx.Context().Value(keyFwt).(fwt.IFwt[T])
 	if !ok {
 		panic("authfwt fwt not found, please check your middlewares")
@@ -39,14 +39,14 @@ func GetFwtFromContext[T fwt.IdentityGetter](ctx context.Context) fwt.IFwt[T] {
 	return f
 }
 
-func AttachMemcache(ctx huma.Context, m memcache.IMemcache) huma.Context {
+func AttachMemcacheToHumaContext(ctx huma.Context, m memcache.IMemcache) huma.Context {
 	if ctx.Context().Value(keyMemcache) != nil {
 		panic("authfwt memcache already attached, please check your middlewares")
 	}
 	return huma.WithValue(ctx, keyMemcache, m)
 }
 
-func GetMemcache(ctx huma.Context) memcache.IMemcache {
+func GetMemcacheFromHumaContext(ctx huma.Context) memcache.IMemcache {
 	m, ok := ctx.Context().Value(keyMemcache).(memcache.IMemcache)
 	if !ok {
 		panic("authfwt memcache not found, please check your middlewares")
@@ -62,19 +62,19 @@ func GetMemcacheFromContext(ctx context.Context) memcache.IMemcache {
 	return m
 }
 
-func AttachUserData[T fwt.IdentityGetter](ctx huma.Context, userdata T) huma.Context {
-	if ctx.Context().Value(keyUserData) != nil {
-		panic("authfwt userdata already attached, please check your middlewares")
+func AttachClaimsToHumaContext[T fwt.IdentityGetter](ctx huma.Context, claims fwt.Claims[T]) huma.Context {
+	if ctx.Context().Value(keyClaims) != nil {
+		panic("authfwt fwt claims already attached, please check your middlewares")
 	}
-	return huma.WithValue(ctx, keyUserData, userdata)
+	return huma.WithValue(ctx, keyClaims, claims)
 }
 
-func GetUserData[T fwt.IdentityGetter](ctx huma.Context) T {
-	userdata, _ := ctx.Context().Value(keyUserData).(T)
-	return userdata
+func GetClaimsFromHumaContext[T fwt.IdentityGetter](ctx huma.Context) fwt.Claims[T] {
+	claims, _ := ctx.Context().Value(keyClaims).(fwt.Claims[T])
+	return claims
 }
 
-func GetUserDataFromContext[T fwt.IdentityGetter](ctx context.Context) T {
-	userdata, _ := ctx.Value(keyUserData).(T)
-	return userdata
+func GetClaimsFromContext[T fwt.IdentityGetter](ctx context.Context) fwt.Claims[T] {
+	claims, _ := ctx.Value(keyClaims).(fwt.Claims[T])
+	return claims
 }

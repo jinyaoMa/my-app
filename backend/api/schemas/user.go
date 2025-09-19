@@ -1,14 +1,21 @@
 package schemas
 
-import "majinyao.cn/my-app/backend/pkg/api/schema"
+import (
+	"majinyao.cn/my-app/backend/pkg/api/schema"
+	"majinyao.cn/my-app/backend/pkg/db/datatype"
+)
 
 type UserData struct {
-	Identity string
-	UserId   int64
+	VisitorId string
+	UserId    int64
 }
 
 func (u UserData) GetIdentity() string {
-	return u.Identity
+	return u.GetUserId().HexString() + "_" + u.VisitorId
+}
+
+func (u UserData) GetUserId() datatype.Id {
+	return datatype.Id(u.UserId)
 }
 
 type UserItem struct {

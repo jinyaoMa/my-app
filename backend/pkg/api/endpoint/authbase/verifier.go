@@ -10,7 +10,7 @@ import (
 
 type Verifier[T fwt.IdentityGetter] interface {
 	// verify and update userdata
-	VerifyUserData(userdata T) (newUserdata T, err error)
+	VerifyUserData(userdata T, visitorId string) (newUserdata T, err error)
 	// verify login and return userdata
 	VerifyLogin(input *LoginInput) (userdata T, err error)
 }
@@ -23,7 +23,7 @@ func (v *verifier[T]) VerifyLogin(input *LoginInput) (userdata T, err error) {
 }
 
 // VerifyUserData implements Verifier.
-func (v *verifier[T]) VerifyUserData(userdata T) (newUserdata T, err error) {
+func (v *verifier[T]) VerifyUserData(userdata T, visitorId string) (newUserdata T, err error) {
 	return newUserdata, errors.New("unimplemented")
 }
 

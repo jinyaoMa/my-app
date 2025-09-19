@@ -7,21 +7,25 @@ import (
 
 	"gorm.io/gorm"
 	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/datatype"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
 )
 
 type ICrudService[T db.EntityIdGetter] interface {
 	Create(entity *T, choices ...Choice) (affected int64, err error)
 	BatchCreate(entities *[]T, choices ...Choice) (affected int64, err error)
 	Update(entity *T, choices ...Choice) (affected int64, err error)
-	Delete(ids ...int64) (affected int64, err error)
-	GetById(id int64, includes ...string) (entity T, notFound bool, err error)
-	ScanById(entity any, id int64, includes ...string) (notFound bool, err error)
+	Delete(ids ...datatype.Id) (affected int64, err error)
+	GetById(id datatype.Id, includes ...string) (entity T, notFound bool, err error)
+	ScanById(entity any, id datatype.Id, includes ...string) (notFound bool, err error)
 	All(includes ...string) (entities []T, total int64, err error)
 	ScanAll(entities any, includes ...string) (total int64, err error)
 	Query(criteria Criteria) (entities []T, total int64, err error)
 	ScanQuery(entities any, criteria Criteria) (total int64, err error)
 	QueryWithCondition(criteria Criteria, condition func(tx *gorm.DB) (*gorm.DB, error)) (entities []T, total int64, err error)
 	ScanQueryWithCondition(entities any, criteria Criteria, condition func(tx *gorm.DB) (*gorm.DB, error)) (total int64, err error)
+	FindOne(condition func(tx *gorm.DB) (*gorm.DB, error), includes ...string) (entity T, notFound bool, err error)
+	ScanOne(entity any, condition func(tx *gorm.DB) (*gorm.DB, error), includes ...string) (notFound bool, err error)
 }
 
 func New[T db.EntityIdGetter](tx *gorm.DB) ICrudService[T] {
@@ -76,14 +80,14 @@ func (c *Crud[T]) Update(entity *T, choices ...Choice) (affected int64, err erro
 	return
 }
 
-func (c *Crud[T]) Delete(ids ...int64) (affected int64, err error) {
+func (c *Crud[T]) Delete(ids ...datatype.Id) (affected int64, err error) {
 	result := c.Db.Delete(&[]T{}, ids)
 	affected = result.RowsAffected
 	err = result.Error
 	return
 }
 
-func (c *Crud[T]) GetById(id int64, includes ...string) (entity T, notFound bool, err error) {
+func (c *Crud[T]) GetById(id datatype.Id, includes ...string) (entity T, notFound bool, err error) {
 	tx := c.Db
 	for _, include := range includes {
 		tx = tx.Preload(include)
@@ -99,13 +103,13 @@ func (c *Crud[T]) GetById(id int64, includes ...string) (entity T, notFound bool
 	return
 }
 
-func (c *Crud[T]) ScanById(entity any, id int64, includes ...string) (notFound bool, err error) {
+func (c *Crud[T]) ScanById(entity any, id datatype.Id, includes ...string) (notFound bool, err error) {
 	tx := c.Db.Model(new(T))
 	for _, include := range includes {
 		tx = tx.Preload(include)
 	}
 
-	res := tx.Where([]int64{id}).
+	res := tx.Where([]datatype.Id{id}).
 		Limit(1).
 		Scan(entity)
 
@@ -197,12 +201,58 @@ func (c *Crud[T]) Init(tx *gorm.DB) *Crud[T] {
 	return c
 }
 
+func (c *Crud[T]) FindOne(condition func(tx *gorm.DB) (*gorm.DB, error), includes ...string) (entity T, notFound bool, err error) {
+	tx := c.Db
+	for _, include := range includes {
+		tx = tx.Preload(include)
+	}
+
+	if condition != nil {
+		tx, err = condition(tx)
+		if err != nil {
+			return
+		}
+	}
+
+	res := tx.Take(&entity)
+	err = res.Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		notFound = true
+		err = nil
+		return
+	}
+	return
+}
+
+func (c *Crud[T]) ScanOne(entity any, condition func(tx *gorm.DB) (*gorm.DB, error), includes ...string) (notFound bool, err error) {
+	tx := c.Db.Model(new(T))
+	for _, include := range includes {
+		tx = tx.Preload(include)
+	}
+
+	if condition != nil {
+		tx, err = condition(tx)
+		if err != nil {
+			return
+		}
+	}
+
+	res := tx.Limit(1).Scan(entity)
+	err = res.Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		notFound = true
+		err = nil
+		return
+	}
+	return
+}
+
 func (c *Crud[T]) InitWithCancelUnderContext(ctx context.Context, tx *gorm.DB) (*Crud[T], context.CancelFunc) {
-	tx, cancel := db.SectionUnderContextWithCancel(ctx, tx)
+	tx, cancel := dbcontext.SectionUnderContextWithCancel(ctx, tx)
 	return c.Init(tx), cancel
 }
 
 func (c *Crud[T]) InitWithTimeoutUnderContext(ctx context.Context, tx *gorm.DB, timeout time.Duration) (*Crud[T], context.CancelFunc) {
-	tx, cancel := db.SectionUnderContextWithTimeout(ctx, tx, timeout)
+	tx, cancel := dbcontext.SectionUnderContextWithTimeout(ctx, tx, timeout)
 	return c.Init(tx), cancel
 }

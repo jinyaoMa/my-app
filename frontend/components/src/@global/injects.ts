@@ -1,4 +1,5 @@
-import { computed, ComputedGetter, inject, provide, ref, Ref, watchEffect } from 'vue'
+import type { ComputedGetter, Ref } from 'vue'
+import { computed, inject, provide, ref, watchEffect } from 'vue'
 import { Mode, ModeHelper } from './enums'
 import type { ModeKey } from './enums'
 import { defineRwMode, type RwProxy } from './defines'

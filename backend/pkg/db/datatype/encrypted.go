@@ -7,7 +7,7 @@ import (
 	"reflect"
 
 	"gorm.io/gorm/schema"
-	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
 )
 
 type Encrypted string
@@ -17,7 +17,7 @@ type Encrypted string
 // dst: current model value, `user` in the below example
 // dbValue: current field's value in database
 func (e *Encrypted) Scan(ctx context.Context, field *schema.Field, dst reflect.Value, dbValue any) (err error) {
-	cipher, ok := db.GetCipherFromContext(ctx)
+	cipher, ok := dbcontext.GetCipherFromContext(ctx)
 	if !ok {
 		return errors.New("db context does not contain cipher")
 	}
@@ -40,7 +40,7 @@ func (e *Encrypted) Scan(ctx context.Context, field *schema.Field, dst reflect.V
 // dst: current model value, `user` in the below example
 // fieldValue: current field's value of the dst
 func (e Encrypted) Value(ctx context.Context, field *schema.Field, dst reflect.Value, fieldValue any) (any, error) {
-	cipher, ok := db.GetCipherFromContext(ctx)
+	cipher, ok := dbcontext.GetCipherFromContext(ctx)
 	if !ok {
 		return nil, errors.New("db context does not contain cipher")
 	}

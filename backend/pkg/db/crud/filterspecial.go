@@ -6,5 +6,6 @@ const (
 	FilterSpecialIdString FilterSpecial = iota + 1
 	FilterSpecialEncrypted
 	FilterSpecialHashed
+	FilterSpecialOid
 	FilterSpecialPassword
 )

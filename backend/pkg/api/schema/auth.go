@@ -3,8 +3,8 @@ package schema
 import "time"
 
 type AuthLoginRequest struct {
-	Account  string `json:"account" doc:"User Account"`
-	Password string `json:"password" doc:"User Password"`
+	Account  string `json:"account" required:"true" doc:"User Account"`
+	Password string `json:"password" required:"true" doc:"User Password"`
 }
 
 type AuthLogin struct {

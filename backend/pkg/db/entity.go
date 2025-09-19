@@ -4,6 +4,8 @@ import (
 	"time"
 
 	"gorm.io/gorm"
+	"majinyao.cn/my-app/backend/pkg/db/datatype"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
 )
 
 type EntityM2MSetup struct {
@@ -17,29 +19,24 @@ type EntityM2MSetupsGetter interface {
 }
 
 type EntityIdGetter interface {
-	GetId() int64
-	GetIdString() string
+	GetId() datatype.Id
 }
 
 type Entity struct {
-	Id        int64          `gorm:"primaryKey;comment:Id;"`
+	Id        datatype.Id    `gorm:"primaryKey;comment:Id;"`
 	CreatedAt time.Time      `gorm:"<-:create;autoCreateTime;comment:Created At;"`
 	UpdatedAt time.Time      `gorm:"autoUpdateTime;comment:Updated At;"`
 	DeletedAt gorm.DeletedAt `gorm:"index;comment:Deleted At;"`
 }
 
-func (e Entity) GetId() int64 {
+func (e Entity) GetId() datatype.Id {
 	return e.Id
 }
 
-func (e Entity) GetIdString() string {
-	return ConvertIdToString(e.Id)
-}
-
 func (e *Entity) BeforeCreate(tx *gorm.DB) (err error) {
-	s, ok := GetSnowflake(tx)
+	s, ok := dbcontext.GetSnowflake(tx)
 	if ok {
-		e.Id = s.Generate()
+		e.Id = datatype.Id(s.Generate())
 	}
 	return nil
 }

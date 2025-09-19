@@ -7,6 +7,8 @@ import (
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"majinyao.cn/my-app/backend/pkg/cflog"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
 )
 
 func Open(autoMigrateDst []any, options Options) (db *gorm.DB, err error) {
@@ -15,7 +17,11 @@ func Open(autoMigrateDst []any, options Options) (db *gorm.DB, err error) {
 		return
 	}
 
-	cfg := newGormConfig(options)
+	cfg, err := newGormConfig(options)
+	if err != nil {
+		return
+	}
+
 	db, err = gorm.Open(dialector, cfg)
 	if err != nil {
 		return
@@ -47,31 +53,41 @@ func Open(autoMigrateDst []any, options Options) (db *gorm.DB, err error) {
 }
 
 func setContext(db *gorm.DB, options Options) (err error) {
-	_, err = setSnowflake(db, options.Snowflake)
+	_, err = dbcontext.SetSnowflake(db, options.Snowflake)
 	if err != nil {
 		return
 	}
-	_, err = setKeygen(db, options.Keygen)
+	_, err = dbcontext.SetKeygen(db, options.Keygen)
 	if err != nil {
 		return
 	}
-	_, err = setHasher(db, options.Hasher)
+	_, err = dbcontext.SetHasher(db, options.Hasher)
 	if err != nil {
 		return
 	}
-	_, err = setCipher(db, options.Cipher)
+	_, err = dbcontext.SetCipher(db, options.Cipher)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func newGormConfig(options Options) (cfg *gorm.Config) {
+func newGormConfig(options Options) (cfg *gorm.Config, err error) {
+	cflog, err := cflog.New(options.Cflog)
+	if err != nil {
+		return
+	}
+
 	return &gorm.Config{
 		PrepareStmt:    true,
 		PrepareStmtTTL: time.Hour,
-		Logger:         logger.Default.LogMode(options.LogLevel),
-	}
+		Logger: logger.New(cflog, logger.Config{
+			SlowThreshold:             200 * time.Millisecond,
+			LogLevel:                  options.LogLevel,
+			IgnoreRecordNotFoundError: false,
+			Colorful:                  false,
+		}),
+	}, nil
 }
 
 func openDialector(options Options) (dialector gorm.Dialector, err error) {

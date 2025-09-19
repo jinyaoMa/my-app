@@ -3,24 +3,24 @@ package schema
 import (
 	"time"
 
-	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/datatype"
 )
 
 type EntityIdGetter interface {
-	GetId() (id int64, err error)
-	GetIdString() string
+	GetId() (id datatype.Id, err error)
+	GetIdHexString() string
 	IsTransient() bool
 }
 
 type EntityId struct {
-	Id string `json:"id" doc:"Entity Id"`
+	Id string `json:"id" doc:"Entity Id (Hex)"`
 }
 
-func (i EntityId) GetId() (id int64, err error) {
-	return db.ConvertStringToId(i.Id)
+func (i EntityId) GetId() (id datatype.Id, err error) {
+	return datatype.ParseIdFromHex(i.Id)
 }
 
-func (i EntityId) GetIdString() string {
+func (i EntityId) GetIdHexString() string {
 	return i.Id
 }
 

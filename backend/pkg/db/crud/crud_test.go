@@ -66,10 +66,10 @@ func (r *Role) AfterFind(tx *gorm.DB) (err error) {
 type UserRole struct {
 	db.Entity
 
-	UserId int64
+	UserId datatype.Id
 	User   User
 
-	RoleId int64
+	RoleId datatype.Id
 	Role   Role
 }
 
@@ -223,7 +223,7 @@ func TestCrud(t *testing.T) {
 
 	var scanUser UserScan
 	notFound, err = userService.ScanById(&scanUser, record.Id)
-	if err != nil || notFound || scanUser.Id != record.Id || scanUser.Password != string(record.Password) {
+	if err != nil || notFound || scanUser.Id != record.Id.Int64() || scanUser.Password != string(record.Password) {
 		t.Fatal(notFound, scanUser.Id, scanUser.Password, err)
 	}
 
@@ -351,7 +351,7 @@ func TestCrud(t *testing.T) {
 			{
 				Type:    crud.FilterTypeEqual,
 				Field:   "user_roles.user_id",
-				Params:  []any{db.ConvertIdToString(newUsers[0].Id)},
+				Params:  []any{newUsers[0].Id.HexString()},
 				Special: crud.FilterSpecialIdString,
 			},
 			{

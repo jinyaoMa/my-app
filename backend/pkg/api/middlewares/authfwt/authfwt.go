@@ -64,8 +64,8 @@ func New[T fwt.IdentityGetter](
 			}
 		}
 
-		ctx = AttachFwt(ctx, f)
-		ctx = AttachMemcache(ctx, m)
+		ctx = AttachFwtToHumaContext(ctx, f)
+		ctx = AttachMemcacheToHumaContext(ctx, m)
 		if !isAuthorizationRequired {
 			next(ctx)
 			return
@@ -77,13 +77,12 @@ func New[T fwt.IdentityGetter](
 			return
 		}
 
-		var userdata T
+		var claims fwt.Claims[T]
 		if cacheItem, err := m.Get(token); err == nil {
-			userdata = cacheItem.(T)
-		} else if claims, err := f.ParseAccessToken(token); err == nil {
-			userdata = claims.Data
+			claims = cacheItem.(fwt.Claims[T])
+		} else if claims, err = f.ParseAccessToken(token); err == nil {
 			if err := f.ValidateClaims(claims); err == nil {
-				m.Set(token, userdata, claims.ExpiredAt)
+				m.Set(token, claims, claims.ExpiredAt)
 			} else if scopes != nil { // if scopes is not nil, claims must be valid
 				huma.WriteErr(api, ctx, http.StatusForbidden, err.Error())
 				return
@@ -93,7 +92,6 @@ func New[T fwt.IdentityGetter](
 			return
 		}
 
-		ctx = AttachUserData(ctx, userdata)
 		if scopes != nil {
 			if err := scopesValidator(ctx, scopes); err != nil {
 				huma.WriteErr(api, ctx, http.StatusForbidden, err.Error())
@@ -101,6 +99,7 @@ func New[T fwt.IdentityGetter](
 			}
 		}
 
+		ctx = AttachClaimsToHumaContext(ctx, claims)
 		next(ctx)
 	}, nil
 }

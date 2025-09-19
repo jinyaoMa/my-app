@@ -29,7 +29,7 @@ type File struct {
 	Readonly bool       `gorm:"comment:Is Read-only or Not;"`
 	Hidden   bool       `gorm:"comment:Is Hidden or Visible;"`
 
-	FileExtensionId *int64 `gorm:"comment:File Extension Id;"`
+	FileExtensionId *datatype.Id `gorm:"comment:File Extension Id;"`
 	FileExtension   *FileExtension
 
 	FileUsers []FileUser
@@ -49,7 +49,7 @@ func (f *File) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 func (f *File) AfterCreate(tx *gorm.DB) (err error) {
-	res := tx.Model(f).Update("oid", append(f.Oid, f.Id))
+	res := tx.Model(f).Update("oid", append(f.Oid, f.Id.Int64()))
 	if res.Error != nil {
 		return res.Error
 	}

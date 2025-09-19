@@ -56,7 +56,7 @@ tasks:
     generates:
       - frontend/sdk/bindings/**/*
     cmds:
-      - '{{.WAILS3}} generate bindings -f "{{.BUILD_FLAGS}}"{{if .USE_TYPESCRIPT}} -ts{{end}} -clean=true -d frontend/sdk/bindings ./...'
+      - "{{.WAILS3}} generate bindings -f '{{.BUILD_FLAGS}}'{{if .USE_TYPESCRIPT}} -ts{{end}} -clean=true -d frontend/sdk/bindings ./..."
 
   generate:icons:
     summary: Generates Windows `.ico` and Mac `.icns` files from an image

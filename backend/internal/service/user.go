@@ -5,16 +5,14 @@ import (
 	"time"
 
 	"gorm.io/gorm"
-	"majinyao.cn/my-app/backend/api/schemas"
 	"majinyao.cn/my-app/backend/internal/entity"
-	"majinyao.cn/my-app/backend/pkg/api/endpoint/authbase"
-	"majinyao.cn/my-app/backend/pkg/db"
 	"majinyao.cn/my-app/backend/pkg/db/crud"
+	"majinyao.cn/my-app/backend/pkg/db/datatype"
 )
 
 type IUserService interface {
-	authbase.Verifier[schemas.UserData]
 	crud.ICrudService[entity.User]
+	GetByAccountPassword(account string, password string, includes ...string) (user entity.User, notFound bool, err error)
 }
 
 func NewUserService(ctx context.Context, tx *gorm.DB) (IUserService, context.CancelFunc) {
@@ -30,16 +28,14 @@ type UserService struct {
 	crud.Crud[entity.User]
 }
 
-func (s *UserService) VerifyUserData(userdata schemas.UserData) (newUserdata schemas.UserData, err error) {
-	return userdata, nil
-}
-
-func (s *UserService) VerifyLogin(input *authbase.LoginInput) (userdata schemas.UserData, err error) {
-	var userId int64
-	return schemas.UserData{
-		Identity: db.ConvertIdToString(userId) + "_" + input.VisitorId,
-		UserId:   userId,
-	}, nil
+func (s *UserService) GetByAccountPassword(account string, password string, includes ...string) (user entity.User, notFound bool, err error) {
+	return s.FindOne(func(tx *gorm.DB) (*gorm.DB, error) {
+		tx = tx.Where(entity.User{
+			Account:  datatype.Encrypted(account),
+			Password: datatype.Password(password),
+		})
+		return tx, nil
+	}, includes...)
 }
 
 func (s *UserService) Init(tx *gorm.DB) *UserService {
