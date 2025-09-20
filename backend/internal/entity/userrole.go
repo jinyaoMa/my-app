@@ -1,12 +1,12 @@
 package entity
 
 import (
-	"majinyao.cn/my-app/backend/pkg/db"
 	"majinyao.cn/my-app/backend/pkg/db/datatype"
+	"majinyao.cn/my-app/backend/pkg/db/model"
 )
 
 type UserRole struct {
-	db.Entity
+	model.Model
 
 	UserId datatype.Id `gorm:"comment:User Id;"`
 	User   User

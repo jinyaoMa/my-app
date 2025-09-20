@@ -27,6 +27,6 @@ func (v *verifier[T]) VerifyUserData(userdata T, visitorId string) (newUserdata 
 	return newUserdata, errors.New("unimplemented")
 }
 
-func newVerifier[T fwt.IdentityGetter](ctx context.Context, tx *gorm.DB) (Verifier[T], context.CancelFunc) {
+func newVerifier[T fwt.IdentityGetter](ctx context.Context, db *gorm.DB) (Verifier[T], context.CancelFunc) {
 	return &verifier[T]{}, func() {}
 }

@@ -10,12 +10,11 @@ import (
 	"majinyao.cn/my-app/backend/internal/service"
 	"majinyao.cn/my-app/backend/pkg/api/endpoint"
 	"majinyao.cn/my-app/backend/pkg/api/endpoint/crudbase"
-	"majinyao.cn/my-app/backend/pkg/db"
 	"majinyao.cn/my-app/backend/pkg/db/crud"
 )
 
-func New(scheme string, tx *gorm.DB) endpoint.Register {
-	return new(UserRole).Init(scheme, tx)
+func New(scheme string, db *gorm.DB) endpoint.Register {
+	return new(UserRole).Init(scheme, db)
 }
 
 type UserRole struct {
@@ -28,9 +27,9 @@ func (r *UserRole) Register(api huma.API) (ops []huma.Operation) {
 	return
 }
 
-func (r *UserRole) Init(scheme string, tx *gorm.DB) *UserRole {
-	r.Crud.Init("UserRole", tx, db.DefaultCopierOption, func(ctx context.Context, tx *gorm.DB) (crud.ICrudService[entity.UserRole], context.CancelFunc) {
-		return service.NewUserRoleService(ctx, tx)
+func (r *UserRole) Init(scheme string, db *gorm.DB) *UserRole {
+	r.Crud.Init("UserRole", db, func(ctx context.Context, db *gorm.DB) (crud.ICrud[entity.UserRole], context.CancelFunc) {
+		return service.NewUserRoleService(ctx, db)
 	}, scheme)
 	return r
 }

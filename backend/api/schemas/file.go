@@ -6,8 +6,8 @@ import (
 )
 
 type FileItem struct {
-	schema.EntityId
-	schema.EntityTime
+	schema.ModelId
+	schema.ModelTime
 	Oid   string `json:"oid" doc:"Oid"`
 	IsDir bool   `json:"isDir" doc:"Is Directory or Not"`
 	Name  string `json:"name" doc:"Name"`
@@ -22,8 +22,8 @@ type FileItem struct {
 }
 
 type FileDetail struct {
-	schema.EntityId
-	schema.EntityTime
+	schema.ModelId
+	schema.ModelTime
 	Oid   string `json:"oid" doc:"Oid"`
 	IsDir bool   `json:"isDir" doc:"Is Directory or Not"`
 	Name  string `json:"name" doc:"Name"`
@@ -44,7 +44,7 @@ type FileDetail struct {
 }
 
 type FileSave struct {
-	schema.EntityId
+	schema.ModelId
 	Oid   string `json:"oid" doc:"Oid"`
 	IsDir bool   `json:"isDir" doc:"Is Directory or Not"`
 	Name  string `json:"name" doc:"Name"`

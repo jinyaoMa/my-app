@@ -31,27 +31,27 @@ import (
 
 const authScheme = "auth-fwt"
 
-func setup(ctx context.Context, tx *gorm.DB, humaapi huma.API) (operationIdEnumMap map[string]int, err error) {
+func setup(ctx context.Context, db *gorm.DB, humaapi huma.API) (operationIdEnumMap map[string]int, err error) {
 	// setup endpoints
 	var ops []huma.Operation
 	for _, op := range []endpoint.Register{
-		auth.New(authScheme, tx),
-		file.New(authScheme, tx),
-		filecategory.New(authScheme, tx),
-		fileextension.New(authScheme, tx),
-		filegroup.New(authScheme, tx),
-		fileuser.New(authScheme, tx),
-		group.New(authScheme, tx),
-		grouprole.New(authScheme, tx),
-		groupuser.New(authScheme, tx),
-		operationidenumpair.New(authScheme, tx),
-		option.New(authScheme, tx),
-		permission.New(authScheme, tx),
-		role.New(authScheme, tx),
-		rolepermission.New(authScheme, tx),
-		user.New(authScheme, tx),
-		userpassword.New(authScheme, tx),
-		userrole.New(authScheme, tx),
+		auth.New(authScheme, db),
+		file.New(authScheme, db),
+		filecategory.New(authScheme, db),
+		fileextension.New(authScheme, db),
+		filegroup.New(authScheme, db),
+		fileuser.New(authScheme, db),
+		group.New(authScheme, db),
+		grouprole.New(authScheme, db),
+		groupuser.New(authScheme, db),
+		operationidenumpair.New(authScheme, db),
+		option.New(authScheme, db),
+		permission.New(authScheme, db),
+		role.New(authScheme, db),
+		rolepermission.New(authScheme, db),
+		user.New(authScheme, db),
+		userpassword.New(authScheme, db),
+		userrole.New(authScheme, db),
 	} {
 		ops = append(ops, op.Register(humaapi)...)
 	}
@@ -59,7 +59,7 @@ func setup(ctx context.Context, tx *gorm.DB, humaapi huma.API) (operationIdEnumM
 	// finalize endpoints
 	ops = append(ops, endpoints.New(authScheme, ops).Register(humaapi)...)
 
-	operationIdEnumPairService, cancel := service.NewOperationIdEnumPairService(ctx, tx)
+	operationIdEnumPairService, cancel := service.NewOperationIdEnumPairService(ctx, db)
 	defer cancel()
 
 	operationIdEnumPairs := entity.OperationIdEnumPairs(utils.SliceMap(ops, func(op huma.Operation) entity.OperationIdEnumPair {

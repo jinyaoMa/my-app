@@ -43,9 +43,9 @@ func init() {
 	setup(ctx, exe, cfg, log, store, i19, tx, api, h3s)
 }
 
-func initAPI(ctx context.Context, log *cflog.Cflog, tx *gorm.DB, options api.Options) router.IRouter {
+func initAPI(ctx context.Context, log *cflog.Cflog, db *gorm.DB, options api.Options) router.IRouter {
 	var err error
-	API, err = api.New(ctx, tx, options)
+	API, err = api.New(ctx, db, options)
 	if err != nil {
 		log.Panicln("init api failed", err)
 	}

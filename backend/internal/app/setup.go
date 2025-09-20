@@ -29,14 +29,15 @@ func setup(
 	log *cflog.Cflog,
 	store storage.IStorage,
 	i19 i18n.II18n,
-	tx *gorm.DB,
+	db *gorm.DB,
 	api router.IRouter,
 	h3s h3server.IH3Server,
 ) {
 	// setup data
-	tx, cancel := dbcontext.SectionUnderContextWithCancel(ctx, tx)
+	db, cancel := dbcontext.SectionUnderContextWithCancel(ctx, db)
 	defer cancel()
-	err := tx.Transaction(func(tx *gorm.DB) error {
+
+	err := db.Transaction(func(tx *gorm.DB) error {
 		optionSystemLocale := entity.Option{
 			Key: entity.OptionKeySystemLocale,
 		}
@@ -91,7 +92,7 @@ func setup(
 		})
 
 		lastOperationIdEnumPair := entity.OperationIdEnumPair{}
-		if res := tx.First(&lastOperationIdEnumPair); res.Error != nil {
+		if res := tx.Order("enum DESC").First(&lastOperationIdEnumPair); res.Error != nil {
 			return res.Error
 		}
 

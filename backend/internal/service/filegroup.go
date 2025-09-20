@@ -10,33 +10,33 @@ import (
 )
 
 type IFileGroupService interface {
-	crud.ICrudService[entity.FileGroup]
+	crud.ICrud[entity.FileGroup]
 }
 
-func NewFileGroupService(ctx context.Context, tx *gorm.DB) (IFileGroupService, context.CancelFunc) {
-	s, cancel := new(FileGroupService).InitWithCancelUnderContext(ctx, tx)
+func NewFileGroupService(ctx context.Context, db *gorm.DB) (IFileGroupService, context.CancelFunc) {
+	s, cancel := new(FileGroupService).InitWithCancelUnderContext(ctx, db)
 	return s, cancel
 }
 
-func UseFileGroupService(tx *gorm.DB) IFileGroupService {
-	return new(FileGroupService).Init(tx)
+func UseFileGroupService(db *gorm.DB) IFileGroupService {
+	return new(FileGroupService).Init(db)
 }
 
 type FileGroupService struct {
 	crud.Crud[entity.FileGroup]
 }
 
-func (s *FileGroupService) Init(tx *gorm.DB) *FileGroupService {
-	s.Crud.Init(tx)
+func (s *FileGroupService) Init(db *gorm.DB) *FileGroupService {
+	s.Crud.Init(db)
 	return s
 }
 
-func (s *FileGroupService) InitWithCancelUnderContext(ctx context.Context, tx *gorm.DB) (*FileGroupService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithCancelUnderContext(ctx, tx)
+func (s *FileGroupService) InitWithCancelUnderContext(ctx context.Context, db *gorm.DB) (*FileGroupService, context.CancelFunc) {
+	_, cancel := s.Crud.InitWithCancelUnderContext(ctx, db)
 	return s, cancel
 }
 
-func (s *FileGroupService) InitWithTimeoutUnderContext(ctx context.Context, tx *gorm.DB, timeout time.Duration) (*FileGroupService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithTimeoutUnderContext(ctx, tx, timeout)
+func (s *FileGroupService) InitWithTimeoutUnderContext(ctx context.Context, db *gorm.DB, timeout time.Duration) (*FileGroupService, context.CancelFunc) {
+	_, cancel := s.Crud.InitWithTimeoutUnderContext(ctx, db, timeout)
 	return s, cancel
 }

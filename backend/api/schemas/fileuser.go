@@ -3,8 +3,8 @@ package schemas
 import "majinyao.cn/my-app/backend/pkg/api/schema"
 
 type FileUserItem struct {
-	schema.EntityId
-	schema.EntityTime
+	schema.ModelId
+	schema.ModelTime
 
 	FileId string   `json:"fileId" doc:"File Id"`
 	File   FileItem `json:"file" doc:"File"`
@@ -20,8 +20,8 @@ type FileUserItem struct {
 }
 
 type FileUserDetail struct {
-	schema.EntityId
-	schema.EntityTime
+	schema.ModelId
+	schema.ModelTime
 
 	FileId string   `json:"fileId" doc:"File Id"`
 	File   FileItem `json:"file" doc:"File"`
@@ -37,7 +37,7 @@ type FileUserDetail struct {
 }
 
 type FileUserSave struct {
-	schema.EntityId
+	schema.ModelId
 
 	FileId string `json:"fileId" doc:"File Id"`
 

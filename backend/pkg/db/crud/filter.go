@@ -77,7 +77,7 @@ func (f *Filter) Apply(tx *gorm.DB) *gorm.DB {
 	case FilterSpecialIdString:
 		for i := range f.Params {
 			if v, ok := f.Params[i].(string); ok {
-				if id, err := datatype.ParseIdFromHex(v); err == nil {
+				if id, err := datatype.ParseIdFromB36(v); err == nil {
 					f.Params[i] = id
 				}
 			}
@@ -109,7 +109,7 @@ func (f *Filter) Apply(tx *gorm.DB) *gorm.DB {
 		for i := range f.Params {
 			if v, ok := f.Params[i].(string); ok {
 				for _, id := range strings.Split(v, datatype.OidDelimiter) {
-					if id, err := utils.ConvertHexToInt64(id); err == nil {
+					if id, err := utils.ConvertB36ToInt64(id); err == nil {
 						oid = append(oid, id)
 					}
 				}

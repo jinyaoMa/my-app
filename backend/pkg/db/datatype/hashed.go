@@ -13,8 +13,8 @@ import (
 
 type Hashed string
 
-func (s Hashed) VerifyBase64(tx *gorm.DB, data string) (ok bool, err error) {
-	hasher, ok := dbcontext.GetHasher(tx)
+func (s Hashed) VerifyBase64(db *gorm.DB, data string) (ok bool, err error) {
+	hasher, ok := dbcontext.GetHasher(db)
 	if !ok {
 		return false, errors.New("db context does not contain hasher")
 	}

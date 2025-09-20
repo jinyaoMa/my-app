@@ -8,8 +8,8 @@ import (
 	"majinyao.cn/my-app/backend/pkg/api/endpoint/authbase"
 )
 
-func New(scheme string, tx *gorm.DB) endpoint.Register {
-	return new(Auth).Init(scheme, tx)
+func New(scheme string, db *gorm.DB) endpoint.Register {
+	return new(Auth).Init(scheme, db)
 }
 
 type Auth struct {
@@ -22,7 +22,7 @@ func (a *Auth) Register(api huma.API) (ops []huma.Operation) {
 	return
 }
 
-func (a *Auth) Init(scheme string, tx *gorm.DB) *Auth {
-	a.Auth.Init(scheme, tx, NewVerifier)
+func (a *Auth) Init(scheme string, db *gorm.DB) *Auth {
+	a.Auth.Init(scheme, db, NewVerifier)
 	return a
 }

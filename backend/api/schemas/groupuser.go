@@ -3,8 +3,8 @@ package schemas
 import "majinyao.cn/my-app/backend/pkg/api/schema"
 
 type GroupUserItem struct {
-	schema.EntityId
-	schema.EntityTime
+	schema.ModelId
+	schema.ModelTime
 
 	GroupId string    `json:"groupId" doc:"Group Id"`
 	Group   GroupItem `json:"group" doc:"Group"`
@@ -14,8 +14,8 @@ type GroupUserItem struct {
 }
 
 type GroupUserDetail struct {
-	schema.EntityId
-	schema.EntityTime
+	schema.ModelId
+	schema.ModelTime
 
 	GroupId string    `json:"groupId" doc:"Group Id"`
 	Group   GroupItem `json:"group" doc:"Group"`
@@ -25,7 +25,7 @@ type GroupUserDetail struct {
 }
 
 type GroupUserSave struct {
-	schema.EntityId
+	schema.ModelId
 
 	GroupId string `json:"groupId" doc:"Group Id"`
 

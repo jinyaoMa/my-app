@@ -5,11 +5,9 @@ import (
 	"net/http"
 
 	"github.com/danielgtaylor/huma/v2"
-	"github.com/jinzhu/copier"
 	"majinyao.cn/my-app/backend/api/schemas"
 	"majinyao.cn/my-app/backend/internal/service"
 	"majinyao.cn/my-app/backend/pkg/api/schema"
-	"majinyao.cn/my-app/backend/pkg/db"
 )
 
 type ListInput struct {
@@ -36,17 +34,11 @@ func (p *OperationIdEnumPair) RegisterList(api huma.API) (op huma.Operation) {
 		service, cancel := service.NewOperationIdEnumPairService(ctx, p.Db)
 		defer cancel()
 
-		entities, total, err := service.List(input.OperationID)
-		if err != nil {
-			return nil, err
-		}
-
 		var list []schemas.OperationIdEnumPairItem
-		err = copier.CopyWithOption(&list, &entities, db.DefaultCopierOption)
+		_, total, err := service.ListCopy(&list, input.OperationID)
 		if err != nil {
 			return nil, err
 		}
-
 		return schema.Succeed(list, total), nil
 	}
 

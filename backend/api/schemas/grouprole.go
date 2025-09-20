@@ -3,8 +3,8 @@ package schemas
 import "majinyao.cn/my-app/backend/pkg/api/schema"
 
 type GroupRoleItem struct {
-	schema.EntityId
-	schema.EntityTime
+	schema.ModelId
+	schema.ModelTime
 
 	GroupId string    `json:"groupId" doc:"Group Id"`
 	Group   GroupItem `json:"group" doc:"Group"`
@@ -14,8 +14,8 @@ type GroupRoleItem struct {
 }
 
 type GroupRoleDetail struct {
-	schema.EntityId
-	schema.EntityTime
+	schema.ModelId
+	schema.ModelTime
 
 	GroupId string    `json:"groupId" doc:"Group Id"`
 	Group   GroupItem `json:"group" doc:"Group"`
@@ -25,7 +25,7 @@ type GroupRoleDetail struct {
 }
 
 type GroupRoleSave struct {
-	schema.EntityId
+	schema.ModelId
 
 	GroupId string `json:"groupId" doc:"Group Id"`
 

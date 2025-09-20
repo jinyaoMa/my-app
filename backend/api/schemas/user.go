@@ -11,7 +11,7 @@ type UserData struct {
 }
 
 func (u UserData) GetIdentity() string {
-	return u.GetUserId().HexString() + "_" + u.VisitorId
+	return u.GetUserId().B36String() + "_" + u.VisitorId
 }
 
 func (u UserData) GetUserId() datatype.Id {
@@ -19,8 +19,8 @@ func (u UserData) GetUserId() datatype.Id {
 }
 
 type UserItem struct {
-	schema.EntityId
-	schema.EntityTime
+	schema.ModelId
+	schema.ModelTime
 	Account     string `json:"account" doc:"Account"`
 	Password    string `json:"password" doc:"Password"`
 	Name        string `json:"name" doc:"Name"`
@@ -28,8 +28,8 @@ type UserItem struct {
 }
 
 type UserDetail struct {
-	schema.EntityId
-	schema.EntityTime
+	schema.ModelId
+	schema.ModelTime
 	Account     string `json:"account" doc:"Account"`
 	Password    string `json:"password" doc:"Password"`
 	Name        string `json:"name" doc:"Name"`
@@ -48,7 +48,7 @@ type UserDetail struct {
 }
 
 type UserSave struct {
-	schema.EntityId
+	schema.ModelId
 	Account     string `json:"account" doc:"Account"`
 	Password    string `json:"password" doc:"Password"`
 	Name        string `json:"name" doc:"Name"`

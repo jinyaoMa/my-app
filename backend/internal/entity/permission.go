@@ -1,13 +1,13 @@
 package entity
 
 import (
-	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/model"
 	"majinyao.cn/my-app/backend/pkg/flag"
 )
 
 type Permission struct {
-	db.Entity
-	db.EntityReserved
+	model.Model
+	model.Reserved
 	Code        string `gorm:"index;not null;size:254;comment:Permission Code;"`
 	Name        string `gorm:"index;size:254;comment:Permission Name;"`
 	Description string `gorm:"size:254;comment:Permission Description;"`
@@ -25,8 +25,8 @@ func (p *Permission) SetFlag(f flag.IFlag) {
 	p.Flag = f.ToBytes()
 }
 
-func (p *Permission) GetM2MSetups() []db.EntityM2MSetup {
-	return []db.EntityM2MSetup{
+func (p *Permission) GetM2MSetups() []model.M2MSetup {
+	return []model.M2MSetup{
 		{
 			Model:     new(Permission),
 			Field:     "Roles",

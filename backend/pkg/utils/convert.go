@@ -3,7 +3,7 @@ package utils
 import (
 	"encoding/base64"
 	"encoding/binary"
-	"encoding/hex"
+	"strconv"
 )
 
 func ConvertInt64ToBytes(v int64) []byte {
@@ -40,14 +40,11 @@ func ConvertBase64ToUint64(s string) (uint64, error) {
 	return ConvertBytesToUint64(buf), nil
 }
 
-func ConvertInt64ToHex(v int64) string {
-	return hex.EncodeToString(ConvertInt64ToBytes(v))
+func ConvertInt64ToB36(v int64) string {
+	return strconv.FormatUint(uint64(v), 36)
 }
 
-func ConvertHexToInt64(s string) (int64, error) {
-	buf, err := hex.DecodeString(s)
-	if err != nil {
-		return 0, err
-	}
-	return ConvertBytesToInt64(buf), nil
+func ConvertB36ToInt64(s string) (int64, error) {
+	v, err := strconv.ParseUint(s, 36, 64)
+	return int64(v), err
 }

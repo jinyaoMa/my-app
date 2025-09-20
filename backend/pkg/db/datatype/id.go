@@ -2,7 +2,6 @@ package datatype
 
 import (
 	"context"
-	"encoding/hex"
 	"fmt"
 	"reflect"
 
@@ -10,18 +9,18 @@ import (
 	"majinyao.cn/my-app/backend/pkg/utils"
 )
 
-func ParseIdFromHex(hexStr string) (Id, error) {
-	buf, err := hex.DecodeString(hexStr)
+func ParseIdFromB36(b36 string) (Id, error) {
+	v, err := utils.ConvertB36ToInt64(b36)
 	if err != nil {
 		return 0, err
 	}
-	return Id(utils.ConvertBytesToInt64(buf)), nil
+	return Id(v), nil
 }
 
 type Id int64
 
-func (i Id) HexString() string {
-	return utils.ConvertInt64ToHex(int64(i))
+func (i Id) B36String() string {
+	return utils.ConvertInt64ToB36(int64(i))
 }
 
 func (i Id) Int64() int64 {

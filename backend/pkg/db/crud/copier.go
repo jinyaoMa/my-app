@@ -1,4 +1,4 @@
-package db
+package crud
 
 import (
 	"errors"
@@ -30,7 +30,7 @@ func TypeConverters() []copier.TypeConverter {
 					return dst, errors.New("copier src type [datatype.Id] not matched dst type [string]")
 				}
 
-				return s.HexString(), nil
+				return s.B36String(), nil
 			},
 		},
 		{
@@ -42,7 +42,7 @@ func TypeConverters() []copier.TypeConverter {
 					return nil, errors.New("copier src type [string] not matched dst type [datatype.Id]")
 				}
 
-				dst, err = datatype.ParseIdFromHex(s)
+				dst, err = datatype.ParseIdFromB36(s)
 				if err != nil {
 					return nil, err
 				}

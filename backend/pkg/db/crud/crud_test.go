@@ -10,6 +10,7 @@ import (
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"majinyao.cn/my-app/backend/pkg/cflog"
 	"majinyao.cn/my-app/backend/pkg/crypto/cipher"
 	"majinyao.cn/my-app/backend/pkg/crypto/cipher/sm4"
 	"majinyao.cn/my-app/backend/pkg/crypto/hasher"
@@ -19,12 +20,13 @@ import (
 	"majinyao.cn/my-app/backend/pkg/db"
 	"majinyao.cn/my-app/backend/pkg/db/crud"
 	"majinyao.cn/my-app/backend/pkg/db/datatype"
+	"majinyao.cn/my-app/backend/pkg/db/model"
 	"majinyao.cn/my-app/backend/pkg/snowflake"
 	"majinyao.cn/my-app/backend/pkg/test"
 )
 
 type User struct {
-	db.Entity
+	model.Model
 	Account  datatype.Encrypted
 	Password datatype.Password
 
@@ -38,7 +40,7 @@ type UserScan struct {
 }
 
 type Role struct {
-	db.Entity
+	model.Model
 	Name   string
 	Desc   string
 	Hmac   datatype.Hashed
@@ -64,7 +66,7 @@ func (r *Role) AfterFind(tx *gorm.DB) (err error) {
 }
 
 type UserRole struct {
-	db.Entity
+	model.Model
 
 	UserId datatype.Id
 	User   User
@@ -80,8 +82,8 @@ func (r *UserRole) AfterFind(tx *gorm.DB) (err error) {
 	return
 }
 
-func (r *UserRole) GetEntityM2MSetups() []db.EntityM2MSetup {
-	return []db.EntityM2MSetup{
+func (r *UserRole) GetM2MSetups() []model.M2MSetup {
+	return []model.M2MSetup{
 		{
 			Model:     &User{},
 			Field:     "Roles",
@@ -122,9 +124,12 @@ func TestCrud(t *testing.T) {
 		&Role{},
 		&UserRole{},
 	}, db.Options{
+		Cflog: cflog.Options{
+			EnableConsole: true,
+		},
+		LogLevel: logger.Info,
 		Driver:   db.DrvSqlite,
 		Dsn:      ":memory:?_pragma=foreign_keys(1)",
-		LogLevel: logger.Info,
 		Snowflake: snowflake.Options{
 			Epoch:    epoch,
 			NodeBits: 7,
@@ -248,7 +253,7 @@ func TestCrud(t *testing.T) {
 		t.Fatal(len(records), total, records[0].Account, err)
 	}
 
-	total, err = userService.ScanQuery(&scanUsers, crud.Criteria{
+	total, err = userService.QueryScan(&scanUsers, crud.Criteria{
 		Page: 2,
 		Size: 1,
 	})
@@ -274,7 +279,7 @@ func TestCrud(t *testing.T) {
 		t.Fatal(len(records), total, records[0].Account, err)
 	}
 
-	total, err = userService.ScanQueryWithCondition(&scanUsers, crud.Criteria{
+	total, err = userService.QueryScanWithCondition(&scanUsers, crud.Criteria{
 		Page: 1,
 		Size: 2,
 		Filters: []crud.Filter{
@@ -351,7 +356,7 @@ func TestCrud(t *testing.T) {
 			{
 				Type:    crud.FilterTypeEqual,
 				Field:   "user_roles.user_id",
-				Params:  []any{newUsers[0].Id.HexString()},
+				Params:  []any{newUsers[0].Id.B36String()},
 				Special: crud.FilterSpecialIdString,
 			},
 			{

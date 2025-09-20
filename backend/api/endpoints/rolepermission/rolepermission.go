@@ -10,12 +10,11 @@ import (
 	"majinyao.cn/my-app/backend/internal/service"
 	"majinyao.cn/my-app/backend/pkg/api/endpoint"
 	"majinyao.cn/my-app/backend/pkg/api/endpoint/crudbase"
-	"majinyao.cn/my-app/backend/pkg/db"
 	"majinyao.cn/my-app/backend/pkg/db/crud"
 )
 
-func New(scheme string, tx *gorm.DB) endpoint.Register {
-	return new(RolePermission).Init(scheme, tx)
+func New(scheme string, db *gorm.DB) endpoint.Register {
+	return new(RolePermission).Init(scheme, db)
 }
 
 type RolePermission struct {
@@ -28,9 +27,9 @@ func (p *RolePermission) Register(api huma.API) (ops []huma.Operation) {
 	return
 }
 
-func (p *RolePermission) Init(scheme string, tx *gorm.DB) *RolePermission {
-	p.Crud.Init("RolePermission", tx, db.DefaultCopierOption, func(ctx context.Context, tx *gorm.DB) (crud.ICrudService[entity.RolePermission], context.CancelFunc) {
-		return service.NewRolePermissionService(ctx, tx)
+func (p *RolePermission) Init(scheme string, db *gorm.DB) *RolePermission {
+	p.Crud.Init("RolePermission", db, func(ctx context.Context, db *gorm.DB) (crud.ICrud[entity.RolePermission], context.CancelFunc) {
+		return service.NewRolePermissionService(ctx, db)
 	}, scheme)
 	return p
 }

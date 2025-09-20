@@ -19,8 +19,8 @@ const (
 	keyCipher
 )
 
-func SetSnowflake(tx *gorm.DB, options snowflake.Options) (s snowflake.ISnowflake, err error) {
-	tx.Statement.Context, s, err = SetSnowflakeToContext(tx.Statement.Context, options)
+func SetSnowflake(db *gorm.DB, options snowflake.Options) (s snowflake.ISnowflake, err error) {
+	db.Statement.Context, s, err = SetSnowflakeToContext(db.Statement.Context, options)
 	return
 }
 
@@ -33,8 +33,8 @@ func SetSnowflakeToContext(ctx context.Context, options snowflake.Options) (newC
 	return
 }
 
-func GetSnowflake(tx *gorm.DB) (s snowflake.ISnowflake, ok bool) {
-	return GetSnowflakeFromContext(tx.Statement.Context)
+func GetSnowflake(db *gorm.DB) (s snowflake.ISnowflake, ok bool) {
+	return GetSnowflakeFromContext(db.Statement.Context)
 }
 
 func GetSnowflakeFromContext(ctx context.Context) (s snowflake.ISnowflake, ok bool) {
@@ -47,8 +47,8 @@ func GetSnowflakeFromContext(ctx context.Context) (s snowflake.ISnowflake, ok bo
 	return
 }
 
-func SetKeygen(tx *gorm.DB, options keygen.Options) (k keygen.IKeygen, err error) {
-	tx.Statement.Context, k, err = SetKeygenToContext(tx.Statement.Context, options)
+func SetKeygen(db *gorm.DB, options keygen.Options) (k keygen.IKeygen, err error) {
+	db.Statement.Context, k, err = SetKeygenToContext(db.Statement.Context, options)
 	return
 }
 
@@ -61,8 +61,8 @@ func SetKeygenToContext(ctx context.Context, options keygen.Options) (newCtx con
 	return
 }
 
-func GetKeygen(tx *gorm.DB) (k keygen.IKeygen, ok bool) {
-	return GetKeygenFromContext(tx.Statement.Context)
+func GetKeygen(db *gorm.DB) (k keygen.IKeygen, ok bool) {
+	return GetKeygenFromContext(db.Statement.Context)
 }
 
 func GetKeygenFromContext(ctx context.Context) (k keygen.IKeygen, ok bool) {
@@ -75,8 +75,8 @@ func GetKeygenFromContext(ctx context.Context) (k keygen.IKeygen, ok bool) {
 	return
 }
 
-func SetHasher(tx *gorm.DB, options hasher.Options) (h hasher.IHasher, err error) {
-	tx.Statement.Context, h, err = SetHasherToContext(tx.Statement.Context, options)
+func SetHasher(db *gorm.DB, options hasher.Options) (h hasher.IHasher, err error) {
+	db.Statement.Context, h, err = SetHasherToContext(db.Statement.Context, options)
 	return
 }
 
@@ -89,8 +89,8 @@ func SetHasherToContext(ctx context.Context, options hasher.Options) (newCtx con
 	return
 }
 
-func GetHasher(tx *gorm.DB) (h hasher.IHasher, ok bool) {
-	return GetHasherFromContext(tx.Statement.Context)
+func GetHasher(db *gorm.DB) (h hasher.IHasher, ok bool) {
+	return GetHasherFromContext(db.Statement.Context)
 }
 
 func GetHasherFromContext(ctx context.Context) (h hasher.IHasher, ok bool) {
@@ -103,8 +103,8 @@ func GetHasherFromContext(ctx context.Context) (h hasher.IHasher, ok bool) {
 	return
 }
 
-func SetCipher(tx *gorm.DB, options cipher.Options) (c cipher.ICipher, err error) {
-	tx.Statement.Context, c, err = SetCipherToContext(tx.Statement.Context, options)
+func SetCipher(db *gorm.DB, options cipher.Options) (c cipher.ICipher, err error) {
+	db.Statement.Context, c, err = SetCipherToContext(db.Statement.Context, options)
 	return
 }
 
@@ -117,8 +117,8 @@ func SetCipherToContext(ctx context.Context, options cipher.Options) (newCtx con
 	return
 }
 
-func GetCipher(tx *gorm.DB) (c cipher.ICipher, ok bool) {
-	return GetCipherFromContext(tx.Statement.Context)
+func GetCipher(db *gorm.DB) (c cipher.ICipher, ok bool) {
+	return GetCipherFromContext(db.Statement.Context)
 }
 
 func GetCipherFromContext(ctx context.Context) (c cipher.ICipher, ok bool) {

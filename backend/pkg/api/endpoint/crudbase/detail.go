@@ -6,19 +6,18 @@ import (
 	"net/http"
 
 	"github.com/danielgtaylor/huma/v2"
-	"github.com/jinzhu/copier"
 	"majinyao.cn/my-app/backend/pkg/api/schema"
 	"majinyao.cn/my-app/backend/pkg/db/datatype"
 )
 
 type DetailInput struct {
 	id       datatype.Id
-	Id       string   `query:"id" required:"true" doc:"Entity Id (Hex)"`
+	Id       string   `query:"id" required:"true" doc:"Model Id (Base36)"`
 	Includes []string `query:"includes" doc:"Included Associations"`
 }
 
 func (i *DetailInput) Resolve(ctx huma.Context) (errs []error) {
-	id, err := datatype.ParseIdFromHex(i.Id)
+	id, err := datatype.ParseIdFromB36(i.Id)
 	if err != nil {
 		errs = append(errs, err)
 		return
@@ -48,20 +47,14 @@ func (c *Crud[T, TItem, TDetail, TSave]) RegisterDetail(api huma.API) (op huma.O
 		service, cancel := c.GetCrudService(ctx, c.Db)
 		defer cancel()
 
-		entity, notFound, err := service.GetById(input.id, input.Includes...)
+		var detail TDetail
+		_, notFound, err := service.GetCopyById(&detail, input.id, input.Includes...)
 		if err != nil {
 			return nil, err
 		}
 		if notFound {
 			return schema.Fail[TDetail](http.StatusNotFound, "not found"), nil
 		}
-
-		var detail TDetail
-		err = copier.CopyWithOption(&detail, &entity, c.CopierOption)
-		if err != nil {
-			return nil, err
-		}
-
 		return schema.Succeed(detail, 1), nil
 	}
 

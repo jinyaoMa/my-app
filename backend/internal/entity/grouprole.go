@@ -1,13 +1,13 @@
 package entity
 
 import (
-	"majinyao.cn/my-app/backend/pkg/db"
 	"majinyao.cn/my-app/backend/pkg/db/datatype"
+	"majinyao.cn/my-app/backend/pkg/db/model"
 )
 
 type GroupRole struct {
-	db.Entity
-	db.EntityReserved
+	model.Model
+	model.Reserved
 
 	GroupId datatype.Id `gorm:"comment:Group Id;"`
 	Group   Group

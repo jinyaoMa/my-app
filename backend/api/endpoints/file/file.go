@@ -10,12 +10,11 @@ import (
 	"majinyao.cn/my-app/backend/internal/service"
 	"majinyao.cn/my-app/backend/pkg/api/endpoint"
 	"majinyao.cn/my-app/backend/pkg/api/endpoint/crudbase"
-	"majinyao.cn/my-app/backend/pkg/db"
 	"majinyao.cn/my-app/backend/pkg/db/crud"
 )
 
-func New(scheme string, tx *gorm.DB) endpoint.Register {
-	return new(File).Init(scheme, tx)
+func New(scheme string, db *gorm.DB) endpoint.Register {
+	return new(File).Init(scheme, db)
 }
 
 type File struct {
@@ -28,9 +27,9 @@ func (f *File) Register(api huma.API) (ops []huma.Operation) {
 	return
 }
 
-func (f *File) Init(scheme string, tx *gorm.DB) *File {
-	f.Crud.Init("File", tx, db.DefaultCopierOption, func(ctx context.Context, tx *gorm.DB) (crud.ICrudService[entity.File], context.CancelFunc) {
-		return service.NewFileService(ctx, tx)
+func (f *File) Init(scheme string, db *gorm.DB) *File {
+	f.Crud.Init("File", db, func(ctx context.Context, db *gorm.DB) (crud.ICrud[entity.File], context.CancelFunc) {
+		return service.NewFileService(ctx, db)
 	}, scheme)
 	return f
 }

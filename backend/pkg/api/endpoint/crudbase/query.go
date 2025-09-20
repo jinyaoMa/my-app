@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/danielgtaylor/huma/v2"
-	"github.com/jinzhu/copier"
 	"majinyao.cn/my-app/backend/pkg/api/schema"
 	"majinyao.cn/my-app/backend/pkg/db/crud"
 )
@@ -35,17 +34,11 @@ func (c *Crud[T, TItem, TDetail, TSave]) RegisterQuery(api huma.API) (op huma.Op
 		service, cancel := c.GetCrudService(ctx, c.Db)
 		defer cancel()
 
-		entities, total, err := service.Query(input.Body)
-		if err != nil {
-			return nil, err
-		}
-
 		var list []TItem
-		err = copier.CopyWithOption(&list, &entities, c.CopierOption)
+		_, total, err := service.QueryCopy(&list, input.Body)
 		if err != nil {
 			return nil, err
 		}
-
 		return schema.Succeed(list, total), nil
 	}
 

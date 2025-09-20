@@ -1,13 +1,13 @@
 package entity
 
 import (
-	"majinyao.cn/my-app/backend/pkg/db"
 	"majinyao.cn/my-app/backend/pkg/db/datatype"
+	"majinyao.cn/my-app/backend/pkg/db/model"
 )
 
 type User struct {
-	db.Entity
-	db.EntityReserved
+	model.Model
+	model.Reserved
 	Account     datatype.Encrypted `gorm:"uniqueIndex;not null;size:64;comment:User Account;"`
 	Password    datatype.Password  `gorm:"not null;size:32;comment:User Password;"`
 	Name        string             `gorm:"index;size:16;comment:User Name;"`
@@ -25,8 +25,8 @@ type User struct {
 	Files     []File `gorm:"many2many:file_users;"`
 }
 
-func (u *User) GetEntityM2MSetups() []db.EntityM2MSetup {
-	return []db.EntityM2MSetup{
+func (u *User) GetM2MSetups() []model.M2MSetup {
+	return []model.M2MSetup{
 		{
 			Model:     new(User),
 			Field:     "Roles",

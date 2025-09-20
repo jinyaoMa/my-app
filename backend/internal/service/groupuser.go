@@ -10,33 +10,33 @@ import (
 )
 
 type IGroupUserService interface {
-	crud.ICrudService[entity.GroupUser]
+	crud.ICrud[entity.GroupUser]
 }
 
-func NewGroupUserService(ctx context.Context, tx *gorm.DB) (IGroupUserService, context.CancelFunc) {
-	s, cancel := new(GroupUserService).InitWithCancelUnderContext(ctx, tx)
+func NewGroupUserService(ctx context.Context, db *gorm.DB) (IGroupUserService, context.CancelFunc) {
+	s, cancel := new(GroupUserService).InitWithCancelUnderContext(ctx, db)
 	return s, cancel
 }
 
-func UseGroupUserService(tx *gorm.DB) IGroupUserService {
-	return new(GroupUserService).Init(tx)
+func UseGroupUserService(db *gorm.DB) IGroupUserService {
+	return new(GroupUserService).Init(db)
 }
 
 type GroupUserService struct {
 	crud.Crud[entity.GroupUser]
 }
 
-func (s *GroupUserService) Init(tx *gorm.DB) *GroupUserService {
-	s.Crud.Init(tx)
+func (s *GroupUserService) Init(db *gorm.DB) *GroupUserService {
+	s.Crud.Init(db)
 	return s
 }
 
-func (s *GroupUserService) InitWithCancelUnderContext(ctx context.Context, tx *gorm.DB) (*GroupUserService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithCancelUnderContext(ctx, tx)
+func (s *GroupUserService) InitWithCancelUnderContext(ctx context.Context, db *gorm.DB) (*GroupUserService, context.CancelFunc) {
+	_, cancel := s.Crud.InitWithCancelUnderContext(ctx, db)
 	return s, cancel
 }
 
-func (s *GroupUserService) InitWithTimeoutUnderContext(ctx context.Context, tx *gorm.DB, timeout time.Duration) (*GroupUserService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithTimeoutUnderContext(ctx, tx, timeout)
+func (s *GroupUserService) InitWithTimeoutUnderContext(ctx context.Context, db *gorm.DB, timeout time.Duration) (*GroupUserService, context.CancelFunc) {
+	_, cancel := s.Crud.InitWithTimeoutUnderContext(ctx, db, timeout)
 	return s, cancel
 }

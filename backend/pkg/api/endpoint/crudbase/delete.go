@@ -12,11 +12,11 @@ import (
 
 type DeleteInput struct {
 	id datatype.Id
-	Id string `query:"id" required:"true" doc:"Entity Id (Hex)"`
+	Id string `query:"id" required:"true" doc:"Model Id (Base36)"`
 }
 
 func (i *DeleteInput) Resolve(ctx huma.Context) (errs []error) {
-	id, err := datatype.ParseIdFromHex(i.Id)
+	id, err := datatype.ParseIdFromB36(i.Id)
 	if err != nil {
 		errs = append(errs, err)
 		return

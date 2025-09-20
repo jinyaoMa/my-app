@@ -20,7 +20,7 @@ type UserData struct {
 }
 
 func (u UserData) GetIdentity() string {
-	return utils.ConvertInt64ToHex(u.UserId)
+	return utils.ConvertInt64ToB36(u.UserId)
 }
 
 func (u UserData) GetAgentId() string {

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"majinyao.cn/my-app/backend/pkg/db"
 	"majinyao.cn/my-app/backend/pkg/db/datatype"
+	"majinyao.cn/my-app/backend/pkg/db/model"
 )
 
 const (
@@ -54,8 +54,8 @@ func NewOption(key string, value any) (*Option, error) {
 }
 
 type Option struct {
-	db.Entity
-	db.EntityReserved
+	model.Model
+	model.Reserved
 	Key   string             `gorm:"<-:create;index;not null;size:254;comment:Option Key;"`
 	Value datatype.Encrypted `gorm:"size:254;comment:Option Value;"`
 }

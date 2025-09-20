@@ -10,12 +10,11 @@ import (
 	"majinyao.cn/my-app/backend/internal/service"
 	"majinyao.cn/my-app/backend/pkg/api/endpoint"
 	"majinyao.cn/my-app/backend/pkg/api/endpoint/crudbase"
-	"majinyao.cn/my-app/backend/pkg/db"
 	"majinyao.cn/my-app/backend/pkg/db/crud"
 )
 
-func New(scheme string, tx *gorm.DB) endpoint.Register {
-	return new(Option).Init(scheme, tx)
+func New(scheme string, db *gorm.DB) endpoint.Register {
+	return new(Option).Init(scheme, db)
 }
 
 type Option struct {
@@ -28,9 +27,9 @@ func (o *Option) Register(api huma.API) (ops []huma.Operation) {
 	return
 }
 
-func (o *Option) Init(scheme string, tx *gorm.DB) *Option {
-	o.Crud.Init("Option", tx, db.DefaultCopierOption, func(ctx context.Context, tx *gorm.DB) (crud.ICrudService[entity.Option], context.CancelFunc) {
-		return service.NewOptionService(ctx, tx)
+func (o *Option) Init(scheme string, db *gorm.DB) *Option {
+	o.Crud.Init("Option", db, func(ctx context.Context, db *gorm.DB) (crud.ICrud[entity.Option], context.CancelFunc) {
+		return service.NewOptionService(ctx, db)
 	}, scheme)
 	return o
 }

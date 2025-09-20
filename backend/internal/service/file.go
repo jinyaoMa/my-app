@@ -10,33 +10,33 @@ import (
 )
 
 type IFileService interface {
-	crud.ICrudService[entity.File]
+	crud.ICrud[entity.File]
 }
 
-func NewFileService(ctx context.Context, tx *gorm.DB) (IFileService, context.CancelFunc) {
-	s, cancel := new(FileService).InitWithCancelUnderContext(ctx, tx)
+func NewFileService(ctx context.Context, db *gorm.DB) (IFileService, context.CancelFunc) {
+	s, cancel := new(FileService).InitWithCancelUnderContext(ctx, db)
 	return s, cancel
 }
 
-func UseFileService(tx *gorm.DB) IFileService {
-	return new(FileService).Init(tx)
+func UseFileService(db *gorm.DB) IFileService {
+	return new(FileService).Init(db)
 }
 
 type FileService struct {
 	crud.Crud[entity.File]
 }
 
-func (s *FileService) Init(tx *gorm.DB) *FileService {
-	s.Crud.Init(tx)
+func (s *FileService) Init(db *gorm.DB) *FileService {
+	s.Crud.Init(db)
 	return s
 }
 
-func (s *FileService) InitWithCancelUnderContext(ctx context.Context, tx *gorm.DB) (*FileService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithCancelUnderContext(ctx, tx)
+func (s *FileService) InitWithCancelUnderContext(ctx context.Context, db *gorm.DB) (*FileService, context.CancelFunc) {
+	_, cancel := s.Crud.InitWithCancelUnderContext(ctx, db)
 	return s, cancel
 }
 
-func (s *FileService) InitWithTimeoutUnderContext(ctx context.Context, tx *gorm.DB, timeout time.Duration) (*FileService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithTimeoutUnderContext(ctx, tx, timeout)
+func (s *FileService) InitWithTimeoutUnderContext(ctx context.Context, db *gorm.DB, timeout time.Duration) (*FileService, context.CancelFunc) {
+	_, cancel := s.Crud.InitWithTimeoutUnderContext(ctx, db, timeout)
 	return s, cancel
 }

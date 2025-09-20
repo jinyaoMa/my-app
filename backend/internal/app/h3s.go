@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"time"
 
 	"gorm.io/gorm"
 	"majinyao.cn/my-app/backend/internal/entity"
@@ -22,9 +23,10 @@ func SHUTDOWN_H3S(ctx context.Context) error {
 }
 
 func RUN_H3S(ctx context.Context, isAuto bool) error {
-	tx, cancel := dbcontext.SectionUnderContextWithCancel(ctx, DB)
+	db, cancel := dbcontext.SectionUnderContextWithTimeout(ctx, DB, time.Second*5)
 	defer cancel()
-	return tx.Transaction(func(tx *gorm.DB) error {
+
+	return db.Transaction(func(tx *gorm.DB) error {
 		var optionServerAutoRun,
 			optionServerPort,
 			optionServerSecurePort,

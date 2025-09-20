@@ -3,8 +3,8 @@ package schemas
 import "majinyao.cn/my-app/backend/pkg/api/schema"
 
 type UserPasswordItem struct {
-	schema.EntityId
-	schema.EntityTime
+	schema.ModelId
+	schema.ModelTime
 	Password string `json:"password" doc:"Password"`
 
 	UserId string   `json:"userId" doc:"User Id"`
@@ -12,8 +12,8 @@ type UserPasswordItem struct {
 }
 
 type UserPasswordDetail struct {
-	schema.EntityId
-	schema.EntityTime
+	schema.ModelId
+	schema.ModelTime
 	Password string `json:"password" doc:"Password"`
 
 	UserId string   `json:"userId" doc:"User Id"`
@@ -21,7 +21,7 @@ type UserPasswordDetail struct {
 }
 
 type UserPasswordSave struct {
-	schema.EntityId
+	schema.ModelId
 	Password string `json:"password" doc:"Password"`
 
 	UserId string `json:"userId" doc:"User Id"`

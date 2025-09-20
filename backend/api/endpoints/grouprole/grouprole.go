@@ -10,12 +10,11 @@ import (
 	"majinyao.cn/my-app/backend/internal/service"
 	"majinyao.cn/my-app/backend/pkg/api/endpoint"
 	"majinyao.cn/my-app/backend/pkg/api/endpoint/crudbase"
-	"majinyao.cn/my-app/backend/pkg/db"
 	"majinyao.cn/my-app/backend/pkg/db/crud"
 )
 
-func New(scheme string, tx *gorm.DB) endpoint.Register {
-	return new(GroupRole).Init(scheme, tx)
+func New(scheme string, db *gorm.DB) endpoint.Register {
+	return new(GroupRole).Init(scheme, db)
 }
 
 type GroupRole struct {
@@ -28,9 +27,9 @@ func (r *GroupRole) Register(api huma.API) (ops []huma.Operation) {
 	return
 }
 
-func (r *GroupRole) Init(scheme string, tx *gorm.DB) *GroupRole {
-	r.Crud.Init("GroupRole", tx, db.DefaultCopierOption, func(ctx context.Context, tx *gorm.DB) (crud.ICrudService[entity.GroupRole], context.CancelFunc) {
-		return service.NewGroupRoleService(ctx, tx)
+func (r *GroupRole) Init(scheme string, db *gorm.DB) *GroupRole {
+	r.Crud.Init("GroupRole", db, func(ctx context.Context, db *gorm.DB) (crud.ICrud[entity.GroupRole], context.CancelFunc) {
+		return service.NewGroupRoleService(ctx, db)
 	}, scheme)
 	return r
 }

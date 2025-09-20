@@ -10,33 +10,33 @@ import (
 )
 
 type IPermissionService interface {
-	crud.ICrudService[entity.Permission]
+	crud.ICrud[entity.Permission]
 }
 
-func NewPermissionService(ctx context.Context, tx *gorm.DB) (IPermissionService, context.CancelFunc) {
-	s, cancel := new(PermissionService).InitWithCancelUnderContext(ctx, tx)
+func NewPermissionService(ctx context.Context, db *gorm.DB) (IPermissionService, context.CancelFunc) {
+	s, cancel := new(PermissionService).InitWithCancelUnderContext(ctx, db)
 	return s, cancel
 }
 
-func UsePermissionService(tx *gorm.DB) IPermissionService {
-	return new(PermissionService).Init(tx)
+func UsePermissionService(db *gorm.DB) IPermissionService {
+	return new(PermissionService).Init(db)
 }
 
 type PermissionService struct {
 	crud.Crud[entity.Permission]
 }
 
-func (s *PermissionService) Init(tx *gorm.DB) *PermissionService {
-	s.Crud.Init(tx)
+func (s *PermissionService) Init(db *gorm.DB) *PermissionService {
+	s.Crud.Init(db)
 	return s
 }
 
-func (s *PermissionService) InitWithCancelUnderContext(ctx context.Context, tx *gorm.DB) (*PermissionService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithCancelUnderContext(ctx, tx)
+func (s *PermissionService) InitWithCancelUnderContext(ctx context.Context, db *gorm.DB) (*PermissionService, context.CancelFunc) {
+	_, cancel := s.Crud.InitWithCancelUnderContext(ctx, db)
 	return s, cancel
 }
 
-func (s *PermissionService) InitWithTimeoutUnderContext(ctx context.Context, tx *gorm.DB, timeout time.Duration) (*PermissionService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithTimeoutUnderContext(ctx, tx, timeout)
+func (s *PermissionService) InitWithTimeoutUnderContext(ctx context.Context, db *gorm.DB, timeout time.Duration) (*PermissionService, context.CancelFunc) {
+	_, cancel := s.Crud.InitWithTimeoutUnderContext(ctx, db, timeout)
 	return s, cancel
 }

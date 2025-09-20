@@ -3,8 +3,8 @@ package schemas
 import "majinyao.cn/my-app/backend/pkg/api/schema"
 
 type PermissionItem struct {
-	schema.EntityId
-	schema.EntityTime
+	schema.ModelId
+	schema.ModelTime
 	Code        string `json:"code" doc:"Code"`
 	Name        string `json:"name" doc:"Name"`
 	Description string `json:"description" doc:"Description"`
@@ -12,8 +12,8 @@ type PermissionItem struct {
 }
 
 type PermissionDetail struct {
-	schema.EntityId
-	schema.EntityTime
+	schema.ModelId
+	schema.ModelTime
 	Code        string `json:"code" doc:"Code"`
 	Name        string `json:"name" doc:"Name"`
 	Description string `json:"description" doc:"Description"`
@@ -24,7 +24,7 @@ type PermissionDetail struct {
 }
 
 type PermissionSave struct {
-	schema.EntityId
+	schema.ModelId
 	Code        string `json:"code" doc:"Code"`
 	Name        string `json:"name" doc:"Name"`
 	Description string `json:"description" doc:"Description"`

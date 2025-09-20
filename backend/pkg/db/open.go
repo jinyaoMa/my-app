@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm/logger"
 	"majinyao.cn/my-app/backend/pkg/cflog"
 	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
+	"majinyao.cn/my-app/backend/pkg/db/model"
 )
 
 func Open(autoMigrateDst []any, options Options) (db *gorm.DB, err error) {
@@ -33,8 +34,8 @@ func Open(autoMigrateDst []any, options Options) (db *gorm.DB, err error) {
 	}
 
 	for _, d := range autoMigrateDst {
-		if getter, ok := d.(EntityM2MSetupsGetter); ok {
-			for _, s := range getter.GetEntityM2MSetups() {
+		if getter, ok := d.(model.M2MSetupsGetter); ok {
+			for _, s := range getter.GetM2MSetups() {
 				err = db.SetupJoinTable(s.Model, s.Field, s.JoinTable)
 				if err != nil {
 					return nil, err
@@ -85,7 +86,7 @@ func newGormConfig(options Options) (cfg *gorm.Config, err error) {
 			SlowThreshold:             200 * time.Millisecond,
 			LogLevel:                  options.LogLevel,
 			IgnoreRecordNotFoundError: false,
-			Colorful:                  false,
+			Colorful:                  options.Cflog.LogFile == "",
 		}),
 	}, nil
 }

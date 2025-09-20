@@ -92,6 +92,7 @@ func New[T fwt.IdentityGetter](
 			return
 		}
 
+		ctx = AttachClaimsToHumaContext(ctx, claims)
 		if scopes != nil {
 			if err := scopesValidator(ctx, scopes); err != nil {
 				huma.WriteErr(api, ctx, http.StatusForbidden, err.Error())
@@ -99,7 +100,6 @@ func New[T fwt.IdentityGetter](
 			}
 		}
 
-		ctx = AttachClaimsToHumaContext(ctx, claims)
 		next(ctx)
 	}, nil
 }

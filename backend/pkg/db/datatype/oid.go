@@ -26,7 +26,7 @@ func (o *Oid) Scan(ctx context.Context, field *schema.Field, dst reflect.Value, 
 		}
 		value = value[1:]
 		*o = utils.SliceMap(strings.Split(value, OidDelimiter), func(s string) int64 {
-			v, _ := utils.ConvertHexToInt64(s)
+			v, _ := utils.ConvertB36ToInt64(s)
 			return v
 		})
 	default:
@@ -41,6 +41,6 @@ func (o *Oid) Scan(ctx context.Context, field *schema.Field, dst reflect.Value, 
 // fieldValue: current field's value of the dst
 func (o Oid) Value(ctx context.Context, field *schema.Field, dst reflect.Value, fieldValue any) (any, error) {
 	return OidDelimiter + strings.Join(utils.SliceMap(o, func(v int64) string {
-		return utils.ConvertInt64ToHex(v)
+		return utils.ConvertInt64ToB36(v)
 	}), OidDelimiter), nil
 }

@@ -10,17 +10,17 @@ import (
 )
 
 type IOptionService interface {
-	crud.ICrudService[entity.Option]
+	crud.ICrud[entity.Option]
 	LoadOrCreateByKey(o *entity.Option) (err error)
 }
 
-func NewOptionService(ctx context.Context, tx *gorm.DB) (IOptionService, context.CancelFunc) {
-	s, cancel := new(OptionService).InitWithCancelUnderContext(ctx, tx)
+func NewOptionService(ctx context.Context, db *gorm.DB) (IOptionService, context.CancelFunc) {
+	s, cancel := new(OptionService).InitWithCancelUnderContext(ctx, db)
 	return s, cancel
 }
 
-func UseOptionService(tx *gorm.DB) IOptionService {
-	return new(OptionService).Init(tx)
+func UseOptionService(db *gorm.DB) IOptionService {
+	return new(OptionService).Init(db)
 }
 
 type OptionService struct {
@@ -35,17 +35,17 @@ func (s *OptionService) LoadOrCreateByKey(o *entity.Option) (err error) {
 	return
 }
 
-func (s *OptionService) Init(tx *gorm.DB) *OptionService {
-	s.Crud.Init(tx)
+func (s *OptionService) Init(db *gorm.DB) *OptionService {
+	s.Crud.Init(db)
 	return s
 }
 
-func (s *OptionService) InitWithCancelUnderContext(ctx context.Context, tx *gorm.DB) (*OptionService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithCancelUnderContext(ctx, tx)
+func (s *OptionService) InitWithCancelUnderContext(ctx context.Context, db *gorm.DB) (*OptionService, context.CancelFunc) {
+	_, cancel := s.Crud.InitWithCancelUnderContext(ctx, db)
 	return s, cancel
 }
 
-func (s *OptionService) InitWithTimeoutUnderContext(ctx context.Context, tx *gorm.DB, timeout time.Duration) (*OptionService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithTimeoutUnderContext(ctx, tx, timeout)
+func (s *OptionService) InitWithTimeoutUnderContext(ctx context.Context, db *gorm.DB, timeout time.Duration) (*OptionService, context.CancelFunc) {
+	_, cancel := s.Crud.InitWithTimeoutUnderContext(ctx, db, timeout)
 	return s, cancel
 }

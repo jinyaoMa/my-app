@@ -6,8 +6,8 @@ import (
 	"majinyao.cn/my-app/backend/pkg/api/endpoint"
 )
 
-func New(scheme string, tx *gorm.DB) endpoint.Register {
-	return new(OperationIdEnumPair).Init(scheme, tx)
+func New(scheme string, db *gorm.DB) endpoint.Register {
+	return new(OperationIdEnumPair).Init(scheme, db)
 }
 
 type OperationIdEnumPair struct {
@@ -20,8 +20,8 @@ func (p *OperationIdEnumPair) Register(api huma.API) (ops []huma.Operation) {
 	return
 }
 
-func (p *OperationIdEnumPair) Init(scheme string, tx *gorm.DB) *OperationIdEnumPair {
-	p.Db = tx
+func (p *OperationIdEnumPair) Init(scheme string, db *gorm.DB) *OperationIdEnumPair {
+	p.Db = db
 	p.Scheme = scheme
 	return p
 }

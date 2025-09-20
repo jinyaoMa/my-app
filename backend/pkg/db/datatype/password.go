@@ -13,8 +13,8 @@ import (
 
 type Password string
 
-func (p Password) VerifyBase64(tx *gorm.DB, password string) (ok bool, err error) {
-	keygen, ok := dbcontext.GetKeygen(tx)
+func (p Password) VerifyBase64(db *gorm.DB, password string) (ok bool, err error) {
+	keygen, ok := dbcontext.GetKeygen(db)
 	if !ok {
 		return false, errors.New("db context does not contain keygen")
 	}

@@ -13,10 +13,10 @@ import (
 	"majinyao.cn/my-app/backend/pkg/flag"
 )
 
-func NewVerifier(ctx context.Context, tx *gorm.DB) (authbase.Verifier[schemas.UserData], context.CancelFunc) {
+func NewVerifier(ctx context.Context, db *gorm.DB) (authbase.Verifier[schemas.UserData], context.CancelFunc) {
 	v := new(Verifier)
 	v.ctx = ctx
-	userService, cancel := service.NewUserService(ctx, tx)
+	userService, cancel := service.NewUserService(ctx, db)
 	v.IUserService = userService
 	return v, func() {
 		cancel()
@@ -48,14 +48,16 @@ func (v *Verifier) VerifyLogin(input *authbase.LoginInput) (userdata schemas.Use
 	var flag flag.IFlag
 	for _, role := range user.Roles {
 		for _, perm := range role.Permissions {
-			fmt.Printf("\nROLE_PERM: %b\n\n", perm.GetFlag())
 			flag = perm.GetFlag().Or(flag)
-			fmt.Printf("\nROLE_PERM_FLAG: %b\n\n", flag)
 		}
 	}
 
 	cache := memcache.GetFromContext(v.ctx)
-	cache.Set(fmt.Sprintf("auth_perm_%d", user.Id.Int64()), flag)
+	_, _, err = cache.Set(fmt.Sprintf("auth_perm_%d", user.Id.Int64()), flag)
+	if err != nil {
+		return
+	}
+
 	return schemas.UserData{
 		VisitorId: input.VisitorId,
 		UserId:    user.Id.Int64(),

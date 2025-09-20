@@ -1,12 +1,10 @@
 package entity
 
-import (
-	"majinyao.cn/my-app/backend/pkg/db"
-)
+import "majinyao.cn/my-app/backend/pkg/db/model"
 
 type Role struct {
-	db.Entity
-	db.EntityReserved
+	model.Model
+	model.Reserved
 	Code        string `gorm:"index;not null;size:254;comment:Role Code;"`
 	Name        string `gorm:"index;size:254;comment:Role Name;"`
 	Description string `gorm:"size:254;comment:Role Description;"`
@@ -21,8 +19,8 @@ type Role struct {
 	Groups     []Group `gorm:"many2many:group_roles;"`
 }
 
-func (r *Role) GetEntityM2MSetups() []db.EntityM2MSetup {
-	return []db.EntityM2MSetup{
+func (r *Role) GetM2MSetups() []model.M2MSetup {
+	return []model.M2MSetup{
 		{
 			Model:     new(Role),
 			Field:     "Permissions",

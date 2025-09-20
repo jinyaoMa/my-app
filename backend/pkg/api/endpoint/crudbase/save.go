@@ -7,13 +7,12 @@ import (
 	"reflect"
 
 	"github.com/danielgtaylor/huma/v2"
-	"github.com/jinzhu/copier"
 	"majinyao.cn/my-app/backend/pkg/api/schema"
 	"majinyao.cn/my-app/backend/pkg/db/crud"
 	"majinyao.cn/my-app/backend/pkg/utils"
 )
 
-type SaveInput[TSave any] struct {
+type SaveInput[TSave schema.ModelIdGetter] struct {
 	Body TSave
 }
 
@@ -47,26 +46,14 @@ func (c *Crud[T, TItem, TDetail, TSave]) RegisterSave(api huma.API) (op huma.Ope
 		service, cancel := c.GetCrudService(ctx, c.Db)
 		defer cancel()
 
-		var entity T
-		err = copier.CopyWithOption(&entity, &input.Body, c.CopierOption)
-		if err != nil {
-			return nil, err
-		}
-
-		var affected int64
-		if input.Body.IsTransient() {
-			affected, err = service.Create(&entity)
-		} else {
-			affected, err = service.Update(&entity, choice)
-		}
+		entity, affected, err := service.SaveCopy(&input.Body, choice)
 		if err != nil {
 			return nil, err
 		}
 		if affected < 1 {
 			return schema.Fail[string](http.StatusNotModified, "zero affected"), nil
 		}
-
-		return schema.Succeed(entity.GetId().HexString(), affected), nil
+		return schema.Succeed(entity.GetId().B36String(), affected), nil
 	}
 
 	huma.Register(api, op, handler)

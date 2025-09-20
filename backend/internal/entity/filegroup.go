@@ -1,12 +1,12 @@
 package entity
 
 import (
-	"majinyao.cn/my-app/backend/pkg/db"
 	"majinyao.cn/my-app/backend/pkg/db/datatype"
+	"majinyao.cn/my-app/backend/pkg/db/model"
 )
 
 type FileGroup struct {
-	db.Entity
+	model.Model
 
 	FileId datatype.Id `gorm:"comment:File Id;"`
 	File   File

@@ -22,15 +22,21 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 			return 0, err
 		}
 	}
-	return w.file.Write(p)
+	if w.file != nil {
+		return w.file.Write(p)
+	}
+	return
 }
 
 func (w *Writer) init(path string, enableConsole bool) (*Writer, error) {
-	file, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
-	if err != nil {
-		return nil, errors.Join(errors.New("failed to init cflog writer"), err)
+	if path != "" {
+		file, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+		if err != nil {
+			return nil, errors.Join(errors.New("failed to init cflog writer"), err)
+		}
+		w.file = file
 	}
-	w.file = file
+
 	w.enableConsole = enableConsole
 	return w, nil
 }

@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	"gorm.io/gorm"
-	"majinyao.cn/my-app/backend/pkg/db"
 	"majinyao.cn/my-app/backend/pkg/db/datatype"
+	"majinyao.cn/my-app/backend/pkg/db/model"
 )
 
 type FileStatus int
@@ -18,7 +18,7 @@ const (
 )
 
 type File struct {
-	db.Entity
+	model.Model
 	Oid       datatype.Oid `gorm:"index;not null;size:254;comment:File Oid;"`
 	IsDir     bool         `gorm:"index;comment:Is Directory or Not;"`
 	Name      string       `gorm:"index;comment:File Name;"`
@@ -65,8 +65,8 @@ func (f *File) BeforeUpdate(tx *gorm.DB) (err error) {
 	return nil
 }
 
-func (f *File) GetEntityM2MSetups() []db.EntityM2MSetup {
-	return []db.EntityM2MSetup{
+func (f *File) GetM2MSetups() []model.M2MSetup {
+	return []model.M2MSetup{
 		{
 			Model:     new(File),
 			Field:     "Users",
