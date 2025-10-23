@@ -5,12 +5,11 @@ import (
 	"majinyao.cn/my-app/backend/pkg/api/endpoint"
 )
 
-func New(scheme string, ops []huma.Operation) endpoint.Register {
-	return new(endpoints).init(scheme, ops)
+func New(ops []huma.Operation) endpoint.Register {
+	return new(endpoints).Init(ops)
 }
 
 type endpoints struct {
-	Scheme string
 	Ops    []huma.Operation
 }
 
@@ -22,8 +21,7 @@ func (e *endpoints) Register(api huma.API) (ops []huma.Operation) {
 	return
 }
 
-func (e *endpoints) init(scheme string, ops []huma.Operation) *endpoints {
-	e.Scheme = scheme
+func (e *endpoints) Init(ops []huma.Operation) *endpoints {
 	e.Ops = ops
 	return e
 }

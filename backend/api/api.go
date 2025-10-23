@@ -7,39 +7,48 @@ import (
 	"slices"
 
 	"github.com/danielgtaylor/huma/v2"
-	"gorm.io/gorm"
-	"majinyao.cn/my-app/backend/api/schemas"
+	"majinyao.cn/my-app/backend/api/apir"
 	"majinyao.cn/my-app/backend/internal/service"
+	"majinyao.cn/my-app/backend/internal/view"
 	"majinyao.cn/my-app/backend/pkg/api/middlewares/authfwt"
 	"majinyao.cn/my-app/backend/pkg/api/middlewares/memcache"
+	"majinyao.cn/my-app/backend/pkg/db/crud"
 	"majinyao.cn/my-app/backend/pkg/db/datatype"
 	"majinyao.cn/my-app/backend/pkg/flag"
 	"majinyao.cn/my-app/backend/pkg/router"
 )
 
-func New(ctx context.Context, db *gorm.DB, options Options) (router.IRouter, error) {
+func New(ctx context.Context, res *apir.Resources, options Options) (router.IRouter, error) {
 	return router.New("/api", options.Router, func(humaapi huma.API) error {
 		var operationIdEnumMap map[string]int
-		authfwt, err := authfwt.New[schemas.UserData](humaapi, authScheme, options.AuthFwt, func(ctx huma.Context, scopes []string) error {
+		authfwt, err := authfwt.New[view.UserData](humaapi, apir.AuthScheme, options.AuthFwt, func(ctx huma.Context, scopes []string) error {
 			var requiredEnums []int
 			for _, scope := range scopes {
 				if enum, ok := operationIdEnumMap[scope]; ok {
 					requiredEnums = append(requiredEnums, enum)
 				}
 			}
+			if len(requiredEnums) == 0 {
+				return nil
+			}
 
 			cache := memcache.GetFromHumaContext(ctx)
-			claims := authfwt.GetClaimsFromHumaContext[schemas.UserData](ctx)
+			claims := authfwt.GetClaimsFromHumaContext[view.UserData](ctx)
 
 			var perm flag.IFlag
-			authPerm, err := cache.Get(fmt.Sprintf("auth_perm_%d", claims.Data.UserId))
+			authPerm, err := cache.Get(fmt.Sprintf("auth_perm_%d_%d", claims.Data.UserId, claims.Data.RoleId))
 			if err == nil {
 				perm, _ = authPerm.(flag.IFlag)
 			} else {
-				userService, cancel := service.NewUserService(ctx.Context(), db)
+				userService, cancel := service.NewUserService(ctx.Context(), res.CrudOptions, res.Db, res.Store)
 				defer cancel()
 
-				user, notFound, err := userService.GetById(datatype.Id(claims.Data.UserId), "Roles.Permissions")
+				user, notFound, err := userService.GetById(datatype.Id(claims.Data.UserId), []crud.Include{
+					{
+						Association: "Roles.Permissions",
+						IgnoreSize:  true,
+					},
+				})
 				if err != nil {
 					return err
 				}
@@ -48,12 +57,14 @@ func New(ctx context.Context, db *gorm.DB, options Options) (router.IRouter, err
 				}
 
 				for _, role := range user.Roles {
-					for _, p := range role.Permissions {
-						perm = p.GetFlag().Or(perm)
+					if role.Id.Int64() == claims.Data.RoleId {
+						for _, p := range role.Permissions {
+							perm = p.GetFlag().Or(perm)
+						}
 					}
 				}
 
-				_, _, err = cache.Set(fmt.Sprintf("auth_perm_%d", user.Id.Int64()), perm)
+				_, _, err = cache.Set(fmt.Sprintf("auth_perm_%d_%d", claims.Data.UserId, claims.Data.RoleId), perm)
 				if err != nil {
 					return err
 				}
@@ -70,7 +81,7 @@ func New(ctx context.Context, db *gorm.DB, options Options) (router.IRouter, err
 
 		humaapi.UseMiddleware(memcache.New(options.MemcacheLimit), authfwt)
 
-		operationIdEnumMap, err = setup(ctx, db, humaapi)
+		operationIdEnumMap, err = setup(ctx, res, humaapi)
 		if err != nil {
 			return err
 		}

@@ -7,13 +7,14 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"majinyao.cn/my-app/backend/pkg/api/schema"
+	"majinyao.cn/my-app/backend/pkg/db/crud"
 	"majinyao.cn/my-app/backend/pkg/db/datatype"
 )
 
 type DetailInput struct {
-	id       datatype.Id
-	Id       string   `query:"id" required:"true" doc:"Model Id (Base36)"`
-	Includes []string `query:"includes" doc:"Included Associations"`
+	id   datatype.Id
+	Id   string        `path:"id" required:"true" doc:"Model Id (Base36)"`
+	Body crud.Includes `doc:"Detail Includes"`
 }
 
 func (i *DetailInput) Resolve(ctx huma.Context) (errs []error) {
@@ -27,14 +28,16 @@ func (i *DetailInput) Resolve(ctx huma.Context) (errs []error) {
 	return
 }
 
-func (c *Crud[T, TItem, TDetail, TSave]) RegisterDetail(api huma.API) (op huma.Operation) {
+func (c *Crud[T, TItem, TSave, TDetail, TSearchItem]) RegisterDetail(api huma.API) (op huma.Operation) {
 	op = huma.Operation{
-		Method:      http.MethodGet,
-		Path:        fmt.Sprintf("/%s", c.SlugifiedName),
-		Summary:     fmt.Sprintf("Get %s Detail", c.SpacedName),
-		Description: fmt.Sprintf("Get %s detail by id, and users can include associated entities by passing includes.", c.LowerCaseSpacedName),
-		OperationID: fmt.Sprintf("%s.detail", c.SlugifiedName),
-		Tags:        []string{c.EntityName},
+		Method:       http.MethodPost,
+		Path:         fmt.Sprintf("/%s/detail/{id}", c.SlugifiedName),
+		Summary:      fmt.Sprintf("Get %s Detail", c.SpacedName),
+		Description:  fmt.Sprintf("Get %s detail by id, and users can include associated entities by passing includes.", c.LowerCaseSpacedName),
+		OperationID:  fmt.Sprintf("%s.post.detail", c.SlugifiedName),
+		Tags:         []string{c.EntityName},
+		Errors:       []int{http.StatusInternalServerError},
+		MaxBodyBytes: 2 * 1024,
 	}
 
 	for _, scheme := range c.Schemes {
@@ -44,11 +47,11 @@ func (c *Crud[T, TItem, TDetail, TSave]) RegisterDetail(api huma.API) (op huma.O
 	}
 
 	handler := func(ctx context.Context, input *DetailInput) (output *schema.Response[TDetail], err error) {
-		service, cancel := c.GetCrudService(ctx, c.Db)
+		service, cancel := c.GetCrudService(ctx)
 		defer cancel()
 
 		var detail TDetail
-		_, notFound, err := service.GetCopyById(&detail, input.id, input.Includes...)
+		_, notFound, err := service.GetCopyById(&detail, input.id, input.Body)
 		if err != nil {
 			return nil, err
 		}

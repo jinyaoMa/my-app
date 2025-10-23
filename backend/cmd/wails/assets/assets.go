@@ -8,6 +8,9 @@ var Icon []byte
 //go:embed icon.dark.png
 var IconDark []byte
 
+//go:embed icon.admin.png
+var IconAdmin []byte
+
 //go:embed icon.apid.png
 var IconApid []byte
 

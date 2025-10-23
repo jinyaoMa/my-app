@@ -2,41 +2,38 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"gorm.io/gorm"
 	"majinyao.cn/my-app/backend/internal/entity"
 	"majinyao.cn/my-app/backend/pkg/db/crud"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
 )
 
 type IFileCategoryService interface {
 	crud.ICrud[entity.FileCategory]
 }
 
-func NewFileCategoryService(ctx context.Context, db *gorm.DB) (IFileCategoryService, context.CancelFunc) {
-	s, cancel := new(FileCategoryService).InitWithCancelUnderContext(ctx, db)
+func NewFileCategoryService(ctx context.Context, options crud.Options, db *gorm.DB) (IFileCategoryService, context.CancelFunc) {
+	s, cancel := new(FileCategoryService).InitUnderContextWithCancel(ctx, options, db)
 	return s, cancel
 }
 
-func UseFileCategoryService(db *gorm.DB) IFileCategoryService {
-	return new(FileCategoryService).Init(db)
+func UseFileCategoryService(ctx context.Context, options crud.Options, db *gorm.DB) IFileCategoryService {
+	return new(FileCategoryService).Init(ctx, options, db)
 }
 
 type FileCategoryService struct {
 	crud.Crud[entity.FileCategory]
+	ctx context.Context
 }
 
-func (s *FileCategoryService) Init(db *gorm.DB) *FileCategoryService {
-	s.Crud.Init(db)
+func (s *FileCategoryService) InitUnderContextWithCancel(ctx context.Context, options crud.Options, db *gorm.DB) (*FileCategoryService, context.CancelFunc) {
+	db, cancel := dbcontext.SectionUnderContextWithCancel(ctx, db)
+	return s.Init(ctx, options, db), cancel
+}
+
+func (s *FileCategoryService) Init(ctx context.Context, options crud.Options, db *gorm.DB) *FileCategoryService {
+	s.Crud.Init(options, db)
+	s.ctx = ctx
 	return s
-}
-
-func (s *FileCategoryService) InitWithCancelUnderContext(ctx context.Context, db *gorm.DB) (*FileCategoryService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithCancelUnderContext(ctx, db)
-	return s, cancel
-}
-
-func (s *FileCategoryService) InitWithTimeoutUnderContext(ctx context.Context, db *gorm.DB, timeout time.Duration) (*FileCategoryService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithTimeoutUnderContext(ctx, db, timeout)
-	return s, cancel
 }

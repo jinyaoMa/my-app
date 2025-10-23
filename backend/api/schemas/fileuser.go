@@ -19,15 +19,12 @@ type FileUserItem struct {
 	IsAvatar bool `json:"isAvatar" doc:"Is Used as Avatar or Not"`
 }
 
-type FileUserDetail struct {
+type FileUserSave struct {
 	schema.ModelId
-	schema.ModelTime
 
-	FileId string   `json:"fileId" doc:"File Id"`
-	File   FileItem `json:"file" doc:"File"`
+	FileId string `json:"fileId" doc:"File Id"`
 
-	UserId string   `json:"userId" doc:"User Id"`
-	User   UserItem `json:"user" doc:"User"`
+	UserId string `json:"userId" doc:"User Id"`
 
 	NoCreate bool `json:"noCreate" doc:"No Create"`
 	NoRead   bool `json:"noRead" doc:"No Read"`
@@ -36,12 +33,23 @@ type FileUserDetail struct {
 	IsAvatar bool `json:"isAvatar" doc:"Is Used as Avatar or Not"`
 }
 
-type FileUserSave struct {
+type FileUserDetail struct {
+	FileUserSave
+	schema.ModelTime
+
+	File FileItem `json:"file" doc:"File"`
+
+	User UserItem `json:"user" doc:"User"`
+}
+
+type FileUserSearchItem struct {
 	schema.ModelId
 
-	FileId string `json:"fileId" doc:"File Id"`
+	FileId string         `json:"fileId" doc:"File Id"`
+	File   FileSearchItem `json:"file" doc:"File"`
 
-	UserId string `json:"userId" doc:"User Id"`
+	UserId string         `json:"userId" doc:"User Id"`
+	User   UserSearchItem `json:"user" doc:"User"`
 
 	NoCreate bool `json:"noCreate" doc:"No Create"`
 	NoRead   bool `json:"noRead" doc:"No Read"`

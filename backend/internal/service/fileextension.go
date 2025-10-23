@@ -2,41 +2,38 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"gorm.io/gorm"
 	"majinyao.cn/my-app/backend/internal/entity"
 	"majinyao.cn/my-app/backend/pkg/db/crud"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
 )
 
 type IFileExtensionService interface {
 	crud.ICrud[entity.FileExtension]
 }
 
-func NewFileExtensionService(ctx context.Context, db *gorm.DB) (IFileExtensionService, context.CancelFunc) {
-	s, cancel := new(FileExtensionService).InitWithCancelUnderContext(ctx, db)
+func NewFileExtensionService(ctx context.Context, options crud.Options, db *gorm.DB) (IFileExtensionService, context.CancelFunc) {
+	s, cancel := new(FileExtensionService).InitUnderContextWithCancel(ctx, options, db)
 	return s, cancel
 }
 
-func UseFileExtensionService(db *gorm.DB) IFileExtensionService {
-	return new(FileExtensionService).Init(db)
+func UseFileExtensionService(ctx context.Context, options crud.Options, db *gorm.DB) IFileExtensionService {
+	return new(FileExtensionService).Init(ctx, options, db)
 }
 
 type FileExtensionService struct {
 	crud.Crud[entity.FileExtension]
+	ctx context.Context
 }
 
-func (s *FileExtensionService) Init(db *gorm.DB) *FileExtensionService {
-	s.Crud.Init(db)
+func (s *FileExtensionService) InitUnderContextWithCancel(ctx context.Context, options crud.Options, db *gorm.DB) (*FileExtensionService, context.CancelFunc) {
+	db, cancel := dbcontext.SectionUnderContextWithCancel(ctx, db)
+	return s.Init(ctx, options, db), cancel
+}
+
+func (s *FileExtensionService) Init(ctx context.Context, options crud.Options, db *gorm.DB) *FileExtensionService {
+	s.Crud.Init(options, db)
+	s.ctx = ctx
 	return s
-}
-
-func (s *FileExtensionService) InitWithCancelUnderContext(ctx context.Context, db *gorm.DB) (*FileExtensionService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithCancelUnderContext(ctx, db)
-	return s, cancel
-}
-
-func (s *FileExtensionService) InitWithTimeoutUnderContext(ctx context.Context, db *gorm.DB, timeout time.Duration) (*FileExtensionService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithTimeoutUnderContext(ctx, db, timeout)
-	return s, cancel
 }

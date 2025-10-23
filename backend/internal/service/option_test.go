@@ -16,6 +16,8 @@ import (
 	"majinyao.cn/my-app/backend/pkg/crypto/keygen"
 	"majinyao.cn/my-app/backend/pkg/crypto/keygen/argon2"
 	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/crud"
+	"majinyao.cn/my-app/backend/pkg/db/model"
 	"majinyao.cn/my-app/backend/pkg/snowflake"
 	"majinyao.cn/my-app/backend/pkg/test"
 )
@@ -42,7 +44,7 @@ func TestOptionService(t *testing.T) {
 	key := keyGen.DeriveBase64(text, false)
 	iv := ivGen.DeriveBase64(text, false)
 
-	tx, err := db.Open([]any{
+	tx, err := db.Open([]model.Setup{
 		&entity.Option{},
 	}, db.Options{
 		Driver:   db.DrvSqlite,
@@ -77,7 +79,7 @@ func TestOptionService(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	optionService, cancel := service.NewOptionService(context.Background(), tx)
+	optionService, cancel := service.NewOptionService(context.Background(), crud.DefaultOptions(), tx)
 	defer cancel()
 
 	optTest := entity.MustNewOption("test", 1.0)
@@ -87,8 +89,9 @@ func TestOptionService(t *testing.T) {
 	}
 
 	optTest.SetBool(true)
-	optionService.Update(optTest)
-	if optTest.GetBool() != true {
+	var affected int64
+	*optTest, affected, err = optionService.Update(*optTest)
+	if err != nil || affected != 1 || optTest.GetBool() != true {
 		t.Fatal("update failed")
 	}
 

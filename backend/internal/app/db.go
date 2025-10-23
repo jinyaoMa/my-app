@@ -5,11 +5,12 @@ import (
 	"majinyao.cn/my-app/backend/internal/entity"
 	"majinyao.cn/my-app/backend/pkg/cflog"
 	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/model"
 )
 
 func initDB(log *cflog.Cflog, options db.Options) *gorm.DB {
 	var err error
-	DB, err = db.Open([]any{
+	DB, err = db.Open([]model.Setup{
 		new(entity.File),
 		new(entity.FileCategory),
 		new(entity.FileExtension),

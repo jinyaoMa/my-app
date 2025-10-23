@@ -10,18 +10,20 @@ import (
 )
 
 type RefreshInput struct {
-	Token     string `query:"token" required:"true" doc:"Refresh Token"`
-	VisitorId string `header:"X-Visitor-ID" required:"true" doc:"Visitor Id"`
+	RefreshToken string `path:"refresh" required:"true" maxLength:"32" doc:"Refresh Token"`
+	VisitorId    string `header:"X-Visitor-ID" required:"true" maxLength:"32" doc:"Visitor Id"`
 }
 
 func (a *Auth[T]) RegisterRefresh(api huma.API) (op huma.Operation) {
 	op = huma.Operation{
-		Method:      http.MethodGet,
-		Path:        "/auth/refresh",
-		Summary:     "Auth Refresh",
-		Description: "Refresh by refresh token, and return access token and refresh token.",
-		OperationID: "auth.refresh",
-		Tags:        []string{"Auth"},
+		Method:       http.MethodGet,
+		Path:         "/auth/refresh/{refresh}",
+		Summary:      "Refresh",
+		Description:  "Refresh by refresh token, and return access token and refresh token.",
+		OperationID:  "auth.get.refresh",
+		Tags:         []string{"Auth"},
+		Errors:       []int{http.StatusInternalServerError},
+		MaxBodyBytes: 1,
 	}
 
 	if a.Scheme != "" {
@@ -33,10 +35,10 @@ func (a *Auth[T]) RegisterRefresh(api huma.API) (op huma.Operation) {
 	handler := func(ctx context.Context, input *RefreshInput) (output *schema.Response[schema.AuthLogin], err error) {
 		f := authfwt.GetFwtFromContext[T](ctx)
 		claims := authfwt.GetClaimsFromContext[T](ctx)
-		verifier, cancel := a.NewVerifier(ctx, a.Db)
+		verifier, cancel := a.NewVerifier(ctx)
 		defer cancel()
 
-		accessToken, refreshToken, expiredAt, err := f.Refresh(claims, input.Token, func(data T) (newData T, err error) {
+		accessToken, refreshToken, expiredAt, err := f.Refresh(claims, input.RefreshToken, func(data T) (newData T, err error) {
 			newData, err = verifier.VerifyUserData(data, input.VisitorId)
 			return
 		})

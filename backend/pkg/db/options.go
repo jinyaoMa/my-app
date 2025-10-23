@@ -14,6 +14,7 @@ const DrvSqlite string = "sqlite"
 type Options struct {
 	Cflog       cflog.Options     `json:"cflog"`
 	LogLevel    logger.LogLevel   `json:"logLevel"`
+	LogNotFound bool              `json:"logNotFound"`
 	Driver      string            `json:"driver"`
 	Dsn         string            `json:"dsn"`
 	Snowflake   snowflake.Options `json:"snowflake"`

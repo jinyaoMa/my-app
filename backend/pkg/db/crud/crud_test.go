@@ -3,8 +3,8 @@ package crud_test
 import (
 	"context"
 	"errors"
-	"fmt"
 	"runtime"
+	"strings"
 	"testing"
 	"time"
 
@@ -20,6 +20,7 @@ import (
 	"majinyao.cn/my-app/backend/pkg/db"
 	"majinyao.cn/my-app/backend/pkg/db/crud"
 	"majinyao.cn/my-app/backend/pkg/db/datatype"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
 	"majinyao.cn/my-app/backend/pkg/db/model"
 	"majinyao.cn/my-app/backend/pkg/snowflake"
 	"majinyao.cn/my-app/backend/pkg/test"
@@ -27,11 +28,46 @@ import (
 
 type User struct {
 	model.Model
-	Account  datatype.Encrypted
+	Account  datatype.Sensitive
 	Password datatype.Password
 
 	UserRoles []UserRole
 	Roles     []Role `gorm:"many2many:user_roles;"`
+}
+
+func (u *User) BeforeUpdate(tx *gorm.DB) (err error) {
+	if tx.Statement.Changed("Account") {
+		return errors.New("account not allowed to change")
+	}
+	return nil
+}
+
+func (u *User) BeforeDelete(tx *gorm.DB) (err error) {
+	return nil
+}
+
+func (u *User) AfterDelete(tx *gorm.DB) (err error) {
+	return nil
+}
+
+func (u *User) AfterUpdate(tx *gorm.DB) (err error) {
+	return nil
+}
+
+func (u *User) AfterCreate(tx *gorm.DB) (err error) {
+	return nil
+}
+
+func (u *User) AfterFind(tx *gorm.DB) (err error) {
+	return nil
+}
+
+func (u *User) Many2ManySetups() (setups []model.Many2ManySetup) {
+	setups = append(setups, model.Many2ManySetup{
+		Field:     "Roles",
+		JoinTable: new(UserRole),
+	})
+	return
 }
 
 type UserScan struct {
@@ -41,27 +77,66 @@ type UserScan struct {
 
 type Role struct {
 	model.Model
-	Name   string
-	Desc   string
-	Hmac   datatype.Hashed
-	HmacOk bool `gorm:"-:all"`
+	model.ModelReserved
+	model.ModelHmac
+	Name string
+	Desc string
 
 	UserRoles []UserRole
 	Users     []User `gorm:"many2many:user_roles;"`
 }
 
-func (r *Role) BeforeSave(tx *gorm.DB) (err error) {
-	r.Hmac = datatype.Hashed(fmt.Sprint(r.Name, r.Desc))
-	return nil
+func (r *Role) buildHmacData() string {
+	return strings.Join([]string{r.Name, r.Desc}, ":")
 }
 
-func (r *Role) AfterSave(tx *gorm.DB) (err error) {
-	r.HmacOk, err = r.Hmac.VerifyBase64(tx, fmt.Sprint(r.Name, r.Desc))
+func (r *Role) BeforeCreate(tx *gorm.DB) (err error) {
+	if err = r.ModelReserved.BeforeCreate(tx); err != nil {
+		return err
+	}
+	if err = r.Model.BeforeCreate(tx); err != nil {
+		return err
+	}
 	return
 }
 
+func (r *Role) BeforeUpdate(tx *gorm.DB) (err error) {
+	if err = r.ModelReserved.BeforeUpdate(tx); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *Role) AfterDelete(tx *gorm.DB) (err error) {
+	return nil
+}
+
+func (r *Role) AfterUpdate(tx *gorm.DB) (err error) {
+	if err = r.ModelHmac.Update(tx, r, r.buildHmacData); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *Role) AfterCreate(tx *gorm.DB) (err error) {
+	if err = r.ModelHmac.Update(tx, r, r.buildHmacData); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *Role) AfterFind(tx *gorm.DB) (err error) {
-	r.HmacOk, err = r.Hmac.VerifyBase64(tx, fmt.Sprint(r.Name, r.Desc))
+	if err = r.ModelHmac.Verify(tx, r.buildHmacData); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *Role) Many2ManySetups() (setups []model.Many2ManySetup) {
+	setups = append(setups, model.Many2ManySetup{
+		Field:     "Users",
+		JoinTable: new(UserRole),
+	})
 	return
 }
 
@@ -75,6 +150,26 @@ type UserRole struct {
 	Role   Role
 }
 
+func (r *UserRole) BeforeUpdate(tx *gorm.DB) (err error) {
+	return nil
+}
+
+func (r *UserRole) BeforeDelete(tx *gorm.DB) (err error) {
+	return nil
+}
+
+func (r *UserRole) AfterDelete(tx *gorm.DB) (err error) {
+	return nil
+}
+
+func (r *UserRole) AfterUpdate(tx *gorm.DB) (err error) {
+	return nil
+}
+
+func (r *UserRole) AfterCreate(tx *gorm.DB) (err error) {
+	return nil
+}
+
 func (r *UserRole) AfterFind(tx *gorm.DB) (err error) {
 	if err = r.Role.AfterFind(tx); err != nil {
 		return
@@ -82,19 +177,8 @@ func (r *UserRole) AfterFind(tx *gorm.DB) (err error) {
 	return
 }
 
-func (r *UserRole) GetM2MSetups() []model.M2MSetup {
-	return []model.M2MSetup{
-		{
-			Model:     &User{},
-			Field:     "Roles",
-			JoinTable: &UserRole{},
-		},
-		{
-			Model:     &Role{},
-			Field:     "Users",
-			JoinTable: &UserRole{},
-		},
-	}
+func (r *UserRole) Many2ManySetups() (setups []model.Many2ManySetup) {
+	return
 }
 
 func TestCrud(t *testing.T) {
@@ -119,7 +203,7 @@ func TestCrud(t *testing.T) {
 	key := keyGen.DeriveBase64(text, false)
 	iv := ivGen.DeriveBase64(text, false)
 
-	tx, err := db.Open([]any{
+	tx, err := db.Open([]model.Setup{
 		&User{},
 		&Role{},
 		&UserRole{},
@@ -162,39 +246,51 @@ func TestCrud(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 0)
 	defer cancel()
 
-	userService, cancel := crud.NewtWithCancelUnderContext[User](ctx, tx)
+	tx1, cancel := dbcontext.SectionUnderContextWithCancel(ctx, tx)
 	defer cancel()
 
-	_, _, err = userService.All()
+	userService := crud.New[User](crud.DefaultOptions(), tx1)
+
+	time.Sleep(time.Millisecond)
+	_, _, err = userService.All(nil)
 	if !errors.Is(err, context.Canceled) {
 		t.Fatal(err)
 	}
 
-	ctx, cancel = context.WithTimeout(context.Background(), 60*time.Second)
+	// ctx, cancel = context.WithTimeout(context.Background(), time.Hour)
+	ctx, cancel = context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	userService, cancel = crud.NewtWithCancelUnderContext[User](ctx, tx)
+	tx2, cancel := dbcontext.SectionUnderContextWithCancel(ctx, tx)
 	cancel()
 
-	_, _, err = userService.All()
+	userService = crud.New[User](crud.DefaultOptions(), tx2)
+
+	_, _, err = userService.All(nil)
 	if !errors.Is(err, context.Canceled) {
 		t.Fatal(err)
 	}
 
-	userService, cancel = crud.NewWithTimeoutUnderContext[User](ctx, tx, 0)
+	tx3, cancel := dbcontext.SectionUnderContextWithTimeout(ctx, tx, 0)
 	defer cancel()
 
-	_, _, err = userService.All()
+	userService = crud.New[User](crud.DefaultOptions(), tx3)
+
+	_, _, err = userService.All(nil)
 	if !errors.Is(err, context.DeadlineExceeded) {
 		t.Fatal(err)
 	}
 
-	userService, cancel = crud.NewtWithCancelUnderContext[User](ctx, tx)
+	tx4, cancel := dbcontext.SectionUnderContextWithCancel(ctx, tx)
 	defer cancel()
 
+	userService = crud.New[User](crud.DefaultOptions(), tx4)
+
 	newUser := User{
-		Account:  datatype.Encrypted("1"),
-		Password: datatype.Password("1"),
+		Account: "1",
+		Password: datatype.Password{
+			Data: "1",
+		},
 	}
 	affected, err := userService.Create(&newUser)
 	if err != nil || affected != 1 {
@@ -203,12 +299,16 @@ func TestCrud(t *testing.T) {
 
 	newUsers := []User{
 		{
-			Account:  datatype.Encrypted("2"),
-			Password: datatype.Password("2"),
+			Account: "2",
+			Password: datatype.Password{
+				Data: "2",
+			},
 		},
 		{
-			Account:  datatype.Encrypted("3"),
-			Password: datatype.Password("3"),
+			Account: "3",
+			Password: datatype.Password{
+				Data: "3",
+			},
 		},
 	}
 	affected, err = userService.BatchCreate(&newUsers)
@@ -216,32 +316,39 @@ func TestCrud(t *testing.T) {
 		t.Fatal(affected, err)
 	}
 
-	affected, err = userService.Delete(newUser.Id)
+	newUsers[0].Account = "99"
+	_, affected, err = userService.Update(newUsers[0])
+	if !strings.Contains(err.Error(), "account not allowed to change") {
+		t.Fatal(affected, err)
+	}
+	newUsers[0].Account = "2"
+
+	_, affected, err = userService.Delete(newUser.Id)
 	if err != nil || affected != 1 {
 		t.Fatal(affected, err)
 	}
 
-	record, notFound, err := userService.GetById(newUsers[1].Id)
+	record, notFound, err := userService.GetById(newUsers[1].Id, nil)
 	if err != nil || notFound || record.Account != newUsers[1].Account {
 		t.Fatal(notFound, record.Account, err)
 	}
 
 	var scanUser UserScan
-	notFound, err = userService.ScanById(&scanUser, record.Id)
-	if err != nil || notFound || scanUser.Id != record.Id.Int64() || scanUser.Password != string(record.Password) {
+	notFound, err = userService.ScanById(&scanUser, record.Id, nil)
+	if err != nil || notFound || scanUser.Id != record.Id.Int64() || scanUser.Password != record.Password.Data {
 		t.Fatal(notFound, scanUser.Id, scanUser.Password, err)
 	}
 
 	var total int64
 
-	records, total, err := userService.All()
+	records, total, err := userService.All(nil)
 	if err != nil || len(records) != 2 || total != 2 || records[0].Account != newUsers[0].Account || records[1].Account != newUsers[1].Account {
 		t.Fatal(len(records), total, records[0].Account, records[1].Account, err)
 	}
 
 	var scanUsers []UserScan
-	total, err = userService.ScanAll(&scanUsers)
-	if err != nil || len(scanUsers) != 2 || total != 2 || scanUsers[0].Password != string(records[0].Password) || scanUsers[1].Password != string(records[1].Password) {
+	total, err = userService.ScanAll(&scanUsers, nil)
+	if err != nil || len(scanUsers) != 2 || total != 2 || scanUsers[0].Password != records[0].Password.Data || scanUsers[1].Password != records[1].Password.Data {
 		t.Fatal(len(scanUsers), total, scanUsers[0].Password, scanUsers[1].Password, err)
 	}
 
@@ -257,55 +364,72 @@ func TestCrud(t *testing.T) {
 		Page: 2,
 		Size: 1,
 	})
-	if err != nil || len(scanUsers) != 1 || total != 2 || scanUsers[0].Password != string(records[0].Password) {
+	if err != nil || len(scanUsers) != 1 || total != 2 || scanUsers[0].Password != records[0].Password.Data {
 		t.Fatal(len(scanUsers), total, scanUsers[0].Password, err)
 	}
 
-	records, total, err = userService.QueryWithCondition(crud.Criteria{
+	records, total, err = userService.Query(crud.Criteria{
 		Page: 1,
 		Size: 2,
 		Filters: []crud.Filter{
 			{
 				Type:    crud.FilterTypeEqual,
 				Field:   "users.password",
-				Params:  []any{string(newUsers[0].Password)},
+				Params:  []any{"2"},
 				Special: crud.FilterSpecialPassword,
 			},
 		},
 	}, func(tx *gorm.DB) (*gorm.DB, error) {
-		return tx.Where(&User{Account: datatype.Encrypted("2")}), nil
+		return tx.Where(&User{Account: "2"}), nil
 	})
 	if err != nil || len(records) != 1 || total != 1 || records[0].Account != newUsers[0].Account {
 		t.Fatal(len(records), total, records[0].Account, err)
 	}
 
-	total, err = userService.QueryScanWithCondition(&scanUsers, crud.Criteria{
+	total, err = userService.QueryScan(&scanUsers, crud.Criteria{
 		Page: 1,
 		Size: 2,
 		Filters: []crud.Filter{
 			{
 				Type:    crud.FilterTypeEqual,
 				Field:   "users.password",
-				Params:  []any{string(newUsers[0].Password)},
+				Params:  []any{"2"},
 				Special: crud.FilterSpecialPassword,
 			},
 		},
 	}, func(tx *gorm.DB) (*gorm.DB, error) {
-		return tx.Where(&User{Account: datatype.Encrypted("2")}), nil
+		return tx.Where(&User{Account: "2"}), nil
 	})
-	if err != nil || len(scanUsers) != 1 || total != 1 || scanUsers[0].Password != string(records[0].Password) {
+	if err != nil || len(scanUsers) != 1 || total != 1 || scanUsers[0].Password != records[0].Password.Data {
 		t.Fatal(len(scanUsers), total, scanUsers[0].Password, err)
 	}
 
-	roleService, cancel := crud.NewtWithCancelUnderContext[Role](ctx, tx)
+	tx5, cancel := dbcontext.SectionUnderContextWithCancel(ctx, tx)
 	defer cancel()
+
+	roleService := crud.New[Role](crud.DefaultOptions(), tx5)
 
 	newRole := Role{
 		Name: "admin",
-		Desc: "admin",
+		Desc: "admin\\\"'%admin",
 	}
+	newRole.SysOp(true)
 	affected, err = roleService.Create(&newRole)
 	if err != nil || affected != 1 {
+		t.Fatal(affected, err)
+	}
+
+	editRole := Role{
+		Model: model.Model{
+			Id: newRole.Id,
+		},
+	}
+	newRole, affected, err = roleService.Update(editRole)
+	if !strings.Contains(err.Error(), "can not be modified") {
+		t.Fatal(affected, err)
+	}
+	_, affected, err = roleService.Delete(newRole.Id)
+	if !strings.Contains(err.Error(), "can not be deleted") {
 		t.Fatal(affected, err)
 	}
 
@@ -324,8 +448,10 @@ func TestCrud(t *testing.T) {
 		t.Fatal(len(queryRoles), total, queryRoles[0], err)
 	}
 
-	userRoleService, cancel := crud.NewtWithCancelUnderContext[UserRole](ctx, tx)
+	tx6, cancel := dbcontext.SectionUnderContextWithCancel(ctx, tx)
 	defer cancel()
+
+	userRoleService := crud.New[UserRole](crud.DefaultOptions(), tx6)
 
 	newUserRoles := []UserRole{
 		{
@@ -342,16 +468,30 @@ func TestCrud(t *testing.T) {
 		t.Fatal(affected, err)
 	}
 
-	recordUserRole, notFound, err := userRoleService.GetById(newUserRoles[1].Id, "User", "Role")
+	recordUserRole, notFound, err := userRoleService.GetById(newUserRoles[1].Id, []crud.Include{
+		{
+			Association: "User",
+		},
+		{
+			Association: "Role",
+		},
+	})
 	if err != nil || notFound || recordUserRole.User.Account != newUsers[1].Account || recordUserRole.Role.Name != newRole.Name || !recordUserRole.Role.HmacOk {
 		t.Fatal(notFound, recordUserRole, err)
 	}
 
 	queryUserRoles, total, err := userRoleService.Query(crud.Criteria{
-		Page:     1,
-		Size:     10,
-		Includes: []string{"User", "Role"},
-		Joins:    []string{"User", "Role"},
+		Page: 1,
+		Size: 10,
+		Includes: []crud.Include{
+			{
+				Association: "User",
+			},
+			{
+				Association: "Role",
+			},
+		},
+		Joins: []string{"User", "Role"},
 		Filters: []crud.Filter{
 			{
 				Type:    crud.FilterTypeEqual,
@@ -363,16 +503,16 @@ func TestCrud(t *testing.T) {
 				Type:    crud.FilterTypeEqual,
 				Field:   "User.account",
 				Params:  []any{string(newUsers[0].Account)},
-				Special: crud.FilterSpecialEncrypted,
+				Special: crud.FilterSpecialSensitive,
 			},
 			{
-				Type:   crud.FilterTypeEqual,
+				Type:   crud.FilterTypeContains,
 				Field:  "Role.desc",
-				Params: []any{newRole.Desc},
+				Params: []any{"n\\\"'%a"},
 			},
 		},
 	})
-	if err != nil || len(queryUserRoles) != 1 || total != 2 || queryUserRoles[0].User.Account != newUsers[0].Account || queryUserRoles[0].Role.Name != newRole.Name || !queryUserRoles[0].Role.HmacOk {
+	if err != nil || len(queryUserRoles) != 1 || total != 1 || queryUserRoles[0].User.Account != newUsers[0].Account || queryUserRoles[0].Role.Name != newRole.Name || !queryUserRoles[0].Role.HmacOk {
 		t.Fatal(len(queryUserRoles), total, queryUserRoles[0], err)
 	}
 }

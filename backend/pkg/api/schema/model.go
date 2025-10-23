@@ -6,13 +6,8 @@ import (
 	"majinyao.cn/my-app/backend/pkg/db/datatype"
 )
 
-type ModelIdGetter interface {
-	GetId() (id datatype.Id, err error)
-	GetIdB36() string
-}
-
 type ModelId struct {
-	Id string `json:"id" doc:"Model Id (Base36)"`
+	Id string `json:"id" required:"false" doc:"Model Id (Base36)"`
 }
 
 func (i ModelId) GetId() (id datatype.Id, err error) {
@@ -24,7 +19,15 @@ func (i ModelId) GetIdB36() string {
 }
 
 type ModelTime struct {
-	CreatedAt time.Time  `json:"createAt" doc:"Created At"`
-	UpdatedAt time.Time  `json:"updateAt" doc:"Updated At"`
-	DeletedAt *time.Time `json:"deleteAt,omitempty" doc:"Deleted At"`
+	CreatedAt time.Time `json:"createdAt" doc:"Created At"`
+	UpdatedAt time.Time `json:"updatedAt" doc:"Updated At"`
+	DeletedAt time.Time `json:"deletedAt" doc:"Deleted At"`
+}
+
+type ModelReserved struct {
+	Reserved bool `json:"reserved" doc:"Is System Reserved"`
+}
+
+type ModelHmac struct {
+	HmacOk bool `json:"hmacOk" doc:"Is Hmac Ok"`
 }

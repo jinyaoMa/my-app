@@ -5,17 +5,23 @@ import "majinyao.cn/my-app/backend/pkg/api/schema"
 type RoleItem struct {
 	schema.ModelId
 	schema.ModelTime
+	schema.ModelReserved
+	Code        string `json:"code" doc:"Code"`
+	Name        string `json:"name" doc:"Name"`
+	Description string `json:"description" doc:"Description"`
+}
+
+type RoleSave struct {
+	schema.ModelId
 	Code        string `json:"code" doc:"Code"`
 	Name        string `json:"name" doc:"Name"`
 	Description string `json:"description" doc:"Description"`
 }
 
 type RoleDetail struct {
-	schema.ModelId
+	RoleSave
 	schema.ModelTime
-	Code        string `json:"code" doc:"Code"`
-	Name        string `json:"name" doc:"Name"`
-	Description string `json:"description" doc:"Description"`
+	schema.ModelReserved
 
 	RolePermissions []RolePermissionItem `json:"rolePermissions" doc:"Role Permissions"`
 	Permissions     []PermissionItem     `json:"permissions" doc:"Permissions"`
@@ -27,9 +33,8 @@ type RoleDetail struct {
 	Groups     []GroupItem     `json:"groups" doc:"Groups"`
 }
 
-type RoleSave struct {
+type RoleSearchItem struct {
 	schema.ModelId
-	Code        string `json:"code" doc:"Code"`
-	Name        string `json:"name" doc:"Name"`
-	Description string `json:"description" doc:"Description"`
+	Code string `json:"code" doc:"Code"`
+	Name string `json:"name" doc:"Name"`
 }

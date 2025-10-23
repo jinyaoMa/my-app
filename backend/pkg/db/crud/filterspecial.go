@@ -1,11 +1,11 @@
 package crud
 
-type FilterSpecial int
+type FilterSpecial string
 
 const (
-	FilterSpecialIdString FilterSpecial = iota + 1
-	FilterSpecialEncrypted
-	FilterSpecialHashed
-	FilterSpecialOid
-	FilterSpecialPassword
+	FilterSpecialIdString  FilterSpecial = "idString"
+	FilterSpecialSensitive FilterSpecial = "sensitive"
+	FilterSpecialSecret    FilterSpecial = "secret"
+	FilterSpecialPassword  FilterSpecial = "password"
+	FilterSpecialOid       FilterSpecial = "oid"
 )

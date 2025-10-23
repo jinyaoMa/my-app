@@ -1,53 +1,52 @@
 package model
 
 import (
+	"database/sql"
 	"errors"
 
 	"gorm.io/gorm"
 )
 
-type Reserved struct {
-	isSystem bool `gorm:"-"`
-	Reserved bool `gorm:"<-:create;index;comment:Is System Reserved;"`
+type ModelReserved struct {
+	Reserved sql.NullBool `gorm:"<-:create;index;comment:Is System Reserved;"`
+	isSystem bool         `gorm:"-"`
 }
 
-func (r *Reserved) SysOp(reserved bool) {
+func (r *ModelReserved) IsReserved() bool {
+	return r.Reserved.Valid && r.Reserved.Bool
+}
+
+func (r *ModelReserved) SysOp(reserved bool) {
+	r.Reserved = sql.NullBool{Bool: reserved, Valid: true}
 	r.isSystem = true
-	r.Reserved = reserved
 }
 
-func (r *Reserved) BeforeCreate(tx *gorm.DB) (err error) {
+func (r *ModelReserved) BeforeCreate(tx *gorm.DB) (err error) {
 	if r.isSystem {
-		return nil
+		return
 	}
-	if r.Reserved {
+	if r.IsReserved() {
 		return errors.New("entity can not be system reserved when operation is not by system")
 	}
-	return nil
+	return
 }
 
-func (r *Reserved) BeforeUpdate(tx *gorm.DB) (err error) {
+func (r *ModelReserved) BeforeUpdate(tx *gorm.DB) (err error) {
 	if r.isSystem {
-		return nil
+		return
 	}
-	if tx.Statement.Changed("Reserved") {
-		return errors.New("reserved not allowed to change")
+	if r.IsReserved() {
+		return errors.New("system reserved entity can not be modified when operation is not by system")
 	}
-	if r.Reserved {
-		return errors.New("system reserved entity can not be modified")
-	}
-	return nil
+	return
 }
 
-func (r *Reserved) BeforeDelete(tx *gorm.DB) (err error) {
+func (r *ModelReserved) BeforeDelete(tx *gorm.DB) (err error) {
 	if r.isSystem {
-		return nil
+		return
 	}
-	if tx.Statement.Changed("Reserved") {
-		return errors.New("reserved not allowed to change")
+	if r.IsReserved() {
+		return errors.New("system reserved entity can not be deleted when operation is not by system")
 	}
-	if r.Reserved {
-		return errors.New("system reserved entity can not be deleted")
-	}
-	return nil
+	return
 }

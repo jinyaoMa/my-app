@@ -20,8 +20,9 @@ dist
 .task/
 build/bin/certs/
 build/bin/library/
+build/bin/statics/admin
 build/bin/statics/app
 build/bin/statics/docs
-build/bin/config.json
+build/bin/userdata/
 build/bin/*.log
 build/bin/my-app.*

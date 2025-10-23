@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"gorm.io/gorm"
 	"majinyao.cn/my-app/backend/pkg/db/datatype"
 	"majinyao.cn/my-app/backend/pkg/db/model"
 )
@@ -43,6 +44,8 @@ func NewOption(key string, value any) (*Option, error) {
 		o.SetBool(value.(bool))
 	case int64:
 		o.SetInt64(value.(int64))
+	case uint16:
+		o.SetUint16(value.(uint16))
 	case uint64:
 		o.SetUint64(value.(uint64))
 	case float64:
@@ -55,9 +58,75 @@ func NewOption(key string, value any) (*Option, error) {
 
 type Option struct {
 	model.Model
-	model.Reserved
-	Key   string             `gorm:"<-:create;index;not null;size:254;comment:Option Key;"`
-	Value datatype.Encrypted `gorm:"size:254;comment:Option Value;"`
+	model.ModelReserved
+	model.ModelHmac
+	Key   string             `gorm:"<-:create;index;not null;check:key <> '';size:254;comment:Option Key;"`
+	Value datatype.Sensitive `gorm:"not null;check:value <> '';size:254;comment:Option Value;"`
+}
+
+func (o *Option) buildHmacData() string {
+	return fmt.Sprint(
+		o.Id.Int64(),
+		o.CreatedAt.Unix(),
+		o.UpdatedAt.Unix(),
+		o.DeletedAt.Time.Unix(),
+		o.Key,
+		o.GetString(),
+	)
+}
+
+// AfterCreate implements model.Setup.
+func (o *Option) AfterCreate(tx *gorm.DB) (err error) {
+	if err = o.ModelHmac.Update(tx, o, o.buildHmacData); err != nil {
+		return err
+	}
+	return
+}
+
+// AfterDelete implements model.Setup.
+func (o *Option) AfterDelete(tx *gorm.DB) (err error) {
+	return
+}
+
+// AfterFind implements model.Setup.
+func (o *Option) AfterFind(tx *gorm.DB) (err error) {
+	if err = o.ModelHmac.Verify(tx, o.buildHmacData); err != nil {
+		return
+	}
+	return
+}
+
+// AfterUpdate implements model.Setup.
+func (o *Option) AfterUpdate(tx *gorm.DB) (err error) {
+	if err = o.ModelHmac.Update(tx, o, o.buildHmacData); err != nil {
+		return err
+	}
+	return
+}
+
+// BeforeCreate implements model.Setup.
+func (o *Option) BeforeCreate(tx *gorm.DB) (err error) {
+	if err = o.ModelReserved.BeforeCreate(tx); err != nil {
+		return
+	}
+	return o.Model.BeforeCreate(tx)
+}
+
+// BeforeDelete implements model.Setup.
+// Subtle: this method shadows the method (Reserved).BeforeDelete of Option.Reserved.
+func (o *Option) BeforeDelete(tx *gorm.DB) (err error) {
+	return o.ModelReserved.BeforeDelete(tx)
+}
+
+// BeforeUpdate implements model.Setup.
+// Subtle: this method shadows the method (Reserved).BeforeUpdate of Option.Reserved.
+func (o *Option) BeforeUpdate(tx *gorm.DB) (err error) {
+	return o.ModelReserved.BeforeUpdate(tx)
+}
+
+// Many2ManySetups implements model.Setup.
+func (o *Option) Many2ManySetups() (setups []model.Many2ManySetup) {
+	return
 }
 
 func (o *Option) GetString() (v string) {
@@ -65,7 +134,7 @@ func (o *Option) GetString() (v string) {
 }
 
 func (o *Option) SetString(v string) {
-	o.Value = datatype.Encrypted(v)
+	o.Value = datatype.Sensitive(v)
 }
 
 func (o *Option) GetColorTheme() (v string) {

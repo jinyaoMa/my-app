@@ -2,11 +2,11 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"gorm.io/gorm"
 	"majinyao.cn/my-app/backend/internal/entity"
 	"majinyao.cn/my-app/backend/pkg/db/crud"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
 )
 
 type IOptionService interface {
@@ -14,17 +14,18 @@ type IOptionService interface {
 	LoadOrCreateByKey(o *entity.Option) (err error)
 }
 
-func NewOptionService(ctx context.Context, db *gorm.DB) (IOptionService, context.CancelFunc) {
-	s, cancel := new(OptionService).InitWithCancelUnderContext(ctx, db)
+func NewOptionService(ctx context.Context, options crud.Options, db *gorm.DB) (IOptionService, context.CancelFunc) {
+	s, cancel := new(OptionService).InitUnderContextWithCancel(ctx, options, db)
 	return s, cancel
 }
 
-func UseOptionService(db *gorm.DB) IOptionService {
-	return new(OptionService).Init(db)
+func UseOptionService(ctx context.Context, options crud.Options, db *gorm.DB) IOptionService {
+	return new(OptionService).Init(ctx, options, db)
 }
 
 type OptionService struct {
 	crud.Crud[entity.Option]
+	ctx context.Context
 }
 
 func (s *OptionService) LoadOrCreateByKey(o *entity.Option) (err error) {
@@ -35,17 +36,13 @@ func (s *OptionService) LoadOrCreateByKey(o *entity.Option) (err error) {
 	return
 }
 
-func (s *OptionService) Init(db *gorm.DB) *OptionService {
-	s.Crud.Init(db)
+func (s *OptionService) InitUnderContextWithCancel(ctx context.Context, options crud.Options, db *gorm.DB) (*OptionService, context.CancelFunc) {
+	db, cancel := dbcontext.SectionUnderContextWithCancel(ctx, db)
+	return s.Init(ctx, options, db), cancel
+}
+
+func (s *OptionService) Init(ctx context.Context, options crud.Options, db *gorm.DB) *OptionService {
+	s.Crud.Init(options, db)
+	s.ctx = ctx
 	return s
-}
-
-func (s *OptionService) InitWithCancelUnderContext(ctx context.Context, db *gorm.DB) (*OptionService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithCancelUnderContext(ctx, db)
-	return s, cancel
-}
-
-func (s *OptionService) InitWithTimeoutUnderContext(ctx context.Context, db *gorm.DB, timeout time.Duration) (*OptionService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithTimeoutUnderContext(ctx, db, timeout)
-	return s, cancel
 }

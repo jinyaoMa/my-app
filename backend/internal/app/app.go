@@ -6,8 +6,10 @@ import (
 
 	"gorm.io/gorm"
 	"majinyao.cn/my-app/backend/api"
+	"majinyao.cn/my-app/backend/api/apir"
 	"majinyao.cn/my-app/backend/pkg/cflog"
 	"majinyao.cn/my-app/backend/pkg/config"
+	"majinyao.cn/my-app/backend/pkg/db/crud"
 	"majinyao.cn/my-app/backend/pkg/executable"
 	"majinyao.cn/my-app/backend/pkg/h3server"
 	"majinyao.cn/my-app/backend/pkg/i18n"
@@ -34,18 +36,24 @@ func init() {
 
 	exe := initEXE()
 	cfg := initCFG(exe)
-	log := initLOG(cfg.Get().Cflog)
-	store := initSTORE(log, cfg.Get().Storage)
-	i19 := initI18N(log, cfg.Get().I18n)
-	tx := initDB(log, cfg.Get().Db)
-	api := initAPI(ctx, log, tx, cfg.Get().Api)
+	config := cfg.Get()
+
+	log := initLOG(config.Cflog)
+	store := initSTORE(log, config.Storage)
+	i19 := initI18N(log, config.I18n)
+	db := initDB(log, config.Db)
+	api := initAPI(ctx, log, db, store, config.Api, config.Crud)
 	h3s := initH3S(api)
-	setup(ctx, exe, cfg, log, store, i19, tx, api, h3s)
+	setup(ctx, exe, cfg, log, store, i19, db, api, h3s)
 }
 
-func initAPI(ctx context.Context, log *cflog.Cflog, db *gorm.DB, options api.Options) router.IRouter {
+func initAPI(ctx context.Context, log *cflog.Cflog, db *gorm.DB, store storage.IStorage, options api.Options, crudOptions crud.Options) router.IRouter {
 	var err error
-	API, err = api.New(ctx, db, options)
+	API, err = api.New(ctx, &apir.Resources{
+		CrudOptions: crudOptions,
+		Db:          db,
+		Store:       store,
+	}, options)
 	if err != nil {
 		log.Panicln("init api failed", err)
 	}

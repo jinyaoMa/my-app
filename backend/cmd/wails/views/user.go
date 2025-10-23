@@ -5,7 +5,3 @@ type CreateReservedUserForm struct {
 	Account  string
 	Password string
 }
-
-type ReservedUserInfo struct {
-	Name string
-}

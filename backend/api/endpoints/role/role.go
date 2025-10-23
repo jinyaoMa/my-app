@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/danielgtaylor/huma/v2"
-	"gorm.io/gorm"
+	"majinyao.cn/my-app/backend/api/apir"
 	"majinyao.cn/my-app/backend/api/schemas"
 	"majinyao.cn/my-app/backend/internal/entity"
 	"majinyao.cn/my-app/backend/internal/service"
@@ -13,23 +13,24 @@ import (
 	"majinyao.cn/my-app/backend/pkg/db/crud"
 )
 
-func New(scheme string, db *gorm.DB) endpoint.Register {
-	return new(Role).Init(scheme, db)
+func New(res *apir.Resources) endpoint.Register {
+	return new(Role).Init(res)
 }
 
 type Role struct {
-	crudbase.Crud[entity.Role, schemas.RoleItem, schemas.RoleDetail, schemas.RoleSave]
+	crudbase.Crud[entity.Role, schemas.RoleItem, schemas.RoleSave, schemas.RoleDetail, schemas.RoleSearchItem]
+	*apir.Resources
 }
 
 func (r *Role) Register(api huma.API) (ops []huma.Operation) {
-	ops = append(ops,
-		r.Crud.Register(api)...)
+	ops = append(ops, r.Crud.Register(api)...)
 	return
 }
 
-func (r *Role) Init(scheme string, db *gorm.DB) *Role {
-	r.Crud.Init("Role", db, func(ctx context.Context, db *gorm.DB) (crud.ICrud[entity.Role], context.CancelFunc) {
-		return service.NewRoleService(ctx, db)
-	}, scheme)
+func (r *Role) Init(res *apir.Resources) *Role {
+	r.Crud.Init("Role", func(ctx context.Context) (crud.ICrud[entity.Role], context.CancelFunc) {
+		return service.NewRoleService(ctx, res.CrudOptions, res.Db)
+	}, apir.AuthScheme)
+	r.Resources = res
 	return r
 }

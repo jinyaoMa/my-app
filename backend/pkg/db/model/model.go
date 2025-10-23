@@ -9,6 +9,7 @@ import (
 )
 
 type IdGetter interface {
+	GetIdFieldName() string
 	GetId() datatype.Id
 	IsTransient() bool
 }
@@ -20,6 +21,10 @@ type Model struct {
 	DeletedAt gorm.DeletedAt `gorm:"index;comment:Deleted At;"`
 }
 
+func (m Model) GetIdFieldName() string {
+	return "id"
+}
+
 func (m Model) GetId() datatype.Id {
 	return m.Id
 }
@@ -28,22 +33,10 @@ func (m Model) IsTransient() bool {
 	return m.Id.Int64() == 0
 }
 
-func (m *Model) BeforeSave(tx *gorm.DB) (err error) {
-	if m.IsTransient() {
-		s, ok := dbcontext.GetSnowflake(tx)
-		if ok {
-			m.Id = datatype.Id(s.Generate())
-		}
-	}
-	return nil
-}
-
 func (m *Model) BeforeCreate(tx *gorm.DB) (err error) {
-	if m.IsTransient() {
-		s, ok := dbcontext.GetSnowflake(tx)
-		if ok {
-			m.Id = datatype.Id(s.Generate())
-		}
+	s, ok := dbcontext.GetSnowflake(tx)
+	if ok {
+		m.Id = datatype.Id(s.Generate())
 	}
-	return nil
+	return
 }

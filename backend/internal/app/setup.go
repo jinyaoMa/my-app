@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"database/sql"
 	"mime"
 
 	"gorm.io/gorm"
@@ -97,24 +98,33 @@ func setup(
 		}
 
 		codePerrmissionFullControl := "full.control"
-		permissionFullControl := entity.Permission{
-			Code:        codePerrmissionFullControl,
-			Name:        translation.Get("permission." + codePerrmissionFullControl),
-			Description: translation.Get("permission." + codePerrmissionFullControl),
-		}
-		permissionFullControl.SysOp(true)
-		permissionFullControl.SetFlag(flag.Make(lastOperationIdEnumPair.Enum+1, true))
-		if res := tx.FirstOrCreate(&permissionFullControl, entity.Permission{
+		var permissionFullControl entity.Permission
+		if res := tx.First(&permissionFullControl, entity.Permission{
 			Code: codePerrmissionFullControl,
-		}); res.Error != nil {
-			return res.Error
+		}); res.Error == nil {
+			permissionFullControl.SysOp(true)
+			permissionFullControl.SetFlag(flag.Make(lastOperationIdEnumPair.Enum+1, true))
+			if res := tx.Save(&permissionFullControl); res.Error != nil {
+				return res.Error
+			}
+		} else {
+			permissionFullControl = entity.Permission{
+				Code:        codePerrmissionFullControl,
+				Name:        translation.Get("permission." + codePerrmissionFullControl),
+				Description: sql.NullString{String: translation.Get("permission." + codePerrmissionFullControl), Valid: true},
+			}
+			permissionFullControl.SysOp(true)
+			permissionFullControl.SetFlag(flag.Make(lastOperationIdEnumPair.Enum+1, true))
+			if res := tx.Create(&permissionFullControl); res.Error != nil {
+				return res.Error
+			}
 		}
 
 		codeRoleSuperUser := "super.user"
 		roleSuperUser := entity.Role{
 			Code:        codeRoleSuperUser,
 			Name:        translation.Get("role." + codeRoleSuperUser),
-			Description: translation.Get("role." + codeRoleSuperUser),
+			Description: sql.NullString{String: translation.Get("role." + codeRoleSuperUser), Valid: true},
 		}
 		roleSuperUser.SysOp(true)
 		if res := tx.FirstOrCreate(&roleSuperUser, entity.Role{
@@ -139,7 +149,7 @@ func setup(
 		groupEveryone := entity.Group{
 			Code:        codeGroupEveryone,
 			Name:        translation.Get("group." + codeGroupEveryone),
-			Description: translation.Get("group." + codeGroupEveryone),
+			Description: sql.NullString{String: translation.Get("group." + codeGroupEveryone), Valid: true},
 		}
 		groupEveryone.SysOp(true)
 		if res := tx.FirstOrCreate(&groupEveryone, entity.Group{
@@ -235,8 +245,8 @@ func setup(
 			for _, ext := range fileExtensions {
 				fileExtension := entity.FileExtension{
 					Ext:            ext,
-					Name:           translation.Get("file.extension" + ext),
-					Mime:           mime.TypeByExtension(ext),
+					Name:           sql.NullString{String: translation.Get("file.extension" + ext), Valid: true},
+					Mime:           sql.NullString{String: mime.TypeByExtension(ext), Valid: true},
 					FileCategoryId: &fileCategory.Id,
 				}
 				fileExtension.SysOp(true)

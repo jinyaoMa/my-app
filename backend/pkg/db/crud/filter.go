@@ -1,7 +1,6 @@
 package crud
 
 import (
-	"regexp"
 	"strings"
 
 	"gorm.io/gorm"
@@ -10,19 +9,49 @@ import (
 	"majinyao.cn/my-app/backend/pkg/utils"
 )
 
-var regFilterField = regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_\.]*$`)
+const FilterParamsMaxLength = 20
+
+type Filters []Filter
+
+func (f Filters) Apply(tx *gorm.DB, paramsMaxLength int) *gorm.DB {
+	for _, filter := range f {
+		tx = filter.Apply(tx, paramsMaxLength)
+	}
+	return tx
+}
 
 type Filter struct {
 	Or      bool          `json:"or" required:"false" doc:"Or or And"`
-	Type    FilterType    `json:"type" doc:"Filter Type"`
-	Field   string        `json:"field" doc:"Filter Field Name"`
-	Params  []any         `json:"params" doc:"Filter Condition Parameters"`
-	Special FilterSpecial `json:"special" required:"false" doc:"Filter Special"`
+	Type    FilterType    `json:"type" required:"true" doc:"Filter Type: equal, notEqual, lessThan, lessThanOrEqual, greaterThan, greaterThanOrEqual, contains, notContains, startsWith, notStartsWith, endsWith, notEndsWith, null, notNull, between, notBetween, in, notIn"`
+	Field   string        `json:"field" required:"true" doc:"Filter Field Name"`
+	Params  []any         `json:"params" required:"false" doc:"Filter Condition Parameters"`
+	Special FilterSpecial `json:"special" required:"false" doc:"Filter Special: idString, sensitive, secret, password, oid"`
 }
 
-func (f *Filter) Apply(tx *gorm.DB) *gorm.DB {
-	if !regFilterField.MatchString(f.Field) {
+func (f *Filter) Apply(tx *gorm.DB, paramsMaxLength int) *gorm.DB {
+	if len(f.Params) > paramsMaxLength || !regField.MatchString(f.Field) {
 		return tx
+	}
+
+	switch f.Type {
+	case FilterTypeContains, FilterTypeNotContains:
+		for i := range f.Params {
+			if v, ok := f.Params[i].(string); ok {
+				f.Params[i] = "%" + FixLikeKeyword(v) + "%"
+			}
+		}
+	case FilterTypeStartsWith, FilterTypeNotStartsWith:
+		for i := range f.Params {
+			if v, ok := f.Params[i].(string); ok {
+				f.Params[i] = FixLikeKeyword(v) + "%"
+			}
+		}
+	case FilterTypeEndsWith, FilterTypeNotEndsWith:
+		for i := range f.Params {
+			if v, ok := f.Params[i].(string); ok {
+				f.Params[i] = "%" + FixLikeKeyword(v)
+			}
+		}
 	}
 
 	condition := ""
@@ -39,10 +68,10 @@ func (f *Filter) Apply(tx *gorm.DB) *gorm.DB {
 		condition = f.Field + " > ?"
 	case FilterTypeGreaterThanOrEqual:
 		condition = f.Field + " >= ?"
-	case FilterTypeLike:
-		condition = f.Field + " LIKE ?"
-	case FilterTypeNotLike:
-		condition = f.Field + " NOT LIKE ?"
+	case FilterTypeContains, FilterTypeStartsWith, FilterTypeEndsWith:
+		condition = f.Field + " LIKE ? ESCAPE '\\'"
+	case FilterTypeNotContains, FilterTypeNotStartsWith, FilterTypeNotEndsWith:
+		condition = f.Field + " NOT LIKE ? ESCAPE '\\'"
 	case FilterTypeNull:
 		condition = f.Field + " IS NULL"
 	case FilterTypeNotNull:
@@ -61,16 +90,10 @@ func (f *Filter) Apply(tx *gorm.DB) *gorm.DB {
 
 	if f.Type == FilterTypeNull || f.Type == FilterTypeNotNull {
 		if f.Or {
-			tx = tx.Or(condition)
+			return tx.Or(condition)
 		} else {
-			tx = tx.Where(condition)
+			return tx.Where(condition)
 		}
-		return tx
-	}
-
-	if f.Or {
-		tx = tx.Or(condition, f.Params...)
-		return tx
 	}
 
 	switch f.Special {
@@ -82,7 +105,7 @@ func (f *Filter) Apply(tx *gorm.DB) *gorm.DB {
 				}
 			}
 		}
-	case FilterSpecialEncrypted:
+	case FilterSpecialSensitive:
 		cipher, ok := dbcontext.GetCipher(tx)
 		if !ok {
 			return tx
@@ -93,7 +116,7 @@ func (f *Filter) Apply(tx *gorm.DB) *gorm.DB {
 				f.Params[i] = cipher.EncryptBase64(v)
 			}
 		}
-	case FilterSpecialHashed:
+	case FilterSpecialSecret:
 		hasher, ok := dbcontext.GetHasher(tx)
 		if !ok {
 			return tx
@@ -104,18 +127,6 @@ func (f *Filter) Apply(tx *gorm.DB) *gorm.DB {
 				f.Params[i] = hasher.HashBase64(v)
 			}
 		}
-	case FilterSpecialOid:
-		var oid []int64
-		for i := range f.Params {
-			if v, ok := f.Params[i].(string); ok {
-				for _, id := range strings.Split(v, datatype.OidDelimiter) {
-					if id, err := utils.ConvertB36ToInt64(id); err == nil {
-						oid = append(oid, id)
-					}
-				}
-			}
-		}
-		f.Params = []any{datatype.Oid(oid)}
 	case FilterSpecialPassword:
 		keygen, ok := dbcontext.GetKeygen(tx)
 		if !ok {
@@ -127,7 +138,22 @@ func (f *Filter) Apply(tx *gorm.DB) *gorm.DB {
 				f.Params[i] = keygen.DeriveBase64(v, true)
 			}
 		}
+	case FilterSpecialOid:
+		var oid []int64
+		for i := range f.Params {
+			if v, ok := f.Params[i].(string); ok {
+				for id := range strings.SplitSeq(v, datatype.OidDelimiter) {
+					if id, err := utils.ConvertB36ToInt64(id); err == nil {
+						oid = append(oid, id)
+					}
+				}
+			}
+		}
+		f.Params = []any{datatype.Oid(oid)}
 	}
-	tx = tx.Where(condition, f.Params...)
-	return tx
+
+	if f.Or {
+		return tx.Or(condition, f.Params...)
+	}
+	return tx.Where(condition, f.Params...)
 }

@@ -14,6 +14,7 @@
         "start": "停止 HTTP 服务器",
         "stop": "启动 HTTP 服务器"
       },
+      "admin": "打开 管理中心",
       "apid": "打开 API 文档",
       "docs": "打开 应用文档",
       "quit": "退出",
@@ -30,6 +31,82 @@
           "dark": "深色"
         }
       }
+    }
+  },
+  "dialog": {
+    "upload": {
+      "avatar": {
+        "title": "上传头像"
+      }
+    },
+    "common": {
+      "image": {
+        "files": "常见图片文件"
+      }
+    }
+  },
+  "permission": {
+    "full": {
+      "control": "完全控制"
+    }
+  },
+  "role": {
+    "super": {
+      "user": "超级用户"
+    }
+  },
+  "group": {
+    "everyone": "全部用户"
+  },
+  "file": {
+    "category": {
+      "document": "文档",
+      "image": "图片",
+      "video": "视频",
+      "audio": "音频",
+      "other": "其他"
+    },
+    "extension": {
+      "doc": "Word文档",
+      "docx": "Word文档(新版)",
+      "pdf": "PDF文档",
+      "txt": "文本文件",
+      "rtf": "富文本文件",
+      "xls": "Excel表格",
+      "xlsx": "Excel表格(新版)",
+      "csv": "CSV表格",
+      "ppt": "PowerPoint演示文稿",
+      "pptx": "PowerPoint演示文稿(新版)",
+      "md": "Markdown文档",
+      "html": "网页文件",
+      "xml": "XML文件",
+      "log": "日志文件",
+      "jpg": "JPEG图片",
+      "jpeg": "JPEG图片",
+      "png": "PNG图片",
+      "gif": "GIF图片",
+      "bmp": "BMP图片",
+      "tiff": "TIFF图片",
+      "svg": "SVG矢量图",
+      "webp": "WebP图片",
+      "ico": "图标文件",
+      "heic": "HEIC图片",
+      "mp4": "MP4视频",
+      "avi": "AVI视频",
+      "mov": "MOV视频",
+      "mkv": "MKV视频",
+      "wmv": "WMV视频",
+      "flv": "FLV视频",
+      "webm": "WebM视频",
+      "3gp": "3GP视频",
+      "mp3": "MP3音频",
+      "wav": "WAV音频",
+      "aac": "AAC音频",
+      "flac": "FLAC音频",
+      "ogg": "OGG音频",
+      "m4a": "M4A音频",
+      "wma": "WMA音频",
+      "midi": "MIDI音频"
     }
   }
 }

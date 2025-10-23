@@ -3,10 +3,10 @@ package schema
 type Response[T any] struct {
 	Body struct {
 		Success bool   `json:"success" example:"true" doc:"Has the action done successfully?"`
-		Data    T      `json:"data" doc:"response payload"`
-		Total   int64  `json:"total" doc:"if request is list query, total represents the count of the list w/o any user query conditions but conditions built-in; or represents affected rows for other requests"`
-		Code    int    `json:"code" example:"0" doc:"0 => success; otherwise, fail"`
-		Message string `json:"message" example:"hint message" doc:"hint message"`
+		Data    T      `json:"data" doc:"Response Payload"`
+		Total   int64  `json:"total" doc:"If request is list query, total represents the count of the list w/o any user query conditions but conditions built-in; Or represents affected rows for other requests"`
+		Code    int    `json:"code" example:"0" doc:"0 => success; Otherwise, fail"`
+		Message string `json:"message" example:"hint message" doc:"Hint Message"`
 	}
 }
 

@@ -3,11 +3,11 @@ import { RouterLink } from 'vue-router'
 import HelloWorld from '../components/HelloWorld.vue'
 import TheWelcome from '../components/TheWelcome.vue'
 import { Events } from '@wailsio/runtime'
-import { api } from '@jinyaoma/my-sdk'
-import { GreetService } from '@jinyaoma/my-sdk/bindings/majinyao.cn/my-app/backend/cmd/wails/services'
+import api from '@/services/api'
+import { GreetService } from '@/bindings/majinyao.cn/my-app/backend/cmd/wails/services'
 
 api.auth
-  .authLogin({
+  .authPostLogin({
     account: '',
     password: ''
   })

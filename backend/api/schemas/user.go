@@ -1,39 +1,35 @@
 package schemas
 
 import (
+	"time"
+
 	"majinyao.cn/my-app/backend/pkg/api/schema"
-	"majinyao.cn/my-app/backend/pkg/db/datatype"
 )
-
-type UserData struct {
-	VisitorId string
-	UserId    int64
-}
-
-func (u UserData) GetIdentity() string {
-	return u.GetUserId().B36String() + "_" + u.VisitorId
-}
-
-func (u UserData) GetUserId() datatype.Id {
-	return datatype.Id(u.UserId)
-}
 
 type UserItem struct {
 	schema.ModelId
 	schema.ModelTime
-	Account     string `json:"account" doc:"Account"`
-	Password    string `json:"password" doc:"Password"`
-	Name        string `json:"name" doc:"Name"`
-	Description string `json:"description" doc:"Description"`
+	schema.ModelReserved
+	Account                    string    `json:"account" doc:"Account"`
+	Name                       string    `json:"name" doc:"Name"`
+	TemporaryPassword          string    `json:"temporaryPassword" doc:"Temporary Password"`
+	TemporaryPasswordExpiredAt time.Time `json:"temporaryPasswordExpiredAt" doc:"Temporary Password Expired At"`
+}
+
+type UserSave struct {
+	schema.ModelId
+	Account                    string    `json:"account" doc:"Account"`
+	Password                   string    `json:"password" doc:"Password"`
+	Name                       string    `json:"name" doc:"Name"`
+	Description                string    `json:"description" doc:"Description"`
+	TemporaryPassword          string    `json:"temporaryPassword" doc:"Temporary Password"`
+	TemporaryPasswordExpiredAt time.Time `json:"temporaryPasswordExpiredAt" doc:"Temporary Password Expired At"`
 }
 
 type UserDetail struct {
-	schema.ModelId
+	UserSave
 	schema.ModelTime
-	Account     string `json:"account" doc:"Account"`
-	Password    string `json:"password" doc:"Password"`
-	Name        string `json:"name" doc:"Name"`
-	Description string `json:"description" doc:"Description"`
+	schema.ModelReserved
 
 	UserPasswords []UserPasswordItem `json:"userPasswords" doc:"User Passwords"`
 
@@ -47,10 +43,8 @@ type UserDetail struct {
 	Files     []FileItem     `json:"files" doc:"Files"`
 }
 
-type UserSave struct {
+type UserSearchItem struct {
 	schema.ModelId
-	Account     string `json:"account" doc:"Account"`
-	Password    string `json:"password" doc:"Password"`
-	Name        string `json:"name" doc:"Name"`
-	Description string `json:"description" doc:"Description"`
+	Account string `json:"account" doc:"Account"`
+	Name    string `json:"name" doc:"Name"`
 }

@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	SystrayWindowName = "Systray Window"
+	SystrayWindowName = "systray-window"
 )
 
 var (
@@ -26,6 +26,7 @@ var (
 	SystrayTooltip                  string
 	SystrayMenu                     *application.Menu
 	SystrayMenuApi                  *application.MenuItem
+	SystrayMenuAdmin                *application.MenuItem
 	SystrayMenuApid                 *application.MenuItem
 	SystrayMenuDocs                 *application.MenuItem
 	SystrayMenuDisplayLanguageTitle *application.MenuItem
@@ -38,7 +39,7 @@ var (
 	SystrayWindow                   *application.WebviewWindow
 )
 
-func newSystray(a *application.App) *application.SystemTray {
+func useSystray(a *application.App) {
 	translation := app.I18N.GetTranslation()
 	app.I18N.Watch(func(t i18n.Translation) (err error) {
 		if SystrayMenuQuit == nil {
@@ -49,6 +50,7 @@ func newSystray(a *application.App) *application.SystemTray {
 		} else {
 			SystrayMenuApi.SetLabel(t.Get("systray.menu.api.stop"))
 		}
+		SystrayMenuAdmin.SetLabel(t.Get("systray.menu.admin"))
 		SystrayMenuApid.SetLabel(t.Get("systray.menu.apid"))
 		SystrayMenuDocs.SetLabel(t.Get("systray.menu.docs"))
 		SystrayMenuDisplayLanguageTitle.SetLabel(t.Get("systray.menu.display.language.title"))
@@ -86,10 +88,12 @@ func newSystray(a *application.App) *application.SystemTray {
 	app.H3S.OnRun(func(h1, h2 *http.Server, h3 *http3.Server) {
 		SystrayMenuApi.SetEnabled(true)
 
+		SystrayMenuAdmin.SetHidden(false)
 		SystrayMenuApid.SetHidden(false)
 		SystrayMenuDocs.SetHidden(false)
 
 		SystrayMenuApi.SetBitmap(assets.IconStart)
+		SystrayMenuAdmin.SetBitmap(assets.IconAdmin)
 		SystrayMenuApid.SetBitmap(assets.IconApid)
 		SystrayMenuDocs.SetBitmap(assets.IconDocs)
 
@@ -100,6 +104,7 @@ func newSystray(a *application.App) *application.SystemTray {
 	app.H3S.OnShutddown(func(h1, h2 *http.Server, h3 *http3.Server) {
 		SystrayMenuApi.SetEnabled(true)
 
+		SystrayMenuAdmin.SetHidden(true)
 		SystrayMenuApid.SetHidden(true)
 		SystrayMenuDocs.SetHidden(true)
 
@@ -111,6 +116,30 @@ func newSystray(a *application.App) *application.SystemTray {
 	})
 
 	SystrayMenu = a.Menu.New()
+
+	SystrayMenuAdmin = SystrayMenu.
+		Add(translation.Get("systray.menu.admin")).
+		SetBitmap(assets.IconAdmin).
+		SetHidden(!app.H3S.IsRunning()).
+		OnClick(func(ctx *application.Context) {
+			a.Browser.OpenURL("https://localhost" + app.H3S.SecureAddr() + "/admin")
+		})
+
+	SystrayMenuApid = SystrayMenu.
+		Add(translation.Get("systray.menu.apid")).
+		SetBitmap(assets.IconApid).
+		SetHidden(!app.H3S.IsRunning()).
+		OnClick(func(ctx *application.Context) {
+			a.Browser.OpenURL("https://localhost" + app.H3S.SecureAddr() + app.API.GetDocsPath())
+		})
+
+	SystrayMenuDocs = SystrayMenu.
+		Add(translation.Get("systray.menu.docs")).
+		SetBitmap(assets.IconDocs).
+		SetHidden(!app.H3S.IsRunning()).
+		OnClick(func(ctx *application.Context) {
+			a.Browser.OpenURL("https://localhost" + app.H3S.SecureAddr() + "/docs")
+		})
 
 	if app.H3S.IsRunning() {
 		SystrayMenuApi = SystrayMenu.
@@ -133,22 +162,6 @@ func newSystray(a *application.App) *application.SystemTray {
 			}
 		}
 	})
-
-	SystrayMenuApid = SystrayMenu.
-		Add(translation.Get("systray.menu.apid")).
-		SetBitmap(assets.IconApid).
-		SetHidden(!app.H3S.IsRunning()).
-		OnClick(func(ctx *application.Context) {
-			a.Browser.OpenURL("https://localhost" + app.H3S.SecureAddr() + app.API.GetDocsPath())
-		})
-
-	SystrayMenuDocs = SystrayMenu.
-		Add(translation.Get("systray.menu.docs")).
-		SetBitmap(assets.IconDocs).
-		SetHidden(!app.H3S.IsRunning()).
-		OnClick(func(ctx *application.Context) {
-			a.Browser.OpenURL("https://localhost" + app.H3S.SecureAddr() + "/docs")
-		})
 
 	SystrayMenu.AddSeparator()
 
@@ -241,7 +254,6 @@ func newSystray(a *application.App) *application.SystemTray {
 	})
 
 	updateSystrayTooltip(translation, theme)
-	return Systray
 }
 
 func updateSystrayTooltip(t i18n.Translation, theme ...string) {

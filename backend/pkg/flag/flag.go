@@ -1,12 +1,18 @@
 package flag
 
-import "bytes"
+import (
+	"bytes"
+	"encoding/base64"
+	"slices"
+)
 
 type IFlag interface {
 	ToBytes() []byte
+	ToBase64() string
+  ToPositions() []int
 	Trim() IFlag
-	TurnOn(pos int) IFlag
-	TurnOff(pos int) IFlag
+	TurnOn(pos int, noCopy ...bool) IFlag
+	TurnOff(pos int, noCopy ...bool) IFlag
 	IsOn(pos int) bool
 	Or(other IFlag) IFlag
 	And(other IFlag) IFlag
@@ -37,10 +43,37 @@ func FromBytes(v []byte) IFlag {
 	return flag(v).copy()
 }
 
+func FromBase64(b64 string) (IFlag, error) {
+	v, err := base64.RawURLEncoding.DecodeString(b64)
+	if err != nil {
+		return nil, err
+	}
+	return flag(v), nil
+}
+
 type flag []byte
 
 func (f flag) ToBytes() []byte {
 	return f.copy()
+}
+
+func (f flag) ToBase64() string {
+	return base64.RawURLEncoding.EncodeToString(f)
+}
+
+func (f flag) ToPositions() []int {
+	positions := make([]int, 0)
+	for i, b := range f {
+		if b == 0 {
+			continue
+		}
+		for j := 0; j < 8; j++ {
+			if b&(0b10000000>>j) != 0 {
+				positions = append(positions, i*8+j)
+			}
+		}
+	}
+	return positions
 }
 
 func (f flag) Trim() IFlag {
@@ -53,8 +86,11 @@ func (f flag) Trim() IFlag {
 	return f[:0]
 }
 
-func (f flag) TurnOn(pos int) IFlag {
-	f = f.copy()
+func (f flag) TurnOn(pos int, noCopy ...bool) IFlag {
+	nc := slices.Contains(noCopy, true)
+	if !nc {
+		f = f.copy()
+	}
 	if pos < 0 {
 		return f
 	}
@@ -71,8 +107,11 @@ func (f flag) TurnOn(pos int) IFlag {
 	return f
 }
 
-func (f flag) TurnOff(pos int) IFlag {
-	f = f.copy()
+func (f flag) TurnOff(pos int, noCopy ...bool) IFlag {
+	nc := slices.Contains(noCopy, true)
+	if !nc {
+		f = f.copy()
+	}
 	if pos < 0 {
 		return f
 	}

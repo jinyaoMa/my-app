@@ -11,8 +11,9 @@ import (
 
 func main() {
 	a := newApp()
-	_ = newSystray(a)
-	_ = newMainWindow(a)
+	useSystray(a)
+	useWindows(a)
+	useEvents(a)
 
 	// Create a goroutine that emits an event containing the current time every second.
 	// The frontend can listen to this event and update the UI accordingly.
@@ -25,6 +26,6 @@ func main() {
 	}()
 
 	if err := a.Run(); err != nil {
-		app.LOG.Fatal(err)
+		app.LOG.Fatalln(err)
 	}
 }

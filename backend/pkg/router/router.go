@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/danielgtaylor/huma/v2"
@@ -123,13 +122,7 @@ func (r *router) init(apiPath string, options Options, setupHandlers ...func(hum
 	}
 
 	fileServer := http.FileServer(http.Dir(options.StaticsDirectory))
-	r.mux.NotFound(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet && strings.HasSuffix(r.URL.Path, ".wasm.gz") {
-			w.Header().Set("Content-Encoding", "gzip")
-			w.Header().Set("Content-Type", "application/wasm")
-		}
-		fileServer.ServeHTTP(w, r)
-	}))
+	r.mux.NotFound(http.HandlerFunc(fileServer.ServeHTTP))
 
 	// setup huma
 	cfg := DocsConfig(r.docsTitle, r.docsVersion, r.docsPath, r.apiPath)

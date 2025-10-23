@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/danielgtaylor/huma/v2"
+	"majinyao.cn/my-app/backend/api/apir"
 	"majinyao.cn/my-app/backend/api/schemas"
 	"majinyao.cn/my-app/backend/internal/service"
 	"majinyao.cn/my-app/backend/pkg/api/schema"
@@ -16,19 +17,19 @@ type ListInput struct {
 
 func (p *OperationIdEnumPair) RegisterList(api huma.API) (op huma.Operation) {
 	op = huma.Operation{
-		Method:      http.MethodGet,
-		Path:        "/operation-id-enum-pair/list",
-		Summary:     "Get Operation Id Enum Pair List",
-		Description: "Get operation id enum pair list, filtered by operation id.",
-		OperationID: "operation-id-enum-pair.list",
-		Tags:        []string{"OperationIdEnumPair"},
+		Method:       http.MethodGet,
+		Path:         "/operation-id-enum-pair/list",
+		Summary:      "Get Pair List",
+		Description:  "Get operation id enum pair list, filtered by operation id.",
+		OperationID:  "operation-id-enum-pair.get.list",
+		Tags:         []string{"OperationIdEnumPair"},
+		Errors:       []int{http.StatusInternalServerError},
+		MaxBodyBytes: 1,
 	}
 
-	if p.Scheme != "" {
-		op.Security = append(op.Security, map[string][]string{
-			p.Scheme: {op.OperationID},
-		})
-	}
+	op.Security = append(op.Security, map[string][]string{
+		apir.AuthScheme: {op.OperationID},
+	})
 
 	handler := func(ctx context.Context, input *ListInput) (output *schema.Response[[]schemas.OperationIdEnumPairItem], err error) {
 		service, cancel := service.NewOperationIdEnumPairService(ctx, p.Db)

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/danielgtaylor/huma/v2"
-	"gorm.io/gorm"
+	"majinyao.cn/my-app/backend/api/apir"
 	"majinyao.cn/my-app/backend/api/schemas"
 	"majinyao.cn/my-app/backend/internal/entity"
 	"majinyao.cn/my-app/backend/internal/service"
@@ -13,23 +13,24 @@ import (
 	"majinyao.cn/my-app/backend/pkg/db/crud"
 )
 
-func New(scheme string, db *gorm.DB) endpoint.Register {
-	return new(FileExtension).Init(scheme, db)
+func New(res *apir.Resources) endpoint.Register {
+	return new(FileExtension).Init(res)
 }
 
 type FileExtension struct {
-	crudbase.Crud[entity.FileExtension, schemas.FileExtensionItem, schemas.FileExtensionDetail, schemas.FileExtensionSave]
+	crudbase.Crud[entity.FileExtension, schemas.FileExtensionItem, schemas.FileExtensionSave, schemas.FileExtensionDetail, schemas.FileExtensionSearchItem]
+	*apir.Resources
 }
 
 func (e *FileExtension) Register(api huma.API) (ops []huma.Operation) {
-	ops = append(ops,
-		e.Crud.Register(api)...)
+	ops = append(ops, e.Crud.Register(api)...)
 	return
 }
 
-func (e *FileExtension) Init(scheme string, db *gorm.DB) *FileExtension {
-	e.Crud.Init("FileExtension", db, func(ctx context.Context, db *gorm.DB) (crud.ICrud[entity.FileExtension], context.CancelFunc) {
-		return service.NewFileExtensionService(ctx, db)
-	}, scheme)
+func (e *FileExtension) Init(res *apir.Resources) *FileExtension {
+	e.Crud.Init("FileExtension", func(ctx context.Context) (crud.ICrud[entity.FileExtension], context.CancelFunc) {
+		return service.NewFileExtensionService(ctx, res.CrudOptions, res.Db)
+	}, apir.AuthScheme)
+	e.Resources = res
 	return e
 }

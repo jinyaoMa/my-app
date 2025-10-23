@@ -11,18 +11,24 @@ type UserPasswordItem struct {
 	User   UserItem `json:"user" doc:"User"`
 }
 
-type UserPasswordDetail struct {
-	schema.ModelId
-	schema.ModelTime
-	Password string `json:"password" doc:"Password"`
-
-	UserId string   `json:"userId" doc:"User Id"`
-	User   UserItem `json:"user" doc:"User"`
-}
-
 type UserPasswordSave struct {
 	schema.ModelId
 	Password string `json:"password" doc:"Password"`
 
 	UserId string `json:"userId" doc:"User Id"`
+}
+
+type UserPasswordDetail struct {
+	UserPasswordSave
+	schema.ModelTime
+
+	User UserItem `json:"user" doc:"User"`
+}
+
+type UserPasswordSearchItem struct {
+	schema.ModelId
+	Password string `json:"password" doc:"Password"`
+
+	UserId string         `json:"userId" doc:"User Id"`
+	User   UserSearchItem `json:"user" doc:"User"`
 }

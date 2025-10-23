@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/danielgtaylor/huma/v2"
-	"gorm.io/gorm"
+	"majinyao.cn/my-app/backend/api/apir"
 	"majinyao.cn/my-app/backend/api/schemas"
 	"majinyao.cn/my-app/backend/internal/entity"
 	"majinyao.cn/my-app/backend/internal/service"
@@ -13,23 +13,24 @@ import (
 	"majinyao.cn/my-app/backend/pkg/db/crud"
 )
 
-func New(scheme string, db *gorm.DB) endpoint.Register {
-	return new(Group).Init(scheme, db)
+func New(res *apir.Resources) endpoint.Register {
+	return new(Group).Init(res)
 }
 
 type Group struct {
-	crudbase.Crud[entity.Group, schemas.GroupItem, schemas.GroupDetail, schemas.GroupSave]
+	crudbase.Crud[entity.Group, schemas.GroupItem, schemas.GroupSave, schemas.GroupDetail, schemas.GroupSearchItem]
+	*apir.Resources
 }
 
 func (g *Group) Register(api huma.API) (ops []huma.Operation) {
-	ops = append(ops,
-		g.Crud.Register(api)...)
+	ops = append(ops, g.Crud.Register(api)...)
 	return
 }
 
-func (g *Group) Init(scheme string, db *gorm.DB) *Group {
-	g.Crud.Init("Group", db, func(ctx context.Context, db *gorm.DB) (crud.ICrud[entity.Group], context.CancelFunc) {
-		return service.NewGroupService(ctx, db)
-	}, scheme)
+func (g *Group) Init(res *apir.Resources) *Group {
+	g.Crud.Init("Group", func(ctx context.Context) (crud.ICrud[entity.Group], context.CancelFunc) {
+		return service.NewGroupService(ctx, res.CrudOptions, res.Db)
+	}, apir.AuthScheme)
+	g.Resources = res
 	return g
 }

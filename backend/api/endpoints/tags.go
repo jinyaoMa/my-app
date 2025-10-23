@@ -5,25 +5,26 @@ import (
 	"net/http"
 
 	"github.com/danielgtaylor/huma/v2"
+	"majinyao.cn/my-app/backend/api/apir"
 	"majinyao.cn/my-app/backend/pkg/api/schema"
 	"majinyao.cn/my-app/backend/pkg/utils"
 )
 
 func (e *endpoints) RegisterTags(api huma.API) (op huma.Operation) {
 	op = huma.Operation{
-		Method:      http.MethodGet,
-		Path:        "/endpoints/tags",
-		Summary:     "Get Tags of Endpoints",
-		Description: "Get all tags of registered endpoints.",
-		OperationID: "endpoints.tags",
-		Tags:        []string{"Endpoints"},
+		Method:       http.MethodGet,
+		Path:         "/endpoints/tags",
+		Summary:      "Get Tags of Endpoints",
+		Description:  "Get all tags of registered endpoints.",
+		OperationID:  "endpoints.get.tags",
+		Tags:         []string{"Endpoints"},
+		Errors:       []int{http.StatusInternalServerError},
+		MaxBodyBytes: 1,
 	}
 
-	if e.Scheme != "" {
-		op.Security = append(op.Security, map[string][]string{
-			e.Scheme: {op.OperationID},
-		})
-	}
+	op.Security = append(op.Security, map[string][]string{
+		apir.AuthScheme: {op.OperationID},
+	})
 
 	e.Ops = append(e.Ops, op)
 	handler := func(ctx context.Context, input *struct{}) (output *schema.Response[[]string], err error) {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/danielgtaylor/huma/v2"
 	"gorm.io/gorm"
+	"majinyao.cn/my-app/backend/api/apir"
 	"majinyao.cn/my-app/backend/api/schemas"
 	"majinyao.cn/my-app/backend/internal/entity"
 	"majinyao.cn/my-app/backend/internal/service"
@@ -13,23 +14,32 @@ import (
 	"majinyao.cn/my-app/backend/pkg/db/crud"
 )
 
-func New(scheme string, db *gorm.DB) endpoint.Register {
-	return new(FileGroup).Init(scheme, db)
+func New(res *apir.Resources) endpoint.Register {
+	return new(FileGroup).Init(res)
 }
 
 type FileGroup struct {
-	crudbase.Crud[entity.FileGroup, schemas.FileGroupItem, schemas.FileGroupDetail, schemas.FileGroupSave]
+	crudbase.Crud[entity.FileGroup, schemas.FileGroupItem, schemas.FileGroupSave, schemas.FileGroupDetail, schemas.FileGroupSearchItem]
+	*apir.Resources
 }
 
 func (g *FileGroup) Register(api huma.API) (ops []huma.Operation) {
 	ops = append(ops,
-		g.Crud.Register(api)...)
+		g.Crud.RegisterDelete(api),
+		g.Crud.RegisterDetail(api),
+		g.Crud.RegisterQuery(api, nil),
+		g.Crud.RegisterSave(api),
+		g.Crud.RegisterSearch(api, func(tx *gorm.DB) (*gorm.DB, error) {
+			return tx.Joins("File").Joins("Group"), nil
+		}),
+	)
 	return
 }
 
-func (g *FileGroup) Init(scheme string, db *gorm.DB) *FileGroup {
-	g.Crud.Init("FileGroup", db, func(ctx context.Context, db *gorm.DB) (crud.ICrud[entity.FileGroup], context.CancelFunc) {
-		return service.NewFileGroupService(ctx, db)
-	}, scheme)
+func (g *FileGroup) Init(res *apir.Resources) *FileGroup {
+	g.Crud.Init("FileGroup", func(ctx context.Context) (crud.ICrud[entity.FileGroup], context.CancelFunc) {
+		return service.NewFileGroupService(ctx, res.CrudOptions, res.Db)
+	}, apir.AuthScheme)
+	g.Resources = res
 	return g
 }

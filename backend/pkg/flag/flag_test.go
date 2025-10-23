@@ -110,4 +110,15 @@ func TestFlag(t *testing.T) {
 	if !f.And(f2).HasOn() {
 		t.Fatal("expected true, got false")
 	}
+
+	ps := f.ToPositions()
+	if len(ps) != 3 || ps[0] != 0 || ps[1] != 8 || ps[2] != 15 {
+		t.Fatal("expected [0, 8, 15], got", ps)
+	}
+
+  fb64, _ := flag.FromBase64("AAAAAAAAAAAAAAAAAAAA")
+	ps = fb64.ToPositions()
+	if len(ps) != 0 {
+		t.Fatal("expected 0, got", len(ps))
+	}
 }

@@ -19,13 +19,14 @@ import (
 type IStorage interface {
 	GetHashAlgs() (algs []string)
 	GetLibraryAPathMaxLength() int
-	PersistTemporary(ctx context.Context, namespace string, checksum string, size uint64, ext string) (checksums []string, err error)
-	CacheTemporary(ctx context.Context, namespace string, checksum string, size uint64, offset uint64, data io.Reader) (err error)
+	PersistLocalFile(ctx context.Context, path string) (checksums []string, size int64, ext string, err error)
+	PersistTemporary(ctx context.Context, namespace string, checksum string, size int64, ext string) (checksums []string, err error)
+	CacheTemporary(ctx context.Context, namespace string, checksum string, size int64, offset int64, data io.Reader) (err error)
 	SearchTemporary(namespace string, checksum string) (file *os.File, path string, dir string, err error)
-	SearchDirectory(ext string, size uint64, checksums ...string) (file *os.File, path string, dir string, err error)
-	BuildPersistedFilename(ext string, size uint64, checksums ...string) string
-	ChooseLibraryTemporaryBySize(ctx context.Context, size uint64, namespace string) (nsDir string, err error)
-	ChooseBySize(ctx context.Context, size uint64) (partition Partition, dir string, err error)
+	SearchDirectory(ext string, size int64, checksums ...string) (file *os.File, path string, dir string, err error)
+	BuildPersistedFilename(ext string, size int64, checksums ...string) string
+	ChooseLibraryTemporaryBySize(ctx context.Context, size int64, namespace string) (nsDir string, err error)
+	ChooseBySize(ctx context.Context, size int64) (partition Partition, dir string, err error)
 	EnableLibraryByMountpoint(mountpoint string) (err error)
 	DisableLibraryByMountpoint(mountpoint string)
 	GetLibraryTemporaryByMountpoint(ctx context.Context, mountpoint string) (tmp string, ok bool)
@@ -52,7 +53,7 @@ func New(options Options) (IStorage, error) {
 type storage struct {
 	libraries     []Library
 	temporary     string
-	bufferSize    uint64
+	bufferSize    int64
 	combo         hasher.ICombo
 	maxPathLength int
 }
@@ -76,7 +77,91 @@ func (s *storage) GetLibraryAPathMaxLength() int {
 	return s.maxPathLength - (utils.SliceSum(s.combo.OutputLengths())*2 + 16) - (utils.SliceSum(s.combo.OutputLengths())*2+16)/2
 }
 
-func (s *storage) PersistTemporary(ctx context.Context, namespace string, checksum string, size uint64, ext string) (checksums []string, err error) {
+func (s *storage) PersistLocalFile(ctx context.Context, path string) (checksums []string, size int64, ext string, err error) {
+	stat, err := os.Stat(path)
+	if err != nil {
+		return
+	}
+	if stat.IsDir() {
+		err = errors.New("storage persist local file: path is directory")
+		return
+	}
+
+	file, err := os.Open(path)
+	if err != nil {
+		return
+	}
+
+	s.combo.Using(func(hs hash2.Hash2s) {
+		defer func() {
+			if err == nil {
+				checksums = hs.SumBase64()
+			}
+		}()
+
+		buffer := make([]byte, s.bufferSize)
+		for {
+			select {
+			case <-ctx.Done():
+				err = ctx.Err()
+				return
+			default:
+				n, errRead := file.Read(buffer)
+				if errRead == io.EOF {
+					return
+				}
+				if errRead != nil {
+					err = errRead
+					return
+				}
+
+				m, errWrite := hs.Write(buffer[:n])
+				if errWrite != nil {
+					err = errWrite
+					return
+				}
+				if n != m {
+					err = errors.New("storage persist local file: combo hasher write not all bytes")
+					return
+				}
+			}
+		}
+	})
+
+	defer file.Close()
+	if err != nil {
+		return
+	}
+
+	ext = filepath.Ext(path)
+	size = int64(stat.Size())
+	pFile, _, _, err := s.SearchDirectory(ext, size, checksums...)
+	if err == nil {
+		defer pFile.Close()
+		return
+	}
+
+	_, dir, err := s.ChooseBySize(ctx, size)
+	if err != nil {
+		return
+	}
+
+	newPath := filepath.Join(dir, s.BuildPersistedFilename(ext, size, checksums...))
+	newFile, err := os.OpenFile(newPath, os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return
+	}
+	defer newFile.Close()
+
+	file.Seek(0, io.SeekStart)
+	_, err = io.Copy(newFile, file)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (s *storage) PersistTemporary(ctx context.Context, namespace string, checksum string, size int64, ext string) (checksums []string, err error) {
 	tmpFile, path, dir, err := s.SearchTemporary(namespace, checksum)
 	if err != nil {
 		return nil, err
@@ -141,7 +226,7 @@ func (s *storage) PersistTemporary(ctx context.Context, namespace string, checks
 	return
 }
 
-func (s *storage) CacheTemporary(ctx context.Context, namespace string, checksum string, size uint64, offset uint64, data io.Reader) (err error) {
+func (s *storage) CacheTemporary(ctx context.Context, namespace string, checksum string, size int64, offset int64, data io.Reader) (err error) {
 	tmpFile, _, _, err := s.SearchTemporary(namespace, checksum)
 	if err != nil {
 		var nsDir string
@@ -208,7 +293,7 @@ func (s *storage) SearchTemporary(namespace string, checksum string) (file *os.F
 	return nil, "", "", errors.New("storage search temporary: not found")
 }
 
-func (s *storage) SearchDirectory(ext string, size uint64, checksums ...string) (file *os.File, path string, dir string, err error) {
+func (s *storage) SearchDirectory(ext string, size int64, checksums ...string) (file *os.File, path string, dir string, err error) {
 	ls := s.GetLibraries()
 	for _, l := range ls {
 		path = filepath.Join(l.Directory, s.BuildPersistedFilename(ext, size, checksums...))
@@ -220,16 +305,16 @@ func (s *storage) SearchDirectory(ext string, size uint64, checksums ...string) 
 	return nil, "", "", errors.New("storage search temporary: not found")
 }
 
-func (s *storage) BuildPersistedFilename(ext string, size uint64, checksums ...string) string {
+func (s *storage) BuildPersistedFilename(ext string, size int64, checksums ...string) string {
 	// assume `{sha256:b64},{crc64:b64},{xxh3:b64},{size:b64}.{ext}`
 	if ext != "" && !strings.HasPrefix(ext, ".") {
 		ext = "." + ext
 	}
-	commaParts := append(checksums, utils.ConvertUint64ToBase64(size))
+	commaParts := append(checksums, utils.ConvertInt64ToBase64(size))
 	return strings.Join(commaParts, ",") + ext
 }
 
-func (s *storage) ChooseLibraryTemporaryBySize(ctx context.Context, size uint64, namespace string) (nsDir string, err error) {
+func (s *storage) ChooseLibraryTemporaryBySize(ctx context.Context, size int64, namespace string) (nsDir string, err error) {
 	_, dir, err := s.ChooseBySize(ctx, size)
 	if err != nil {
 		return "", err
@@ -237,7 +322,7 @@ func (s *storage) ChooseLibraryTemporaryBySize(ctx context.Context, size uint64,
 	return filepath.Join(dir, s.temporary, namespace), nil
 }
 
-func (s *storage) ChooseBySize(ctx context.Context, size uint64) (partition Partition, dir string, err error) {
+func (s *storage) ChooseBySize(ctx context.Context, size int64) (partition Partition, dir string, err error) {
 	var partitions []Partition
 	partitions, err = s.GetPartitions(ctx)
 	if err != nil {
@@ -327,9 +412,9 @@ func (s *storage) GetPartitions(ctx context.Context) (partitions []Partition, er
 			Mountpoint:  pStat.Mountpoint,
 			Fstype:      pStat.Fstype,
 			Opts:        pStat.Opts,
-			Total:       uStat.Total,
-			Free:        uStat.Free,
-			Used:        uStat.Used,
+			Total:       int64(uStat.Total),
+			Free:        int64(uStat.Free),
+			Used:        int64(uStat.Used),
 			UsedPercent: uStat.UsedPercent,
 		})
 	}
@@ -418,9 +503,14 @@ func (s *storage) init(options Options) (*storage, error) {
 		maxPathLength = options.MaxPathLength
 	}
 	s.maxPathLength = maxPathLength
-	s.bufferSize = options.BufferSize
 
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(30*time.Second))
+	if options.BufferSize < 1 {
+		s.bufferSize = 1
+	} else {
+		s.bufferSize = options.BufferSize
+	}
+
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(5*time.Second))
 	defer cancel()
 
 	err = s.LoadLibraries(ctx, options.Temporary, options.Libraries...)

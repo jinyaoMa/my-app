@@ -11,22 +11,24 @@ import (
 
 type LoginInput struct {
 	Body      schema.AuthLoginRequest
-	VisitorId string `header:"X-Visitor-ID" required:"true" doc:"Visitor Id"`
+	VisitorId string `header:"X-Visitor-ID" required:"true" maxLength:"32" doc:"Visitor Id"`
 }
 
 func (a *Auth[T]) RegisterLogin(api huma.API) (op huma.Operation) {
 	op = huma.Operation{
-		Method:      http.MethodPost,
-		Path:        "/auth/login",
-		Summary:     "Auth Login",
-		Description: "Login by username and password, and return access token and refresh token. BTW, visitor id is required for distinguishing clients/devices.",
-		OperationID: "auth.login",
-		Tags:        []string{"Auth"},
+		Method:       http.MethodPost,
+		Path:         "/auth/login",
+		Summary:      "Login",
+		Description:  "Login by username and password, and return access token and refresh token. BTW, visitor id is required for distinguishing clients/devices.",
+		OperationID:  "auth.post.login",
+		Tags:         []string{"Auth"},
+		Errors:       []int{http.StatusInternalServerError},
+		MaxBodyBytes: 512,
 	}
 
 	handler := func(ctx context.Context, input *LoginInput) (output *schema.Response[schema.AuthLogin], err error) {
 		f := authfwt.GetFwtFromContext[T](ctx)
-		verifier, cancel := a.NewVerifier(ctx, a.Db)
+		verifier, cancel := a.NewVerifier(ctx)
 		defer cancel()
 
 		userdata, err := verifier.VerifyLogin(input)

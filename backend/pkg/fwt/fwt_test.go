@@ -54,7 +54,7 @@ func TestFwt(t *testing.T) {
 		RefreshAge:    10,
 		RefreshLength: 32,
 	}, func(f *fory.Fory) error {
-		f.RegisterTagType("UserData", UserData{})
+		f.RegisterNamedType(UserData{}, "UserData")
 		return nil
 	})
 	if err != nil {

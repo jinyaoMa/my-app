@@ -12,7 +12,7 @@ import (
 func ParseIdFromB36(b36 string) (Id, error) {
 	v, err := utils.ConvertB36ToInt64(b36)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("db datatype id: id %s is not valid", b36)
 	}
 	return Id(v), nil
 }
@@ -31,10 +31,14 @@ func (i Id) Int64() int64 {
 // field: the field using the serializer, contains GORM settings, struct tags
 // dst: current model value, `user` in the below example
 // dbValue: current field's value in database
-func (o *Id) Scan(ctx context.Context, field *schema.Field, dst reflect.Value, dbValue any) (err error) {
+func (i *Id) Scan(ctx context.Context, field *schema.Field, dst reflect.Value, dbValue any) error {
+	if dbValue == nil {
+		return nil
+	}
+
 	switch value := dbValue.(type) {
 	case int64:
-		*o = Id(value)
+		*i = Id(value)
 	default:
 		return fmt.Errorf("db datatype oid: unsupported data %#v", dbValue)
 	}

@@ -10,9 +10,10 @@ import (
 	"majinyao.cn/my-app/backend/pkg/cflog"
 	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
 	"majinyao.cn/my-app/backend/pkg/db/model"
+	"majinyao.cn/my-app/backend/pkg/utils"
 )
 
-func Open(autoMigrateDst []any, options Options) (db *gorm.DB, err error) {
+func Open(models []model.Setup, options Options) (db *gorm.DB, err error) {
 	dialector, err := openDialector(options)
 	if err != nil {
 		return
@@ -33,19 +34,17 @@ func Open(autoMigrateDst []any, options Options) (db *gorm.DB, err error) {
 		return nil, err
 	}
 
-	for _, d := range autoMigrateDst {
-		if getter, ok := d.(model.M2MSetupsGetter); ok {
-			for _, s := range getter.GetM2MSetups() {
-				err = db.SetupJoinTable(s.Model, s.Field, s.JoinTable)
-				if err != nil {
-					return nil, err
-				}
+	for _, m := range models {
+		for _, s := range m.Many2ManySetups() {
+			err = db.SetupJoinTable(m, s.Field, s.JoinTable)
+			if err != nil {
+				return nil, err
 			}
 		}
 	}
 
 	if options.AutoMigrate {
-		err = db.AutoMigrate(autoMigrateDst...)
+		err = db.AutoMigrate(utils.SliceMap(models, func(m model.Setup) any { return m })...)
 		if err != nil {
 			return nil, err
 		}
@@ -85,7 +84,7 @@ func newGormConfig(options Options) (cfg *gorm.Config, err error) {
 		Logger: logger.New(cflog, logger.Config{
 			SlowThreshold:             200 * time.Millisecond,
 			LogLevel:                  options.LogLevel,
-			IgnoreRecordNotFoundError: false,
+			IgnoreRecordNotFoundError: !options.LogNotFound,
 			Colorful:                  options.Cflog.LogFile == "",
 		}),
 	}, nil

@@ -17,27 +17,16 @@ func ConvertBytesToInt64(buf []byte) int64 {
 	return v
 }
 
-func ConvertUint64ToBytes(v uint64) []byte {
-	buf := make([]byte, 8)
-	binary.PutUvarint(buf, v)
-	return buf
+func ConvertInt64ToBase64(v int64) string {
+	return base64.RawURLEncoding.EncodeToString(ConvertInt64ToBytes(v))
 }
 
-func ConvertBytesToUint64(buf []byte) uint64 {
-	v, _ := binary.Uvarint(buf)
-	return v
-}
-
-func ConvertUint64ToBase64(v uint64) string {
-	return base64.RawURLEncoding.EncodeToString(ConvertUint64ToBytes(v))
-}
-
-func ConvertBase64ToUint64(s string) (uint64, error) {
+func ConvertBase64ToInt64(s string) (int64, error) {
 	buf, err := base64.RawURLEncoding.DecodeString(s)
 	if err != nil {
 		return 0, err
 	}
-	return ConvertBytesToUint64(buf), nil
+	return ConvertBytesToInt64(buf), nil
 }
 
 func ConvertInt64ToB36(v int64) string {

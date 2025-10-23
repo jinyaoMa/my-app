@@ -2,41 +2,38 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"gorm.io/gorm"
 	"majinyao.cn/my-app/backend/internal/entity"
 	"majinyao.cn/my-app/backend/pkg/db/crud"
+	"majinyao.cn/my-app/backend/pkg/db/dbcontext"
 )
 
 type IRolePermissionService interface {
 	crud.ICrud[entity.RolePermission]
 }
 
-func NewRolePermissionService(ctx context.Context, db *gorm.DB) (IRolePermissionService, context.CancelFunc) {
-	s, cancel := new(RolePermissionService).InitWithCancelUnderContext(ctx, db)
+func NewRolePermissionService(ctx context.Context, options crud.Options, db *gorm.DB) (IRolePermissionService, context.CancelFunc) {
+	s, cancel := new(RolePermissionService).InitUnderContextWithCancel(ctx, options, db)
 	return s, cancel
 }
 
-func UseRolePermissionService(db *gorm.DB) IRolePermissionService {
-	return new(RolePermissionService).Init(db)
+func UseRolePermissionService(ctx context.Context, options crud.Options, db *gorm.DB) IRolePermissionService {
+	return new(RolePermissionService).Init(ctx, options, db)
 }
 
 type RolePermissionService struct {
 	crud.Crud[entity.RolePermission]
+	ctx context.Context
 }
 
-func (s *RolePermissionService) Init(db *gorm.DB) *RolePermissionService {
-	s.Crud.Init(db)
+func (s *RolePermissionService) InitUnderContextWithCancel(ctx context.Context, options crud.Options, db *gorm.DB) (*RolePermissionService, context.CancelFunc) {
+	db, cancel := dbcontext.SectionUnderContextWithCancel(ctx, db)
+	return s.Init(ctx, options, db), cancel
+}
+
+func (s *RolePermissionService) Init(ctx context.Context, options crud.Options, db *gorm.DB) *RolePermissionService {
+	s.Crud.Init(options, db)
+	s.ctx = ctx
 	return s
-}
-
-func (s *RolePermissionService) InitWithCancelUnderContext(ctx context.Context, db *gorm.DB) (*RolePermissionService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithCancelUnderContext(ctx, db)
-	return s, cancel
-}
-
-func (s *RolePermissionService) InitWithTimeoutUnderContext(ctx context.Context, db *gorm.DB, timeout time.Duration) (*RolePermissionService, context.CancelFunc) {
-	_, cancel := s.Crud.InitWithTimeoutUnderContext(ctx, db, timeout)
-	return s, cancel
 }

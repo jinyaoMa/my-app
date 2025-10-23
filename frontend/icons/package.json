@@ -29,6 +29,6 @@
   },
   "devDependencies": {
     "pkg": "^5.8.1",
-    "svgtofont": "^6.4.0"
+    "svgtofont": "^6.4.1"
   }
 }

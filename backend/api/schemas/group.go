@@ -5,17 +5,23 @@ import "majinyao.cn/my-app/backend/pkg/api/schema"
 type GroupItem struct {
 	schema.ModelId
 	schema.ModelTime
+	schema.ModelReserved
+	Code        string `json:"code" doc:"Code"`
+	Name        string `json:"name" doc:"Name"`
+	Description string `json:"description" doc:"Description"`
+}
+
+type GroupSave struct {
+	schema.ModelId
 	Code        string `json:"code" doc:"Code"`
 	Name        string `json:"name" doc:"Name"`
 	Description string `json:"description" doc:"Description"`
 }
 
 type GroupDetail struct {
-	schema.ModelId
+	GroupSave
 	schema.ModelTime
-	Code        string `json:"code" doc:"Code"`
-	Name        string `json:"name" doc:"Name"`
-	Description string `json:"description" doc:"Description"`
+	schema.ModelReserved
 
 	GroupUsers []GroupUserItem `json:"groupUsers" doc:"Group Users"`
 	Users      []UserItem      `json:"users" doc:"Users"`
@@ -27,9 +33,8 @@ type GroupDetail struct {
 	Files      []FileItem      `json:"files" doc:"Files"`
 }
 
-type GroupSave struct {
+type GroupSearchItem struct {
 	schema.ModelId
-	Code        string `json:"code" doc:"Code"`
-	Name        string `json:"name" doc:"Name"`
-	Description string `json:"description" doc:"Description"`
+	Code string `json:"code" doc:"Code"`
+	Name string `json:"name" doc:"Name"`
 }

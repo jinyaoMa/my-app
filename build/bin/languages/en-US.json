@@ -14,6 +14,7 @@
         "start": "Disable HTTP Server",
         "stop": "Enable HTTP Server"
       },
+      "admin": "Open Admin Center",
       "apid": "Open API Docs",
       "docs": "Open Application Docs",
       "quit": "Quit",
@@ -30,6 +31,82 @@
           "dark": "Dark"
         }
       }
+    }
+  },
+  "dialog": {
+    "upload": {
+      "avatar": {
+        "title": "Upload Avatar"
+      }
+    },
+    "common": {
+      "image": {
+        "files": "Common Image Files"
+      }
+    }
+  },
+  "permission": {
+    "full": {
+      "control": "Full Control"
+    }
+  },
+  "role": {
+    "super": {
+      "user": "Super User"
+    }
+  },
+  "group": {
+    "everyone": "Everyone"
+  },
+  "file": {
+    "category": {
+      "document": "Document",
+      "image": "Image",
+      "video": "Video",
+      "audio": "Audio",
+      "other": "Other"
+    },
+    "extension": {
+      "doc": "Word Document",
+      "docx": "Word Document (New)",
+      "pdf": "PDF Document",
+      "txt": "Text File",
+      "rtf": "Rich Text File",
+      "xls": "Excel Spreadsheet",
+      "xlsx": "Excel Spreadsheet (New)",
+      "csv": "CSV File",
+      "ppt": "PowerPoint Presentation",
+      "pptx": "PowerPoint Presentation (New)",
+      "md": "Markdown Document",
+      "html": "HTML File",
+      "xml": "XML File",
+      "log": "Log File",
+      "jpg": "JPEG Image",
+      "jpeg": "JPEG Image",
+      "png": "PNG Image",
+      "gif": "GIF Image",
+      "bmp": "BMP Image",
+      "tiff": "TIFF Image",
+      "svg": "SVG Image",
+      "webp": "WebP Image",
+      "ico": "Icon File",
+      "heic": "HEIC Image",
+      "mp4": "MP4 Video",
+      "avi": "AVI Video",
+      "mov": "MOV Video",
+      "mkv": "MKV Video",
+      "wmv": "WMV Video",
+      "flv": "FLV Video",
+      "webm": "WebM Video",
+      "3gp": "3GP Video",
+      "mp3": "MP3 Audio",
+      "wav": "WAV Audio",
+      "aac": "AAC Audio",
+      "flac": "FLAC Audio",
+      "ogg": "OGG Audio",
+      "m4a": "M4A Audio",
+      "wma": "WMA Audio",
+      "midi": "MIDI Audio"
     }
   }
 }

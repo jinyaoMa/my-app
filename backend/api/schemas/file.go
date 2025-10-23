@@ -11,9 +11,9 @@ type FileItem struct {
 	Oid   string `json:"oid" doc:"Oid"`
 	IsDir bool   `json:"isDir" doc:"Is Directory or Not"`
 	Name  string `json:"name" doc:"Name"`
-	Size  uint64 `json:"size" doc:"Size"`
+	Size  int64  `json:"size" doc:"Size"`
 
-	Status   entity.FileStatus `json:"status" doc:"Status: 1-Uploading, 2-Persisted, 3-NotFound, 4-Forbidden"`
+	Status   entity.FileStatus `json:"status" doc:"Status: uploading, persisted, lost, forbidden"`
 	Readonly bool              `json:"readonly" doc:"Is Read-only or Not"`
 	Hidden   bool              `json:"hidden" doc:"Is Hidden or Visible"`
 
@@ -21,20 +21,26 @@ type FileItem struct {
 	FileExtension   *FileExtensionItem `json:"fileExtension" doc:"File Extension"`
 }
 
-type FileDetail struct {
+type FileSave struct {
 	schema.ModelId
-	schema.ModelTime
-	Oid   string `json:"oid" doc:"Oid"`
-	IsDir bool   `json:"isDir" doc:"Is Directory or Not"`
-	Name  string `json:"name" doc:"Name"`
-	Size  uint64 `json:"size" doc:"Size"`
+	Oid       string   `json:"oid" doc:"Oid"`
+	IsDir     bool     `json:"isDir" doc:"Is Directory or Not"`
+	Name      string   `json:"name" doc:"Name"`
+	Checksums []string `json:"checksums" doc:"Checksums"`
+	Size      int64    `json:"size" doc:"Size"`
 
-	Status   entity.FileStatus `json:"status" doc:"Status: 1-Uploading, 2-Persisted, 3-NotFound, 4-Forbidden"`
+	Status   entity.FileStatus `json:"status" doc:"Status: uploading, persisted, lost, forbidden"`
 	Readonly bool              `json:"readonly" doc:"Is Read-only or Not"`
 	Hidden   bool              `json:"hidden" doc:"Is Hidden or Visible"`
 
-	FileExtensionId *string            `json:"fileExtensionId" doc:"File Extension Id"`
-	FileExtension   *FileExtensionItem `json:"fileExtension" doc:"File Extension"`
+	FileExtensionId *string `json:"fileExtensionId" doc:"File Extension Id"`
+}
+
+type FileDetail struct {
+	FileSave
+	schema.ModelTime
+
+	FileExtension *FileExtensionItem `json:"fileExtension" doc:"File Extension"`
 
 	FileUsers []FileUserItem `json:"fileUsers" doc:"File Users"`
 	Users     []UserItem     `json:"users" doc:"Users"`
@@ -43,16 +49,15 @@ type FileDetail struct {
 	Groups     []GroupItem     `json:"groups" doc:"Groups"`
 }
 
-type FileSave struct {
+type FileSearchItem struct {
 	schema.ModelId
-	Oid   string `json:"oid" doc:"Oid"`
 	IsDir bool   `json:"isDir" doc:"Is Directory or Not"`
 	Name  string `json:"name" doc:"Name"`
-	Size  uint64 `json:"size" doc:"Size"`
+	Size  int64  `json:"size" doc:"Size"`
 
-	Status   entity.FileStatus `json:"status" doc:"Status: 1-Uploading, 2-Persisted, 3-NotFound, 4-Forbidden"`
+	Status   entity.FileStatus `json:"status" doc:"Status: uploading, persisted, lost, forbidden"`
 	Readonly bool              `json:"readonly" doc:"Is Read-only or Not"`
-	Hidden   bool              `json:"hidden" doc:"Is Hidden or Visible"`
 
-	FileExtensionId *string `json:"fileExtensionId" doc:"File Extension Id"`
+	FileExtensionId *string                  `json:"fileExtensionId" doc:"File Extension Id"`
+	FileExtension   *FileExtensionSearchItem `json:"fileExtension" doc:"File Extension"`
 }

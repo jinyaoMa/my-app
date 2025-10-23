@@ -34,17 +34,23 @@ type refreshClaims struct {
 }
 
 type fwt[T IdentityGetter] struct {
+	handlers      []func(f *fory.Fory) error
 	snowflake     snowflake.ISnowflake
 	hasher        hasher.IHasher
 	codegen       codegen.ICodegen
-	pool          sync.Pool
-	idMap         sync.Map // id => refreshClaims
+	pool          sync.Pool // *fory.Fory
+	idMap         sync.Map  // id => refreshClaims
 	issuer        string
 	subject       string
 	epoch         time.Time
 	expiredAge    time.Duration
 	refreshAge    time.Duration
 	refreshLength int
+
+	t    T
+	tTag string
+	c    Claims[T]
+	cTag string
 }
 
 func (f *fwt[T]) Generate(data T) (accessToken string, refreshToken string, expiredAt time.Time, err error) {
@@ -142,7 +148,7 @@ func (f *fwt[T]) ParseAccessToken(accessToken string) (claims Claims[T], err err
 
 	f2 := f.pool.Get().(*fory.Fory)
 	defer func() {
-		f2.Reset()
+		f2, _ = f.newFory(false)
 		f.pool.Put(f2)
 	}()
 
@@ -157,7 +163,7 @@ func (f *fwt[T]) ParseAccessToken(accessToken string) (claims Claims[T], err err
 func (f *fwt[T]) BuildAccessToken(claims Claims[T]) (accessToken string, err error) {
 	f2 := f.pool.Get().(*fory.Fory)
 	defer func() {
-		f2.Reset()
+		f2, _ = f.newFory(false)
 		f.pool.Put(f2)
 	}()
 
@@ -173,7 +179,23 @@ func (f *fwt[T]) BuildAccessToken(claims Claims[T]) (accessToken string, err err
 	return content + "," + checksum, nil
 }
 
-func (f *fwt[T]) init(options Options, registers ...func(f *fory.Fory) error) (*fwt[T], error) {
+func (f *fwt[T]) newFory(returnErrors bool) (f2 *fory.Fory, err error) {
+	f2 = fory.NewFory(true)
+	if err := f2.RegisterNamedType(f.t, f.tTag); err != nil && returnErrors {
+		return nil, errors.Join(fmt.Errorf("fwt register tag type %s failed", f.tTag), err)
+	}
+	if err := f2.RegisterNamedType(f.c, f.cTag); err != nil && returnErrors {
+		return nil, errors.Join(fmt.Errorf("fwt register tag type %s failed", f.cTag), err)
+	}
+	for _, handler := range f.handlers {
+		if err := handler(f2); err != nil && returnErrors {
+			return nil, errors.Join(errors.New("fwt register extra failed"), err)
+		}
+	}
+	return f2, nil
+}
+
+func (f *fwt[T]) init(options Options, handlers ...func(f *fory.Fory) error) (*fwt[T], error) {
 	snowflake, err := snowflake.New(options.Snowflake)
 	if err != nil {
 		return nil, errors.Join(errors.New("fwt init snowflake failed"), err)
@@ -189,34 +211,17 @@ func (f *fwt[T]) init(options Options, registers ...func(f *fory.Fory) error) (*
 		return nil, errors.Join(errors.New("fwt init codegen failed"), err)
 	}
 
-	f2 := fory.NewFory(true)
-
-	var t T
-	tTag := reflect.TypeOf(t).Name()
-	if err := f2.RegisterTagType(tTag, t); err != nil {
-		return nil, errors.Join(fmt.Errorf("fwt register tag type %s failed", tTag), err)
-	}
-
-	var c Claims[T]
-	cTag := reflect.TypeOf(c).Name()
-	if err := f2.RegisterTagType(cTag, c); err != nil {
-		return nil, errors.Join(fmt.Errorf("fwt register tag type %s failed", cTag), err)
-	}
-
-	for _, register := range registers {
-		if err := register(f2); err != nil {
-			return nil, errors.Join(errors.New("fwt register extra failed"), err)
-		}
+	f.tTag = reflect.TypeOf(f.t).Name()
+	f.cTag = reflect.TypeOf(f.c).Name()
+	f.handlers = handlers
+	f2, err := f.newFory(true)
+	if err != nil {
+		return nil, err
 	}
 
 	f.pool = sync.Pool{
 		New: func() any {
-			fory := fory.NewFory(true)
-			fory.RegisterTagType(tTag, t)
-			fory.RegisterTagType(cTag, c)
-			for _, register := range registers {
-				register(fory)
-			}
+			fory, _ := f.newFory(false)
 			return fory
 		},
 	}

@@ -21,6 +21,7 @@ import (
 	"majinyao.cn/my-app/backend/pkg/crypto/keygen"
 	"majinyao.cn/my-app/backend/pkg/crypto/keygen/argon2"
 	"majinyao.cn/my-app/backend/pkg/db"
+	"majinyao.cn/my-app/backend/pkg/db/crud"
 	"majinyao.cn/my-app/backend/pkg/executable"
 	"majinyao.cn/my-app/backend/pkg/fwt"
 	"majinyao.cn/my-app/backend/pkg/i18n"
@@ -30,11 +31,13 @@ import (
 )
 
 type Config struct {
-	Cflog   cflog.Options   `json:"cflog"`
-	Storage storage.Options `json:"storage"`
-	I18n    i18n.Options    `json:"i18n"`
-	Db      db.Options      `json:"db"`
-	Api     api.Options     `json:"api"`
+	WebviewUserDataPath string          `json:"webviewUserDataPath"`
+	Crud                crud.Options    `json:"crud"`
+	Cflog               cflog.Options   `json:"cflog"`
+	Storage             storage.Options `json:"storage"`
+	I18n                i18n.Options    `json:"i18n"`
+	Db                  db.Options      `json:"db"`
+	Api                 api.Options     `json:"api"`
 }
 
 func defaultConfig(exe executable.IExecutable) Config {
@@ -79,11 +82,14 @@ func defaultConfig(exe executable.IExecutable) Config {
 		panic(err)
 	}
 
+	webviewUserDataPath := exe.JoinDir("userdata")
 	languagesDir := exe.JoinDir("languages")
 	libraryDir := exe.JoinDir("library")
 	staticsDir := exe.JoinDir("statics")
 
 	return Config{
+		WebviewUserDataPath: webviewUserDataPath,
+		Crud:                crud.DefaultOptions(),
 		Cflog: cflog.Options{
 			EnableConsole: true,
 			LogFile:       exe.JoinDir("app.log"),
@@ -123,9 +129,10 @@ func defaultConfig(exe executable.IExecutable) Config {
 				LogFile:       exe.JoinDir("db.log"),
 				LogPrefix:     "[DB_] ",
 			},
-			LogLevel: logger.Error,
-			Driver:   db.DrvSqlite,
-			Dsn:      exe.GetPathWithExt("db") + "?_pragma=foreign_keys(1)",
+			LogLevel:    logger.Error,
+			LogNotFound: true,
+			Driver:      db.DrvSqlite,
+			Dsn:         exe.GetPathWithExt("db") + "?_pragma=foreign_keys(1)",
 			Snowflake: snowflake.Options{
 				Epoch:    now,
 				NodeBits: 7,
@@ -163,8 +170,8 @@ func defaultConfig(exe executable.IExecutable) Config {
 				EnableTimeout:    true,
 				Timeout:          30,
 				EnableCors:       true,
-				AllowedOrigins:   []string{"https://*"},
-				AllowedMethods:   []string{"GET", "POST", "DELETE"},
+				AllowedOrigins:   []string{"http://*", "https://*"},
+				AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
 				AllowedHeaders:   []string{"*"},
 				EnableHttpRate:   true,
 				LimitByIp:        true,
